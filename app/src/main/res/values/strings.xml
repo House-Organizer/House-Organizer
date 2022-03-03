@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">House Organizer</string>
+    <string name="mainNameHint">Name</string>
+    <string name="mainName" />
+    <string name="mainGoButton">Send</string>
+    <string name="greeting_message">Hello %1$s!</string>
+</resources>
