@@ -8,3 +8,5 @@
 - [Maxime Germano](https://github.com/Defibrilator)
 - [Florian Marcoz](https://github.com/Geno22)
 - [Sandra Sierra](https://github.com/sansive)
+
+delete me when merging 
