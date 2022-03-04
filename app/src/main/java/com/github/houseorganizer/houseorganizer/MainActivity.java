@@ -19,7 +19,6 @@ public class MainActivity extends AppCompatActivity {
     }
 
     /* Called when the user taps the Send button */
-    @SuppressWarnings("unused")
     public void sendMessage(View view) {
         // Get name
         EditText editText = findViewById(R.id.mainName);
