@@ -15,7 +15,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 @RunWith(AndroidJUnit4.class)
-public class GreetingActivityTest {
+public class MainScreenActivityTest {
     /*
     // Test that the user sees a greeting message with their name
     @Test

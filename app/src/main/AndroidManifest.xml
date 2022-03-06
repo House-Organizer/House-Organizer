@@ -10,7 +10,7 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.HouseOrganizer">
         <activity
-            android:name=".GreetingActivity"
+            android:name=".MainScreenActivity"
             android:parentActivityName="com.github.houseorganizer.houseorganizer.MainActivity"
             android:exported="false" />
         <activity

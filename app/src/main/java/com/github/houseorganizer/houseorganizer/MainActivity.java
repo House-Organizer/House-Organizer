@@ -26,7 +26,7 @@ public class MainActivity extends AppCompatActivity {
 
         // An intent is an object that provides runtime binding between separate components
         // The intent represents an app's intent to do something
-        Intent intent = new Intent(this, GreetingActivity.class);
+        Intent intent = new Intent(this, MainScreenActivity.class);
         // An intent can carry data types as key-value pairs called extras
         intent.putExtra(EXTRA_MESSAGE, message);
 
