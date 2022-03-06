@@ -1,5 +1,8 @@
 <resources>
     <string name="app_name">House Organizer</string>
+    <string name="settings_speakable_text">Settings</string>
+    <string name="house_speakable_text">Home selection</string>
+    <string name="info_speakable_text">Info</string>
     <string name="mainNameHint">Name</string>
     <string name="mainName" />
     <string name="mainGoButton">Send</string>
