@@ -19,20 +19,4 @@ import org.junit.runner.RunWith;
 @RunWith(AndroidJUnit4.class)
 public class MainActivityTest {
 
-    @Rule
-    public ActivityScenarioRule<MainActivity> testRule = new ActivityScenarioRule<>(MainActivity.class);
-
-    // Test that when the button is clicked an intent is fired and the intent contains the username
-    @Test
-    public void clickButton() {
-        Intents.init();
-
-        onView(withId(R.id.mainName)).perform(replaceText("Sandra"));
-        onView(withId(R.id.mainGoButton)).perform(click());
-
-        intended(toPackage("com.github.houseorganizer.houseorganizer"));
-        intended(hasExtra("com.github.houseorganizer.houseorganizer.MESSAGE", "Sandra"));
-
-        Intents.release();
-    }
 }
