@@ -11,7 +11,7 @@
         android:theme="@style/Theme.HouseOrganizer">
         <activity
             android:name=".LoginActivity"
-            android:exported="false" />
+            android:exported="true" />
         <activity
             android:name=".GreetingActivity"
             android:exported="false"
