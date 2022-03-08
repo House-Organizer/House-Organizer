@@ -16,6 +16,8 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        Intent intent = new Intent(this, LoginActivity.class);
+        startActivity(intent);
     }
 
     /* Called when the user taps the Send button */
@@ -27,9 +29,9 @@ public class MainActivity extends AppCompatActivity {
 
         // An intent is an object that provides runtime binding between separate components
         // The intent represents an app's intent to do something
-        Intent intent = new Intent(this, GreetingActivity.class);
+        Intent intent = new Intent(this, LoginActivity.class);
         // An intent can carry data types as key-value pairs called extras
-        intent.putExtra(EXTRA_MESSAGE, message);
+        //intent.putExtra(EXTRA_MESSAGE, message);
 
         startActivity(intent);
     }
