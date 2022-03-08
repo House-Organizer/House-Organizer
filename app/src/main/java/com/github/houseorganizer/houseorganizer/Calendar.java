@@ -3,7 +3,10 @@ package com.github.houseorganizer.houseorganizer;
 import static java.util.Objects.requireNonNull;
 import androidx.annotation.NonNull;
 import java.time.LocalDateTime;
+import java.time.Month;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 class Calendar {
     private ArrayList<Event> events;
@@ -12,10 +15,19 @@ class Calendar {
     public Calendar() {
         events = new ArrayList<>();
         view = CalendarView.MONTHLY;
+        events.add(new Event("My event", "this is my event", LocalDateTime.now(), 100));
     }
 
     public void rotateView() {
         view =  view.next();
+    }
+
+    public List<Event> getEvents() {
+        return events.subList(0, events.size());
+    }
+
+    public CalendarView getView() {
+        return view;
     }
 
     @NonNull
@@ -26,10 +38,6 @@ class Calendar {
             ret.append(event).append("\n");
         }
         return ret.toString();
-    }
-
-    public void show() {
-        //TODO : make it show the calendar on the app (not sure this is how to do it for now)
     }
 
     static class Event {
@@ -46,6 +54,22 @@ class Calendar {
             this.description = (description == null) ? "" : description;
             this.start = start;
             this.duration = duration;
+        }
+
+        public String getTitle() {
+            return title;
+        }
+
+        public String getDescription() {
+            return description;
+        }
+
+        public LocalDateTime getStart() {
+            return start;
+        }
+
+        public int getDuration() {
+            return duration;
         }
 
         @NonNull
