@@ -6,7 +6,9 @@ import androidx.annotation.NonNull;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 class Calendar {
@@ -15,15 +17,15 @@ class Calendar {
 
     public Calendar() {
         events = new ArrayList<>();
-        view = CalendarView.MONTHLY;
+        view = CalendarView.UPCOMING;
     }
 
     // For testing purposes
     public Calendar(int eventAmount) {
         events = new ArrayList<>();
-        view = CalendarView.MONTHLY;
+        view = CalendarView.UPCOMING;
         for (int i = 0; i < eventAmount; i++) {
-            events.add(new Event("My event", "this is my event", LocalDateTime.of(LocalDate.now(), LocalTime.NOON), 100));
+            events.add(new Event("My event", "this is my event", LocalDateTime.of(LocalDate.now(), LocalTime.NOON.minus(i, ChronoUnit.HOURS)), 100));
         }
     }
 
@@ -32,7 +34,14 @@ class Calendar {
     }
 
     public List<Event> getEvents() {
-        return events.subList(0, events.size());
+        List<Event> ret = events.subList(0, events.size());
+        ret.sort(new Comparator<Event>() {
+            @Override
+            public int compare(Event o1, Event o2) {
+                return o1.getStart().compareTo(o2.getStart());
+            }
+        });
+        return ret;
     }
 
     public CalendarView getView() {

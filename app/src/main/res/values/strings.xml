@@ -4,4 +4,5 @@
     <string name="house_speakable_text">Home selection</string>
     <string name="info_speakable_text">Info</string>
     <string name="button_feedback_text">No button has been pressed</string>
+    <string name="calendar_upcoming_date">\t On the %1$s.</string>
 </resources>

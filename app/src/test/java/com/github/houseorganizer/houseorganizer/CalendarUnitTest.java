@@ -3,11 +3,10 @@ package com.github.houseorganizer.houseorganizer;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
-import androidx.annotation.NonNull;
-
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import com.github.houseorganizer.houseorganizer.Calendar.Event;
 
@@ -38,6 +37,13 @@ public class CalendarUnitTest {
         events.add(new Event("My event", "this is my event", LocalDateTime.of(LocalDate.now(), LocalTime.NOON), 100));
         assertEquals(events.size(), calendar.getEvents().size());
         assertEquals(events.get(0), calendar.getEvents().get(0));
+    }
+
+    @Test
+    public void EventsAreProperlySorted() {
+        Calendar calendar = new Calendar(3);
+        Event e = new Event("My event", "this is my event", LocalDateTime.of(LocalDate.now(), LocalTime.NOON.minus(2, ChronoUnit.HOURS)), 100);
+        assertEquals(e, calendar.getEvents().get(0));
     }
 
     @Test
