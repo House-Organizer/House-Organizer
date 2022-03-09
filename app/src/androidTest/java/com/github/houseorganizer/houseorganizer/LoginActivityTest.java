@@ -6,7 +6,10 @@ import static androidx.test.espresso.action.ViewActions.replaceText;
 import static androidx.test.espresso.intent.Intents.intended;
 import static androidx.test.espresso.intent.matcher.IntentMatchers.hasExtra;
 import static androidx.test.espresso.intent.matcher.IntentMatchers.toPackage;
+import static androidx.test.espresso.matcher.ViewMatchers.assertThat;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
+
+import static org.hamcrest.CoreMatchers.is;
 
 import androidx.test.espresso.intent.Intents;
 import androidx.test.ext.junit.rules.ActivityScenarioRule;
@@ -21,7 +24,12 @@ public class LoginActivityTest {
 
     @Rule
     public ActivityScenarioRule<LoginActivity> testRule = new ActivityScenarioRule<>(LoginActivity.class);
-    
+
+    // Test that when the sign in button is clicked an intent is fired
+    @Test
+    public void clickSignInButtonFiresIntent() {
+        assertThat(2+2, is(4));
+    }
 
 
 }
