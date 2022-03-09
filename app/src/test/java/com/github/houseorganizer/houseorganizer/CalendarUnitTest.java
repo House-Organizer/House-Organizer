@@ -17,11 +17,11 @@ public class CalendarUnitTest {
     public void calendarViewCorrectlyRotates() {
         Calendar calendar = new Calendar();
         calendar.rotateView();
+        assertEquals(Calendar.CalendarView.MONTHLY, calendar.getView());
+        calendar.rotateView();
         assertEquals(Calendar.CalendarView.WEEKLY, calendar.getView());
         calendar.rotateView();
         assertEquals(Calendar.CalendarView.UPCOMING, calendar.getView());
-        calendar.rotateView();
-        assertEquals(Calendar.CalendarView.MONTHLY, calendar.getView());
     }
 
     @Test
@@ -49,13 +49,13 @@ public class CalendarUnitTest {
     @Test
     public void getViewReturnsCorrectlyWithoutRotate() {
         Calendar calendar = new Calendar();
-        assertEquals(Calendar.CalendarView.MONTHLY, calendar.getView());
+        assertEquals(Calendar.CalendarView.UPCOMING, calendar.getView());
     }
 
     @Test
     public void toStringHasRightFormat() {
         Calendar calendar = new Calendar(1);
-        assertEquals("Calendar with view : MONTHLY and the following events :\n" + calendar.getEvents().get(0).toString() + "\n", calendar.toString());
+        assertEquals("Calendar with view : UPCOMING and the following events :\n" + calendar.getEvents().get(0).toString() + "\n", calendar.toString());
     }
 
     //Event tests
