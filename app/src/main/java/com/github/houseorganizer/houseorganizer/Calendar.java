@@ -2,10 +2,11 @@ package com.github.houseorganizer.houseorganizer;
 
 import static java.util.Objects.requireNonNull;
 import androidx.annotation.NonNull;
+
+import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.Month;
+import java.time.LocalTime;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 class Calendar {
@@ -15,7 +16,15 @@ class Calendar {
     public Calendar() {
         events = new ArrayList<>();
         view = CalendarView.MONTHLY;
-        events.add(new Event("My event", "this is my event", LocalDateTime.now(), 100));
+    }
+
+    // For testing purposes
+    public Calendar(int eventAmount) {
+        events = new ArrayList<>();
+        view = CalendarView.MONTHLY;
+        for (int i = 0; i < eventAmount; i++) {
+            events.add(new Event("My event", "this is my event", LocalDateTime.of(LocalDate.now(), LocalTime.NOON), 100));
+        }
     }
 
     public void rotateView() {
@@ -33,7 +42,7 @@ class Calendar {
     @NonNull
     @Override
     public String toString() {
-        StringBuilder ret = new StringBuilder("Calendar with view :" + view + " and the following events : \n");
+        StringBuilder ret = new StringBuilder("Calendar with view : " + view + " and the following events :\n");
         for(Event event : events) {
             ret.append(event).append("\n");
         }
@@ -75,7 +84,16 @@ class Calendar {
         @NonNull
         @Override
         public String toString() {
-            return this.title + " at " + start.toString() + ", lasts " + duration + " seconds. :\n" + description;
+            return this.title + " at " + start.toString() + ", lasts " + duration + " seconds. : " + description;
+        }
+
+        @Override
+        public boolean equals(Object oEvent) {
+            if (this == oEvent) return true;
+            if (!(oEvent instanceof Event)) return false;
+            Event event = (Event) oEvent;
+            // Shortcut since toString depends of every variable Event has
+            return event.toString().equals(this.toString());
         }
     }
 
@@ -85,7 +103,7 @@ class Calendar {
         UPCOMING;
 
         public CalendarView next() {
-            return values()[ordinal() + 1 % values().length];
+            return values()[(ordinal() + 1) % values().length];
         }
     }
 }
