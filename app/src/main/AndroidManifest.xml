@@ -10,11 +10,7 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.HouseOrganizer">
         <activity
-            android:name=".GreetingActivity"
-            android:parentActivityName="com.github.houseorganizer.houseorganizer.MainActivity"
-            android:exported="false" />
-        <activity
-            android:name=".MainActivity"
+            android:name=".MainScreenActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
