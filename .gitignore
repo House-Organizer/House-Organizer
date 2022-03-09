@@ -83,6 +83,7 @@ lint/generated/
 lint/outputs/
 lint/tmp/
 # lint/reports/
+.idea/
 .idea/deploymentTargetDropDown.xml
 .idea/deploymentTargetDropDown.xml
 .idea/misc.xml
