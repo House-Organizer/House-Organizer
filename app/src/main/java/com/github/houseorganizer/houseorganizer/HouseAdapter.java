@@ -12,11 +12,11 @@ import androidx.recyclerview.widget.RecyclerView;
 
 public class HouseAdapter extends RecyclerView.Adapter<HouseAdapter.HouseHolder> {
 
-    Context cx;
-    String houseNames[];
-    int houseImages[];
+    final Context cx;
+    final String[] houseNames;
+    final int[] houseImages;
 
-    public HouseAdapter(Context cx, String houseNames[], int houseImages[]) {
+    public HouseAdapter(Context cx, String[] houseNames, int[] houseImages) {
         this.cx = cx;
         this.houseNames = houseNames;
         this.houseImages = houseImages;
@@ -41,10 +41,10 @@ public class HouseAdapter extends RecyclerView.Adapter<HouseAdapter.HouseHolder>
         return houseNames.length;
     }
 
-    public class HouseHolder extends RecyclerView.ViewHolder {
+    public static class HouseHolder extends RecyclerView.ViewHolder {
 
-        TextView houseName;
-        ImageView houseImage;
+        final TextView houseName;
+        final ImageView houseImage;
 
         public HouseHolder(@NonNull View itemView) {
             super(itemView);

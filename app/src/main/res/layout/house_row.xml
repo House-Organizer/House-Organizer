@@ -22,7 +22,8 @@
                 android:layout_height="81dp"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                app:srcCompat="@drawable/home_icon" />
+                app:srcCompat="@drawable/home_icon"
+                android:contentDescription="@string/img_house_row_desc" />
 
             <TextView
                 android:id="@+id/houseName"
@@ -30,7 +31,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="108dp"
                 android:layout_marginTop="28dp"
-                android:text="TextView"
+                android:text="@string/house_name"
                 android:textSize="24sp"
                 android:textStyle="bold"
                 app:layout_constraintStart_toStartOf="@+id/houseImage"

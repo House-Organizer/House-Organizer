@@ -1,3 +1,4 @@
+//file:noinspection GrDeprecatedAPIUsage
 plugins {
     id 'com.android.application'
     id 'jacoco'
