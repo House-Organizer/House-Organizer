@@ -4,8 +4,4 @@
     <string name="house_speakable_text">Home selection</string>
     <string name="info_speakable_text">Info</string>
     <string name="button_feedback_text">No button has been pressed</string>
-    <string name="mainNameHint">Name</string>
-    <string name="mainName" />
-    <string name="mainGoButton">Send</string>
-    <string name="greeting_message">Hello %1$s!</string>
 </resources>
