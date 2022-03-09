@@ -24,7 +24,7 @@ public class LoginActivityTest {
 
     // Test that when the sign in button is clicked an intent is fired
     @Test
-    public void clickSignInButton() {
+    public void clickSignInButtonFiresIntent() {
         Intents.init();
 
         onView(withId(R.id.sign_in_button)).perform(click());
