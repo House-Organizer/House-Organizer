@@ -88,20 +88,12 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         // Check for existing Google Sign In account, if the user is already signed in
         // the GoogleSignInAccount will be non-null.
         GoogleSignInAccount account = GoogleSignIn.getLastSignedInAccount(this);
-        if(account != null){
-            FirebaseUser currentUser = mAuth.getCurrentUser();
-            // Check if the user is also signed in with Firebase
-            if(currentUser != null){
-                startMainActivity();
-            }
-            else{
-                firebaseAuthWithGoogle(account.getIdToken());
-            }
-        } else{
-            // No user Signed in, activating the sign-in button
-            findViewById(R.id.sign_in_button).setOnClickListener(this);
-        }
 
+        if(account == null){
+            findViewById(R.id.sign_in_button).setOnClickListener(this);
+        }else{
+            startMainActivity();
+        }
     }
 
 
