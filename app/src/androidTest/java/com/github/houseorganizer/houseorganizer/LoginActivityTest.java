@@ -27,7 +27,7 @@ public class LoginActivityTest {
 
     // Test that when the sign in button is clicked an intent is fired
     @Test
-    public void clickSignInButtonFiresIntent() {
+    public void dummyTest() {
         assertThat(2+2, is(4));
     }
 
