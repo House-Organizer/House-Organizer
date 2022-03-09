@@ -1,5 +1,6 @@
 package com.github.houseorganizer.houseorganizer;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.TextView;
@@ -15,9 +16,8 @@ public class MainScreenActivity extends AppCompatActivity {
     }
 
     public void houseButtonPressed(View view){
-        TextView text = findViewById(R.id.last_button_activated);
-        String s = "House button pressed";
-        text.setText(s);
+        Intent intent = new Intent(this, HouseSelectionActivity.class);
+        startActivity(intent);
     }
 
     public void settingsButtonPressed(View view){
