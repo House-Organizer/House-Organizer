@@ -29,17 +29,6 @@
         app:layout_constraintVertical_bias="0.45" />
 
     <TextView
-        android:id="@+id/loggedUserName"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.498"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/loginStatus"
-        app:layout_constraintVertical_bias="0.319" />
-
-    <TextView
         android:id="@+id/discoverButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -74,19 +63,6 @@
         android:textColor="@color/purple_700"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/appNameText" />
-
-    <Button
-        android:id="@+id/disconnect_button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="136dp"
-        android:text="@string/signout_button"
-        android:visibility="invisible"
-        app:layout_constraintBottom_toTopOf="@+id/sign_in_button"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/appDescriptionText"
-        app:layout_constraintVertical_bias="0.156" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
