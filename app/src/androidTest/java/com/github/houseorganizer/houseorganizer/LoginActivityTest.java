@@ -22,9 +22,9 @@ public class LoginActivityTest {
     @Rule
     public ActivityScenarioRule<LoginActivity> testRule = new ActivityScenarioRule<>(LoginActivity.class);
 
-    // Test that when the button is clicked an intent is fired and the intent contains the username
+    // Test that when the sign in button is clicked an intent is fired
     @Test
-    public void clickButton() {
+    public void clickSignInButton() {
         Intents.init();
 
         onView(withId(R.id.sign_in_button)).perform(click());
