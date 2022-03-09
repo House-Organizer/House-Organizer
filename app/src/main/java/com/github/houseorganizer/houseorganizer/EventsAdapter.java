@@ -69,41 +69,27 @@ public class EventsAdapter extends RecyclerView.Adapter<EventsAdapter.ViewHolder
         switch (calendar.getView()) {
             case MONTHLY:
                 titleView.setText(String.format(Locale.ENGLISH, "%d", position + 1));
-                titleView.setOnClickListener(v -> {
-                    AlertDialog.Builder builder = new AlertDialog.Builder(v.getContext());
-                    builder.setTitle(Integer.toString(position + 1));
-                    builder.setMessage("List of events for this day somehow");
-                    builder.show();
-                });
+                titleView.setOnClickListener(v -> new AlertDialog.Builder(v.getContext())
+                        .setTitle(Integer.toString(position + 1)).setMessage("List of events for this day somehow")
+                        .setMessage("List of events for this day somehow").show());
                 break;
             case WEEKLY:
                 String[] days = new String[]{"MON", "TUE", "WED", "THU", "FRI", "SAT", "SUN"};
-                String day = days[position];
 
-                titleView.setText(day);
-                titleView.setOnClickListener(v -> {
-                    AlertDialog.Builder builder = new AlertDialog.Builder(v.getContext());
-                    builder.setTitle(day);
-                    builder.setMessage("List of events for this day somehow");
-                    builder.show();
-                });
+                titleView.setText(days[position]);
+                titleView.setOnClickListener(v -> new AlertDialog.Builder(v.getContext())
+                        .setTitle(days[position])
+                        .setMessage("List of events for this day somehow").show());
                 break;
             case UPCOMING:
                 Event event = calendar.getEvents().get(position);
-
                 titleView.setText(event.getTitle());
-                titleView.setOnClickListener(v -> {
-                    AlertDialog.Builder builder = new AlertDialog.Builder(v.getContext());
-                    builder.setTitle(event.getTitle());
-                    builder.setMessage(event.getDescription());
-                    builder.show();
-                });
-
+                titleView.setOnClickListener(v -> new AlertDialog.Builder(v.getContext())
+                        .setTitle(event.getTitle())
+                        .setMessage(event.getDescription()).show());
                 TextView dateView = holder.dateView;
                 dateView.setText(dateView.getContext().getResources().getString(R.string.calendar_upcoming_date,
                         event.getStart().format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm"))));
-                break;
-            default:
         }
     }
 
