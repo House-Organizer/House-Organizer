@@ -13,12 +13,15 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.TextView;
 
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
+import com.google.android.gms.common.SignInButton;
 import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -33,8 +36,9 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     private GoogleSignInClient mGoogleSignInClient;
     private FirebaseAuth mAuth;
     private static final String TAG = "LoginActivity";
+    public static final String EXTRA_MESSAGE = "com.github.houseorganizer.houseorganizer.MESSAGE";
 
-    ActivityResultLauncher<Intent> someActivityResultLauncher = registerForActivityResult(
+    ActivityResultLauncher<Intent> googleSignInResultLauncher = registerForActivityResult(
             new ActivityResultContracts.StartActivityForResult(),
             new ActivityResultCallback<ActivityResult>() {
                 @Override
@@ -49,9 +53,8 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                         } catch (ApiException e) {
                             // Google Sign In failed, update UI appropriately
                             Log.w(TAG, "Google sign in failed", e);
+                            //TODO:Handle Fail cases
                         }
-
-                        // TODO : Handle Sign-in results
                     }
                 }
             }
@@ -62,33 +65,22 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        setContentView(R.layout.activity_login);
+
         // Configure sign-in to request the user's ID, email address, and basic
         // profile. ID and basic profile are included in DEFAULT_SIGN_IN.
         // Configure Google Sign In
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-                .requestIdToken("203269545085-bd0ji5p3615rboo0cjkmcg9fslr9d6q8.apps.googleusercontent.com")
+                .requestIdToken(getString(R.string.cloudServerID))
                 .requestEmail()
                 .build();
 
         // Build a GoogleSignInClient with the options specified by gso.
         mGoogleSignInClient = GoogleSignIn.getClient(this, gso);
-
-        // Check for existing Google Sign In account, if the user is already signed in
-        // the GoogleSignInAccount will be non-null.
-        GoogleSignInAccount account = GoogleSignIn.getLastSignedInAccount(this);
-        if(account != null){
-            // TODO : Launch activity after login
-            setContentView(R.layout.activity_login);
-            updateUI(account.getDisplayName());
-        }
-        else{
-            // Display login screen
-            setContentView(R.layout.activity_login);
-            //Activating the sign-in button
-
-        }
-        findViewById(R.id.sign_in_button).setOnClickListener(this);
         mAuth = FirebaseAuth.getInstance();
+
+
+
 
 
     }
@@ -97,9 +89,24 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     public void onStart() {
         super.onStart();
 
-        FirebaseUser currentUser = mAuth.getCurrentUser();
-        if(currentUser!=null){
-            updateUI(currentUser.getDisplayName());
+        // Check for existing Google Sign In account, if the user is already signed in
+        // the GoogleSignInAccount will be non-null.
+        GoogleSignInAccount account = GoogleSignIn.getLastSignedInAccount(this);
+        if(account != null){
+            FirebaseUser currentUser = mAuth.getCurrentUser();
+            if(currentUser != null){
+                // TODO : Launch activity after login
+                setContentView(R.layout.activity_login);
+                startMainActivity();
+            }
+            else{
+                firebaseAuthWithGoogle(account.getIdToken());
+            }
+        } else{
+            // Display login screen
+
+            //TODO : Activating the sign-in button (VISIBLE and listener)
+            findViewById(R.id.sign_in_button).setOnClickListener(this);
         }
 
     }
@@ -117,7 +124,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     private void signIn() {
 
         Intent signInIntent = mGoogleSignInClient.getSignInIntent();
-        someActivityResultLauncher.launch(signInIntent);
+        googleSignInResultLauncher.launch(signInIntent);
     }
 
     private void firebaseAuthWithGoogle(String idToken) {
@@ -130,31 +137,23 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                             // Sign in success, update UI with the signed-in user's information
                             Log.d(TAG, "signInWithCredential:success");
                             FirebaseUser user = mAuth.getCurrentUser();
-                            updateUI(user.getDisplayName()+" to Firebase");
+                            startMainActivity();
                         } else {
                             // If sign in fails, display a message to the user.
                             Log.w(TAG, "signInWithCredential:failure", task.getException());
-                            updateUI(null);
+                            //TODO:Handle Fail cases
                         }
                     }
                 });
     }
 
-    public void updateUI(String displayName){
-        TextView logged = findViewById(R.id.loginStatus);
-
-        if(displayName == null){
-            logged.setText("Login failed");
-        }
-        else{
-            logged.setText("Login succesful");
-            TextView userName = findViewById(R.id.loggedUserName);
-            userName.setText("Welcome "+displayName+" !");
-        }
+    //temporary changed to test the functionality
+    private void startMainActivity(){
+        SignInButton but = findViewById(R.id.sign_in_button);
+        but.setVisibility(View.INVISIBLE);
+        Intent intent = new Intent(this, GreetingActivity.class);
+        intent.putExtra(EXTRA_MESSAGE, mAuth.getCurrentUser().getDisplayName());
+        startActivity(intent);
     }
-
-
-
-
 
 }

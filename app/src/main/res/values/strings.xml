@@ -6,5 +6,6 @@
     <string name="greeting_message">Hello %1$s!</string>
     <string name="discoverButton">Discover</string>
     <string name="appDescription">stub description of the app to appeal the user</string>
+    <string name="cloudServerID">203269545085-bd0ji5p3615rboo0cjkmcg9fslr9d6q8.apps.googleusercontent.com</string>
 
 </resources>
