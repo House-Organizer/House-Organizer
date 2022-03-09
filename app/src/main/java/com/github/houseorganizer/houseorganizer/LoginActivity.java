@@ -91,6 +91,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
         if(account == null){
             findViewById(R.id.sign_in_button).setOnClickListener(this);
+            findViewById(R.id.discoverButton).setOnClickListener(this);
         }else{
             startMainActivity();
         }
@@ -103,6 +104,9 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             case R.id.sign_in_button:
                 signIn();
                 break;
+            case R.id.discoverButton:
+                anonSignIn();
+                break;
         }
     }
 
@@ -112,6 +116,24 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     private void signIn() {
         Intent signInIntent = mGoogleSignInClient.getSignInIntent();
         googleSignInResultLauncher.launch(signInIntent);
+    }
+
+    private void anonSignIn() {
+        mAuth.signInAnonymously()
+                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+                    @Override
+                    public void onComplete(@NonNull Task<AuthResult> task) {
+                        if (task.isSuccessful()) {
+                            // Sign in success, update UI with the signed-in user's information
+                            Log.d("LoginActivity", "signInAnonymously:success");
+                            FirebaseUser user = mAuth.getCurrentUser();
+                        } else {
+                            // If sign in fails, display a message to the user.
+                            Log.w("LoginActivity", "signInAnonymously:failure", task.getException());
+                            displayFailedSignIn();
+                        }
+                    }
+                });
     }
 
     /**
