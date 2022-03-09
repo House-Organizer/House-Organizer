@@ -7,13 +7,12 @@ import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.GridLayoutManager;
-import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 public class MainScreenActivity extends AppCompatActivity {
 
     Calendar calendar;
-    RecyclerView[] calendarViews;
+    int calendarColumns = 1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -21,29 +20,17 @@ public class MainScreenActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main_screen);
         calendar = new Calendar(3);
 
-        RecyclerView calendarEventsUpcoming = findViewById(R.id.calendar_upcoming);
-        EventsUpcomingAdapter calendarUpcomingAdapter = new EventsUpcomingAdapter(calendar.getEvents());
-        calendarEventsUpcoming.setAdapter(calendarUpcomingAdapter);
-        calendarEventsUpcoming.setLayoutManager(new LinearLayoutManager(this));
-
-        RecyclerView calendarEventsWeekly = findViewById(R.id.calendar_weekly);
-        calendarEventsWeekly.setVisibility(View.GONE);
-        EventsWeeklyAdapter calendarWeeklyAdapter = new EventsWeeklyAdapter();
-        calendarEventsWeekly.setAdapter(calendarWeeklyAdapter);
-        calendarEventsWeekly.setLayoutManager(new GridLayoutManager(this, 7));
-
-        RecyclerView calendarEventsMonthly = findViewById(R.id.calendar_monthly);
-        calendarEventsMonthly.setVisibility(View.GONE);
-        EventsMonthlyAdapter calendarMonthlyAdapter = new EventsMonthlyAdapter();
-        calendarEventsMonthly.setAdapter(calendarMonthlyAdapter);
-        calendarEventsMonthly.setLayoutManager(new GridLayoutManager(this, 7));
+        RecyclerView calendarEvents = findViewById(R.id.calendar);
+        EventsAdapter calendarAdapter = new EventsAdapter(calendar);
+        calendarEvents.setAdapter(calendarAdapter);
+        calendarEvents.setLayoutManager(new GridLayoutManager(this, calendarColumns));
 
         Button calendarViewChange = findViewById(R.id.calendar_view_change);
-        calendarViews = new RecyclerView[]{calendarEventsMonthly, calendarEventsWeekly, calendarEventsUpcoming};
         calendarViewChange.setOnClickListener(v -> {
-            calendarViews[calendar.getView().ordinal()].setVisibility(View.GONE);
             calendar.rotateView();
-            calendarViews[calendar.getView().ordinal()].setVisibility(View.VISIBLE);
+            calendarColumns = calendar.getView() == Calendar.CalendarView.UPCOMING ? 1 : 7;
+            calendarEvents.setAdapter(calendarAdapter);
+            calendarEvents.setLayoutManager(new GridLayoutManager(this, calendarColumns));
         });
     }
 
