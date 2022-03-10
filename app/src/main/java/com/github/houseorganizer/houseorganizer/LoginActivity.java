@@ -118,7 +118,17 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         googleSignInResultLauncher.launch(signInIntent);
     }
 
+    /**
+     * Intermediary function to create an anonymous Firebase account.
+     *
+     * Jumps directly to the main activity if there's already a registered
+     * anonymous account.
+     */
     private void anonSignIn() {
+        if (mAuth.getCurrentUser() != null) {
+            startMainActivity();
+        }
+
         mAuth.signInAnonymously()
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                     @Override
@@ -126,7 +136,8 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                         if (task.isSuccessful()) {
                             // Sign in success, update UI with the signed-in user's information
                             Log.d("LoginActivity", "signInAnonymously:success");
-                            FirebaseUser user = mAuth.getCurrentUser();
+                            ///FirebaseUser user = mAuth.getCurrentUser();
+                            startMainActivity();
                         } else {
                             // If sign in fails, display a message to the user.
                             Log.w("LoginActivity", "signInAnonymously:failure", task.getException());
@@ -142,6 +153,12 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
      */
     private void firebaseAuthWithGoogle(String idToken) {
         AuthCredential credential = GoogleAuthProvider.getCredential(idToken, null);
+
+        if (mAuth.getCurrentUser() != null) {
+            firebaseLinkWithGoogle(credential);
+            return;
+        }
+
         mAuth.signInWithCredential(credential)
                 .addOnCompleteListener(this, task -> {
                     if (task.isSuccessful()) {
@@ -153,6 +170,31 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                         // If sign in fails, display a message to the user.
                         Log.w("LoginActivity", "signInWithCredential:failure", task.getException());
                         displayFailedSignIn();
+                    }
+                });
+    }
+
+    /**
+     * Links current Firebase and Google accounts.
+     *
+     * This allows previous anonymous users to keep their
+     * initial Firebase data after logging in with Google.
+     *
+     * @param credential the credential of the connected Google account
+     */
+    private void firebaseLinkWithGoogle(AuthCredential credential) {
+        mAuth.getCurrentUser().linkWithCredential(credential)
+                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+                    @Override
+                    public void onComplete(@NonNull Task<AuthResult> task) {
+                        if (task.isSuccessful()) {
+                            Log.d("LoginActivity", "linkWithCredential:success");
+                            FirebaseUser user = task.getResult().getUser();
+                            startMainActivity();
+                        } else {
+                            Log.w("LoginActivity", "linkWithCredential:failure", task.getException());
+                            displayFailedSignIn();
+                        }
                     }
                 });
     }
