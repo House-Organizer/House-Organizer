@@ -13,4 +13,8 @@
     <string name="firebaseAnonOk">You can now use our app anonymously</string>
     <string name="firebaseAnonRemembered">You\'re still using our app anonymously</string>
     <string name="googleSignInRemembered">You\'re still signed in with Google</string>
+    <string name="settings_speakable_text">Settings</string>
+    <string name="house_speakable_text">Home selection</string>
+    <string name="info_speakable_text">Info</string>
+    <string name="button_feedback_text">No button has been pressed</string>
 </resources>
