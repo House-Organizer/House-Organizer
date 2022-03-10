@@ -106,6 +106,7 @@ public class CalendarUnitTest {
     @Test
     public void toStringHasRightFormatEvent() {
         Event event = new Event("title", "desc", LocalDateTime.of(LocalDate.now(), LocalTime.NOON), 100);
-        assertEquals("title at 2022-03-09T12:00, lasts 100 seconds. : desc", event.toString());
+
+        assertEquals("title at " + event.getStart() + ", lasts 100 seconds. : desc", event.toString());
     }
 }
