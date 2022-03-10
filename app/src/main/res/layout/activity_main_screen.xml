@@ -45,8 +45,8 @@
         app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@drawable/info_icon" />
 
-    <androidx.constraintlayout.utils.widget.MockView
-        android:id="@+id/calendar_mock"
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/calendar"
         android:layout_width="329dp"
         android:layout_height="229dp"
         android:layout_marginBottom="8dp"
@@ -54,6 +54,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/house_imageButton" />
+
 
     <androidx.constraintlayout.utils.widget.MockView
         android:id="@+id/todolist_mock"
@@ -72,6 +73,18 @@
         app:layout_constraintBottom_toTopOf="@+id/todolist_mock"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/calendar_mock" />
+        app:layout_constraintTop_toBottomOf="@+id/calendar" />
+
+    <Button
+        android:id="@+id/calendar_view_change"
+        android:layout_width="40dp"
+        android:layout_height="52dp"
+        android:text=""
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.884"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/house_imageButton"
+        app:layout_constraintVertical_bias="0.064" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

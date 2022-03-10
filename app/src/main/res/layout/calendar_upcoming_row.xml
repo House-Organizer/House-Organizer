@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="horizontal"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:paddingTop="0dp"
+    android:paddingBottom="0dp"
+    >
+
+    <Button
+        android:id="@+id/event_upcoming_title"
+        android:layout_width="110dp"
+        android:layout_height="37dp"
+        android:layout_weight="0" />
+
+    <TextView
+        android:id="@+id/event_upcoming_date"
+        android:layout_width="160dp"
+        android:layout_height="20dp"
+        android:layout_weight="1" />
+
+</LinearLayout>
