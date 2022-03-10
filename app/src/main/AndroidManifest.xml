@@ -10,7 +10,7 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.HouseOrganizer">
         <activity
-            android:name=".LoginActivity"
+            android:name=".MainScreenActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -19,9 +19,8 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".GreetingActivity"
-            android:exported="false"
-            android:parentActivityName=".MainActivity" />
+            android:name=".LoginActivity"
+            android:exported="true" />
         <activity
             android:name=".MainActivity"
             android:exported="true" />
