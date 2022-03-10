@@ -3,7 +3,6 @@ package com.github.houseorganizer.houseorganizer;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
-import androidx.annotation.NonNull;
 import androidx.annotation.StringRes;
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -19,12 +18,9 @@ import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.common.api.ApiException;
-import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthCredential;
-import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
 
 public class LoginActivity extends AppCompatActivity implements View.OnClickListener {
@@ -125,19 +121,16 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         }
 
         mAuth.signInAnonymously()
-                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
-                    @Override
-                    public void onComplete(@NonNull Task<AuthResult> task) {
-                        if (task.isSuccessful()) {
-                            // Sign in success, update UI with the signed-in user's information
-                            Log.d("LoginActivity", "signInAnonymously:success");
-                            ///FirebaseUser user = mAuth.getCurrentUser();
-                            startMainActivity(R.string.firebaseAnonOk);
-                        } else {
-                            // If sign in fails, display a message to the user.
-                            Log.w("LoginActivity", "signInAnonymously:failure", task.getException());
-                            displayLoginStatus(R.string.signInFailed);
-                        }
+                .addOnCompleteListener(this, task -> {
+                    if (task.isSuccessful()) {
+                        // Sign in success, update UI with the signed-in user's information
+                        Log.d("LoginActivity", "signInAnonymously:success");
+                        ///FirebaseUser user = mAuth.getCurrentUser();
+                        startMainActivity(R.string.firebaseAnonOk);
+                    } else {
+                        // If sign in fails, display a message to the user.
+                        Log.w("LoginActivity", "signInAnonymously:failure", task.getException());
+                        displayLoginStatus(R.string.signInFailed);
                     }
                 });
     }
@@ -179,17 +172,14 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
      */
     private void firebaseLinkWithGoogle(AuthCredential credential) {
         mAuth.getCurrentUser().linkWithCredential(credential)
-                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
-                    @Override
-                    public void onComplete(@NonNull Task<AuthResult> task) {
-                        if (task.isSuccessful()) {
-                            Log.d("LoginActivity", "linkWithCredential:success");
-                            ///FirebaseUser user = task.getResult().getUser();
-                            startMainActivity(R.string.googleSignInOk);
-                        } else {
-                            Log.w("LoginActivity", "linkWithCredential:failure", task.getException());
-                            displayLoginStatus(R.string.signInFailed);
-                        }
+                .addOnCompleteListener(this, task -> {
+                    if (task.isSuccessful()) {
+                        Log.d("LoginActivity", "linkWithCredential:success");
+                        ///FirebaseUser user = task.getResult().getUser();
+                        startMainActivity(R.string.googleSignInOk);
+                    } else {
+                        Log.w("LoginActivity", "linkWithCredential:failure", task.getException());
+                        displayLoginStatus(R.string.signInFailed);
                     }
                 });
     }
