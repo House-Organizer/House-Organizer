@@ -11,4 +11,6 @@
     <string name="signInFailed">The sign-in failed due to an error</string>
     <string name="googleSignInOk">The Google sign-in was successful</string>
     <string name="firebaseAnonOk">You can now use our app anonymously</string>
+    <string name="firebaseAnonRemembered">You\'re still using our app anonymously</string>
+    <string name="googleSignInRemembered">You\'re still signed in with Google</string>
 </resources>
