@@ -17,4 +17,6 @@
     <string name="house_speakable_text">Home selection</string>
     <string name="info_speakable_text">Info</string>
     <string name="button_feedback_text">No button has been pressed</string>
+    <string name="house_name">House name</string>>
+    <string name="img_house_row_desc">Image for the given house name</string>
 </resources>

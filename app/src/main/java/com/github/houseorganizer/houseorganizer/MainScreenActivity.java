@@ -1,11 +1,13 @@
 package com.github.houseorganizer.houseorganizer;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+@SuppressWarnings("unused")
 public class MainScreenActivity extends AppCompatActivity {
 
     @Override
@@ -14,19 +16,19 @@ public class MainScreenActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main_screen);
     }
 
-    public void houseButtonPressed(View view){
-        TextView text = findViewById(R.id.last_button_activated);
-        String s = "House button pressed";
-        text.setText(s);
+    @SuppressWarnings("unused")
+    public void houseButtonPressed(View view) {
+        Intent intent = new Intent(this, HouseSelectionActivity.class);
+        startActivity(intent);
     }
 
-    public void settingsButtonPressed(View view){
+    public void settingsButtonPressed(View view) {
         TextView text = findViewById(R.id.last_button_activated);
         String s = "Settings button pressed";
         text.setText(s);
     }
 
-    public void infoButtonPressed(View view){
+    public void infoButtonPressed(@SuppressWarnings("unused") View view) {
         TextView text = findViewById(R.id.last_button_activated);
         String s = "Info button pressed";
         text.setText(s);
