@@ -41,17 +41,17 @@ public class LoginActivityTest {
     // Firebase Anon only
     @Test
     public void firebaseAnonAuthWorksFirstTime() {
-        /*Intent intent = new Intent(ApplicationProvider.getApplicationContext(), LoginActivity.class);
+        Intent intent = new Intent(ApplicationProvider.getApplicationContext(), LoginActivity.class);
 
         try (ActivityScenario<LoginActivity> scenario = ActivityScenario.launch(intent)) {
             onView(withId(R.id.discoverButton)).perform(click());
-            assertThat(scenario.);
-        }*/
+            onView(withId(R.id.loginStatus)).check(matches(withText(R.string.firebaseAnonOk)));
+        }
     }
 
     @Test
     public void firebaseAnonAuthIsRemembered() {
-
+        // TODO
     }
 
     // Google sign-in only
@@ -68,12 +68,12 @@ public class LoginActivityTest {
     // Firebase anon + google sign-in
     @Test
     public void linkingFirebaseToGoogleWorks() {
-
+        // TODO
     }
 
     @Test
     public void linkingFirebaseToGoogleIsRemembered() {
-
+        // TODO
     }
 
 }

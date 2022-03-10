@@ -1,9 +1,7 @@
 package com.github.houseorganizer.houseorganizer;
 
-import androidx.activity.result.ActivityResult;
-import androidx.activity.result.ActivityResultCallback;
+
 import androidx.activity.result.ActivityResultLauncher;
-import androidx.activity.result.contract.ActivityResultContract;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.StringRes;
@@ -14,15 +12,12 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-import android.widget.Button;
-import android.widget.ImageButton;
 import android.widget.TextView;
 
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
-import com.google.android.gms.common.SignInButton;
 import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -93,7 +88,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             findViewById(R.id.sign_in_button).setOnClickListener(this);
             findViewById(R.id.discoverButton).setOnClickListener(this);
         }else{
-            startMainActivity();
+            startMainActivity(R.string.googleSignInRemembered);
         }
     }
 
@@ -126,7 +121,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
      */
     private void anonSignIn() {
         if (mAuth.getCurrentUser() != null) {
-            startMainActivity();
+            startMainActivity(R.string.firebaseAnonRemembered);
         }
 
         mAuth.signInAnonymously()
@@ -137,7 +132,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                             // Sign in success, update UI with the signed-in user's information
                             Log.d("LoginActivity", "signInAnonymously:success");
                             ///FirebaseUser user = mAuth.getCurrentUser();
-                            startMainActivity();
+                            startMainActivity(R.string.firebaseAnonOk);
                         } else {
                             // If sign in fails, display a message to the user.
                             Log.w("LoginActivity", "signInAnonymously:failure", task.getException());
@@ -164,8 +159,8 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                     if (task.isSuccessful()) {
                         // Sign in success, update UI with the signed-in user's information
                         Log.d("LoginActivity", "signInWithCredential:success");
-                        FirebaseUser user = mAuth.getCurrentUser();
-                        startMainActivity();
+                        ///FirebaseUser user = mAuth.getCurrentUser();
+                        startMainActivity(R.string.googleSignInOk);
                     } else {
                         // If sign in fails, display a message to the user.
                         Log.w("LoginActivity", "signInWithCredential:failure", task.getException());
@@ -190,7 +185,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                         if (task.isSuccessful()) {
                             Log.d("LoginActivity", "linkWithCredential:success");
                             ///FirebaseUser user = task.getResult().getUser();
-                            startMainActivity();
+                            startMainActivity(R.string.googleSignInOk);
                         } else {
                             Log.w("LoginActivity", "linkWithCredential:failure", task.getException());
                             displayLoginStatus(R.string.signInFailed);
@@ -201,9 +196,12 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
     /**
      * Launches the main activity once the user is logged in
+     *
+     * @param resId: String resource ID for the login message
      */
-    private void startMainActivity(){
+    private void startMainActivity(@StringRes int resId){
         // TODO : Does nothing for now, will be linked to the new main activity
+        displayLoginStatus(resId);
     }
 
     /**
