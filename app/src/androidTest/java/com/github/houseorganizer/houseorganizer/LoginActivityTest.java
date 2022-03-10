@@ -41,12 +41,8 @@ public class LoginActivityTest {
     // Firebase Anon only
     @Test
     public void firebaseAnonAuthWorksFirstTime() {
-        Intent intent = new Intent(ApplicationProvider.getApplicationContext(), LoginActivity.class);
-
-        try (ActivityScenario<LoginActivity> scenario = ActivityScenario.launch(intent)) {
-            onView(withId(R.id.discoverButton)).perform(click());
-            onView(withId(R.id.loginStatus)).check(matches(withText(R.string.firebaseAnonOk)));
-        }
+        onView(withId(R.id.discoverButton)).perform(click());
+        onView(withId(R.id.loginStatus)).check(matches(withText(R.string.firebaseAnonOk)));
     }
 
     @Test
