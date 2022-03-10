@@ -1,6 +1,8 @@
 package com.github.houseorganizer.houseorganizer;
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.view.View;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -22,5 +24,11 @@ public class HouseSelectionActivity extends AppCompatActivity {
         HouseAdapter adapter = new HouseAdapter(this, houseNames, houseImages);
         housesView.setAdapter(adapter);
         housesView.setLayoutManager(new LinearLayoutManager(this));
+    }
+
+    @SuppressWarnings("unused")
+    public void houseSelected(View view) {
+        Intent intent = new Intent(this, MainScreenActivity.class);
+        startActivity(intent);
     }
 }
