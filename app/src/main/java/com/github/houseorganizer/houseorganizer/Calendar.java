@@ -35,12 +35,7 @@ class Calendar {
 
     public List<Event> getEvents() {
         List<Event> ret = events.subList(0, events.size());
-        ret.sort(new Comparator<Event>() {
-            @Override
-            public int compare(Event o1, Event o2) {
-                return o1.getStart().compareTo(o2.getStart());
-            }
-        });
+        ret.sort(Comparator.comparing(Event::getStart));
         return ret;
     }
 
