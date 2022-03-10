@@ -109,4 +109,27 @@ public class CalendarUnitTest {
 
         assertEquals("title at " + event.getStart() + ", lasts 100 seconds. : desc", event.toString());
     }
+
+    @Test
+    public void equalsReturnsTrueOnSameEvents() {
+        Event event1 = new Event("title", "desc", LocalDateTime.of(LocalDate.of(2000, 1, 1), LocalTime.NOON), 100);
+        Event event2 = new Event("title", "desc", LocalDateTime.of(LocalDate.of(2000, 1, 1), LocalTime.NOON), 100);
+        assertTrue(event1.equals(event2));
+        assertTrue(event2.equals(event1));
+    }
+
+    @Test
+    public void equalsReturnsFalseOnDifferentEvents() {
+        Event event1 = new Event("title", "desc", LocalDateTime.of(LocalDate.of(2000, 1, 1), LocalTime.NOON), 100);
+        Event event2 = new Event("titl", "desc", LocalDateTime.of(LocalDate.of(2000, 1, 1), LocalTime.NOON), 100);
+        Event event3 = new Event("title", "des", LocalDateTime.of(LocalDate.of(2000, 1, 1), LocalTime.NOON), 100);
+        Event event4 = new Event("title", "desc", LocalDateTime.of(LocalDate.of(2001, 1, 1), LocalTime.NOON), 100);
+        Event event5 = new Event("title", "desc", LocalDateTime.of(LocalDate.of(2000, 1, 1), LocalTime.of(10, 10, 10)), 100);
+        Event event6 = new Event("title", "desc", LocalDateTime.of(LocalDate.of(2000, 1, 1), LocalTime.NOON), 10);
+        assertFalse(event1.equals(event2));
+        assertFalse(event1.equals(event3));
+        assertFalse(event1.equals(event4));
+        assertFalse(event1.equals(event5));
+        assertFalse(event1.equals(event6));
+    }
 }
