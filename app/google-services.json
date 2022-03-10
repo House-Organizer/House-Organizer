@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "203269545085",
+    "project_id": "house-organizer-18a58",
+    "storage_bucket": "house-organizer-18a58.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:203269545085:android:0bb6a9a796cc96707ce514",
+        "android_client_info": {
+          "package_name": "com.github.houseorganizer.houseorganizer"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "203269545085-bd0ji5p3615rboo0cjkmcg9fslr9d6q8.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBhMH1OQHXgQYzjLhyRdfhHiQeuv51ZZyc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "203269545085-bd0ji5p3615rboo0cjkmcg9fslr9d6q8.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
