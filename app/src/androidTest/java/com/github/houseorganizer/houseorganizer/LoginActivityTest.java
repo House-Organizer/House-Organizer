@@ -8,6 +8,9 @@ import static androidx.test.espresso.intent.Intents.intended;
 import static androidx.test.espresso.intent.matcher.IntentMatchers.hasExtra;
 import static androidx.test.espresso.intent.matcher.IntentMatchers.toPackage;
 import static androidx.test.espresso.matcher.ViewMatchers.assertThat;
+import static androidx.test.espresso.matcher.ViewMatchers.isClickable;
+import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
+import static androidx.test.espresso.matcher.ViewMatchers.isEnabled;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
 import static androidx.test.espresso.matcher.ViewMatchers.withText;
 
@@ -37,6 +40,32 @@ public class LoginActivityTest {
     public void dummyTest() {
         assertThat(2+2, is(4));
     }
+
+    // Button tests: displayed, enabled
+
+    /* Sign-in button */
+    @Test
+    public void signInButtonIsDisplayed() {
+        onView(withId(R.id.sign_in_button)).check(matches(isDisplayed()));
+    }
+
+    @Test
+    public void signInButtonIsEnabled() {
+        onView(withId(R.id.sign_in_button)).check(matches(isEnabled()));
+    }
+
+    /* Discover button */
+    @Test
+    public void discoverButtonIsDisplayed() {
+        onView(withId(R.id.discoverButton)).check(matches(isDisplayed()));
+    }
+
+    @Test
+    public void discoverButtonIsEnabled() {
+        onView(withId(R.id.discoverButton)).check(matches(isEnabled()));
+    }
+
+    // Authentication tests
 
     // Firebase Anon only
     @Test
