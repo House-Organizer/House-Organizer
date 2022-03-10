@@ -9,5 +9,6 @@
     <string name="cloudServerID">203269545085-bd0ji5p3615rboo0cjkmcg9fslr9d6q8.apps.googleusercontent.com</string>
     <string name="signout_button">Sign Out</string>
     <string name="signInFailed">The sign-in failed due to an error</string>
-
+    <string name="googleSignInOk">The Google sign-in was successful</string>
+    <string name="firebaseAnonOk">You can now use our app anonymously</string>
 </resources>

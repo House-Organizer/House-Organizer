@@ -6,6 +6,7 @@ import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContract;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
+import androidx.annotation.StringRes;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.Activity;
@@ -51,7 +52,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                     } catch (ApiException e) {
                         // Google Sign In failed, update UI appropriately
                         Log.w("LoginActivity", "Google sign in failed", e);
-                        displayFailedSignIn();
+                        displayLoginStatus(R.string.signInFailed);
                     }
                 }
             }
@@ -75,7 +76,6 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         // Build a GoogleSignInClient with the options specified by gso.
         mGoogleSignInClient = GoogleSignIn.getClient(this, gso);
         mAuth = FirebaseAuth.getInstance();
-
 
 
 
@@ -141,7 +141,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                         } else {
                             // If sign in fails, display a message to the user.
                             Log.w("LoginActivity", "signInAnonymously:failure", task.getException());
-                            displayFailedSignIn();
+                            displayLoginStatus(R.string.signInFailed);
                         }
                     }
                 });
@@ -169,7 +169,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                     } else {
                         // If sign in fails, display a message to the user.
                         Log.w("LoginActivity", "signInWithCredential:failure", task.getException());
-                        displayFailedSignIn();
+                        displayLoginStatus(R.string.signInFailed);
                     }
                 });
     }
@@ -189,11 +189,11 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if (task.isSuccessful()) {
                             Log.d("LoginActivity", "linkWithCredential:success");
-                            FirebaseUser user = task.getResult().getUser();
+                            ///FirebaseUser user = task.getResult().getUser();
                             startMainActivity();
                         } else {
                             Log.w("LoginActivity", "linkWithCredential:failure", task.getException());
-                            displayFailedSignIn();
+                            displayLoginStatus(R.string.signInFailed);
                         }
                     }
                 });
@@ -207,11 +207,12 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     }
 
     /**
-     * Shows the user when the sign-in failed
+     * Displays login status to the user
+     * @param resId: String resource ID for the login message
      */
-    private void displayFailedSignIn(){
+    private void displayLoginStatus(@StringRes int resId) {
         TextView text = findViewById(R.id.loginStatus);
-        text.setText(R.string.signInFailed);
+        text.setText(resId);
     }
 
 }
