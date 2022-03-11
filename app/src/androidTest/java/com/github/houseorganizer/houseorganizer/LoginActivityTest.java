@@ -1,17 +1,11 @@
 package com.github.houseorganizer.houseorganizer;
 
 import static androidx.test.espresso.Espresso.onView;
-import static androidx.test.espresso.action.ViewActions.click;
-import static androidx.test.espresso.action.ViewActions.replaceText;
-import static androidx.test.espresso.intent.Intents.intended;
-import static androidx.test.espresso.intent.matcher.IntentMatchers.hasExtra;
-import static androidx.test.espresso.intent.matcher.IntentMatchers.toPackage;
-import static androidx.test.espresso.matcher.ViewMatchers.assertThat;
+import static androidx.test.espresso.assertion.ViewAssertions.matches;
+import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
+import static androidx.test.espresso.matcher.ViewMatchers.isEnabled;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
 
-import static org.hamcrest.CoreMatchers.is;
-
-import androidx.test.espresso.intent.Intents;
 import androidx.test.ext.junit.rules.ActivityScenarioRule;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 
@@ -25,11 +19,26 @@ public class LoginActivityTest {
     @Rule
     public ActivityScenarioRule<LoginActivity> testRule = new ActivityScenarioRule<>(LoginActivity.class);
 
-    // Test that when the sign in button is clicked an intent is fired
+    /* Sign-in button */
     @Test
-    public void dummyTest() {
-        assertThat(2+2, is(4));
+    public void signInButtonIsDisplayed() {
+        onView(withId(R.id.google_sign_in_button)).check(matches(isDisplayed()));
     }
 
+    @Test
+    public void signInButtonIsEnabled() {
+        onView(withId(R.id.google_sign_in_button)).check(matches(isEnabled()));
+    }
+
+    /* Discover button */
+    @Test
+    public void discoverButtonIsDisplayed() {
+        onView(withId(R.id.discoverButton)).check(matches(isDisplayed()));
+    }
+
+    @Test
+    public void discoverButtonIsEnabled() {
+        onView(withId(R.id.discoverButton)).check(matches(isEnabled()));
+    }
 
 }
