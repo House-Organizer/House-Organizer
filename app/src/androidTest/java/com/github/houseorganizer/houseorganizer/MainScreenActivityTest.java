@@ -5,6 +5,7 @@ import static androidx.test.espresso.action.ViewActions.click;
 import static androidx.test.espresso.assertion.ViewAssertions.matches;
 import static androidx.test.espresso.intent.Checks.checkNotNull;
 import static androidx.test.espresso.intent.Intents.intended;
+import static androidx.test.espresso.intent.matcher.IntentMatchers.hasComponent;
 import static androidx.test.espresso.intent.matcher.IntentMatchers.toPackage;
 import static androidx.test.espresso.matcher.ViewMatchers.hasChildCount;
 import static androidx.test.espresso.matcher.ViewMatchers.isClickable;
@@ -57,7 +58,7 @@ public class MainScreenActivityTest {
     public void houseSelectionButtonSendsIntent() {
         Intents.init();
         onView(withId(R.id.house_imageButton)).perform(click());
-        intended(toPackage("com.github.houseorganizer.houseorganizer"));
+        intended(hasComponent(HouseSelectionActivity.class.getName()));
         Intents.release();
     }
 
