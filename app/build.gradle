@@ -18,6 +18,15 @@ android {
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
 
+    signingConfigs {
+        debug {
+            storeFile rootProject.file('debug.keystore.jks')
+            storePassword('houseorg')
+            keyAlias 'key0'
+            keyPassword('houseorg')
+        }
+    }
+
     buildTypes {
         release {
             minifyEnabled false
