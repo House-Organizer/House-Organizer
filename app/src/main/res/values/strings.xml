@@ -16,4 +16,6 @@
     <string name="calendar_upcoming_date">\t On the %1$s.</string>
     <string name="house_name">House name</string>>
     <string name="img_house_row_desc">Image for the given house name</string>
+    <string name="home_logo">Home Logo</string>
+    <string name="sign_out">Sign Out</string>
 </resources>
