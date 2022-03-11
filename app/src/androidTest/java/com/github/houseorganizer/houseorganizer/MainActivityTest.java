@@ -1,14 +1,10 @@
 package com.github.houseorganizer.houseorganizer;
 
-import static android.support.test.espresso.matcher.ViewMatchers.withText;
 import static androidx.test.espresso.Espresso.onView;
-import static androidx.test.espresso.action.ViewActions.click;
 import static androidx.test.espresso.assertion.ViewAssertions.matches;
 import static androidx.test.espresso.intent.Intents.intended;
 import static androidx.test.espresso.intent.matcher.IntentMatchers.toPackage;
-import static androidx.test.espresso.matcher.ViewMatchers.hasDescendant;
 import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
-import static androidx.test.espresso.matcher.ViewMatchers.isEnabled;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
 
 import android.content.Intent;
@@ -27,15 +23,26 @@ import org.junit.runner.RunWith;
 public class MainActivityTest {
 
     @Rule
-    public ActivityScenarioRule<LoginActivity> testRule = new ActivityScenarioRule<>(LoginActivity.class);
+    public ActivityScenarioRule<MainActivity> testRule = new ActivityScenarioRule<>(MainActivity.class);
 
     /* See logo */
     @Test
-    public void seeHousesLogo() {
+    public void seeHouseLogo() {
         Intent intent = new Intent(ApplicationProvider.getApplicationContext(), MainActivity.class);
 
         try (ActivityScenario<HouseSelectionActivity> scenario = ActivityScenario.launch(intent)) {
             onView(withId(R.id.house_logo)).check(matches(isDisplayed()));
+        }
+    }
+
+    @Test
+    public void MainActivitySendsIntent() {
+        Intent intent = new Intent(ApplicationProvider.getApplicationContext(), MainActivity.class);
+
+        try (ActivityScenario<HouseSelectionActivity> scenario = ActivityScenario.launch(intent)) {
+            Intents.init();
+            intended(toPackage("com.github.houseorganizer.houseorganizer"));
+            Intents.release();
         }
     }
 }
