@@ -8,7 +8,7 @@
     tools:context=".MainActivity">
 
     <ImageView
-        android:id="@+id/imageView"
+        android:id="@+id/house_logo"
         android:layout_width="122dp"
         android:layout_height="117dp"
         android:contentDescription="@string/home_logo"
