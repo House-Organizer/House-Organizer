@@ -10,11 +10,15 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.firebase.auth.FirebaseAuth;
+
 @SuppressWarnings("unused")
 public class MainScreenActivity extends AppCompatActivity {
 
     Calendar calendar;
     int calendarColumns = 1;
+
+    private FirebaseAuth mAuth;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -26,6 +30,14 @@ public class MainScreenActivity extends AppCompatActivity {
         EventsAdapter calendarAdapter = new EventsAdapter(calendar);
         calendarEvents.setAdapter(calendarAdapter);
         calendarEvents.setLayoutManager(new GridLayoutManager(this, calendarColumns));
+
+        mAuth = FirebaseAuth.getInstance();
+
+        findViewById(R.id.sign_out_button).setOnClickListener(v -> {
+            mAuth.signOut();
+            startActivity(new Intent(this, LoginActivity.class));
+            finish();
+        });
 
         Button calendarViewChange = findViewById(R.id.calendar_view_change);
         calendarViewChange.setOnClickListener(v -> {
