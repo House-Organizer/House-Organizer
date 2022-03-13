@@ -54,4 +54,9 @@ public class LoginActivityTest {
         onView(withId(R.id.discoverButton)).check(matches(isEnabled()));
     }
 
+    /*@Test
+    public void activateSignInButtonWorks(){
+        onView(withId(R.id.google_sign_in_button)).check(matches(has));
+    }*/
+
 }
