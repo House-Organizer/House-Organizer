@@ -18,4 +18,8 @@
     <string name="img_house_row_desc">Image for the given house name</string>
     <string name="home_logo">Home Logo</string>
     <string name="sign_out">Sign Out</string>
+    <string name="sign_in_with_email">Sign in with Email</string>
+    <string name="sign_up">SIGN UP</string>
+    <string name="enter_email">Enter Email</string>
+    <string name="enter_password">Enter Password</string>
 </resources>
