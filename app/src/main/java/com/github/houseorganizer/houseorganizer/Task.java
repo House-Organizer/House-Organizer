@@ -64,7 +64,7 @@ public class Task {
     }
 
     public void removeFinishedSubTasks() {
-        subtasks.removeIf(subTask -> subTask.isFinished);
+        subtasks.removeIf(Task.SubTask::isFinished);
     }
 
     public void markSubTaskAsFinished(int index) {
