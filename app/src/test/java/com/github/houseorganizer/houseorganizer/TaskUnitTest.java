@@ -7,7 +7,7 @@ import java.time.LocalDateTime;
 
 
 public class TaskUnitTest {
-    private static class DummyUser extends User {
+    public static class DummyUser extends User {
         private String name, uid;
 
         DummyUser(String name, String uid) {
@@ -26,7 +26,7 @@ public class TaskUnitTest {
         }
     }
 
-    private static final User NOBODY = new DummyUser("Nobody", "NOBODY");
+    public static final User NOBODY = new DummyUser("Nobody", "NOBODY");
 
     // Subtask tests
     @Test
