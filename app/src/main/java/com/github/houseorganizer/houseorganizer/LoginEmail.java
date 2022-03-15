@@ -34,12 +34,27 @@ public class LoginEmail extends AppCompatActivity implements View.OnClickListene
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.log_email_signin_button:
-                signInWithEmail(v);
+                if (inputsNotEmpty()) signInWithEmail(v);
                 break;
             case R.id.log_email_register_button:
                 startActivity(new Intent(LoginEmail.this, RegisterEmail.class));
                 break;
         }
+    }
+
+    private boolean inputsNotEmpty() {
+        EditText email_field = findViewById(R.id.log_enter_email);
+        EditText password_field = findViewById(R.id.log_enter_password);
+        String email = email_field.getText().toString();
+        String password = password_field.getText().toString();
+        TextView error_message = findViewById(R.id.log_email_error_message);
+
+        if (email.isEmpty() || password.isEmpty()) {
+            error_message.setText(R.string.inputs_not_empty);
+            return false;
+        }
+
+        return true;
     }
 
     public void signInWithEmail(View v) {
@@ -58,7 +73,7 @@ public class LoginEmail extends AppCompatActivity implements View.OnClickListene
                         finish();
                     } else {
                         // If sign in fails, display a message to the user.
-                        Log.d(TAG, "signInWithGoogleCredential:failure");
+                        Log.d(TAG, "signInWithEmail:failure");
                         error_message.setText(R.string.log_email_auth_failed);
                     }
                 });
