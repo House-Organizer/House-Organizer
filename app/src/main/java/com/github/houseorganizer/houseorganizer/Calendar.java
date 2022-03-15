@@ -3,6 +3,8 @@ package com.github.houseorganizer.houseorganizer;
 import static java.util.Objects.requireNonNull;
 import androidx.annotation.NonNull;
 
+import com.google.firebase.firestore.DocumentReference;
+
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -14,16 +16,21 @@ import java.util.List;
 class Calendar {
     private ArrayList<Event> events;
     private CalendarView view;
+    private DocumentReference household;
 
-    public Calendar() {
+    public Calendar(DocumentReference household) {
+        requireNonNull(household);
         events = new ArrayList<>();
         view = CalendarView.UPCOMING;
+        this.household = household;
     }
 
     // For testing purposes
-    public Calendar(int eventAmount) {
+    public Calendar(int eventAmount, DocumentReference household) {
+        requireNonNull(household);
         events = new ArrayList<>();
         view = CalendarView.UPCOMING;
+        this.household = household;
         for (int i = 0; i < eventAmount; i++) {
             events.add(new Event("My event", "this is my event", LocalDateTime.of(LocalDate.now(), LocalTime.NOON.minus(i, ChronoUnit.HOURS)), 100));
         }
@@ -39,8 +46,16 @@ class Calendar {
         return ret;
     }
 
+    public void setEvents(ArrayList<Event> events) {
+        this.events = (ArrayList<Event>) events.clone();
+    }
+
     public CalendarView getView() {
         return view;
+    }
+
+    public DocumentReference getHousehold() {
+        return household;
     }
 
     @NonNull
@@ -54,11 +69,14 @@ class Calendar {
     }
 
     static class Event {
-        private final String title;
-        private final String description;
-        private final LocalDateTime start;
+        private  String title;
+        private String description;
+        private LocalDateTime start;
         // Duration of the event in seconds
-        private final int duration;
+        private int duration;
+
+        // Needed for Firestore
+        public Event() {}
 
         public Event(String title, String description, LocalDateTime start, int duration) {
             requireNonNull(title);

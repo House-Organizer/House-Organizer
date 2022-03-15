@@ -10,12 +10,17 @@ import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import com.github.houseorganizer.houseorganizer.Calendar.Event;
 
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.FirebaseFirestore;
+
 public class CalendarUnitTest {
 
+    FirebaseFirestore db = FirebaseFirestore.getInstance();
+    DocumentReference house = db.document("households/test_house_0");
     // Calendar tests
     @Test
     public void calendarViewCorrectlyRotates() {
-        Calendar calendar = new Calendar();
+        Calendar calendar = new Calendar(house);
         calendar.rotateView();
         assertEquals(Calendar.CalendarView.MONTHLY, calendar.getView());
         calendar.rotateView();
@@ -26,13 +31,13 @@ public class CalendarUnitTest {
 
     @Test
     public void getEventsReturnsCorrectlyOnEmpty() {
-        Calendar calendar = new Calendar();
+        Calendar calendar = new Calendar(house);
         assertTrue(calendar.getEvents().isEmpty());
     }
 
     @Test
     public void getEventsReturnsCorrectlyOnNonEmpty() {
-        Calendar calendar = new Calendar(1);
+        Calendar calendar = new Calendar(1, house);
         ArrayList<Event> events = new ArrayList<>();
         events.add(new Event("My event", "this is my event", LocalDateTime.of(LocalDate.now(), LocalTime.NOON), 100));
         assertEquals(events.size(), calendar.getEvents().size());
@@ -41,20 +46,20 @@ public class CalendarUnitTest {
 
     @Test
     public void EventsAreProperlySorted() {
-        Calendar calendar = new Calendar(3);
+        Calendar calendar = new Calendar(3, house);
         Event e = new Event("My event", "this is my event", LocalDateTime.of(LocalDate.now(), LocalTime.NOON.minus(2, ChronoUnit.HOURS)), 100);
         assertEquals(e, calendar.getEvents().get(0));
     }
 
     @Test
     public void getViewReturnsCorrectlyWithoutRotate() {
-        Calendar calendar = new Calendar();
+        Calendar calendar = new Calendar(house);
         assertEquals(Calendar.CalendarView.UPCOMING, calendar.getView());
     }
 
     @Test
     public void toStringHasRightFormat() {
-        Calendar calendar = new Calendar(1);
+        Calendar calendar = new Calendar(1, house);
         assertEquals("Calendar with view : UPCOMING and the following events :\n" + calendar.getEvents().get(0).toString() + "\n", calendar.toString());
     }
 
