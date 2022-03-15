@@ -96,10 +96,18 @@ public class Task {
         return owner;
     }
 
+    public boolean hasAssignees() {
+        return ! assignees.isEmpty();
+    }
+
     public User getAssigneeAt(int index) {
         assert index < assignees.size();
 
         return assignees.get(index);
+    }
+
+    public boolean hasSubTasks() {
+        return ! subtasks.isEmpty();
     }
 
     public SubTask getSubTaskAt(int index) {
@@ -117,7 +125,7 @@ public class Task {
     }
 
     // Subtask class
-    public class SubTask {
+    public static class SubTask {
         private boolean isFinished;
         private String title;
 
