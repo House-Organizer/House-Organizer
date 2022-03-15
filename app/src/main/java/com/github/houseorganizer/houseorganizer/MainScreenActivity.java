@@ -1,5 +1,9 @@
 package com.github.houseorganizer.houseorganizer;
 
+import static java.util.Objects.nonNull;
+import static java.util.Objects.requireNonNull;
+
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -15,7 +19,9 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.github.houseorganizer.houseorganizer.Calendar.Event;
 
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.Timestamp;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -25,6 +31,8 @@ import com.google.firebase.firestore.QuerySnapshot;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.time.ZoneId;
+import java.time.ZoneOffset;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -38,6 +46,7 @@ public class MainScreenActivity extends AppCompatActivity {
     private FirebaseAuth mAuth;
     private DocumentReference currentHouse;
 
+    @SuppressLint("NotifyDataSetChanged")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -73,11 +82,48 @@ public class MainScreenActivity extends AppCompatActivity {
         findViewById(R.id.add_event).setOnClickListener(v -> {
             Map<String, Object> data = new HashMap<>();
             Event event = new Event("added", "this is the event that i added using the add button", LocalDateTime.now(), 100);
-            data.put("event", event);
+            data.put("title", "added");
+            data.put("description", "this is the event that i added using the add button");
+            data.put("start", LocalDateTime.now().toEpochSecond(ZoneOffset.UTC));
+            data.put("duration", 100);
             data.put("household", calendar.getHousehold());
-            db.collection("events").add(data);
+            LocalDateTime.now().toEpochSecond(ZoneOffset.UTC);
+            db.collection("events").add(data)
+                    .addOnSuccessListener(documentReference -> {
+                        Toast.makeText(v.getContext(), v.getContext().getString(R.string.add_success), Toast.LENGTH_SHORT).show();
+                        ArrayList<Event> newEvents = new ArrayList<>(calendar.getEvents());
+                        newEvents.add(event);
+                        calendarAdapter.notifyDataSetChanged();
+                        calendar.setEvents(newEvents);
+                    })
+                    .addOnFailureListener(documentReference -> Toast.makeText(v.getContext(), v.getContext().getString(R.string.add_fail), Toast.LENGTH_SHORT).show());
         });
 
+        findViewById(R.id.refresh_calendar).setOnClickListener(v -> {
+            db.collection("events")
+                    .whereEqualTo("household", currentHouse)
+                    .get()
+                    .addOnCompleteListener(task -> {
+                        if (task.isSuccessful()) {
+                            ArrayList<Event> newEvents = new ArrayList<>();
+                            for (QueryDocumentSnapshot document : task.getResult()) {
+                                // We assume the stored data is well behaved since it got added in a well behaved manner.
+                                Event event = new Event(
+                                        document.getString("title"),
+                                        document.getString("description"),
+                                        LocalDateTime.ofEpochSecond(document.getLong("start"), 0, ZoneOffset.UTC),
+                                        document.getLong("duration") == null ? 0 : document.getLong("duration"));
+                                newEvents.add(event);
+                            }
+                            calendarAdapter.notifyDataSetChanged();
+                            calendar.setEvents(newEvents);
+                            Toast.makeText(v.getContext(), v.getContext().getString(R.string.refresh_success), Toast.LENGTH_SHORT).show();
+                        }
+                        else {
+                            Toast.makeText(v.getContext(), v.getContext().getString(R.string.refresh_fail), Toast.LENGTH_SHORT).show();
+                        }
+                    });
+        });
     }
 
     @SuppressWarnings("unused")

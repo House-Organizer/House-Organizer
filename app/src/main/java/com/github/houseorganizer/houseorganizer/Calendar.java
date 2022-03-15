@@ -73,12 +73,12 @@ class Calendar {
         private String description;
         private LocalDateTime start;
         // Duration of the event in seconds
-        private int duration;
+        private long duration;
 
         // Needed for Firestore
         public Event() {}
 
-        public Event(String title, String description, LocalDateTime start, int duration) {
+        public Event(String title, String description, LocalDateTime start, long duration) {
             requireNonNull(title);
             requireNonNull(start);
             this.title = title;
@@ -99,7 +99,7 @@ class Calendar {
             return start;
         }
 
-        public int getDuration() {
+        public long getDuration() {
             return duration;
         }
 
