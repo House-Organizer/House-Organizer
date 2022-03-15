@@ -1,5 +1,6 @@
 package com.github.houseorganizer.houseorganizer;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -11,6 +12,8 @@ public class Task {
     private final List<User> assignees;
     private final User owner;
 
+    private LocalDateTime dueDate;
+
     public Task(User owner, String title, String description) {
         this.title       = title;
         this.description = description;
@@ -19,6 +22,8 @@ public class Task {
 
         this.owner    = owner;
         this.assignees = new ArrayList<>();
+
+        this.dueDate = LocalDateTime.MIN;
     }
 
     // Setters (except for owner)
@@ -70,6 +75,10 @@ public class Task {
         getSubTaskAt(index).changeTitle(newTitle);
     }
 
+    public void changeDueDate(LocalDateTime newDueDate) {
+        this.dueDate = newDueDate;
+    }
+
     // Getters
     public boolean isFinished() {
         return isFinished;
@@ -97,6 +106,14 @@ public class Task {
         assert index < subtasks.size();
 
         return subtasks.get(index);
+    }
+
+    public boolean hasDueDate() {
+        return dueDate != LocalDateTime.MIN;
+    }
+
+    public LocalDateTime getDueDate() {
+        return dueDate;
     }
 
     // Subtask class
