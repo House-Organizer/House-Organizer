@@ -104,7 +104,7 @@ public class Task {
         private boolean isFinished;
         private String title;
 
-        public SubTask(Task parent, String title) {
+        public SubTask(String title) {
             this.title = title;
             this.isFinished = false;
         }
