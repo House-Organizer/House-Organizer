@@ -41,15 +41,13 @@ public class LoginActivity extends AppCompatActivity {
         mAuth = FirebaseAuth.getInstance();
 
         // If a sign out has been requested, sign out the current user
-        if(getIntent().hasExtra("sign_out")){
+        if(getIntent().hasExtra(getString(R.string.signout_intent))){
             mAuth.signOut();
             mGoogleSignInClient.signOut().addOnCompleteListener(this, l ->
                     activateSignInButton());
         } else{
             activateSignInButton();
         }
-
-
     }
 
     ActivityResultLauncher<Intent> googleSignInResultLauncher = registerForActivityResult(

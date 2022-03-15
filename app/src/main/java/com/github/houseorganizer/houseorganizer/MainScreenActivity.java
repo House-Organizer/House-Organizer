@@ -34,9 +34,10 @@ public class MainScreenActivity extends AppCompatActivity {
 
         mAuth = FirebaseAuth.getInstance();
 
+        // Setting the sign-out button to switch to the login activity
         findViewById(R.id.sign_out_button).setOnClickListener(v -> {
             Intent intent = new Intent(this, LoginActivity.class);
-            intent.putExtra("sign_out", true);
+            intent.putExtra(getString(R.string.signout_intent), true);
             startActivity(intent);
             finish();
         });

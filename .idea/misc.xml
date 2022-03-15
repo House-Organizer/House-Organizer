@@ -4,6 +4,10 @@
     <option name="filePathToZoomLevelMap">
       <map>
         <entry key="..\:/Users/flori/StudioProjects/House-Organizer/app/src/main/res/layout/activity_main_screen.xml" value="0.2708333333333333" />
+        <entry key="..\:/Users/flori/StudioProjects/House-Organizer/app/src/main/res/layout/calendar_monthly_cell.xml" value="0.17831813576494426" />
+        <entry key="..\:/Users/flori/StudioProjects/House-Organizer/app/src/main/res/layout/calendar_upcoming_row.xml" value="0.17831813576494426" />
+        <entry key="..\:/Users/flori/StudioProjects/House-Organizer/app/src/main/res/layout/calendar_weekly_row.xml" value="0.17831813576494426" />
+        <entry key="..\:/Users/flori/StudioProjects/House-Organizer/app/src/main/res/layout/house_row.xml" value="0.17831813576494426" />
         <entry key="app/src/main/res/drawable-v24/ic_launcher_foreground.xml" value="0.2255" />
         <entry key="app/src/main/res/drawable/ic_launcher_background.xml" value="0.2255" />
         <entry key="app/src/main/res/layout/activity_greeting.xml" value="0.25416666666666665" />

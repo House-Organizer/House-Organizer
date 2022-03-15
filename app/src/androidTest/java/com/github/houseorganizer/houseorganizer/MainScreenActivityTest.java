@@ -18,7 +18,9 @@ import static androidx.test.espresso.matcher.ViewMatchers.withText;
 import android.view.View;
 
 import androidx.annotation.NonNull;
+import androidx.lifecycle.Lifecycle;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.test.core.app.ApplicationProvider;
 import androidx.test.espresso.intent.Intents;
 import androidx.test.espresso.matcher.BoundedMatcher;
 import androidx.test.ext.junit.rules.ActivityScenarioRule;
@@ -174,15 +176,12 @@ public class MainScreenActivityTest {
     }
 
     @Test
-    public void signOutButtonFiresIntent(){
+    public void signOutButtonFiresRightIntent(){
         Intents.init();
         onView(withId(R.id.sign_out_button)).perform(click());
         intended(hasComponent(LoginActivity.class.getName()));
-        intended(hasExtra("sign_out", true));
+        intended(hasExtra(ApplicationProvider.getApplicationContext().getString(R.string.signout_intent), true));
         Intents.release();
     }
-
-
-
 
 }
