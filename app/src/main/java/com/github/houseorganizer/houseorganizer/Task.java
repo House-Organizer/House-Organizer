@@ -6,10 +6,10 @@ import java.util.List;
 public class Task {
     private boolean isFinished;
     private String title, description;
-    private List<SubTask> subtasks;
+    private final List<SubTask> subtasks;
 
-    private List<User> assignees;
-    private User owner;
+    private final List<User> assignees;
+    private final User owner;
 
     public Task(User owner, String title, String description) {
         this.title       = title;
