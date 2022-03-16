@@ -31,19 +31,27 @@ public class CalendarUnitTest {
     }
 
     @Test
-    public void getEventsReturnsCorrectlyOnNonEmpty() {
-        Calendar calendar = new Calendar(1);
+    public void setAndGetWorkProperly() {
+        Calendar calendar = new Calendar();
         ArrayList<Event> events = new ArrayList<>();
         events.add(new Event("My event", "this is my event", LocalDateTime.of(LocalDate.now(), LocalTime.NOON), 100));
+        calendar.setEvents(events);
         assertEquals(events.size(), calendar.getEvents().size());
         assertEquals(events.get(0), calendar.getEvents().get(0));
     }
 
     @Test
     public void EventsAreProperlySorted() {
-        Calendar calendar = new Calendar(3);
-        Event e = new Event("My event", "this is my event", LocalDateTime.of(LocalDate.now(), LocalTime.NOON.minus(2, ChronoUnit.HOURS)), 100);
-        assertEquals(e, calendar.getEvents().get(0));
+        Calendar calendar = new Calendar();
+        Event e1 = new Event("My event", "this is my event", LocalDateTime.of(LocalDate.now(), LocalTime.NOON.minus(0, ChronoUnit.HOURS)), 100);
+        Event e2 = new Event("My event", "this is my event", LocalDateTime.of(LocalDate.now(), LocalTime.NOON.minus(3, ChronoUnit.HOURS)), 100);
+        Event e3 = new Event("My event", "this is my event", LocalDateTime.of(LocalDate.now(), LocalTime.NOON.minus(8, ChronoUnit.HOURS)), 100);
+        ArrayList<Event> events = new ArrayList<>();
+        events.add(e1);
+        events.add(e2);
+        events.add(e3);
+        calendar.setEvents(events);
+        assertEquals(e3, calendar.getEvents().get(0));
     }
 
     @Test
@@ -54,7 +62,10 @@ public class CalendarUnitTest {
 
     @Test
     public void toStringHasRightFormat() {
-        Calendar calendar = new Calendar(1);
+        Calendar calendar = new Calendar();
+        ArrayList<Event> events = new ArrayList<>();
+        events.add(new Event("My event", "this is my event", LocalDateTime.of(LocalDate.now(), LocalTime.NOON), 100));
+        calendar.setEvents(events);
         assertEquals("Calendar with view : UPCOMING and the following events :\n" + calendar.getEvents().get(0).toString() + "\n", calendar.toString());
     }
 
@@ -114,8 +125,8 @@ public class CalendarUnitTest {
     public void equalsReturnsTrueOnSameEvents() {
         Event event1 = new Event("title", "desc", LocalDateTime.of(LocalDate.of(2000, 1, 1), LocalTime.NOON), 100);
         Event event2 = new Event("title", "desc", LocalDateTime.of(LocalDate.of(2000, 1, 1), LocalTime.NOON), 100);
-        assertTrue(event1.equals(event2));
-        assertTrue(event2.equals(event1));
+        assertEquals(event1, event2);
+        assertEquals(event2, event1);
     }
 
     @Test
@@ -126,10 +137,10 @@ public class CalendarUnitTest {
         Event event4 = new Event("title", "desc", LocalDateTime.of(LocalDate.of(2001, 1, 1), LocalTime.NOON), 100);
         Event event5 = new Event("title", "desc", LocalDateTime.of(LocalDate.of(2000, 1, 1), LocalTime.of(10, 10, 10)), 100);
         Event event6 = new Event("title", "desc", LocalDateTime.of(LocalDate.of(2000, 1, 1), LocalTime.NOON), 10);
-        assertFalse(event1.equals(event2));
-        assertFalse(event1.equals(event3));
-        assertFalse(event1.equals(event4));
-        assertFalse(event1.equals(event5));
-        assertFalse(event1.equals(event6));
+        assertNotEquals(event1, event2);
+        assertNotEquals(event1, event3);
+        assertNotEquals(event1, event4);
+        assertNotEquals(event1, event5);
+        assertNotEquals(event1, event6);
     }
 }
