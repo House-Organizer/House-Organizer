@@ -33,7 +33,7 @@ public class MainScreenActivity extends AppCompatActivity {
     private FirebaseAuth mAuth;
     private DocumentReference currentHouse;
     private EventsAdapter calendarAdapter;
-    private RecyclerView calendarEvents = findViewById(R.id.calendar);
+    private RecyclerView calendarEvents;
 
     @SuppressLint("NotifyDataSetChanged")
     @Override
@@ -46,8 +46,9 @@ public class MainScreenActivity extends AppCompatActivity {
         // Test household for now because house buttons don't do anything
         currentHouse = db.document("households/test_house_0");
 
+        calendarEvents = findViewById(R.id.calendar);
         calendar = new Calendar();
-        EventsAdapter calendarAdapter = new EventsAdapter(calendar);
+        calendarAdapter = new EventsAdapter(calendar);
         calendarEvents.setAdapter(calendarAdapter);
         calendarEvents.setLayoutManager(new GridLayoutManager(this, calendarColumns));
 
