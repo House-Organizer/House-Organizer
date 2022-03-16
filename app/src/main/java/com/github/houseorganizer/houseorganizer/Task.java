@@ -116,6 +116,11 @@ public class Task {
         return subtasks.get(index);
     }
 
+    //todo test
+    public List<SubTask> getSubTasks() {
+        return subtasks;
+    }
+
     public boolean hasDueDate() {
         return dueDate != LocalDateTime.MIN;
     }
