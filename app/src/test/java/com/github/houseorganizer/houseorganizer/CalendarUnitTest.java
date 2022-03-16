@@ -10,11 +10,6 @@ import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import com.github.houseorganizer.houseorganizer.Calendar.Event;
 
-import com.google.firebase.firestore.DocumentReference;
-import com.google.firebase.firestore.FirebaseFirestore;
-
-
-
 public class CalendarUnitTest {
 
     // Calendar tests
@@ -130,8 +125,8 @@ public class CalendarUnitTest {
     public void equalsReturnsTrueOnSameEvents() {
         Event event1 = new Event("title", "desc", LocalDateTime.of(LocalDate.of(2000, 1, 1), LocalTime.NOON), 100);
         Event event2 = new Event("title", "desc", LocalDateTime.of(LocalDate.of(2000, 1, 1), LocalTime.NOON), 100);
-        assertTrue(event1.equals(event2));
-        assertTrue(event2.equals(event1));
+        assertEquals(event1, event2);
+        assertEquals(event2, event1);
     }
 
     @Test
@@ -142,10 +137,10 @@ public class CalendarUnitTest {
         Event event4 = new Event("title", "desc", LocalDateTime.of(LocalDate.of(2001, 1, 1), LocalTime.NOON), 100);
         Event event5 = new Event("title", "desc", LocalDateTime.of(LocalDate.of(2000, 1, 1), LocalTime.of(10, 10, 10)), 100);
         Event event6 = new Event("title", "desc", LocalDateTime.of(LocalDate.of(2000, 1, 1), LocalTime.NOON), 10);
-        assertFalse(event1.equals(event2));
-        assertFalse(event1.equals(event3));
-        assertFalse(event1.equals(event4));
-        assertFalse(event1.equals(event5));
-        assertFalse(event1.equals(event6));
+        assertNotEquals(event1, event2);
+        assertNotEquals(event1, event3);
+        assertNotEquals(event1, event4);
+        assertNotEquals(event1, event5);
+        assertNotEquals(event1, event6);
     }
 }

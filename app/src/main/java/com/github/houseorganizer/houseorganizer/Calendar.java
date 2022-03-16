@@ -3,12 +3,7 @@ package com.github.houseorganizer.houseorganizer;
 import static java.util.Objects.requireNonNull;
 import androidx.annotation.NonNull;
 
-import com.google.firebase.firestore.DocumentReference;
-
-import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.LocalTime;
-import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -57,9 +52,6 @@ class Calendar {
         private LocalDateTime start;
         // Duration of the event in seconds
         private long duration;
-
-        // Needed for Firestore
-        public Event() {}
 
         public Event(String title, String description, LocalDateTime start, long duration) {
             requireNonNull(title);

@@ -1,37 +1,24 @@
 package com.github.houseorganizer.houseorganizer;
 
-import static java.util.Objects.nonNull;
-import static java.util.Objects.requireNonNull;
-
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.github.houseorganizer.houseorganizer.Calendar.Event;
 
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
-import com.google.firebase.Timestamp;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
-import com.google.firebase.firestore.QuerySnapshot;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.LocalTime;
-import java.time.ZoneId;
 import java.time.ZoneOffset;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -40,11 +27,12 @@ import java.util.Map;
 @SuppressWarnings("unused")
 public class MainScreenActivity extends AppCompatActivity {
 
-    Calendar calendar;
-    int calendarColumns = 1;
+    private Calendar calendar;
+    private int calendarColumns = 1;
     private FirebaseFirestore db;
     private FirebaseAuth mAuth;
     private DocumentReference currentHouse;
+    private EventsAdapter calendarAdapter;
 
     @SuppressLint("NotifyDataSetChanged")
     @Override
@@ -98,31 +86,29 @@ public class MainScreenActivity extends AppCompatActivity {
                     .addOnFailureListener(documentReference -> Toast.makeText(v.getContext(), v.getContext().getString(R.string.add_fail), Toast.LENGTH_SHORT).show());
         });
 
-        findViewById(R.id.refresh_calendar).setOnClickListener(v -> {
-            db.collection("events")
-                    .whereEqualTo("household", currentHouse)
-                    .get()
-                    .addOnCompleteListener(task -> {
-                        if (task.isSuccessful()) {
-                            ArrayList<Event> newEvents = new ArrayList<>();
-                            for (QueryDocumentSnapshot document : task.getResult()) {
-                                // We assume the stored data is well behaved since it got added in a well behaved manner.
-                                Event event = new Event(
-                                        document.getString("title"),
-                                        document.getString("description"),
-                                        LocalDateTime.ofEpochSecond(document.getLong("start"), 0, ZoneOffset.UTC),
-                                        document.getLong("duration") == null ? 0 : document.getLong("duration"));
-                                newEvents.add(event);
-                            }
-                            calendarAdapter.notifyDataSetChanged();
-                            calendar.setEvents(newEvents);
-                            Toast.makeText(v.getContext(), v.getContext().getString(R.string.refresh_success), Toast.LENGTH_SHORT).show();
+        findViewById(R.id.refresh_calendar).setOnClickListener(v -> db.collection("events")
+                .whereEqualTo("household", currentHouse)
+                .get()
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        ArrayList<Event> newEvents = new ArrayList<>();
+                        for (QueryDocumentSnapshot document : task.getResult()) {
+                            // We assume the stored data is well behaved since it got added in a well behaved manner.
+                            Event event = new Event(
+                                    document.getString("title"),
+                                    document.getString("description"),
+                                    LocalDateTime.ofEpochSecond(document.getLong("start"), 0, ZoneOffset.UTC),
+                                    document.getLong("duration") == null ? 0 : document.getLong("duration"));
+                            newEvents.add(event);
                         }
-                        else {
-                            Toast.makeText(v.getContext(), v.getContext().getString(R.string.refresh_fail), Toast.LENGTH_SHORT).show();
-                        }
-                    });
-        });
+                        calendarAdapter.notifyDataSetChanged();
+                        calendar.setEvents(newEvents);
+                        Toast.makeText(v.getContext(), v.getContext().getString(R.string.refresh_success), Toast.LENGTH_SHORT).show();
+                    }
+                    else {
+                        Toast.makeText(v.getContext(), v.getContext().getString(R.string.refresh_fail), Toast.LENGTH_SHORT).show();
+                    }
+                }));
     }
 
     @SuppressWarnings("unused")

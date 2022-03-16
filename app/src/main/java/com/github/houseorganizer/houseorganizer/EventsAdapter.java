@@ -25,10 +25,6 @@ public class EventsAdapter extends RecyclerView.Adapter<EventsAdapter.ViewHolder
         this.calendar = calendar;
     }
 
-    public void setCalendar(Calendar calendar) {
-        this.calendar = calendar;
-    }
-
     public class ViewHolder extends RecyclerView.ViewHolder {
         public Button titleView;
         public TextView dateView;
