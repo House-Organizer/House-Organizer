@@ -174,7 +174,7 @@ public class TaskUnitTest {
         Task.SubTask s = new Task.SubTask("Subtask 1");
 
         t.addSubTask(s);
-        t.changeSubTaskTitle(0, "Subtask 1: better title");
+        t.getSubTaskAt(0).changeTitle("Subtask 1: better title");
         assertEquals("Subtask 1: better title", t.getSubTaskAt(0).getTitle());
     }
 
@@ -184,7 +184,7 @@ public class TaskUnitTest {
         Task.SubTask s = new Task.SubTask("Subtask 1");
 
         t.addSubTask(s);
-        t.markSubTaskAsFinished(0);
+        t.getSubTaskAt(0).markAsFinished();
         assertTrue(t.getSubTaskAt(0).isFinished());
     }
 
@@ -198,8 +198,8 @@ public class TaskUnitTest {
         t.addSubTask(s);
         t.addSubTask(s2);
 
-        t.markSubTaskAsFinished(0);
-        t.markSubTaskAsFinished(1);
+        t.getSubTaskAt(0).markAsFinished();
+        t.getSubTaskAt(1).markAsFinished();
 
         t.removeFinishedSubTasks();
         assertFalse(t.hasSubTasks());

@@ -67,14 +67,6 @@ public class Task {
         subtasks.removeIf(Task.SubTask::isFinished);
     }
 
-    public void markSubTaskAsFinished(int index) {
-        getSubTaskAt(index).markAsFinished();
-    }
-
-    public void changeSubTaskTitle(int index, String newTitle) {
-        getSubTaskAt(index).changeTitle(newTitle);
-    }
-
     public void changeDueDate(LocalDateTime newDueDate) {
         this.dueDate = newDueDate;
     }
@@ -114,11 +106,6 @@ public class Task {
         assert index < subtasks.size();
 
         return subtasks.get(index);
-    }
-
-    //todo test
-    public List<SubTask> getSubTasks() {
-        return subtasks;
     }
 
     public boolean hasDueDate() {

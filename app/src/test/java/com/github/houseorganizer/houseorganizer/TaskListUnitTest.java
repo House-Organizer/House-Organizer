@@ -133,7 +133,7 @@ public class TaskListUnitTest {
         t2.addSubTask(s);
         t2.addSubTask(s2);
 
-        t2.markSubTaskAsFinished(0); // s marked as finished
+        t2.getSubTaskAt(0).markAsFinished(); // s marked as finished
         t.markAsFinished();
 
         tl.removeFinishedTasks(true);
