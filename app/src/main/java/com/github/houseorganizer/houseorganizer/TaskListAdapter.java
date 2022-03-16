@@ -9,7 +9,7 @@ import android.widget.Button;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-public class TaskListAdapter extends RecyclerView.Adapter<TaskListAdapter.ViewHolder> {
+public class TaskListAdapter extends RecyclerView.Adapter<BiViewHolder<Button, Button>> {
     private final TaskList taskList;
     private Task selectedTask;
 
@@ -18,32 +18,23 @@ public class TaskListAdapter extends RecyclerView.Adapter<TaskListAdapter.ViewHo
         this.selectedTask = null;
     }
 
-    public class ViewHolder extends RecyclerView.ViewHolder {
-
-        final Button titleButton;
-        final Button doneButton;
-        public ViewHolder(@NonNull View itemView) {
-            super(itemView);
-
-            titleButton = itemView.findViewById(R.id.task_title);
-            doneButton  = itemView.findViewById(R.id.task_done_button);
-        }
-    }
-
     @NonNull
     @Override
-    public TaskListAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+    public BiViewHolder<Button, Button> onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         LayoutInflater inflater = LayoutInflater.from(parent.getContext());
         View view = inflater.inflate(R.layout.task_row, parent, false);
 
-        return new TaskListAdapter.ViewHolder(view);
+        return new BiViewHolder<>(view, R.id.task_title, R.id.task_done_button);
     }
 
     @Override
-    public void onBindViewHolder(@NonNull TaskListAdapter.ViewHolder holder, int position) {
-        holder.titleButton.setText(taskList.getTaskAt(position).getTitle());
+    public void onBindViewHolder(@NonNull BiViewHolder<Button, Button> holder, int position) {
+        Button titleButton = holder.leftView;
+        Button doneButton  = holder.rightView;
 
-        holder.titleButton.setOnClickListener(
+        titleButton.setText(taskList.getTaskAt(position).getTitle());
+
+        titleButton.setOnClickListener(
                 v -> {
                     Task t = taskList.getTaskAt(position);
 
@@ -55,7 +46,7 @@ public class TaskListAdapter extends RecyclerView.Adapter<TaskListAdapter.ViewHo
                 }
         );
 
-        holder.doneButton.setOnClickListener(
+        doneButton.setOnClickListener(
                 v -> {
                     taskList.getTaskAt(position).markAsFinished();
                     new AlertDialog.Builder(v.getContext())
