@@ -12,6 +12,9 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.firebase.auth.FirebaseAuth;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+
 @SuppressWarnings("unused")
 public class MainScreenActivity extends AppCompatActivity {
 
@@ -46,6 +49,25 @@ public class MainScreenActivity extends AppCompatActivity {
             calendarEvents.setAdapter(calendarAdapter);
             calendarEvents.setLayoutManager(new GridLayoutManager(this, calendarColumns));
         });
+
+        setUpTaskList();
+
+    }
+
+    private void setUpTaskList() {
+        User owner = new DummyUser("Test User", "0");
+
+        Task t  = new Task(owner, "Clean the kitchen counter", "scrub off all the grease marks!");
+        Task t2 = new Task(owner, "Stop by the post office", "send a postcard to Julia");
+        Task t3 = new Task(owner, "Catch up on lecture notes", "midterm on wednesday!!");
+
+        TaskList taskList = new TaskList(owner, "My weekly todo", Arrays.asList(t, t2, t3));
+
+        RecyclerView taskListView = findViewById(R.id.task_list);
+        TaskListAdapter taskListAdapter = new TaskListAdapter(taskList);
+
+        taskListView.setAdapter(taskListAdapter);
+        taskListView.setLayoutManager(new GridLayoutManager(this, 1));
     }
 
     @SuppressWarnings("unused")
