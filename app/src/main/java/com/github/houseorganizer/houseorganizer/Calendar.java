@@ -16,24 +16,10 @@ import java.util.List;
 class Calendar {
     private ArrayList<Event> events;
     private CalendarView view;
-    private DocumentReference household;
 
-    public Calendar(DocumentReference household) {
-        requireNonNull(household);
+    public Calendar() {
         events = new ArrayList<>();
         view = CalendarView.UPCOMING;
-        this.household = household;
-    }
-
-    // For testing purposes
-    public Calendar(int eventAmount, DocumentReference household) {
-        requireNonNull(household);
-        events = new ArrayList<>();
-        view = CalendarView.UPCOMING;
-        this.household = household;
-        for (int i = 0; i < eventAmount; i++) {
-            events.add(new Event("My event", "this is my event", LocalDateTime.of(LocalDate.now(), LocalTime.NOON.minus(i, ChronoUnit.HOURS)), 100));
-        }
     }
 
     public void rotateView() {
@@ -54,9 +40,6 @@ class Calendar {
         return view;
     }
 
-    public DocumentReference getHousehold() {
-        return household;
-    }
 
     @NonNull
     @Override

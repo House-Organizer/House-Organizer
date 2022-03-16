@@ -60,8 +60,7 @@ public class MainScreenActivity extends AppCompatActivity {
         // Test household for now because house buttons don't do anything
         currentHouse = db.document("households/test_house_0");
 
-        calendar = new Calendar(currentHouse);
-
+        calendar = new Calendar();
         EventsAdapter calendarAdapter = new EventsAdapter(calendar);
         calendarEvents.setAdapter(calendarAdapter);
         calendarEvents.setLayoutManager(new GridLayoutManager(this, calendarColumns));
@@ -86,7 +85,7 @@ public class MainScreenActivity extends AppCompatActivity {
             data.put("description", "this is the event that i added using the add button");
             data.put("start", LocalDateTime.now().toEpochSecond(ZoneOffset.UTC));
             data.put("duration", 100);
-            data.put("household", calendar.getHousehold());
+            data.put("household", currentHouse);
             LocalDateTime.now().toEpochSecond(ZoneOffset.UTC);
             db.collection("events").add(data)
                     .addOnSuccessListener(documentReference -> {
