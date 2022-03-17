@@ -3,6 +3,8 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="..\:/Users/sansi/AndroidStudioProjects/House-Organizer/app/src/main/res/layout/activity_house_selection.xml" value="0.13858695652173914" />
+        <entry key="..\:/Users/sansi/AndroidStudioProjects/House-Organizer/app/src/main/res/layout/house_row.xml" value="0.1796875" />
         <entry key="..\:/Users/thiba/Documents/GitHub/House-Organizer/app/src/main/res/layout/activity_main_screen.xml" value="0.264" />
         <entry key="app/src/main/res/drawable-v24/ic_launcher_foreground.xml" value="0.2255" />
         <entry key="app/src/main/res/drawable/ic_launcher_background.xml" value="0.2255" />

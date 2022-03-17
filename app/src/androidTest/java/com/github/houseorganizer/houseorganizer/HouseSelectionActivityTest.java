@@ -29,10 +29,8 @@ public class HouseSelectionActivityTest {
 
         try (ActivityScenario<HouseSelectionActivity> scenario = ActivityScenario.launch(intent)) {
             onView(withId(R.id.housesView))
-                    .check(matches(hasDescendant(withText("House 1"))))
-                    .check(matches(hasDescendant(withText("House 2"))))
-                    .check(matches(hasDescendant(withText("House 3"))))
-                    .check(matches(hasDescendant(withText("House 4"))));
+                    .check(matches(hasDescendant(withText("Square"))))
+                    .check(matches(hasDescendant(withText("Atrium"))));
         }
     }
 
@@ -44,7 +42,7 @@ public class HouseSelectionActivityTest {
         Intent intent = new Intent(ApplicationProvider.getApplicationContext(), HouseSelectionActivity.class);
 
         try (ActivityScenario<HouseSelectionActivity> scenario = ActivityScenario.launch(intent)) {
-            onView(withText("House 1")).perform(click());
+            onView(withText("Square")).perform(click());
             intended(toPackage("com.github.houseorganizer.houseorganizer"));
         }
 
