@@ -79,10 +79,10 @@
         android:id="@+id/calendar_view_change"
         android:layout_width="40dp"
         android:layout_height="52dp"
-        android:text=""
+        android:text="@string/cycle_views"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.884"
+        app:layout_constraintHorizontal_bias="0.956"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/house_imageButton"
         app:layout_constraintVertical_bias="0.064" />
@@ -96,5 +96,29 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/last_button_activated" />
+
+    <Button
+        android:id="@+id/add_event"
+        android:layout_width="40dp"
+        android:layout_height="52dp"
+        android:text="@string/add_event"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/calendar_view_change"
+        app:layout_constraintHorizontal_bias="0.45"
+        app:layout_constraintStart_toEndOf="@+id/refresh_calendar"
+        app:layout_constraintTop_toBottomOf="@+id/house_imageButton"
+        app:layout_constraintVertical_bias="0.064" />
+
+    <Button
+        android:id="@+id/refresh_calendar"
+        android:layout_width="wrap_content"
+        android:layout_height="52dp"
+        android:text="@string/refresh"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.622"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/house_imageButton"
+        app:layout_constraintVertical_bias="0.064" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
