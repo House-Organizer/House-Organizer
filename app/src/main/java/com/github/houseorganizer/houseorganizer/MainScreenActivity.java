@@ -148,9 +148,8 @@ public class MainScreenActivity extends AppCompatActivity {
     }
 
     public void settingsButtonPressed(View view) {
-        TextView text = findViewById(R.id.last_button_activated);
-        String s = "Settings button pressed";
-        text.setText(s);
+        Intent intent = new Intent(this, SettingsActivity.class);
+        startActivity(intent);
     }
 
     public void infoButtonPressed(@SuppressWarnings("unused") View view) {

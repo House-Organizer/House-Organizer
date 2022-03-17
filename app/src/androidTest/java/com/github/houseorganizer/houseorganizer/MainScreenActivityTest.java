@@ -82,9 +82,11 @@ public class MainScreenActivityTest {
     }
 
     @Test
-    public void settingsButtonDisplaysItHasBeenClicked() {
+    public void settingsButtonSendsIntent() {
+        Intents.init();
         onView(withId(R.id.settings_imageButton)).perform(click());
-        onView(withId(R.id.last_button_activated)).check(matches(withText("Settings button pressed")));
+        intended(hasComponent(SettingsActivity.class.getName()));
+        Intents.release();
     }
 
     // Info button
