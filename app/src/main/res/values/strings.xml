@@ -8,6 +8,7 @@
     <string name="appDescription">stub description of the app to appeal the user</string>
     <string name="cloudServerID">203269545085-bd0ji5p3615rboo0cjkmcg9fslr9d6q8.apps.googleusercontent.com</string>
     <string name="signout_button">Sign Out</string>
+    <string name="signout_intent">sign_out</string>
     <string name="signInFailed">The sign-in failed due to an error</string>
     <string name="settings_speakable_text">Settings</string>
     <string name="house_speakable_text">Home selection</string>
@@ -18,6 +19,7 @@
     <string name="img_house_row_desc">Image for the given house name</string>
     <string name="home_logo">Home Logo</string>
     <string name="sign_out">Sign Out</string>
+  
     <string name="title_activity_settings">Settings</string>
 
     <!-- Preference Titles -->
@@ -32,4 +34,13 @@
     <string name="attachment_title">Download attachments</string>
     <string name="attachment_summary_on">Automatically download attachments for calendar </string>
     <string name="attachment_summary_off">Only download attachments when manually requested</string>
+
+    <string name="add_event">+</string>
+    <string name="add_success">Event added!</string>
+    <string name="add_fail">Could not add event.</string>
+    <string name="cycle_views">↻</string>
+    <string name="refresh">Refresh</string>
+    <string name="refresh_success">Refreshed!</string>
+    <string name="refresh_fail">Could not refresh.</string>
+
 </resources>
