@@ -29,6 +29,8 @@ public class TaskList {
     }
 
     public void removeTask(int index) {
+        assert index < tasks.size();
+
         tasks.remove(index);
     }
 
