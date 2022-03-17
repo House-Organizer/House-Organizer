@@ -6,7 +6,6 @@ import static androidx.test.espresso.assertion.ViewAssertions.matches;
 import static androidx.test.espresso.intent.Checks.checkNotNull;
 import static androidx.test.espresso.intent.Intents.intended;
 import static androidx.test.espresso.intent.matcher.IntentMatchers.hasComponent;
-import static androidx.test.espresso.intent.matcher.IntentMatchers.toPackage;
 import static androidx.test.espresso.matcher.ViewMatchers.hasChildCount;
 import static androidx.test.espresso.matcher.ViewMatchers.isClickable;
 import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
@@ -106,7 +105,7 @@ public class MainScreenActivityTest {
         onView(withId(R.id.last_button_activated)).check(matches(withText("Info button pressed")));
     }
 
-    // Calendar view
+    // Calendar view and its buttons
     @Test
     public void calendarUpcomingIsEnabled() {
         onView(withId(R.id.calendar)).check(matches(isEnabled()));
@@ -116,6 +115,37 @@ public class MainScreenActivityTest {
     public void calendarUpcomingIsDisplayed() {
         onView(withId(R.id.calendar)).check(matches(isDisplayed()));
     }
+
+    @Test
+    public void refreshIsEnabled() {
+        onView(withId(R.id.refresh_calendar)).check(matches(isEnabled()));
+    }
+
+    @Test
+    public void refreshIsDisplayed() {
+        onView(withId(R.id.refresh_calendar)).check(matches(isDisplayed()));
+    }
+
+    @Test
+    public void addEventIsEnabled() {
+        onView(withId(R.id.add_event)).check(matches(isEnabled()));
+    }
+
+    @Test
+    public void addEventIsDisplayed() {
+        onView(withId(R.id.add_event)).check(matches(isDisplayed()));
+    }
+
+    @Test
+    public void cycleIsEnabled() {
+        onView(withId(R.id.calendar_view_change)).check(matches(isEnabled()));
+    }
+
+    @Test
+    public void cycleIsDisplayed() {
+        onView(withId(R.id.calendar_view_change)).check(matches(isDisplayed()));
+    }
+
 
     // Used in order to access RecyclerView items
     public static Matcher<View> atPosition(final int position, @NonNull final Matcher<View> itemMatcher) {
@@ -140,13 +170,26 @@ public class MainScreenActivityTest {
     }
 
     @Test
-    public void calendarUpcomingEventDisplayed() {
-        onView(withId(R.id.calendar)).check(matches(atPosition(0, isDisplayed())));
+    public void calendarUpcomingEventsDisplayed() {
+        onView(withId(R.id.refresh_calendar)).perform(click());
+        // Somehow wait for the calendar to retrieve the data and refresh the calendar
+        //onView(withId(R.id.calendar)).check(matches(hasChildCount(4)));
     }
+
+    /* Need to find a way to run the check (the lambda here doesn't get run)
+    @Test
+    public void addEventWorks() {
+        mainScreenActivityActivityScenarioRule.getScenario().onActivity(activity -> {
+            int baseCount = ((ViewGroup)activity.findViewById(R.id.calendar)).getChildCount();
+            onView(withId(R.id.add_event)).perform(click());
+            onView(withId(R.id.calendar)).check(matches(hasChildCount(baseCount+1)));
+        });
+    }
+    */
 
     @Test
     public void calendarViewRotatesCorrectly() {
-        final int UPCOMING_CHILDREN = 3;
+        final int UPCOMING_CHILDREN = 0;
         final int MONTHLY_CHILDREN = YearMonth.of(LocalDate.now().getYear(), LocalDate.now().getMonth()).lengthOfMonth();
         final int WEEKLY_CHILDREN = 7;
         onView(withId(R.id.calendar)).check(matches(hasChildCount(UPCOMING_CHILDREN)));
