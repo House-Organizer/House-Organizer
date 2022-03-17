@@ -2,11 +2,7 @@ package com.github.houseorganizer.houseorganizer;
 
 import static java.util.Objects.requireNonNull;
 import androidx.annotation.NonNull;
-
-import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.LocalTime;
-import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -20,15 +16,6 @@ class Calendar {
         view = CalendarView.UPCOMING;
     }
 
-    // For testing purposes
-    public Calendar(int eventAmount) {
-        events = new ArrayList<>();
-        view = CalendarView.UPCOMING;
-        for (int i = 0; i < eventAmount; i++) {
-            events.add(new Event("My event", "this is my event", LocalDateTime.of(LocalDate.now(), LocalTime.NOON.minus(i, ChronoUnit.HOURS)), 100));
-        }
-    }
-
     public void rotateView() {
         view =  view.next();
     }
@@ -39,9 +26,15 @@ class Calendar {
         return ret;
     }
 
+  
+    public void setEvents(ArrayList<Event> events) {
+        this.events = (ArrayList<Event>) events.clone();
+    }
+
     public CalendarView getView() {
         return view;
     }
+
 
     @NonNull
     @Override
@@ -54,13 +47,14 @@ class Calendar {
     }
 
     static class Event {
-        private final String title;
-        private final String description;
-        private final LocalDateTime start;
-        // Duration of the event in seconds
-        private final int duration;
 
-        public Event(String title, String description, LocalDateTime start, int duration) {
+        private  String title;
+        private String description;
+        private LocalDateTime start;
+        // Duration of the event in seconds
+        private long duration;
+
+        public Event(String title, String description, LocalDateTime start, long duration) {
             requireNonNull(title);
             requireNonNull(start);
             this.title = title;
@@ -81,7 +75,7 @@ class Calendar {
             return start;
         }
 
-        public int getDuration() {
+        public long getDuration() {
             return duration;
         }
 
