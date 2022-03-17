@@ -26,6 +26,7 @@ public class HouseSelectionActivityTest {
     @Test
     public void seeHousesList() {
         Intent intent = new Intent(ApplicationProvider.getApplicationContext(), HouseSelectionActivity.class);
+        intent.putExtra(MainScreenActivity.CURRENT_USER, "7HqFNpg7CQTFyvVfrzReeV6YPYs2");
 
         try (ActivityScenario<HouseSelectionActivity> scenario = ActivityScenario.launch(intent)) {
             onView(withId(R.id.housesView))
@@ -40,6 +41,7 @@ public class HouseSelectionActivityTest {
         Intents.init();
 
         Intent intent = new Intent(ApplicationProvider.getApplicationContext(), HouseSelectionActivity.class);
+        intent.putExtra(MainScreenActivity.CURRENT_USER, "7HqFNpg7CQTFyvVfrzReeV6YPYs2");
 
         try (ActivityScenario<HouseSelectionActivity> scenario = ActivityScenario.launch(intent)) {
             onView(withText("Square")).perform(click());

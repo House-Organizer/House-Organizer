@@ -28,6 +28,8 @@ import java.util.Map;
 public class MainScreenActivity extends AppCompatActivity {
 
     public static final String HOUSEHOLD = "com.github.houseorganizer.houseorganizer.HOUSEHOLD";
+    // For testing purposes
+    public static final String CURRENT_USER = "com.github.houseorganizer.houseorganizer.CURRENT_USER";
 
     private Calendar calendar;
     private int calendarColumns = 1;
@@ -154,6 +156,7 @@ public class MainScreenActivity extends AppCompatActivity {
     @SuppressWarnings("unused")
     public void houseButtonPressed(View view) {
         Intent intent = new Intent(this, HouseSelectionActivity.class);
+        intent.putExtra(CURRENT_USER, mUser.getUid());
         startActivity(intent);
     }
 

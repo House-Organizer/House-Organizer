@@ -6,10 +6,6 @@ public class HouseModel {
     private HouseModel() {
     }
 
-    private HouseModel(String name) {
-        this.name = name;
-    }
-
     public String getName() {
         return name;
     }

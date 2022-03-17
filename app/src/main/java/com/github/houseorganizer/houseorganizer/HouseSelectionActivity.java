@@ -14,8 +14,6 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter;
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
 
@@ -23,8 +21,7 @@ public class HouseSelectionActivity extends AppCompatActivity {
     RecyclerView housesView;
 
     FirebaseFirestore firestore;
-    FirebaseAuth firebaseAuth;
-    FirebaseUser firebaseUser;
+    String uidUser;
     FirestoreRecyclerAdapter<HouseModel, HouseViewHolder> adapter;
 
     @Override
@@ -33,12 +30,10 @@ public class HouseSelectionActivity extends AppCompatActivity {
         setContentView(R.layout.activity_house_selection);
 
         housesView = findViewById(R.id.housesView);
-
-        firebaseAuth = FirebaseAuth.getInstance();
-        firebaseUser = firebaseAuth.getCurrentUser();
+        uidUser = getIntent().getStringExtra(MainScreenActivity.CURRENT_USER);
 
         firestore = FirebaseFirestore.getInstance();
-        Query query = firestore.collection("households").whereArrayContains("residents", firebaseUser.getUid());
+        Query query = firestore.collection("households").whereArrayContains("residents", uidUser);
         FirestoreRecyclerOptions<HouseModel> options = new FirestoreRecyclerOptions.Builder<HouseModel>()
                 .setQuery(query, HouseModel.class)
                 .build();
