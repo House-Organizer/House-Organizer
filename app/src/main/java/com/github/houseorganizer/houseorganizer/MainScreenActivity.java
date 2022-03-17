@@ -62,7 +62,8 @@ public class MainScreenActivity extends AppCompatActivity {
 
         } else {
             // Current house by default
-            db.collection("households")
+            // Cannot test still, need to sign in first
+            /*db.collection("households")
                     .whereArrayContains("residents", mUser.getUid())
                     .get()
                     .addOnCompleteListener(task -> {
@@ -79,7 +80,11 @@ public class MainScreenActivity extends AppCompatActivity {
                         } else {
                             Toast.makeText(getApplicationContext(), "Could not get a house.", Toast.LENGTH_SHORT).show();
                         }
-                    });
+                    });*/
+
+            // Temp
+            currentHouse = db.collection("households").document("test_house_0");
+            text.setText("currentHouse: " + currentHouse.getId());
         }
 
         calendarEvents = findViewById(R.id.calendar);

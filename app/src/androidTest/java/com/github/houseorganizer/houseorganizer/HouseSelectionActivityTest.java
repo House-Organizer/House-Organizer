@@ -29,9 +29,9 @@ public class HouseSelectionActivityTest {
         intent.putExtra(MainScreenActivity.CURRENT_USER, "7HqFNpg7CQTFyvVfrzReeV6YPYs2");
 
         try (ActivityScenario<HouseSelectionActivity> scenario = ActivityScenario.launch(intent)) {
-            /*onView(withId(R.id.housesView))
+            onView(withId(R.id.housesView))
                     .check(matches(hasDescendant(withText("Square"))))
-                    .check(matches(hasDescendant(withText("Atrium"))));*/
+                    .check(matches(hasDescendant(withText("Atrium"))));
         }
     }
 
@@ -44,8 +44,8 @@ public class HouseSelectionActivityTest {
         intent.putExtra(MainScreenActivity.CURRENT_USER, "7HqFNpg7CQTFyvVfrzReeV6YPYs2");
 
         try (ActivityScenario<HouseSelectionActivity> scenario = ActivityScenario.launch(intent)) {
-            /*onView(withText("Square")).perform(click());
-            intended(toPackage("com.github.houseorganizer.houseorganizer"));*/
+            onView(withText("Square")).perform(click());
+            intended(toPackage("com.github.houseorganizer.houseorganizer"));
         }
 
         Intents.release();
