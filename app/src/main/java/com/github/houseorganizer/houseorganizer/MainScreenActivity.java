@@ -63,8 +63,9 @@ public class MainScreenActivity extends AppCompatActivity {
     }
 
     private void signOut(View v) {
-        mAuth.signOut();
-        startActivity(new Intent(this, LoginActivity.class));
+        Intent intent = new Intent(this, LoginActivity.class);
+        intent.putExtra(getString(R.string.signout_intent), true);
+        startActivity(intent);
         finish();
     }
 

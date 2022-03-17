@@ -6,6 +6,8 @@ import static androidx.test.espresso.assertion.ViewAssertions.matches;
 import static androidx.test.espresso.intent.Checks.checkNotNull;
 import static androidx.test.espresso.intent.Intents.intended;
 import static androidx.test.espresso.intent.matcher.IntentMatchers.hasComponent;
+import static androidx.test.espresso.intent.matcher.IntentMatchers.hasExtra;
+import static androidx.test.espresso.intent.matcher.IntentMatchers.toPackage;
 import static androidx.test.espresso.matcher.ViewMatchers.hasChildCount;
 import static androidx.test.espresso.matcher.ViewMatchers.isClickable;
 import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
@@ -16,7 +18,9 @@ import static androidx.test.espresso.matcher.ViewMatchers.withText;
 import android.view.View;
 
 import androidx.annotation.NonNull;
+import androidx.lifecycle.Lifecycle;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.test.core.app.ApplicationProvider;
 import androidx.test.espresso.intent.Intents;
 import androidx.test.espresso.matcher.BoundedMatcher;
 import androidx.test.ext.junit.rules.ActivityScenarioRule;
@@ -202,5 +206,26 @@ public class MainScreenActivityTest {
     }
 
     // TODO : Add more meaningful tests for each row in the RecyclerViews (no idea how to do it)
+
+
+    @Test
+    public void signOutButtonIsDisplayedAndEnabled(){
+        onView(withId(R.id.sign_out_button)).check(matches(isDisplayed()));
+        onView(withId(R.id.sign_out_button)).check(matches(isEnabled()));
+    }
+
+    @Test
+    public void signOutButtonIsClickable(){
+        onView(withId(R.id.sign_out_button)).check(matches(isClickable()));
+    }
+
+    @Test
+    public void signOutButtonFiresRightIntent(){
+        Intents.init();
+        onView(withId(R.id.sign_out_button)).perform(click());
+        intended(hasComponent(LoginActivity.class.getName()));
+        intended(hasExtra(ApplicationProvider.getApplicationContext().getString(R.string.signout_intent), true));
+        Intents.release();
+    }
 
 }
