@@ -10,7 +10,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-public class HouseAdapter extends RecyclerView.Adapter<HouseAdapter.HouseHolder> {
+public class HouseAdapter extends RecyclerView.Adapter<BiViewHolder<ImageView, TextView>> {
 
     final Context cx;
     final String[] houseNames;
@@ -24,16 +24,16 @@ public class HouseAdapter extends RecyclerView.Adapter<HouseAdapter.HouseHolder>
 
     @NonNull
     @Override
-    public HouseHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+    public BiViewHolder<ImageView, TextView> onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         LayoutInflater inflater = LayoutInflater.from(cx);
         View view = inflater.inflate(R.layout.house_row, parent, false);
-        return new HouseHolder(view);
+        return new BiViewHolder<>(view, R.id.houseImage, R.id.houseName);
     }
 
     @Override
-    public void onBindViewHolder(@NonNull HouseHolder holder, int position) {
-        holder.houseName.setText(houseNames[position]);
-        holder.houseImage.setImageResource(houseImages[position]);
+    public void onBindViewHolder(@NonNull BiViewHolder<ImageView, TextView> holder, int position) {
+        holder.rightView.setText(houseNames[position]);
+        holder.leftView.setImageResource(houseImages[position]);
     }
 
     @Override
@@ -41,6 +41,7 @@ public class HouseAdapter extends RecyclerView.Adapter<HouseAdapter.HouseHolder>
         return houseNames.length;
     }
 
+    /*
     public static class HouseHolder extends RecyclerView.ViewHolder {
 
         final TextView houseName;
@@ -51,5 +52,5 @@ public class HouseAdapter extends RecyclerView.Adapter<HouseAdapter.HouseHolder>
             houseName = itemView.findViewById(R.id.houseName);
             houseImage = itemView.findViewById(R.id.houseImage);
         }
-    }
+    } */
 }
