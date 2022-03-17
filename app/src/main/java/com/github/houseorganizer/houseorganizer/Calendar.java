@@ -2,7 +2,6 @@ package com.github.houseorganizer.houseorganizer;
 
 import static java.util.Objects.requireNonNull;
 import androidx.annotation.NonNull;
-
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -27,6 +26,7 @@ class Calendar {
         return ret;
     }
 
+  
     public void setEvents(ArrayList<Event> events) {
         this.events = (ArrayList<Event>) events.clone();
     }
@@ -47,6 +47,7 @@ class Calendar {
     }
 
     static class Event {
+
         private  String title;
         private String description;
         private LocalDateTime start;
