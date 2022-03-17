@@ -128,8 +128,10 @@ public class MainScreenActivity extends AppCompatActivity {
         Task t = new Task(owner, "Clean the kitchen counter", "scrub off all the grease marks!");
         Task t2 = new Task(owner, "Stop by the post office", "send a postcard to Julia");
         Task t3 = new Task(owner, "Catch up on lecture notes", "midterm on wednesday!!");
+        Task t4 = new Task(owner, "Fix the light bulb", "drop by the supermarket first");
+        Task t5 = new Task(owner, "Pick a gift for Jenny", "she likes bath bombs => check out Lush");
 
-        TaskList taskList = new TaskList(owner, "My weekly todo", Arrays.asList(t, t2, t3));
+        TaskList taskList = new TaskList(owner, "My weekly todo", Arrays.asList(t, t2, t3, t4, t5));
 
         RecyclerView taskListView = findViewById(R.id.task_list);
         TaskListAdapter taskListAdapter = new TaskListAdapter(taskList);
