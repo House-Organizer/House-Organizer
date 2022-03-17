@@ -35,37 +35,4 @@ public class RegisterEmailTest {
     public void registerButtonIsDisplayed() {
         onView(withId(R.id.reg_email_register_button)).check(matches(isDisplayed()));
     }
-
-    /*@Test
-    public void invalidPasswordShowsErrorMessage() {
-        Intents.init();
-        onView(withId(R.id.reg_enter_email)).perform(typeText("example@gmail.com"));
-        onView(withId(R.id.reg_enter_password)).perform(typeText("Password"));
-        onView(withId(R.id.reg_confirm_password)).perform(typeText("Password"));
-        onView(withId(R.id.reg_email_register_button)).perform(click());
-        Intents.release();
-    }
-
-    @Test
-    public void invalidEmailShowsErrorMessage() {
-        Intents.init();
-        onView(withId(R.id.reg_enter_email)).perform(typeText("example@"));
-        onView(withId(R.id.reg_enter_password)).perform(typeText("P@ssw0rd"));
-        onView(withId(R.id.reg_confirm_password)).perform(typeText("P@ssw0rd"));
-        onView(withId(R.id.reg_email_register_button)).perform(click());
-        onView(withId(R.id.reg_email_register_button)).check(matches(withText(R.string.email_not_valid)));
-        Intents.release();
-    }
-
-
-    @Test
-    public void signUpWithValidCredentialsFiresIntent() {
-        Intents.init();
-        onView(withId(R.id.reg_enter_email)).perform(typeText("example@gmail.com"));
-        onView(withId(R.id.reg_enter_password)).perform(typeText("P@ssw0rd"));
-        onView(withId(R.id.reg_confirm_password)).perform(typeText("P@ssw0rd"));
-        onView(withId(R.id.reg_email_register_button)).perform(click());
-        intended(toPackage("com.github.houseorganizer.houseorganizer"));
-        Intents.release();
-    }*/
 }
