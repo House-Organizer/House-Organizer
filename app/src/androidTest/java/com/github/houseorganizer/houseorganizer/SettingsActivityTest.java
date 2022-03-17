@@ -26,7 +26,7 @@ public class SettingsActivityTest {
 
     @Test
     public void canInputTextInSettings() {
-        //TODO
+        //TODO next sprint
     }
 
 }
