@@ -19,7 +19,6 @@ import com.google.firebase.firestore.Query;
 
 public class HouseSelectionActivity extends AppCompatActivity {
     RecyclerView housesView;
-
     FirebaseFirestore firestore;
     String uidUser;
     FirestoreRecyclerAdapter<HouseModel, HouseViewHolder> adapter;
@@ -49,8 +48,7 @@ public class HouseSelectionActivity extends AppCompatActivity {
             @Override
             protected void onBindViewHolder(@NonNull HouseViewHolder holder, int position, @NonNull HouseModel model) {
                 holder.houseName.setText(model.getName());
-                String id = adapter.getSnapshots().getSnapshot(position).getId();
-                holder.houseName.setTag(id);
+                holder.houseName.setTag(adapter.getSnapshots().getSnapshot(position).getId());
             }
         };
 
