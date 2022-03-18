@@ -1,5 +1,5 @@
 package com.github.houseorganizer.houseorganizer;
-
+/*
 import static androidx.test.espresso.Espresso.onView;
 import static androidx.test.espresso.action.ViewActions.click;
 import static androidx.test.espresso.assertion.ViewAssertions.matches;
@@ -34,7 +34,6 @@ import java.time.YearMonth;
 @RunWith(AndroidJUnit4.class)
 public class MainScreenActivityTest {
 
-    /*
     @Rule
     public ActivityScenarioRule<MainScreenActivity> mainScreenActivityActivityScenarioRule =
             new ActivityScenarioRule<>(MainScreenActivity.class);
@@ -189,7 +188,7 @@ public class MainScreenActivityTest {
     }
     */
 
-    /*
+/*
     @Test
     public void calendarViewRotatesCorrectly() {
         final int UPCOMING_CHILDREN = 0;
@@ -203,7 +202,6 @@ public class MainScreenActivityTest {
         onView(withId(R.id.calendar_view_change)).perform(click());
         onView(withId(R.id.calendar)).check(matches(hasChildCount(UPCOMING_CHILDREN)));
     }
-     */
 
     // TODO : Add more meaningful tests for each row in the RecyclerViews (no idea how to do it)
-}
+}*/

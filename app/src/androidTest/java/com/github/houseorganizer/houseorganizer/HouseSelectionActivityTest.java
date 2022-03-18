@@ -1,5 +1,6 @@
 package com.github.houseorganizer.houseorganizer;
 
+/*
 import static android.support.test.espresso.matcher.ViewMatchers.withText;
 import static androidx.test.espresso.Espresso.onView;
 import static androidx.test.espresso.action.ViewActions.click;
@@ -22,7 +23,6 @@ import org.junit.runner.RunWith;
 @RunWith(AndroidJUnit4.class)
 public class HouseSelectionActivityTest {
 
-    /*
     // See list of houses
     @Test
     public void seeHousesList() {
@@ -51,5 +51,4 @@ public class HouseSelectionActivityTest {
 
         Intents.release();
     }
-    */
-}
+}*/
