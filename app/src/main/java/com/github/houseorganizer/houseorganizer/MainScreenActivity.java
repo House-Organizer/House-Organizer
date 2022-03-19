@@ -176,4 +176,11 @@ public class MainScreenActivity extends AppCompatActivity {
         String s = "Info button pressed";
         text.setText(s);
     }
+
+    /* TEMPORARILY HERE */
+    public void addHouseholdButtonPressed(View view) {
+        Intent intent = new Intent(this, CreateHouseholdActivity.class);
+        intent.putExtra("Uid", mUser.getUid());
+        startActivity(intent);
+    }
 }

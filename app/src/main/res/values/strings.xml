@@ -25,4 +25,6 @@
     <string name="refresh">Refresh</string>
     <string name="refresh_success">Refreshed!</string>
     <string name="refresh_fail">Could not refresh.</string>
+    <string name="add_household">Add household</string>
+    <string name="household_creation_hint">Household name</string>
 </resources>
