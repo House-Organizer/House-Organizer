@@ -14,12 +14,21 @@ public class ShopItem {
         this.isPickedUp = false;
     }
 
+    //Setters
     public void markPickedUp(){
         this.isPickedUp = true;
     }
 
     public void changeName(String newName){
         this.name = newName;
+    }
+
+    public void setQuantity(int quantity) {
+        this.quantity = quantity;
+    }
+
+    public void setUnit(String unit){
+        this.unit = unit;
     }
 
     //Getters
@@ -29,6 +38,10 @@ public class ShopItem {
 
     public int getQuantity(){
         return this.quantity;
+    }
+
+    public String getUnit(){
+        return this.unit;
     }
 
     public boolean isPickedUp(){
