@@ -31,6 +31,10 @@ public class ShopItem {
         this.unit = unit;
     }
 
+    public void setPickedUp(boolean pickedUp) {
+        isPickedUp = pickedUp;
+    }
+
     //Getters
     public String getName(){
         return this.name;
