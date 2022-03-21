@@ -1,5 +1,7 @@
 package com.github.houseorganizer.houseorganizer;
 
+import androidx.annotation.NonNull;
+
 public class ShopItem {
 
     private String name;
@@ -50,5 +52,11 @@ public class ShopItem {
 
     public boolean isPickedUp(){
         return this.isPickedUp;
+    }
+
+    @NonNull
+    @Override
+    public String toString(){
+        return name + " : " + quantity + unit;
     }
 }

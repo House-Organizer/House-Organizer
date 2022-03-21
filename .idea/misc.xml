@@ -3,28 +3,27 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
-        <entry key="..\:/Users/flori/OneDrive/Documents/AAA_EPFL/BA6/Software DP/House-Organizer/app/src/main/res/layout/activity_create_household.xml" value="0.2617753623188406" />
-        <entry key="..\:/Users/flori/OneDrive/Documents/AAA_EPFL/BA6/Software DP/House-Organizer/app/src/main/res/layout/activity_login.xml" value="0.25416666666666665" />
-        <entry key="..\:/Users/flori/OneDrive/Documents/AAA_EPFL/BA6/Software DP/House-Organizer/app/src/main/res/layout/activity_main_screen.xml" value="0.20729166666666668" />
-        <entry key="..\:/Users/flori/OneDrive/Documents/AAA_EPFL/BA6/Software DP/House-Organizer/app/src/main/res/layout/calendar_monthly_cell.xml" value="0.26875" />
-        <entry key="..\:/Users/flori/OneDrive/Documents/AAA_EPFL/BA6/Software DP/House-Organizer/app/src/main/res/layout/calendar_weekly_row.xml" value="0.26875" />
-        <entry key="..\:/Users/flori/OneDrive/Documents/AAA_EPFL/BA6/Software DP/House-Organizer/app/src/main/res/layout/house_row.xml" value="0.36666666666666664" />
-        <entry key="..\:/Users/flori/OneDrive/Documents/AAA_EPFL/BA6/Software DP/House-Organizer/app/src/main/res/layout/shoplist_row.xml" value="0.33" />
-        <entry key="..\:/Users/flori/OneDrive/Documents/AAA_EPFL/BA6/Software DP/House-Organizer/app/src/main/res/layout/task_row.xml" value="0.5" />
-        <entry key="..\:/Users/flori/StudioProjects/House-Organizer/app/src/main/res/layout/activity_main_screen.xml" value="0.2708333333333333" />
+        <entry key="..\:/Users/flori/StudioProjects/House-Organizer/app/src/main/res/layout/activity_test.xml" value="0.87109375" />
         <entry key="..\:/Users/flori/StudioProjects/House-Organizer/app/src/main/res/layout/calendar_monthly_cell.xml" value="0.17831813576494426" />
         <entry key="..\:/Users/flori/StudioProjects/House-Organizer/app/src/main/res/layout/calendar_upcoming_row.xml" value="0.17831813576494426" />
         <entry key="..\:/Users/flori/StudioProjects/House-Organizer/app/src/main/res/layout/calendar_weekly_row.xml" value="0.17831813576494426" />
-        <entry key="..\:/Users/flori/StudioProjects/House-Organizer/app/src/main/res/layout/house_row.xml" value="0.17831813576494426" />
+        <entry key="..\:/Users/flori/StudioProjects/House-Organizer/app/src/main/res/layout/shoplist_row.xml" value="0.33" />
+        <entry key="..\:/Users/flori/StudioProjects/House-Organizer/app/src/main/res/layout/shoplist_row2.xml" value="0.33" />
+        <entry key="..\:/Users/flori/StudioProjects/House-Organizer/app/src/main/res/layout/task_row.xml" value="0.17831813576494426" />
         <entry key="app/src/main/res/drawable-v24/ic_launcher_foreground.xml" value="0.2255" />
         <entry key="app/src/main/res/drawable/ic_launcher_background.xml" value="0.2255" />
+        <entry key="app/src/main/res/layout-w1240dp/activity_login_email.xml" value="0.2289156626506024" />
+        <entry key="app/src/main/res/layout-w936dp/activity_login_email.xml" value="0.2671875" />
+        <entry key="app/src/main/res/layout/activity_firebase_ui.xml" value="0.20697463768115942" />
         <entry key="app/src/main/res/layout/activity_greeting.xml" value="0.25416666666666665" />
         <entry key="app/src/main/res/layout/activity_home_selection.xml" value="0.1796875" />
         <entry key="app/src/main/res/layout/activity_house_selection.xml" value="0.17552083333333332" />
         <entry key="app/src/main/res/layout/activity_login.xml" value="0.259375" />
         <entry key="app/src/main/res/layout/activity_login2.xml" value="0.1911231884057971" />
+        <entry key="app/src/main/res/layout/activity_login_email.xml" value="0.35625" />
         <entry key="app/src/main/res/layout/activity_main.xml" value="0.259375" />
         <entry key="app/src/main/res/layout/activity_main_screen.xml" value="0.259375" />
+        <entry key="app/src/main/res/layout/activity_register_email.xml" value="0.35625" />
         <entry key="app/src/main/res/layout/calendar_row.xml" value="0.25317028985507245" />
         <entry key="app/src/main/res/layout/calendar_upcoming_row.xml" value="0.20260416666666667" />
         <entry key="app/src/main/res/layout/calendar_weekly_row.xml" value="0.1890625" />

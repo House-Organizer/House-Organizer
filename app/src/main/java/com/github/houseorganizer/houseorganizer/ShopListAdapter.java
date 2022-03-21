@@ -38,7 +38,7 @@ public class ShopListAdapter extends RecyclerView.Adapter<ShopListAdapter.ItemsH
     public void onBindViewHolder(@NonNull ItemsHolder holder, int position) {
         CheckBox box = holder.checkBox;
         ShopItem item = shopList.getItemAt(position);
-        String text = item.getName() + "" + item.getQuantity() + item.getUnit();
+        String text = item.toString();
         box.setText(text);
         box.setChecked(item.isPickedUp());
         box.setOnClickListener( v -> {
