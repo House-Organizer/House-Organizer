@@ -9,6 +9,7 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.github.houseorganizer.houseorganizer.Calendar.Event;
@@ -156,5 +157,18 @@ public class MainScreenActivity extends AppCompatActivity {
         TextView text = findViewById(R.id.last_button_activated);
         String s = "Info button pressed";
         text.setText(s);
+    }
+
+    public void rotateLists(View view){
+
+        ShopList shopList = new ShopList(new DummyUser("John", "uid"), "TestShopList");
+        shopList.addItem(new ShopItem("Eggs", 4, ""));
+        shopList.addItem(new ShopItem("Flour", 2, "kg"));
+        shopList.addItem(new ShopItem("Raclette", 3, "tons"));
+
+        ShopListAdapter itemAdapter = new ShopListAdapter(shopList);
+        RecyclerView rView = findViewById(R.id.task_list);
+        rView.setAdapter(itemAdapter);
+        rView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
     }
 }
