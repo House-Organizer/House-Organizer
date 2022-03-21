@@ -48,5 +48,4 @@ public class ShopItemUnitTest {
         assertThat(item.getUnit(), is(unit));
     }
 
-
 }
