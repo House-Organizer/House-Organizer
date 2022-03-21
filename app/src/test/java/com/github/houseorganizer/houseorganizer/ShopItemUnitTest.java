@@ -48,4 +48,36 @@ public class ShopItemUnitTest {
         assertThat(item.getUnit(), is(unit));
     }
 
+    // Testing getters
+
+    @Test
+    public void getNameWorks(){
+        ShopItem item = new ShopItem("name", 4, "kg");
+        assertThat(item.getName(), is("name"));
+    }
+
+    @Test
+    public void getQuantityWorks(){
+        ShopItem item = new ShopItem("name", 4, "kg");
+        assertThat(item.getQuantity(), is(4));
+    }
+
+    @Test
+    public void getUnitWorks(){
+        ShopItem item = new ShopItem("name", 4, "kg");
+        assertThat(item.getUnit(), is("kg"));
+    }
+
+    @Test
+    public void isPickedUpIsFalseOnInit(){
+        ShopItem item = new ShopItem("name", 4, "kg");
+        assertThat(item.isPickedUp(), is(false));
+    }
+
+    @Test
+    public void toStringPrintsCorrectly(){
+        ShopItem item = new ShopItem("name", 4, "kg");
+        assertThat(item.toString(), is("name : 4kg"));
+    }
+
 }
