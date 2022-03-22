@@ -37,6 +37,7 @@ public class MainScreenActivity extends AppCompatActivity {
     private DocumentReference currentHouse;
     private EventsAdapter calendarAdapter;
     private RecyclerView calendarEvents;
+    private boolean isChoresList = true;
 
     @SuppressLint("NotifyDataSetChanged")
     @Override
@@ -160,15 +161,22 @@ public class MainScreenActivity extends AppCompatActivity {
     }
 
     public void rotateLists(View view){
+        if(isChoresList){
+            ShopList shopList = new ShopList(new DummyUser("John", "uid"), "TestShopList");
+            shopList.addItem(new ShopItem("Eggs", 4, ""));
+            shopList.addItem(new ShopItem("Flour", 2, "kg"));
+            shopList.addItem(new ShopItem("Raclette", 3, "tons"));
 
-        ShopList shopList = new ShopList(new DummyUser("John", "uid"), "TestShopList");
-        shopList.addItem(new ShopItem("Eggs", 4, ""));
-        shopList.addItem(new ShopItem("Flour", 2, "kg"));
-        shopList.addItem(new ShopItem("Raclette", 3, "tons"));
+            ShopListAdapter itemAdapter = new ShopListAdapter(shopList);
+            RecyclerView rView = findViewById(R.id.task_list);
+            rView.setAdapter(itemAdapter);
+            rView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
+            isChoresList = false;
+        }
+        else {
+            setUpTaskList();
+            isChoresList = true;
+        }
 
-        ShopListAdapter itemAdapter = new ShopListAdapter(shopList);
-        RecyclerView rView = findViewById(R.id.task_list);
-        rView.setAdapter(itemAdapter);
-        rView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
     }
 }
