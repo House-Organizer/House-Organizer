@@ -1,5 +1,6 @@
 package com.github.houseorganizer.houseorganizer;
 
+
 import static androidx.test.espresso.Espresso.onView;
 import static androidx.test.espresso.assertion.ViewAssertions.matches;
 import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
@@ -31,13 +32,13 @@ public class LoginActivityTest {
     }
 
     // Test that when the sign in button is clicked an intent is fired
-    /*@Test
+    @Test
     public void clickSignInButtonFiresIntent() {
         Intents.init();
         onView(withId(R.id.google_sign_in_button)).perform(click());
         intended(toPackage("com.github.houseorganizer.houseorganizer"));
         Intents.release();
-    }*/
+    }
 
     /* Discover button */
     @Test

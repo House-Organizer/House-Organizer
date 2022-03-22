@@ -46,6 +46,15 @@ public class LoginActivity extends AppCompatActivity {
         findViewById(R.id.google_sign_in_button).setOnClickListener(
                 v -> googleSignInResultLauncher.launch(new Intent(mGoogleSignInClient.getSignInIntent()))
         );
+
+      // If a sign out has been requested, sign out the current user
+        if(getIntent().hasExtra(getString(R.string.signout_intent))){
+            mAuth.signOut();
+            mGoogleSignInClient.signOut().addOnCompleteListener(this, l ->
+                    activateSignInButton());
+        } else{
+            activateSignInButton();
+        }
     }
 
     ActivityResultLauncher<Intent> googleSignInResultLauncher = registerForActivityResult(
@@ -74,6 +83,14 @@ public class LoginActivity extends AppCompatActivity {
                 }
             }
     );
+
+    /**
+     *  Activate the Google Sign-In button for the user to authenticate
+     */
+    private void activateSignInButton(){
+        findViewById(R.id.google_sign_in_button).setOnClickListener(
+                v -> googleSignInResultLauncher.launch(new Intent(mGoogleSignInClient.getSignInIntent())));
+    }
 
     private void firebaseAuthWithGoogle(String idToken) {
         AuthCredential credential = GoogleAuthProvider.getCredential(idToken, null);
