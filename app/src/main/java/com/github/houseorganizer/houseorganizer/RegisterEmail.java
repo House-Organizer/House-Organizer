@@ -11,12 +11,14 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.firebase.auth.FirebaseAuth;
 
+import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class RegisterEmail extends AppCompatActivity {
 
     private FirebaseAuth mAuth;
+    private boolean isEmailAlreadyUsed = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,19 +37,36 @@ public class RegisterEmail extends AppCompatActivity {
     private boolean isValidEmail() {
         EditText email_field = findViewById(R.id.reg_enter_email);
         String email = email_field.getText().toString();
+        TextView error_message = findViewById(R.id.reg_email_error_message);
 
         // Regex to check valid email.
         String regex = "^[\\w!#$%&'*+/=?`{|}~^-]+(?:\\.[\\w!#$%&'*+/=?`{|}~^-]+)*@(?:[a-zA-Z0-9-]+\\.)+[a-zA-Z]{2,6}$";
         Pattern p = Pattern.compile(regex);
         Matcher m = p.matcher(email);
 
-        if (m.matches()) {
+        checkIfEmailIsAlreadyUsed(email);
+
+        if (m.matches() && !isEmailAlreadyUsed) {
             return true;
+        } else if (isEmailAlreadyUsed) {
+            error_message.setText(R.string.email_already_used);
+            return false;
         } else {
-            TextView error_message = findViewById(R.id.reg_email_error_message);
             error_message.setText(R.string.email_not_valid);
             return false;
         }
+    }
+
+    // Returns true if email address is in use.
+    private void checkIfEmailIsAlreadyUsed(String emailAddress) {
+        mAuth.fetchSignInMethodsForEmail(emailAddress)
+                .addOnCompleteListener(this, task -> {
+                    if (task.isSuccessful()) {
+                        if (!Objects.requireNonNull(task.getResult().getSignInMethods()).isEmpty()) {
+                            isEmailAlreadyUsed = true;
+                        }
+                    }
+                });
     }
 
     private boolean isValidPassword() {
