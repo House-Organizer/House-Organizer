@@ -1,0 +1,31 @@
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <PreferenceCategory app:title="@string/general_header">
+
+        <EditTextPreference
+            android:id="@+id/name_chosen"
+            app:key="signature"
+            app:title="@string/signature_title"
+            app:useSimpleSummaryProvider="true" />
+
+        <SwitchPreference
+            android:id="@+id/dark_mode_switch"
+            android:defaultValue="false"
+            android:key="switch_preference_1"
+            android:title="@string/dark_mode_title" />
+
+    </PreferenceCategory>
+
+    <PreferenceCategory app:title="@string/cache_header">
+
+        <SwitchPreferenceCompat
+            android:id="@+id/cache_attachments"
+            app:key="attachment"
+            app:summaryOff="@string/attachment_summary_off"
+            app:summaryOn="@string/attachment_summary_on"
+            app:title="@string/attachment_title" />
+
+    </PreferenceCategory>
+
+</PreferenceScreen>

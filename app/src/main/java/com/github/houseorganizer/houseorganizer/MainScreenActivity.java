@@ -24,6 +24,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
+import java.util.Arrays;
+
 @SuppressWarnings("unused")
 public class MainScreenActivity extends AppCompatActivity {
 
@@ -56,11 +58,14 @@ public class MainScreenActivity extends AppCompatActivity {
         findViewById(R.id.calendar_view_change).setOnClickListener(this::rotateView);
         findViewById(R.id.add_event).setOnClickListener(this::addEvent);
         findViewById(R.id.refresh_calendar).setOnClickListener(this::refreshCalendar);
+
+        setUpTaskList();
     }
 
     private void signOut(View v) {
-        mAuth.signOut();
-        startActivity(new Intent(this, LoginActivity.class));
+        Intent intent = new Intent(this, LoginActivity.class);
+        intent.putExtra(getString(R.string.signout_intent), true);
+        startActivity(intent);
         finish();
     }
 
@@ -115,8 +120,26 @@ public class MainScreenActivity extends AppCompatActivity {
                         Toast.makeText(v.getContext(), v.getContext().getString(R.string.refresh_fail), Toast.LENGTH_SHORT).show();
                     }
                 });
+
     }
 
+    private void setUpTaskList() {
+        User owner = new DummyUser("Test User", "0");
+
+        Task t = new Task(owner, "Clean the kitchen counter", "scrub off all the grease marks!");
+        Task t2 = new Task(owner, "Stop by the post office", "send a postcard to Julia");
+        Task t3 = new Task(owner, "Catch up on lecture notes", "midterm on wednesday!!");
+        Task t4 = new Task(owner, "Fix the light bulb", "drop by the supermarket first");
+        Task t5 = new Task(owner, "Pick a gift for Jenny", "she likes bath bombs => check out Lush");
+
+        TaskList taskList = new TaskList(owner, "My weekly todo", Arrays.asList(t, t2, t3, t4, t5));
+
+        RecyclerView taskListView = findViewById(R.id.task_list);
+        TaskListAdapter taskListAdapter = new TaskListAdapter(taskList);
+
+        taskListView.setAdapter(taskListAdapter);
+        taskListView.setLayoutManager(new GridLayoutManager(this, 1));
+    }
 
     @SuppressWarnings("unused")
     public void houseButtonPressed(View view) {
@@ -125,9 +148,8 @@ public class MainScreenActivity extends AppCompatActivity {
     }
 
     public void settingsButtonPressed(View view) {
-        TextView text = findViewById(R.id.last_button_activated);
-        String s = "Settings button pressed";
-        text.setText(s);
+        Intent intent = new Intent(this, SettingsActivity.class);
+        startActivity(intent);
     }
 
     public void infoButtonPressed(@SuppressWarnings("unused") View view) {
