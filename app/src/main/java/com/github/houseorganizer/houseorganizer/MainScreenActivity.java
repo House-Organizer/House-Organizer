@@ -52,6 +52,23 @@ public class MainScreenActivity extends AppCompatActivity {
         mUser = mAuth.getCurrentUser();
         db = FirebaseFirestore.getInstance();
 
+        getCurrentHousehold();
+
+        calendarEvents = findViewById(R.id.calendar);
+        calendar = new Calendar();
+        calendarAdapter = new EventsAdapter(calendar);
+        calendarEvents.setAdapter(calendarAdapter);
+        calendarEvents.setLayoutManager(new GridLayoutManager(this, calendarColumns));
+
+        findViewById(R.id.sign_out_button).setOnClickListener(this::signOut);
+        findViewById(R.id.calendar_view_change).setOnClickListener(this::rotateView);
+        findViewById(R.id.add_event).setOnClickListener(this::addEvent);
+        findViewById(R.id.refresh_calendar).setOnClickListener(this::refreshCalendar);
+
+        setUpTaskList();
+    }
+
+    private void getCurrentHousehold(){
         Intent intent = getIntent();
         String householdId = intent.getStringExtra(HOUSEHOLD);
         TextView text = findViewById(R.id.last_button_activated);
@@ -82,19 +99,6 @@ public class MainScreenActivity extends AppCompatActivity {
                         }
                     });
         }
-
-        calendarEvents = findViewById(R.id.calendar);
-        calendar = new Calendar();
-        calendarAdapter = new EventsAdapter(calendar);
-        calendarEvents.setAdapter(calendarAdapter);
-        calendarEvents.setLayoutManager(new GridLayoutManager(this, calendarColumns));
-
-        findViewById(R.id.sign_out_button).setOnClickListener(this::signOut);
-        findViewById(R.id.calendar_view_change).setOnClickListener(this::rotateView);
-        findViewById(R.id.add_event).setOnClickListener(this::addEvent);
-        findViewById(R.id.refresh_calendar).setOnClickListener(this::refreshCalendar);
-
-        setUpTaskList();
     }
 
     private void signOut(View v) {
