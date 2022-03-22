@@ -36,4 +36,7 @@
     <string name="refresh">Refresh</string>
     <string name="refresh_success">Refreshed!</string>
     <string name="refresh_fail">Could not refresh.</string>
+    <string name="tag_login_activity">LoginActivity</string>
+    <string name="tag_register_email">RegisterEmail</string>
+    <string name="tag_login_email">LoginEmail</string>
 </resources>

@@ -12,11 +12,9 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.firebase.auth.FirebaseAuth;
 
-public class LoginEmail extends AppCompatActivity implements View.OnClickListener {
+public class LoginEmail extends AppCompatActivity {
 
     private FirebaseAuth mAuth;
-
-    private final String TAG = "LoginEmail";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -25,21 +23,14 @@ public class LoginEmail extends AppCompatActivity implements View.OnClickListene
 
         mAuth = FirebaseAuth.getInstance();
 
-        findViewById(R.id.log_email_signin_button).setOnClickListener(this);
-        findViewById(R.id.log_email_register_button).setOnClickListener(this);
-    }
-
-    @SuppressLint("NonConstantResourceId")
-    @Override
-    public void onClick(View v) {
-        switch (v.getId()) {
-            case R.id.log_email_signin_button:
-                if (inputsNotEmpty()) signInWithEmail(v);
-                break;
-            case R.id.log_email_register_button:
-                startActivity(new Intent(LoginEmail.this, RegisterEmail.class));
-                break;
-        }
+        findViewById(R.id.log_email_signin_button).setOnClickListener(
+                v -> {
+                    if (inputsNotEmpty()) signInWithEmail(v);
+                }
+        );
+        findViewById(R.id.log_email_register_button).setOnClickListener(
+                v -> startActivity(new Intent(LoginEmail.this, RegisterEmail.class))
+        );
     }
 
     private boolean inputsNotEmpty() {
@@ -68,12 +59,12 @@ public class LoginEmail extends AppCompatActivity implements View.OnClickListene
                 .addOnCompleteListener(this, task -> {
                     if (task.isSuccessful()) {
                         // Sign in success, update UI with the signed-in user's information
-                        Log.d(TAG, "signInWithEmail:success");
+                        Log.d(getString(R.string.tag_login_email), "signInWithEmail:success");
                         startActivity(new Intent(LoginEmail.this, MainScreenActivity.class));
                         finish();
                     } else {
                         // If sign in fails, display a message to the user.
-                        Log.d(TAG, "signInWithEmail:failure");
+                        Log.d(getString(R.string.tag_login_email), "signInWithEmail:failure");
                         error_message.setText(R.string.log_email_auth_failed);
                     }
                 });

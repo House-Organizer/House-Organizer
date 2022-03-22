@@ -17,7 +17,6 @@ import java.util.regex.Pattern;
 public class RegisterEmail extends AppCompatActivity {
 
     private FirebaseAuth mAuth;
-    private final String TAG = "RegisterEmail";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -87,12 +86,12 @@ public class RegisterEmail extends AppCompatActivity {
                 .addOnCompleteListener(this, task -> {
                     if (task.isSuccessful()) {
                         // Sign in success, update UI with the signed-in user's information
-                        Log.d(TAG, "createUserWithEmail:success");
+                        Log.d(getString(R.string.tag_register_email), "createUserWithEmail:success");
                         startActivity(new Intent(RegisterEmail.this, MainScreenActivity.class));
                         finish();
                     } else {
                         // If sign in fails, display a message to the user.
-                        Log.w(TAG, "createUserWithEmail:failure", task.getException());
+                        Log.w(getString(R.string.tag_register_email), "createUserWithEmail:failure", task.getException());
                         error_message.setText(R.string.reg_email_auth_failed);
                     }
                 });
