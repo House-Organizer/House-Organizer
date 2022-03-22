@@ -43,4 +43,8 @@
     <string name="refresh_success">Refreshed!</string>
     <string name="refresh_fail">Could not refresh.</string>
 
+    <string name="add_household">Add household</string>
+    <string name="add_household_success">Added household!</string>
+    <string name="add_household_failure">Failed to add household!</string>
+    <string name="household_creation_hint">Household name</string>
 </resources>

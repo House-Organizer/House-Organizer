@@ -10,6 +10,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.HouseOrganizer">
         <activity
+            android:name=".CreateHouseholdActivity"
+            android:exported="false" />
+        <activity
             android:name=".SettingsActivity"
             android:exported="false"
             android:parentActivityName=".MainScreenActivity"

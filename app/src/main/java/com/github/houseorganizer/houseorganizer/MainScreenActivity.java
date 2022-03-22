@@ -12,8 +12,8 @@ import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.github.houseorganizer.houseorganizer.Calendar.Event;
-
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
@@ -29,10 +29,15 @@ import java.util.Arrays;
 @SuppressWarnings("unused")
 public class MainScreenActivity extends AppCompatActivity {
 
+    public static final String HOUSEHOLD = "com.github.houseorganizer.houseorganizer.HOUSEHOLD";
+    // For testing purposes
+    public static final String CURRENT_USER = "com.github.houseorganizer.houseorganizer.CURRENT_USER";
+
     private Calendar calendar;
     private int calendarColumns = 1;
     private FirebaseFirestore db;
     private FirebaseAuth mAuth;
+    private FirebaseUser mUser;
     private DocumentReference currentHouse;
     private EventsAdapter calendarAdapter;
     private RecyclerView calendarEvents;
@@ -44,9 +49,10 @@ public class MainScreenActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main_screen);
 
         mAuth = FirebaseAuth.getInstance();
+        mUser = mAuth.getCurrentUser();
         db = FirebaseFirestore.getInstance();
-        // Test household for now because house buttons don't do anything
-        currentHouse = db.document("households/test_house_0");
+
+        getCurrentHousehold();
 
         calendarEvents = findViewById(R.id.calendar);
         calendar = new Calendar();
@@ -60,6 +66,39 @@ public class MainScreenActivity extends AppCompatActivity {
         findViewById(R.id.refresh_calendar).setOnClickListener(this::refreshCalendar);
 
         setUpTaskList();
+    }
+
+    private void getCurrentHousehold(){
+        Intent intent = getIntent();
+        String householdId = intent.getStringExtra(HOUSEHOLD);
+        TextView text = findViewById(R.id.last_button_activated);
+        currentHouse = null;
+
+        if (householdId != null) {
+            currentHouse = db.collection("households").document(householdId);
+            text.setText("currentHouse: " + currentHouse.getId());
+
+        } else {
+            // House by default
+            db.collection("households")
+                    .whereArrayContains("residents", mUser.getUid())
+                    .get()
+                    .addOnCompleteListener(task -> {
+                        if (task.isSuccessful()) {
+                            ArrayList<String> households = new ArrayList<String>();
+                            for (QueryDocumentSnapshot document : task.getResult()) {
+                                String id = document.getId();
+                                households.add(id);
+                            }
+
+                            currentHouse = db.collection("households").document(households.get(0));
+                            text.setText("currentHouse: " + currentHouse.getId() + " by default");
+
+                        } else {
+                            Toast.makeText(getApplicationContext(), "Could not get a house.", Toast.LENGTH_SHORT).show();
+                        }
+                    });
+        }
     }
 
     private void signOut(View v) {
@@ -115,8 +154,7 @@ public class MainScreenActivity extends AppCompatActivity {
                         calendarAdapter.notifyDataSetChanged();
                         calendar.setEvents(newEvents);
                         Toast.makeText(v.getContext(), v.getContext().getString(R.string.refresh_success), Toast.LENGTH_SHORT).show();
-                    }
-                    else {
+                    } else {
                         Toast.makeText(v.getContext(), v.getContext().getString(R.string.refresh_fail), Toast.LENGTH_SHORT).show();
                     }
                 });
@@ -144,6 +182,7 @@ public class MainScreenActivity extends AppCompatActivity {
     @SuppressWarnings("unused")
     public void houseButtonPressed(View view) {
         Intent intent = new Intent(this, HouseSelectionActivity.class);
+        intent.putExtra(CURRENT_USER, mUser.getUid());
         startActivity(intent);
     }
 
@@ -156,5 +195,12 @@ public class MainScreenActivity extends AppCompatActivity {
         TextView text = findViewById(R.id.last_button_activated);
         String s = "Info button pressed";
         text.setText(s);
+    }
+
+    /* TEMPORARILY HERE */
+    public void addHouseholdButtonPressed(View view) {
+        Intent intent = new Intent(this, CreateHouseholdActivity.class);
+        intent.putExtra("Uid", mUser.getUid());
+        startActivity(intent);
     }
 }
