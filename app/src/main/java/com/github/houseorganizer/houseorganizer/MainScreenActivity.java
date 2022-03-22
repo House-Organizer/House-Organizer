@@ -8,6 +8,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.DialogFragment;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -77,21 +78,19 @@ public class MainScreenActivity extends AppCompatActivity {
     }
 
     private void addEvent(View v) {
+        DialogFragment eventCreation = new EventCreationFragment();
+        eventCreation.show(getSupportFragmentManager(), "event_creation");
+        eventCreation
         Map<String, Object> data = new HashMap<>();
-        Event event = new Event("added", "this is the event that i added using the add button", LocalDateTime.now(), 100);
-        data.put("title", "added");
-        data.put("description", "this is the event that i added using the add button");
-        data.put("start", LocalDateTime.now().toEpochSecond(ZoneOffset.UTC));
+        data.put("title", "title");
+        data.put("description", "desc");
+        data.put("start", LocalDateTime.now().plusHours(2).toEpochSecond(ZoneOffset.UTC));
         data.put("duration", 100);
         data.put("household", currentHouse);
-        LocalDateTime.now().toEpochSecond(ZoneOffset.UTC);
         db.collection("events").add(data)
                 .addOnSuccessListener(documentReference -> {
                     Toast.makeText(v.getContext(), v.getContext().getString(R.string.add_success), Toast.LENGTH_SHORT).show();
-                    ArrayList<Event> newEvents = new ArrayList<>(calendar.getEvents());
-                    newEvents.add(event);
-                    calendarAdapter.notifyDataSetChanged();
-                    calendar.setEvents(newEvents);
+                    refreshCalendar(v);
                 })
                 .addOnFailureListener(documentReference -> Toast.makeText(v.getContext(), v.getContext().getString(R.string.add_fail), Toast.LENGTH_SHORT).show());
     }
