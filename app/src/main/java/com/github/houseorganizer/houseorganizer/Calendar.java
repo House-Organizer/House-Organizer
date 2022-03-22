@@ -55,6 +55,7 @@ class Calendar {
         private long duration;
 
         public Event(String title, String description, LocalDateTime start, long duration) {
+
             requireNonNull(title);
             requireNonNull(start);
             this.title = title;
