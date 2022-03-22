@@ -10,12 +10,8 @@ import android.widget.Toast;
 
 import com.google.firebase.firestore.FirebaseFirestore;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 public class CreateHouseholdActivity extends AppCompatActivity {
 
@@ -48,11 +44,11 @@ public class CreateHouseholdActivity extends AppCompatActivity {
         db.collection("households").add(houseHold)
                 .addOnSuccessListener(documentReference -> {
                     Toast.makeText(view.getContext(),
-                                   view.getContext().getString(R.string.add_success),
+                                   view.getContext().getString(R.string.add_household_success),
                                    Toast.LENGTH_SHORT).show();
                 })
                 .addOnFailureListener(documentReference -> Toast.makeText(view.getContext(),
-                                      view.getContext().getString(R.string.add_fail),
+                                      view.getContext().getString(R.string.add_household_failure),
                                       Toast.LENGTH_SHORT).show());
 
         Intent intent = new Intent(this, MainScreenActivity.class);
