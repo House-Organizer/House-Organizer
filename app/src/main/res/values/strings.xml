@@ -44,7 +44,7 @@
     <string name="refresh_calendar_fail">Could not refresh.</string>
     <string name="calendar_upcoming_date">\t On the %1$s.</string>
 
-    <!-- Event creation popup -->
+    <!-- Event creation and information popups -->
     <string name="event_creation_title">Add an event</string>
     <string name="description">Description</string>
     <string name="title">Title</string>
@@ -52,5 +52,10 @@
     <string name="date">Date (dd/MM/yyyy HH:mm)</string>
     <string name="add">Add</string>
     <string name="cancel">Cancel</string>
+    <string name="ok">OK</string>
+    <string name="delete">Delete</string>
+    <string name="edit">Edit</string>
+    <string name="event_editing_title">Edit event</string>
+    <string name="confirm">Confirm</string>
 
 </resources>

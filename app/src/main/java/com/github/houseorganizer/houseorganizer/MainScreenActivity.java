@@ -2,6 +2,7 @@ package com.github.houseorganizer.houseorganizer;
 
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -85,35 +86,37 @@ public class MainScreenActivity extends AppCompatActivity {
     private void addEvent(View v) {
         LayoutInflater inflater = LayoutInflater.from(MainScreenActivity.this);
         final View dialogView = inflater.inflate(R.layout.event_creation, null);
+        new AlertDialog.Builder(MainScreenActivity.this)
+                .setTitle(R.string.event_creation_title)
+                .setView(dialogView)
+                .setPositiveButton(R.string.add, (dialog, id) -> pushEventAndDismiss(dialog, dialogView, v))
+                .setNegativeButton(R.string.cancel, (dialog, id) -> dialog.dismiss())
+                .show();
+    }
+
+    private void pushEventAndDismiss(DialogInterface dialog, View dialogView, View v) {
+        Map<String, Object> data = new HashMap<>();
         final TextView titleField = (EditText) dialogView.findViewById(R.id.new_event_title);
         final TextView descField = (EditText) dialogView.findViewById(R.id.new_event_desc);
         final TextView startField = (EditText) dialogView.findViewById(R.id.new_event_date);
         final TextView durationField = (EditText) dialogView.findViewById(R.id.new_event_duration);
-        AlertDialog.Builder form = new AlertDialog.Builder(MainScreenActivity.this);
-        form.setTitle(R.string.event_creation_title)
-                .setView(dialogView)
-                .setPositiveButton(R.string.add, (dialog, id) -> {
-                    Map<String, Object> data = new HashMap<>();
-                    data.put("title", titleField.getText().toString());
-                    data.put("description", descField.getText().toString());
-                    try {
-                        TemporalAccessor start = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm").parse(startField.getText());
-                        data.put("start", LocalDateTime.from(start).toEpochSecond(ZoneOffset.UTC));
-                        data.put("duration", Integer.valueOf(durationField.getText().toString()));
-                    } catch(Exception e) {
-                        dialog.dismiss();
-                        return;
-                    }
-                    data.put("household", currentHouse);
-                    db.collection("events").add(data)
-                            .addOnSuccessListener(documentReference -> refreshCalendar(v));
-                    dialog.dismiss();
-                })
-                .setNegativeButton(R.string.cancel, (dialog, id) -> dialog.dismiss());
-        form.show();
+        data.put("title", titleField.getText().toString());
+        data.put("description", descField.getText().toString());
+        try {
+            TemporalAccessor start = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm").parse(startField.getText());
+            data.put("start", LocalDateTime.from(start).toEpochSecond(ZoneOffset.UTC));
+            data.put("duration", Integer.valueOf(durationField.getText().toString()));
+        } catch(Exception e) {
+            dialog.dismiss();
+            return;
+        }
+        data.put("household", currentHouse);
+        db.collection("events").add(data)
+                .addOnSuccessListener(documentReference -> refreshCalendar(v));
+        dialog.dismiss();
     }
 
-    private void refreshCalendar(View v) {
+    void refreshCalendar(View v) {
         db.collection("events")
                 .whereEqualTo("household", currentHouse)
                 .get()
@@ -122,11 +125,13 @@ public class MainScreenActivity extends AppCompatActivity {
                         ArrayList<Event> newEvents = new ArrayList<>();
                         for (QueryDocumentSnapshot document : task.getResult()) {
                             // We assume the stored data is well behaved since it got added in a well behaved manner.
+                            System.out.println(document.getId().toString());
                             Event event = new Event(
                                     document.getString("title"),
                                     document.getString("description"),
                                     LocalDateTime.ofEpochSecond(document.getLong("start"), 0, ZoneOffset.UTC),
-                                    document.getLong("duration") == null ? 0 : document.getLong("duration"));
+                                    document.getLong("duration") == null ? 0 : document.getLong("duration"),
+                                    document.getId());
                             newEvents.add(event);
                         }
                         calendarAdapter.notifyDataSetChanged();
