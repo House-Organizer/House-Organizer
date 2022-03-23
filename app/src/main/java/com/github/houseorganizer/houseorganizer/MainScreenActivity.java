@@ -132,6 +132,9 @@ public class MainScreenActivity extends AppCompatActivity {
         Task t4 = new Task(owner, "Fix the light bulb", "drop by the supermarket first");
         Task t5 = new Task(owner, "Pick a gift for Jenny", "she likes bath bombs => check out Lush");
 
+        t.addSubTask(new Task.SubTask("do the dishes"));
+        t.addSubTask(new Task.SubTask("swipe the floor"));
+
         TaskList taskList = new TaskList(owner, "My weekly todo", Arrays.asList(t, t2, t3, t4, t5));
 
         RecyclerView taskListView = findViewById(R.id.task_list);

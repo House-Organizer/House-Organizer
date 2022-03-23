@@ -5,17 +5,17 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.EditText;
 
 import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 public class TaskListAdapter extends RecyclerView.Adapter<BiViewHolder<Button, Button>> {
     private final TaskList taskList;
-    private Task selectedTask;
 
     public TaskListAdapter(TaskList taskList) {
         this.taskList     = taskList;
-        this.selectedTask = null;
     }
 
     @NonNull
@@ -34,15 +34,40 @@ public class TaskListAdapter extends RecyclerView.Adapter<BiViewHolder<Button, B
 
         titleButton.setText(taskList.getTaskAt(position).getTitle());
 
+        // todo: modify due date
         titleButton.setOnClickListener(
                 v -> {
                     Task t = taskList.getTaskAt(position);
 
-                    new AlertDialog.Builder(v.getContext())
-                            .setTitle(t.getTitle())
-                            .setMessage(String.format("Description: %s\nOwner: %s\nStatus: %s\n",
-                                        t.getDescription(), t.getOwner().name(), t.isFinished() ? "Done" : "Ongoing"))
+                    LayoutInflater inflater = LayoutInflater.from(v.getContext());
+
+                    View taskEditor = inflater.inflate(R.layout.task_editor, null);
+
+                    /* Task name & description fully customizable now */
+                    EditText taskNameEditor = taskEditor.findViewById(R.id.task_title_input);
+                    EditText taskDescEditor = taskEditor.findViewById(R.id.task_description_input);
+                    TaskView.setUpTaskView(t, taskNameEditor, taskDescEditor, titleButton);
+
+                    /* Initialize RecyclerView for subtasks */
+                    RecyclerView subTaskView = taskEditor.findViewById(R.id.subtask_list);
+                    SubTaskAdapter subTaskAdapter = new SubTaskAdapter(t);
+
+                    subTaskView.setAdapter(subTaskAdapter);
+                    subTaskView.setLayoutManager(new GridLayoutManager(v.getContext(), 1));
+
+                    final AlertDialog alertDialog
+                            = new AlertDialog.Builder(v.getContext())
+                            .setNeutralButton("Add subtask", null)
+                            .setView(taskEditor)
                             .show();
+
+                    // Patch s.t. the alert dialog window doesn't close
+                    // after pressing `Add subtask`
+                    alertDialog.getButton(AlertDialog.BUTTON_NEUTRAL).setOnClickListener(
+                            dialog -> {
+                                t.addSubTask(new Task.SubTask(""));
+                                subTaskAdapter.notifyItemInserted(getItemCount() - 1);
+                            });
                 }
         );
 
@@ -53,6 +78,8 @@ public class TaskListAdapter extends RecyclerView.Adapter<BiViewHolder<Button, B
                             .setTitle("Congratulations!")
                             .setMessage("You just completed a task. Keep it up!")
                             .show();
+
+                    // todo: remove finished tasks from view
                 }
         );
     }
