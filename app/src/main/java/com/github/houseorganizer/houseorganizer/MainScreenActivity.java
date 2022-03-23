@@ -91,6 +91,11 @@ public class MainScreenActivity extends AppCompatActivity {
                                 households.add(id);
                             }
 
+                            if (households.isEmpty()) {
+                                Intent intentCreate = new Intent(this, CreateHouseholdActivity.class);
+                                startActivity(intentCreate);
+                            }
+
                             currentHouse = db.collection("households").document(households.get(0));
                             text.setText("currentHouse: " + currentHouse.getId() + " by default");
 
