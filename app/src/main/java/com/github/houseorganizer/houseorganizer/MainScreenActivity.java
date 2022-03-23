@@ -1,14 +1,16 @@
 package com.github.houseorganizer.houseorganizer;
 
 import android.annotation.SuppressLint;
+import android.app.AlertDialog;
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.fragment.app.DialogFragment;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -21,6 +23,9 @@ import com.google.firebase.firestore.QueryDocumentSnapshot;
 
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
+import java.time.temporal.TemporalAccessor;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -78,21 +83,34 @@ public class MainScreenActivity extends AppCompatActivity {
     }
 
     private void addEvent(View v) {
-        DialogFragment eventCreation = new EventCreationFragment();
-        eventCreation.show(getSupportFragmentManager(), "event_creation");
-        eventCreation
-        Map<String, Object> data = new HashMap<>();
-        data.put("title", "title");
-        data.put("description", "desc");
-        data.put("start", LocalDateTime.now().plusHours(2).toEpochSecond(ZoneOffset.UTC));
-        data.put("duration", 100);
-        data.put("household", currentHouse);
-        db.collection("events").add(data)
-                .addOnSuccessListener(documentReference -> {
-                    Toast.makeText(v.getContext(), v.getContext().getString(R.string.add_success), Toast.LENGTH_SHORT).show();
-                    refreshCalendar(v);
+        LayoutInflater inflater = LayoutInflater.from(MainScreenActivity.this);
+        final View dialogView = inflater.inflate(R.layout.event_creation, null);
+        final TextView titleField = (EditText) dialogView.findViewById(R.id.new_event_title);
+        final TextView descField = (EditText) dialogView.findViewById(R.id.new_event_desc);
+        final TextView startField = (EditText) dialogView.findViewById(R.id.new_event_date);
+        final TextView durationField = (EditText) dialogView.findViewById(R.id.new_event_duration);
+        AlertDialog.Builder form = new AlertDialog.Builder(MainScreenActivity.this);
+        form.setTitle(R.string.event_creation_title)
+                .setView(dialogView)
+                .setPositiveButton(R.string.add, (dialog, id) -> {
+                    Map<String, Object> data = new HashMap<>();
+                    data.put("title", titleField.getText().toString());
+                    data.put("description", descField.getText().toString());
+                    try {
+                        TemporalAccessor start = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm").parse(startField.getText());
+                        data.put("start", LocalDateTime.from(start).toEpochSecond(ZoneOffset.UTC));
+                        data.put("duration", Integer.valueOf(durationField.getText().toString()));
+                    } catch(Exception e) {
+                        dialog.dismiss();
+                        return;
+                    }
+                    data.put("household", currentHouse);
+                    db.collection("events").add(data)
+                            .addOnSuccessListener(documentReference -> refreshCalendar(v));
+                    dialog.dismiss();
                 })
-                .addOnFailureListener(documentReference -> Toast.makeText(v.getContext(), v.getContext().getString(R.string.add_fail), Toast.LENGTH_SHORT).show());
+                .setNegativeButton(R.string.cancel, (dialog, id) -> dialog.dismiss());
+        form.show();
     }
 
     private void refreshCalendar(View v) {
@@ -113,10 +131,10 @@ public class MainScreenActivity extends AppCompatActivity {
                         }
                         calendarAdapter.notifyDataSetChanged();
                         calendar.setEvents(newEvents);
-                        Toast.makeText(v.getContext(), v.getContext().getString(R.string.refresh_success), Toast.LENGTH_SHORT).show();
+                        Toast.makeText(v.getContext(), v.getContext().getString(R.string.refresh_calendar_success), Toast.LENGTH_SHORT).show();
                     }
                     else {
-                        Toast.makeText(v.getContext(), v.getContext().getString(R.string.refresh_fail), Toast.LENGTH_SHORT).show();
+                        Toast.makeText(v.getContext(), v.getContext().getString(R.string.refresh_calendar_fail), Toast.LENGTH_SHORT).show();
                     }
                 });
 
@@ -156,4 +174,5 @@ public class MainScreenActivity extends AppCompatActivity {
         String s = "Info button pressed";
         text.setText(s);
     }
+
 }

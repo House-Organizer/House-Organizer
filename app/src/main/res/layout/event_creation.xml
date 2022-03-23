@@ -28,7 +28,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:ems="10"
-        android:inputType="date"
+        android:inputType="datetime"
         android:text="@string/date"
         android:textColor="#7A7A7A" />
 

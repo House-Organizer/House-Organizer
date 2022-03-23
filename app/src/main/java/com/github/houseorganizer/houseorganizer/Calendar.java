@@ -51,7 +51,7 @@ class Calendar {
         private  String title;
         private String description;
         private LocalDateTime start;
-        // Duration of the event in seconds
+        // Duration of the event in minutes
         private long duration;
 
         public Event(String title, String description, LocalDateTime start, long duration) {
