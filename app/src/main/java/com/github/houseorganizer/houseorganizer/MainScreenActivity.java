@@ -138,7 +138,12 @@ public class MainScreenActivity extends AppCompatActivity {
         final String desc = ((EditText) dialogView.findViewById(R.id.new_event_desc)).getText().toString();
         final String date = ((EditText) dialogView.findViewById(R.id.new_event_date)).getText().toString();
         final String duration = ((EditText) dialogView.findViewById(R.id.new_event_duration)).getText().toString();
-        if (Util.putEventStringsInData(title, desc, date, duration, data)) {
+        Map<String, String> event = new HashMap<>();
+        event.put("title", title);
+        event.put("desc", desc);
+        event.put("date", date);
+        event.put("duration", duration);
+        if (Util.putEventStringsInData(event, data)) {
             dialog.dismiss();
             return;
         }
