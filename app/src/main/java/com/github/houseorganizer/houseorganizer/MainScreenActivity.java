@@ -29,7 +29,7 @@ import java.util.Arrays;
 @SuppressWarnings("unused")
 public class MainScreenActivity extends AppCompatActivity {
 
-    public static final String HOUSEHOLD = "com.github.houseorganizer.houseorganizer.HOUSEHOLD";
+    public static final String CURRENT_HOUSEHOLD = "com.github.houseorganizer.houseorganizer.HOUSEHOLD";
     // For testing purposes
     public static final String CURRENT_USER = "com.github.houseorganizer.houseorganizer.CURRENT_USER";
 
@@ -70,7 +70,7 @@ public class MainScreenActivity extends AppCompatActivity {
 
     private void getCurrentHousehold(){
         Intent intent = getIntent();
-        String householdId = intent.getStringExtra(HOUSEHOLD);
+        String householdId = intent.getStringExtra(CURRENT_HOUSEHOLD);
         TextView text = findViewById(R.id.last_button_activated);
         currentHouse = null;
 

@@ -43,10 +43,8 @@ public class HouseAdapter extends RecyclerView.Adapter<BiViewHolder<ImageView, T
 
     /*
     public static class HouseHolder extends RecyclerView.ViewHolder {
-
         final TextView houseName;
         final ImageView houseImage;
-
         public HouseHolder(@NonNull View itemView) {
             super(itemView);
             houseName = itemView.findViewById(R.id.houseName);

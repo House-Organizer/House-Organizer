@@ -10,13 +10,17 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.HouseOrganizer">
         <activity
+            android:name=".EditHousehold"
+            android:exported="false"
+            android:parentActivityName=".CreateHouseholdActivity"/>
+        <activity
             android:name=".CreateHouseholdActivity"
-            android:exported="false" />
+            android:exported="false"/>
         <activity
             android:name=".SettingsActivity"
             android:exported="false"
-            android:parentActivityName=".MainScreenActivity"
-            android:label="@string/title_activity_settings" />
+            android:label="@string/title_activity_settings"
+            android:parentActivityName=".MainScreenActivity" />
         <activity
             android:name=".LoginActivity"
             android:exported="false" />

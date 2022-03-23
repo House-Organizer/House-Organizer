@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -18,6 +19,9 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
 
 public class HouseSelectionActivity extends AppCompatActivity {
+
+    public static final String CURRENT_HOUSEHOLD = "com.github.houseorganizer.houseorganizer.HOUSEHOLD";
+
     RecyclerView housesView;
     FirebaseFirestore firestore;
     String uidUser;
@@ -49,6 +53,7 @@ public class HouseSelectionActivity extends AppCompatActivity {
             protected void onBindViewHolder(@NonNull HouseViewHolder holder, int position, @NonNull HouseModel model) {
                 holder.houseName.setText(model.getName());
                 holder.houseName.setTag(adapter.getSnapshots().getSnapshot(position).getId());
+                holder.editButton.setTag(adapter.getSnapshots().getSnapshot(position).getId());
             }
         };
 
@@ -60,16 +65,24 @@ public class HouseSelectionActivity extends AppCompatActivity {
     @SuppressWarnings("unused")
     public void houseSelected(View view) {
         Intent intent = new Intent(this, MainScreenActivity.class);
-        intent.putExtra(MainScreenActivity.HOUSEHOLD, view.getTag().toString());
+        intent.putExtra(MainScreenActivity.CURRENT_HOUSEHOLD, view.getTag().toString());
         startActivity(intent);
     }
 
-    private static class HouseViewHolder extends RecyclerView.ViewHolder {
+    public void editHousehold(View view) {
+        Intent intent = new Intent(this, EditHousehold.class);
+        intent.putExtra(MainScreenActivity.CURRENT_HOUSEHOLD, view.getTag().toString());
+        startActivity(intent);
+    }
+
+    private class HouseViewHolder extends RecyclerView.ViewHolder {
         TextView houseName;
+        ImageButton editButton;
 
         public HouseViewHolder(@NonNull View itemView) {
             super(itemView);
             houseName = itemView.findViewById(R.id.houseName);
+            editButton = itemView.findViewById(R.id.editButton);
         }
     }
 

@@ -19,7 +19,11 @@
     <string name="img_house_row_desc">Image for the given house name</string>
     <string name="home_logo">Home Logo</string>
     <string name="sign_out">Sign Out</string>
-  
+    <string name="user_name">User name</string>
+    <string name="edit_button_description">Press to edit the household</string>
+    <string name="confirm_button">Confirm changes</string>
+    <string name="edit_title">Household</string>
+
     <string name="title_activity_settings">Settings</string>
 
     <!-- Preference Titles -->
