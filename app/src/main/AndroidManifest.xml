@@ -10,9 +10,12 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.HouseOrganizer">
         <activity
+            android:name=".VerifyEmail"
+            android:exported="false" />
+        <activity
             android:name=".RegisterEmail"
             android:exported="false" />
-      <activity
+        <activity
             android:name=".CreateHouseholdActivity"
             android:exported="false" />
         <activity
