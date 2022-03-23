@@ -16,6 +16,7 @@ import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.github.houseorganizer.houseorganizer.Calendar.Event;
+import com.github.houseorganizer.houseorganizer.util.Util;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
@@ -42,7 +43,6 @@ public class MainScreenActivity extends AppCompatActivity {
     private Calendar calendar;
     private int calendarColumns = 1;
     private FirebaseFirestore db;
-    private FirebaseAuth mAuth;
     private FirebaseUser mUser;
     private DocumentReference currentHouse;
     private EventsAdapter calendarAdapter;
@@ -55,7 +55,6 @@ public class MainScreenActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main_screen);
 
         FirebaseAuth mAuth = FirebaseAuth.getInstance();
-        mAuth = FirebaseAuth.getInstance();
         mUser = mAuth.getCurrentUser();
         db = FirebaseFirestore.getInstance();
 
@@ -135,17 +134,11 @@ public class MainScreenActivity extends AppCompatActivity {
 
     private void pushEventAndDismiss(DialogInterface dialog, View dialogView, View v) {
         Map<String, Object> data = new HashMap<>();
-        final TextView titleField = (EditText) dialogView.findViewById(R.id.new_event_title);
-        final TextView descField = (EditText) dialogView.findViewById(R.id.new_event_desc);
-        final TextView startField = (EditText) dialogView.findViewById(R.id.new_event_date);
-        final TextView durationField = (EditText) dialogView.findViewById(R.id.new_event_duration);
-        data.put("title", titleField.getText().toString());
-        data.put("description", descField.getText().toString());
-        try {
-            TemporalAccessor start = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm").parse(startField.getText());
-            data.put("start", LocalDateTime.from(start).toEpochSecond(ZoneOffset.UTC));
-            data.put("duration", Integer.valueOf(durationField.getText().toString()));
-        } catch(Exception e) {
+        final String title = ((EditText) dialogView.findViewById(R.id.new_event_title)).getText().toString();
+        final String desc = ((EditText) dialogView.findViewById(R.id.new_event_desc)).getText().toString();
+        final String date = ((EditText) dialogView.findViewById(R.id.new_event_date)).getText().toString();
+        final String duration = ((EditText) dialogView.findViewById(R.id.new_event_duration)).getText().toString();
+        if (Util.putEventStringsInData(title, desc, date, duration, data)) {
             dialog.dismiss();
             return;
         }

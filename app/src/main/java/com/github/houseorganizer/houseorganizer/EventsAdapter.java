@@ -14,17 +14,15 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.YearMonth;
-import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
-import java.time.temporal.TemporalAccessor;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 
 import com.github.houseorganizer.houseorganizer.Calendar.*;
 
+import com.github.houseorganizer.houseorganizer.util.Util;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.SetOptions;
 
@@ -129,17 +127,11 @@ public class EventsAdapter extends RecyclerView.Adapter<EventsAdapter.ViewHolder
 
     private void editEventAndDismiss(String eventId, DialogInterface editForm, View dialogView, FirebaseFirestore db) {
         Map<String, Object> data = new HashMap<>();
-        final TextView titleField = (EditText) dialogView.findViewById(R.id.new_event_title);
-        final TextView descField = (EditText) dialogView.findViewById(R.id.new_event_desc);
-        final TextView startField = (EditText) dialogView.findViewById(R.id.new_event_date);
-        final TextView durationField = (EditText) dialogView.findViewById(R.id.new_event_duration);
-        data.put("title", titleField.getText().toString());
-        data.put("description", descField.getText().toString());
-        try {
-            TemporalAccessor start = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm").parse(startField.getText());
-            data.put("start", LocalDateTime.from(start).toEpochSecond(ZoneOffset.UTC));
-            data.put("duration", Integer.valueOf(durationField.getText().toString()));
-        } catch(Exception e) {
+        final String title = ((EditText) dialogView.findViewById(R.id.new_event_title)).getText().toString();
+        final String desc = ((EditText) dialogView.findViewById(R.id.new_event_desc)).getText().toString();
+        final String date = ((EditText) dialogView.findViewById(R.id.new_event_date)).getText().toString();
+        final String duration = ((EditText) dialogView.findViewById(R.id.new_event_duration)).getText().toString();
+        if (Util.putEventStringsInData(title, desc, date, duration, data)) {
             editForm.dismiss();
             return;
         }
