@@ -6,10 +6,12 @@ import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 
 import java.util.Objects;
 import java.util.regex.Matcher;
@@ -104,9 +106,24 @@ public class RegisterEmail extends AppCompatActivity {
         mAuth.createUserWithEmailAndPassword(email, password)
                 .addOnCompleteListener(this, task -> {
                     if (task.isSuccessful()) {
+                        FirebaseUser user = mAuth.getCurrentUser();
                         // Sign in success, update UI with the signed-in user's information
                         Log.d(getString(R.string.tag_register_email), "createUserWithEmail:success");
-                        startActivity(new Intent(RegisterEmail.this, MainScreenActivity.class));
+                        if (user != null) {
+                            user.sendEmailVerification()
+                                    .addOnCompleteListener(this, task1 -> {
+                                        if (task.isSuccessful()) {
+                                            Toast.makeText(RegisterEmail.this,
+                                                    "Verification email sent to " + user.getEmail(),
+                                                    Toast.LENGTH_SHORT).show();
+                                        } else {
+                                            Log.e(getString(R.string.tag_register_email), "sendEmailVerification", task.getException());
+                                            Toast.makeText(RegisterEmail.this, "Failed to send verification email.",
+                                                    Toast.LENGTH_SHORT).show();
+                                        }
+                                    });
+                        }
+                        startActivity(new Intent(RegisterEmail.this, VerifyEmail.class));
                         finish();
                     } else {
                         // If sign in fails, display a message to the user.

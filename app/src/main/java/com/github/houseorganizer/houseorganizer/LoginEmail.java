@@ -11,6 +11,8 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.firebase.auth.FirebaseAuth;
 
+import java.util.Objects;
+
 public class LoginEmail extends AppCompatActivity {
 
     private FirebaseAuth mAuth;
@@ -59,7 +61,12 @@ public class LoginEmail extends AppCompatActivity {
                     if (task.isSuccessful()) {
                         // Sign in success, update UI with the signed-in user's information
                         Log.d(getString(R.string.tag_login_email), "signInWithEmail:success");
-                        startActivity(new Intent(LoginEmail.this, MainScreenActivity.class));
+                        if (Objects.requireNonNull(mAuth.getCurrentUser()).isEmailVerified()) {
+                            startActivity(new Intent(LoginEmail.this, MainScreenActivity.class));
+                        } else {
+                            startActivity(new Intent(LoginEmail.this, VerifyEmail.class));
+                        }
+
                         finish();
                     } else {
                         // If sign in fails, display a message to the user.
