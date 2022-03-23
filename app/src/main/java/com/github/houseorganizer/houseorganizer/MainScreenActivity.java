@@ -70,7 +70,7 @@ public class MainScreenActivity extends AppCompatActivity {
         findViewById(R.id.calendar_view_change).setOnClickListener(this::rotateView);
         findViewById(R.id.add_event).setOnClickListener(this::addEvent);
         findViewById(R.id.refresh_calendar).setOnClickListener(this::refreshCalendar);
-
+        refreshCalendar(findViewById(R.id.calendar));
         setUpTaskList();
     }
 
@@ -157,6 +157,7 @@ public class MainScreenActivity extends AppCompatActivity {
     void refreshCalendar(View v) {
         db.collection("events")
                 .whereEqualTo("household", currentHouse)
+                .whereGreaterThan("start", LocalDateTime.now().toEpochSecond(ZoneOffset.UTC))
                 .get()
                 .addOnCompleteListener(task -> {
                     if (task.isSuccessful()) {
