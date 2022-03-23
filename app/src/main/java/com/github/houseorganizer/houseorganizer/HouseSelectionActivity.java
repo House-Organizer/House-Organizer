@@ -38,9 +38,7 @@ public class HouseSelectionActivity extends AppCompatActivity {
         firestore = FirebaseFirestore.getInstance();
         Query query = firestore.collection("households").whereArrayContains("residents", uidUser);
         FirestoreRecyclerOptions<HouseModel> options = new FirestoreRecyclerOptions.Builder<HouseModel>()
-                .setQuery(query, HouseModel.class)
-                .build();
-
+                .setQuery(query, HouseModel.class).build();
         adapter = new FirestoreRecyclerAdapter<HouseModel, HouseViewHolder>(options) {
             @NonNull
             @Override
