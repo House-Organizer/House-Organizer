@@ -10,6 +10,12 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.HouseOrganizer">
         <activity
+            android:name=".RegisterEmail"
+            android:exported="false" />
+      <activity
+            android:name=".CreateHouseholdActivity"
+            android:exported="false" />
+        <activity
             android:name=".SettingsActivity"
             android:exported="false"
             android:parentActivityName=".MainScreenActivity"
@@ -23,6 +29,9 @@
             android:parentActivityName=".MainScreenActivity" />
         <activity
             android:name=".MainScreenActivity"
+            android:exported="false" />
+        <activity
+            android:name=".LoginEmail"
             android:exported="false" />
         <activity
             android:name=".MainActivity"

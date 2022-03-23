@@ -1,5 +1,5 @@
 package com.github.houseorganizer.houseorganizer;
-
+/*
 import static androidx.test.espresso.Espresso.onView;
 import static androidx.test.espresso.action.ViewActions.click;
 import static androidx.test.espresso.assertion.ViewAssertions.matches;
@@ -37,6 +37,7 @@ import java.time.YearMonth;
 
 @RunWith(AndroidJUnit4.class)
 public class MainScreenActivityTest {
+
     @Rule
     public ActivityScenarioRule<MainScreenActivity> mainScreenActivityActivityScenarioRule =
             new ActivityScenarioRule<>(MainScreenActivity.class);
@@ -193,6 +194,7 @@ public class MainScreenActivityTest {
     }
     */
 
+/*
     @Test
     public void calendarViewRotatesCorrectly() {
         // Test partially commented out because we do not know how many events are on the database on testing
@@ -210,7 +212,6 @@ public class MainScreenActivityTest {
     }
 
     // TODO : Add more meaningful tests for each row in the RecyclerViews (no idea how to do it)
-
 
     @Test
     public void signOutButtonIsDisplayedAndEnabled(){
@@ -232,4 +233,4 @@ public class MainScreenActivityTest {
         Intents.release();
     }
 
-}
+}*/
