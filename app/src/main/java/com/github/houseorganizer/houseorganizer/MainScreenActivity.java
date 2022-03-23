@@ -25,7 +25,6 @@ import com.google.firebase.firestore.QueryDocumentSnapshot;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
-import java.time.format.DateTimeParseException;
 import java.time.temporal.TemporalAccessor;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -39,7 +38,6 @@ public class MainScreenActivity extends AppCompatActivity {
     private Calendar calendar;
     private int calendarColumns = 1;
     private FirebaseFirestore db;
-    private FirebaseAuth mAuth;
     private DocumentReference currentHouse;
     private EventsAdapter calendarAdapter;
     private RecyclerView calendarEvents;
@@ -50,7 +48,7 @@ public class MainScreenActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main_screen);
 
-        mAuth = FirebaseAuth.getInstance();
+        FirebaseAuth mAuth = FirebaseAuth.getInstance();
         db = FirebaseFirestore.getInstance();
         // Test household for now because house buttons don't do anything
         currentHouse = db.document("households/test_house_0");
@@ -116,6 +114,7 @@ public class MainScreenActivity extends AppCompatActivity {
         dialog.dismiss();
     }
 
+    @SuppressLint("NotifyDataSetChanged")
     void refreshCalendar(View v) {
         db.collection("events")
                 .whereEqualTo("household", currentHouse)
@@ -125,7 +124,6 @@ public class MainScreenActivity extends AppCompatActivity {
                         ArrayList<Event> newEvents = new ArrayList<>();
                         for (QueryDocumentSnapshot document : task.getResult()) {
                             // We assume the stored data is well behaved since it got added in a well behaved manner.
-                            System.out.println(document.getId().toString());
                             Event event = new Event(
                                     document.getString("title"),
                                     document.getString("description"),
