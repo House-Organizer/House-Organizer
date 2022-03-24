@@ -196,7 +196,7 @@ public class MainScreenActivity extends AppCompatActivity {
     /* TEMPORARILY HERE */
     public void addHouseholdButtonPressed(View view) {
         Intent intent = new Intent(this, CreateHouseholdActivity.class);
-        intent.putExtra("Uid", mUser.getUid());
+        intent.putExtra("mUserEmail", mUser.getEmail());
         startActivity(intent);
     }
 }
