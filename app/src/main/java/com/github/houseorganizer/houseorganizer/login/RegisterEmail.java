@@ -1,4 +1,4 @@
-package com.github.houseorganizer.houseorganizer;
+package com.github.houseorganizer.houseorganizer.login;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -6,10 +6,15 @@ import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.github.houseorganizer.houseorganizer.R;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 
 import java.util.Objects;
 import java.util.regex.Matcher;
@@ -94,24 +99,40 @@ public class RegisterEmail extends AppCompatActivity {
         }
     }
 
+    private void sendEmailVerif(FirebaseUser user, Task<AuthResult> task) {
+        user.sendEmailVerification()
+                .addOnCompleteListener(this, task1 -> {
+                    if (task.isSuccessful()) {
+                        Toast.makeText(RegisterEmail.this,
+                                "Verification email sent to " + user.getEmail(),
+                                Toast.LENGTH_SHORT).show();
+                    } else {
+                        Log.e(getString(R.string.tag_register_email), "sendEmailVerification", task.getException());
+                        Toast.makeText(RegisterEmail.this, "Failed to send verification email.",
+                                Toast.LENGTH_SHORT).show();
+                    }
+                });
+    }
+
     public void signUpWithEmail(View v) {
-        EditText email_field = findViewById(R.id.reg_enter_email);
-        EditText password_field = findViewById(R.id.reg_enter_password);
-        String email = email_field.getText().toString();
-        String password = password_field.getText().toString();
-        TextView error_message = findViewById(R.id.reg_email_error_message);
+        String email = ((EditText) findViewById(R.id.log_enter_email)).getText().toString();
+        String password = ((EditText) findViewById(R.id.log_enter_password)).getText().toString();
 
         mAuth.createUserWithEmailAndPassword(email, password)
                 .addOnCompleteListener(this, task -> {
                     if (task.isSuccessful()) {
+                        FirebaseUser user = mAuth.getCurrentUser();
                         // Sign in success, update UI with the signed-in user's information
                         Log.d(getString(R.string.tag_register_email), "createUserWithEmail:success");
-                        startActivity(new Intent(RegisterEmail.this, MainScreenActivity.class));
+                        if (user != null) {
+                            sendEmailVerif(user, task);
+                        }
+                        startActivity(new Intent(RegisterEmail.this, VerifyEmail.class));
                         finish();
                     } else {
                         // If sign in fails, display a message to the user.
                         Log.w(getString(R.string.tag_register_email), "createUserWithEmail:failure", task.getException());
-                        error_message.setText(R.string.reg_email_auth_failed);
+                        ((TextView) findViewById(R.id.log_email_error_message)).setText(R.string.reg_email_auth_failed);
                     }
                 });
     }
