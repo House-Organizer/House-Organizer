@@ -112,9 +112,9 @@ public class Task {
         return subtasks;
     }
 
-    public boolean hasDueDate() {
+    /*public boolean hasDueDate() {
         return dueDate != LocalDateTime.MIN;
-    }
+    }*/
 
     public LocalDateTime getDueDate() {
         return dueDate;
