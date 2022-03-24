@@ -8,6 +8,7 @@ import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.Arrays;
@@ -19,6 +20,7 @@ public class CreateHouseholdActivity extends AppCompatActivity {
 
     private String Uid;
     private FirebaseFirestore db;
+    private String mUserEmail;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -26,7 +28,7 @@ public class CreateHouseholdActivity extends AppCompatActivity {
         setContentView(R.layout.activity_create_household);
 
         db = FirebaseFirestore.getInstance();
-        Uid = getIntent().getStringExtra("Uid");
+        mUserEmail = getIntent().getStringExtra("mUserEmail");
     }
 
     public void submitHouseholdToFirestore(View view){
@@ -34,10 +36,10 @@ public class CreateHouseholdActivity extends AppCompatActivity {
         CharSequence houseHoldName = houseHoldNameView.getText();
 
         Map<String, Object> houseHold = new HashMap<>();
-        List<String> residents = Arrays.asList(Uid);
+        List<String> residents = Arrays.asList(mUserEmail);
 
         houseHold.put("name", houseHoldName.toString());
-        houseHold.put("owner", Uid);
+        houseHold.put("owner", mUserEmail);
         houseHold.put("num_members", 1);
         houseHold.put("residents", residents);
 
