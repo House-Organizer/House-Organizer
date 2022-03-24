@@ -50,6 +50,7 @@
     <string name="add_task">+</string>
 
     <!-- Calendar view and its buttons -->
+    <string name="add_event">+</string>
     <string name="add_event_success">Event added!</string>
     <string name="add_event_fail">Could not add event.</string>
     <string name="cycle_calendar_views">↻</string>

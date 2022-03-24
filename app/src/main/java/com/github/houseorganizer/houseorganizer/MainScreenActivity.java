@@ -81,6 +81,8 @@ public class MainScreenActivity extends AppCompatActivity {
         findViewById(R.id.new_task).setOnClickListener(this::addTask);
 
         refreshCalendar(findViewById(R.id.calendar));
+
+        initializeDummyTaskList();
         setUpTaskList();
     }
 
@@ -193,7 +195,7 @@ public class MainScreenActivity extends AppCompatActivity {
 
     }
 
-    private void setUpTaskList() {
+    private void initializeDummyTaskList() {
         Task t = new Task(currentUser, "Clean the kitchen counter", "scrub off all the grease marks!");
         Task t2 = new Task(currentUser, "Stop by the post office", "send a postcard to Julia");
         Task t3 = new Task(currentUser, "Catch up on lecture notes", "midterm on wednesday!!");
@@ -205,7 +207,9 @@ public class MainScreenActivity extends AppCompatActivity {
 
         this.taskList = new TaskList(currentUser, "My weekly todo", Arrays.asList(t, t2, t3, t4, t5));
         this.taskListAdapter = new TaskListAdapter(taskList);
+    }
 
+    private void setUpTaskList() {
         RecyclerView taskListView = findViewById(R.id.task_list);
         taskListView.setAdapter(taskListAdapter);
         taskListView.setLayoutManager(new LinearLayoutManager(this));
