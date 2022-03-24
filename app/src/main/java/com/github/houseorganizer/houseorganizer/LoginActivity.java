@@ -85,11 +85,31 @@ public class LoginActivity extends AppCompatActivity {
     );
 
     /**
-     *  Activate the Google Sign-In button for the user to authenticate
+     *  Activates the discover and Google Sign-In buttons for
+     *  the user to authenticate
      */
     private void activateSignInButton(){
         findViewById(R.id.google_sign_in_button).setOnClickListener(
                 v -> googleSignInResultLauncher.launch(new Intent(mGoogleSignInClient.getSignInIntent())));
+
+        findViewById(R.id.discoverButton).setOnClickListener(v -> signInAnonymously());
+    }
+
+    private void signInAnonymously() {
+        mAuth.signInAnonymously()
+                .addOnCompleteListener(this, task -> {
+                    if (task.isSuccessful()) {
+                        // Sign in success, update UI with the signed-in user's information
+                        //Log.d(TAG, "signInAnonymously:success");
+                        startActivity(new Intent(LoginActivity.this, MainScreenActivity.class));
+                        finish();
+                    } else {
+                        // If sign in fails, display a message to the user.
+                        //Log.w(TAG, "signInAnonymously:failure", task.getException());
+                        Toast.makeText(LoginActivity.this, "Authentication failed.",
+                                Toast.LENGTH_SHORT).show();
+                    }
+                });
     }
 
     private void firebaseAuthWithGoogle(String idToken) {
