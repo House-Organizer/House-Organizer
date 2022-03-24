@@ -88,7 +88,7 @@ public class MainScreenActivity extends AppCompatActivity {
         } else {
             // House by default
             db.collection("households")
-                    .whereArrayContains("residents", mUser.getUid())
+                    .whereArrayContains("residents", mUser.getEmail())
                     .get()
                     .addOnCompleteListener(task -> {
                         if (task.isSuccessful()) {
@@ -205,7 +205,7 @@ public class MainScreenActivity extends AppCompatActivity {
     @SuppressWarnings("unused")
     public void houseButtonPressed(View view) {
         Intent intent = new Intent(this, HouseSelectionActivity.class);
-        intent.putExtra(CURRENT_USER, mUser.getUid());
+        intent.putExtra(CURRENT_USER, mUser.getEmail());
         startActivity(intent);
     }
 
@@ -237,10 +237,11 @@ public class MainScreenActivity extends AppCompatActivity {
             isChoresList = true;
         }
     }
+
     /* TEMPORARILY HERE */
     public void addHouseholdButtonPressed(View view) {
         Intent intent = new Intent(this, CreateHouseholdActivity.class);
-        intent.putExtra("Uid", mUser.getUid());
+        intent.putExtra("mUserEmail", mUser.getEmail());
         startActivity(intent);
     }
 }
