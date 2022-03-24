@@ -238,6 +238,7 @@ public class MainScreenActivity extends AppCompatActivity {
             isChoresList = true;
         }
     }
+
     /* TEMPORARILY HERE */
     public void addHouseholdButtonPressed(View view) {
         Intent intent = new Intent(this, CreateHouseholdActivity.class);
