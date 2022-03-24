@@ -34,9 +34,22 @@ public class RegisterEmail extends AppCompatActivity {
 
         findViewById(R.id.reg_email_register_button).setOnClickListener(
                 v -> {
-                    if (isValidEmail() && isValidPassword()) signUpWithEmail(v);
+                    if (inputsNotEmpty() && isValidEmail() && isValidPassword()) signUpWithEmail(v);
                 }
         );
+    }
+
+    private boolean inputsNotEmpty() {
+        String email = ((EditText) findViewById(R.id.reg_enter_email)).getText().toString();
+        String password = ((EditText) findViewById(R.id.reg_enter_password)).getText().toString();
+        TextView error_message = findViewById(R.id.reg_email_error_message);
+
+        if (email.isEmpty() || password.isEmpty()) {
+            error_message.setText(R.string.inputs_not_empty);
+            return false;
+        }
+
+        return true;
     }
 
     private boolean isValidEmail() {
