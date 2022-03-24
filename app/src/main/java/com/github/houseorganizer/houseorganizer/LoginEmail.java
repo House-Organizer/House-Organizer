@@ -35,10 +35,8 @@ public class LoginEmail extends AppCompatActivity {
     }
 
     private boolean inputsNotEmpty() {
-        EditText email_field = findViewById(R.id.log_enter_email);
-        EditText password_field = findViewById(R.id.log_enter_password);
-        String email = email_field.getText().toString();
-        String password = password_field.getText().toString();
+        String email = ((EditText) findViewById(R.id.log_enter_email)).getText().toString();
+        String password = ((EditText) findViewById(R.id.log_enter_password)).getText().toString();
         TextView error_message = findViewById(R.id.log_email_error_message);
 
         if (email.isEmpty() || password.isEmpty()) {
@@ -50,14 +48,9 @@ public class LoginEmail extends AppCompatActivity {
     }
 
     public void signInWithEmail(View v) {
-        EditText email_field = findViewById(R.id.log_enter_email);
-        EditText password_field = findViewById(R.id.log_enter_password);
-        String email = email_field.getText().toString();
-        String password = password_field.getText().toString();
-        TextView error_message = findViewById(R.id.log_email_error_message);
-
-        mAuth.signInWithEmailAndPassword(email, password)
-                .addOnCompleteListener(this, task -> {
+        String email = ((EditText) findViewById(R.id.log_enter_email)).getText().toString();
+        String password = ((EditText) findViewById(R.id.log_enter_password)).getText().toString();
+        mAuth.signInWithEmailAndPassword(email, password).addOnCompleteListener(this, task -> {
                     if (task.isSuccessful()) {
                         // Sign in success, update UI with the signed-in user's information
                         Log.d(getString(R.string.tag_login_email), "signInWithEmail:success");
@@ -66,12 +59,11 @@ public class LoginEmail extends AppCompatActivity {
                         } else {
                             startActivity(new Intent(LoginEmail.this, VerifyEmail.class));
                         }
-
                         finish();
                     } else {
                         // If sign in fails, display a message to the user.
                         Log.d(getString(R.string.tag_login_email), "signInWithEmail:failure");
-                        error_message.setText(R.string.log_email_auth_failed);
+                        ((TextView) findViewById(R.id.log_email_error_message)).setText(R.string.log_email_auth_failed);
                     }
                 });
     }
