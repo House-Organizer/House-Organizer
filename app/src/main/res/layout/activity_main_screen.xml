@@ -88,12 +88,12 @@
         app:layout_constraintVertical_bias="0.064" />
 
     <Button
-        android:id="@+id/liste_view_change2"
+        android:id="@+id/list_view_change"
         android:layout_width="40dp"
         android:layout_height="52dp"
         android:layout_marginBottom="148dp"
         android:onClick="rotateLists"
-        android:text="@string/cycle_views"
+        android:text="@string/cycle_calendar_views"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.616"

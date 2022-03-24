@@ -221,8 +221,8 @@ public class MainScreenActivity extends AppCompatActivity {
         text.setText(s);
     }
 
-    public void rotateLists(View view){
-        if(isChoresList){
+    public void rotateLists(View view) {
+        if (isChoresList) {
             ShopList shopList = new ShopList(new DummyUser("John", "uid"), "TestShopList");
             shopList.addItem(new ShopItem("Eggs", 4, ""));
             shopList.addItem(new ShopItem("Flour", 2, "kg"));
@@ -233,11 +233,11 @@ public class MainScreenActivity extends AppCompatActivity {
             rView.setAdapter(itemAdapter);
             rView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
             isChoresList = false;
-        }
-        else {
+        } else {
             setUpTaskList();
             isChoresList = true;
         }
+    }
     /* TEMPORARILY HERE */
     public void addHouseholdButtonPressed(View view) {
         Intent intent = new Intent(this, CreateHouseholdActivity.class);
