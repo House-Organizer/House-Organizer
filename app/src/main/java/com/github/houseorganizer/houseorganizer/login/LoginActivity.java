@@ -2,6 +2,7 @@ package com.github.houseorganizer.houseorganizer.login;
 
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -107,11 +108,16 @@ public class LoginActivity extends AppCompatActivity {
                         finish();
                     } else {
                         // If sign in fails, display a message to the user.
-                        Log.w(getString(R.string.tag_login_activity), "signInAnonymously:failure", task.getException());
-                        Toast.makeText(LoginActivity.this, "Authentication failed.",
-                                Toast.LENGTH_SHORT).show();
+                        logAndToast(getString(R.string.tag_login_activity),
+                                "signInAnonymously:failure", task.getException(),
+                                LoginActivity.this, "Authentication failed.");
                     }
                 });
+    }
+
+    protected static void logAndToast(String logTag, String logMsg, Exception e, Context cx, String toastMsg) {
+        Log.w(logTag, logMsg, e);
+        Toast.makeText(cx, toastMsg, Toast.LENGTH_SHORT).show();
     }
 
     private void firebaseAuthWithGoogle(String idToken) {
