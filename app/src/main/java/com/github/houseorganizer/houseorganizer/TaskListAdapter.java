@@ -40,8 +40,8 @@ public class TaskListAdapter extends RecyclerView.Adapter<BiViewHolder<Button, B
         return v -> {
             taskList.getTaskAt(position).markAsFinished();
             new AlertDialog.Builder(v.getContext())
-                    .setTitle("Congratulations!")
-                    .setMessage("You just completed a task. Keep it up!")
+                    .setTitle(R.string.task_completion_title)
+                    .setMessage(R.string.task_completion_desc)
                     .show();
 
             taskList.removeTask(position);
@@ -72,7 +72,7 @@ public class TaskListAdapter extends RecyclerView.Adapter<BiViewHolder<Button, B
 
             final AlertDialog alertDialog
                     = new AlertDialog.Builder(v.getContext())
-                    .setNeutralButton("Add subtask", null)
+                    .setNeutralButton(R.string.add_subtask, null)
                     .setView(taskEditor)
                     .show();
 
