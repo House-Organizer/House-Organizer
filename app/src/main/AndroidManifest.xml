@@ -14,7 +14,10 @@
             android:exported="false"
             android:parentActivityName=".MainScreenActivity"/>
         <activity
-            android:name=".RegisterEmail"
+            android:name=".login.VerifyEmail"
+            android:exported="false" />
+        <activity
+            android:name=".login.RegisterEmail"
             android:exported="false" />
         <activity
             android:name=".CreateHouseholdActivity"
@@ -25,7 +28,7 @@
             android:label="@string/title_activity_settings"
             android:parentActivityName=".MainScreenActivity" />
         <activity
-            android:name=".LoginActivity"
+            android:name=".login.LoginActivity"
             android:exported="false" />
         <activity
             android:name=".HouseSelectionActivity"
@@ -35,7 +38,7 @@
             android:name=".MainScreenActivity"
             android:exported="false" />
         <activity
-            android:name=".LoginEmail"
+            android:name=".login.LoginEmail"
             android:exported="false" />
         <activity
             android:name=".MainActivity"
