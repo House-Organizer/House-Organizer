@@ -34,54 +34,59 @@ public class TaskListAdapter extends RecyclerView.Adapter<BiViewHolder<Button, B
 
         titleButton.setText(taskList.getTaskAt(position).getTitle());
 
-        // todo: modify due date
-        titleButton.setOnClickListener(
-                v -> {
-                    Task t = taskList.getTaskAt(position);
+        titleButton.setOnClickListener(titleButtonListener(position, titleButton));
+        doneButton.setOnClickListener(doneButtonListener(position));
+    }
 
-                    LayoutInflater inflater = LayoutInflater.from(v.getContext());
+    private View.OnClickListener doneButtonListener(int position) {
+        return v -> {
+            taskList.getTaskAt(position).markAsFinished();
+            new AlertDialog.Builder(v.getContext())
+                    .setTitle("Congratulations!")
+                    .setMessage("You just completed a task. Keep it up!")
+                    .show();
 
-                    View taskEditor = inflater.inflate(R.layout.task_editor, null);
+            taskList.removeTask(position);
+            notifyItemRemoved(position);
+        };
+    }
 
-                    /* Task name & description fully customizable now */
-                    EditText taskNameEditor = taskEditor.findViewById(R.id.task_title_input);
-                    EditText taskDescEditor = taskEditor.findViewById(R.id.task_description_input);
-                    TaskView.setUpTaskView(t, taskNameEditor, taskDescEditor, titleButton);
+    // todo: modify due date
+    private View.OnClickListener titleButtonListener(int position, Button titleButton) {
+        return v -> {
+            Task t = taskList.getTaskAt(position);
 
-                    /* Initialize RecyclerView for subtasks */
-                    RecyclerView subTaskView = taskEditor.findViewById(R.id.subtask_list);
-                    SubTaskAdapter subTaskAdapter = new SubTaskAdapter(t);
+            LayoutInflater inflater = LayoutInflater.from(v.getContext());
 
-                    subTaskView.setAdapter(subTaskAdapter);
-                    subTaskView.setLayoutManager(new GridLayoutManager(v.getContext(), 1));
+            View taskEditor = inflater.inflate(R.layout.task_editor, null);
 
-                    final AlertDialog alertDialog
-                            = new AlertDialog.Builder(v.getContext())
-                            .setNeutralButton("Add subtask", null)
-                            .setView(taskEditor)
-                            .show();
+            /* Task name & description fully customizable now */
+            EditText taskNameEditor = taskEditor.findViewById(R.id.task_title_input);
+            EditText taskDescEditor = taskEditor.findViewById(R.id.task_description_input);
+            TaskView.setUpTaskView(t, taskNameEditor, taskDescEditor, titleButton);
 
-                    // Patch s.t. the alert dialog window doesn't close
-                    // after pressing `Add subtask`
-                    alertDialog.getButton(AlertDialog.BUTTON_NEUTRAL).setOnClickListener(
-                            dialog -> {
-                                t.addSubTask(new Task.SubTask(""));
-                                subTaskAdapter.notifyItemInserted(t.getSubTasks().size() - 1);
-                            });
-                }
-        );
+            /* Initialize RecyclerView for subtasks */
+            RecyclerView subTaskView = taskEditor.findViewById(R.id.subtask_list);
+            SubTaskAdapter subTaskAdapter = new SubTaskAdapter(t);
 
-        doneButton.setOnClickListener(
-                v -> {
-                    taskList.getTaskAt(position).markAsFinished();
-                    new AlertDialog.Builder(v.getContext())
-                            .setTitle("Congratulations!")
-                            .setMessage("You just completed a task. Keep it up!")
-                            .show();
+            subTaskView.setAdapter(subTaskAdapter);
+            subTaskView.setLayoutManager(new GridLayoutManager(v.getContext(), 1));
 
-                    // todo: remove finished tasks from view
-                }
-        );
+            final AlertDialog alertDialog
+                    = new AlertDialog.Builder(v.getContext())
+                    .setNeutralButton("Add subtask", null)
+                    .setView(taskEditor)
+                    .show();
+
+            // Patch s.t. the alert dialog window doesn't close
+            // after pressing `Add subtask`
+            alertDialog.getButton(AlertDialog.BUTTON_NEUTRAL).setOnClickListener(
+                    dialog -> {
+                        t.addSubTask(new Task.SubTask(""));
+                        subTaskAdapter.notifyItemInserted(t.getSubTasks().size() - 1);
+                    });
+
+        };
     }
 
     @Override
