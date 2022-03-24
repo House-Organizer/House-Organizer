@@ -25,7 +25,7 @@ public class MainActivity extends AppCompatActivity {
          * Else send him to MainScreenActivity */
         (new Handler()).postDelayed(() -> {
             if (user != null) {
-                if (user.isEmailVerified()) {
+                if (user.isEmailVerified() || user.isAnonymous()) {
                     startActivity(new Intent(MainActivity.this, MainScreenActivity.class));
                 } else {
                     startActivity(new Intent(MainActivity.this, LoginEmail.class));
