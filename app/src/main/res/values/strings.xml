@@ -19,11 +19,24 @@
     <string name="img_house_row_desc">Image for the given house name</string>
     <string name="home_logo">Home Logo</string>
     <string name="sign_out">Sign Out</string>
+  
     <string name="user_name">User name</string>
     <string name="edit_button_description">Press to edit the household</string>
     <string name="confirm_button">Confirm changes</string>
     <string name="edit_title">Household</string>
 
+    <string name="sign_in_with_email">Sign in with Email</string>
+    <string name="sign_up">SIGN UP</string>
+    <string name="enter_email">Enter Email</string>
+    <string name="enter_password">Enter Password</string>
+    <string name="confirm_password">Confirm Password</string>
+    <string name="password_constraints">- Must be at least 8 characters.\n- Must contain at least 1 lowercase and 1 uppercase letter.\n- Must contain at least 1 number.\n- Must contain at least 1 special character.\n- Cannot contain any whitespaces.\n- Both passwords must be the same.</string>
+    <string name="reg_email_auth_failed">Authentication failed.</string>
+    <string name="log_email_auth_failed">Email or password is wrong.</string>
+    <string name="email_not_valid">Email is not valid.</string>
+    <string name="password_not_valid">Password is not valid.</string>
+    <string name="inputs_not_empty">Inputs must not be empty.</string>
+  
     <string name="title_activity_settings">Settings</string>
 
     <!-- Preference Titles -->
@@ -46,7 +59,10 @@
     <string name="refresh">Refresh</string>
     <string name="refresh_success">Refreshed!</string>
     <string name="refresh_fail">Could not refresh.</string>
-
+    <string name="tag_login_activity">LoginActivity</string>
+    <string name="tag_register_email">RegisterEmail</string>
+    <string name="tag_login_email">LoginEmail</string>
+    <string name="email_already_used">Email is already used.</string>
     <string name="add_household">Add household</string>
     <string name="add_household_success">Added household!</string>
     <string name="add_household_failure">Failed to add household!</string>

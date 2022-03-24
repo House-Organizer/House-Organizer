@@ -40,7 +40,14 @@ public class LoginActivity extends AppCompatActivity {
         // Firebase Auth Instance
         mAuth = FirebaseAuth.getInstance();
 
-        // If a sign out has been requested, sign out the current user
+        findViewById(R.id.email_signin_button).setOnClickListener(
+                v -> startActivity(new Intent(this, LoginEmail.class))
+        );
+        findViewById(R.id.google_sign_in_button).setOnClickListener(
+                v -> googleSignInResultLauncher.launch(new Intent(mGoogleSignInClient.getSignInIntent()))
+        );
+
+      // If a sign out has been requested, sign out the current user
         if(getIntent().hasExtra(getString(R.string.signout_intent))){
             mAuth.signOut();
             mGoogleSignInClient.signOut().addOnCompleteListener(this, l ->
@@ -62,15 +69,15 @@ public class LoginActivity extends AppCompatActivity {
                             // Google Sign In was successful, authenticate with Firebase
                             GoogleSignInAccount account = task.getResult(ApiException.class);
                             assert account != null;
-                            Log.d("SignInActivity", "firebaseAuthWithGoogle:" + account.getId());
+                            Log.d(getString(R.string.tag_login_activity), "firebaseAuthWithGoogle:" + account.getId());
                             firebaseAuthWithGoogle(account.getIdToken());
                         } catch (ApiException e) {
                             // Google Sign-in failed, update UI appropriately
-                            Log.w("SignInActivity", "Google sign-in failed", e);
+                            Log.w(getString(R.string.tag_login_activity), "Google sign-in failed", e);
                         }
                     } else {
                         if (exception != null) {
-                            Log.w("SignInActivity", exception.toString());
+                            Log.w(getString(R.string.tag_login_activity), exception.toString());
                         }
                     }
                 }
@@ -91,15 +98,14 @@ public class LoginActivity extends AppCompatActivity {
                 .addOnCompleteListener(this, task -> {
                     if (task.isSuccessful()) {
                         // Sign in success, update UI with the signed-in user's information
-                        Log.d("SignInActivity", "signInWithCredential:success");
+                        Log.d(getString(R.string.tag_login_activity), "signInWithGoogleCredential:success");
                         startActivity(new Intent(LoginActivity.this, MainScreenActivity.class));
                         finish();
                     } else {
                         // If sign in fails, display a message to the user.
-                        Log.d("SignInActivity", "signInWithCredential:failure");
+                        Log.d(getString(R.string.tag_login_activity), "signInWithGoogleCredential:failure");
                         Toast.makeText(LoginActivity.this, "Login Failed !", Toast.LENGTH_SHORT).show();
                     }
                 });
     }
-
 }
