@@ -44,9 +44,9 @@ public class EditHousehold extends AppCompatActivity {
                     @Override
                     public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                         DocumentSnapshot document = task.getResult();
-                        List<String> usersUid = (List<String>) document.get("residents");
+                        List<String> users = (List<String>) document.get("residents");
 
-                        UserAdapter adapter = new UserAdapter(cx, usersUid);
+                        UserAdapter adapter = new UserAdapter(cx, users);
                         usersView.setAdapter(adapter);
                         usersView.setLayoutManager(new LinearLayoutManager(cx));
                     }

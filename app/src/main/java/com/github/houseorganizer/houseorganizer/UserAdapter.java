@@ -14,11 +14,11 @@ import java.util.List;
 public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserHolder> {
 
     final Context cx;
-    final List<String> usersName;
+    final List<String> usersEmail;
 
     public UserAdapter(Context cx, List<String> usersName) {
         this.cx = cx;
-        this.usersName = usersName;
+        this.usersEmail = usersName;
     }
 
     @NonNull
@@ -31,20 +31,20 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserHolder> {
 
     @Override
     public void onBindViewHolder(@NonNull UserHolder holder, int position) {
-        holder.userName.setText(usersName.get(position));
+        holder.userEmail.setText(usersEmail.get(position));
     }
 
     @Override
     public int getItemCount() {
-        return usersName.size();
+        return usersEmail.size();
     }
 
     public static class UserHolder extends RecyclerView.ViewHolder {
-        final TextView userName;
+        final TextView userEmail;
 
         public UserHolder(@NonNull View itemView) {
             super(itemView);
-            userName = itemView.findViewById(R.id.houseName);
+            userEmail = itemView.findViewById(R.id.houseName);
         }
     }
 }

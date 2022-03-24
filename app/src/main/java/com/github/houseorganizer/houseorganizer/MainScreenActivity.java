@@ -84,11 +84,12 @@ public class MainScreenActivity extends AppCompatActivity {
                             for (QueryDocumentSnapshot document : task.getResult())
                                 households.add(document.getId());
 
-                            if (households.isEmpty())
+                            if (households.isEmpty()) {
                                 startActivity(new Intent(this, CreateHouseholdActivity.class));
-
-                            currentHouse = db.collection("households").document(households.get(0));
-                            text.setText("currentHouse: " + currentHouse.getId() + " by default");
+                            } else {
+                                currentHouse = db.collection("households").document(households.get(0));
+                                text.setText("currentHouse: " + currentHouse.getId() + " by default");
+                            }
 
                         } else {
                             Toast.makeText(getApplicationContext(), "Could not get a house.", Toast.LENGTH_SHORT).show();
