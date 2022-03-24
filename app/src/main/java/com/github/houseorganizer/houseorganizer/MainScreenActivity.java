@@ -5,6 +5,7 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.EditText;
@@ -18,9 +19,11 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.github.houseorganizer.houseorganizer.Calendar.Event;
 import com.github.houseorganizer.houseorganizer.util.Util;
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 
@@ -215,10 +218,17 @@ public class MainScreenActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
-    public void infoButtonPressed(@SuppressWarnings("unused") View view) {
-        TextView text = findViewById(R.id.last_button_activated);
-        String s = "Info button pressed";
-        text.setText(s);
+    public void infoButtonPressed(View view) {
+        if(currentHouse != null) {
+            currentHouse.get().addOnCompleteListener(task -> {
+                if(task.isSuccessful()){
+                    DocumentSnapshot document = task.getResult();
+                    Intent intent = new Intent(this, InfoActivity.class);
+                    intent.putExtra("info_on_house", document.getData().toString());
+                    startActivity(intent);
+                }
+            });
+        }
     }
 
     public void rotateLists(View view) {
