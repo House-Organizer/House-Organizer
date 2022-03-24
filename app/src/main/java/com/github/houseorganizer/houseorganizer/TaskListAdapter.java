@@ -66,7 +66,7 @@ public class TaskListAdapter extends RecyclerView.Adapter<BiViewHolder<Button, B
                     alertDialog.getButton(AlertDialog.BUTTON_NEUTRAL).setOnClickListener(
                             dialog -> {
                                 t.addSubTask(new Task.SubTask(""));
-                                subTaskAdapter.notifyItemInserted(getItemCount() - 1);
+                                subTaskAdapter.notifyItemInserted(t.getSubTasks().size() - 1);
                             });
                 }
         );
