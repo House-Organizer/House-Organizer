@@ -14,7 +14,6 @@
     <string name="house_speakable_text">Home selection</string>
     <string name="info_speakable_text">Info</string>
     <string name="button_feedback_text">No button has been pressed</string>
-    <string name="calendar_upcoming_date">\t On the %1$s.</string>
     <string name="house_name">House name</string>>
     <string name="img_house_row_desc">Image for the given house name</string>
     <string name="home_logo">Home Logo</string>
@@ -46,13 +45,30 @@
     <string name="attachment_summary_on">Automatically download attachments for calendar </string>
     <string name="attachment_summary_off">Only download attachments when manually requested</string>
 
+    <!-- Calendar view and its buttons -->
     <string name="add_event">+</string>
-    <string name="add_success">Event added!</string>
-    <string name="add_fail">Could not add event.</string>
-    <string name="cycle_views">↻</string>
-    <string name="refresh">Refresh</string>
-    <string name="refresh_success">Refreshed!</string>
-    <string name="refresh_fail">Could not refresh.</string>
+    <string name="add_event_success">Event added!</string>
+    <string name="add_event_fail">Could not add event.</string>
+    <string name="cycle_calendar_views">↻</string>
+    <string name="refresh_calendar">Refresh</string>
+    <string name="refresh_calendar_success">Refreshed!</string>
+    <string name="refresh_calendar_fail">Could not refresh.</string>
+    <string name="calendar_upcoming_date">\t On the %1$s.</string>
+
+    <!-- Event creation and information popups -->
+    <string name="event_creation_title">Add an event</string>
+    <string name="description">Description</string>
+    <string name="title">Title</string>
+    <string name="duration">Duration (in minutes)</string>
+    <string name="date">Date (dd/MM/yyyy HH:mm)</string>
+    <string name="add">Add</string>
+    <string name="cancel">Cancel</string>
+    <string name="ok">OK</string>
+    <string name="delete">Delete</string>
+    <string name="edit">Edit</string>
+    <string name="event_editing_title">Edit event</string>
+    <string name="confirm">Confirm</string>
+
     <string name="tag_login_activity">LoginActivity</string>
     <string name="tag_register_email">RegisterEmail</string>
     <string name="tag_login_email">LoginEmail</string>
@@ -61,4 +77,5 @@
     <string name="add_household_success">Added household!</string>
     <string name="add_household_failure">Failed to add household!</string>
     <string name="household_creation_hint">Household name</string>
+
 </resources>
