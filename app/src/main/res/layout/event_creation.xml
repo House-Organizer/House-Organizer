@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/event_creation"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <EditText
+        android:id="@+id/new_event_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:inputType="textPersonName"
+        android:text=""
+        android:textColor="#7A7A7A"
+        android:autofillHints="title"
+        android:hint="@string/title"/>
+
+    <EditText
+        android:id="@+id/new_event_desc"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:inputType="textPersonName"
+        android:text=""
+        android:textColor="#7A7A7A"
+        android:autofillHints="description"
+        android:hint="@string/description"/>
+
+    <EditText
+        android:id="@+id/new_event_date"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:inputType="datetime"
+        android:text=""
+        android:textColor="#7A7A7A"
+        android:autofillHints="date"
+        android:hint="@string/date"/>
+
+    <EditText
+        android:id="@+id/new_event_duration"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:inputType="number"
+        android:text=""
+        android:textColor="#7A7A7A"
+        android:autofillHints="duration"
+        android:hint="@string/duration"/>
+</LinearLayout>

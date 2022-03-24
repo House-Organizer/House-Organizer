@@ -51,17 +51,19 @@ class Calendar {
         private  String title;
         private String description;
         private LocalDateTime start;
-        // Duration of the event in seconds
+        // Duration of the event in minutes
         private long duration;
+        private String id;
 
-        public Event(String title, String description, LocalDateTime start, long duration) {
-
+        public Event(String title, String description, LocalDateTime start, long duration, String id) {
             requireNonNull(title);
             requireNonNull(start);
+            requireNonNull(id);
             this.title = title;
             this.description = (description == null) ? "" : description;
             this.start = start;
             this.duration = duration;
+            this.id = id;
         }
 
         public String getTitle() {
@@ -78,6 +80,10 @@ class Calendar {
 
         public long getDuration() {
             return duration;
+        }
+
+        public String getId() {
+            return id;
         }
 
         @NonNull
