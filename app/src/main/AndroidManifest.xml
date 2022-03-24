@@ -14,9 +14,6 @@
             android:exported="false"
             android:parentActivityName=".CreateHouseholdActivity" />
         <activity
-            android:name=".RegisterEmail"
-            android:exported="false" />
-        <activity
             android:name=".login.VerifyEmail"
             android:exported="false" />
         <activity
