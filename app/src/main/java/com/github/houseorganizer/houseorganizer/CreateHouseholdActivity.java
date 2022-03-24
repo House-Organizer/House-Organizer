@@ -10,7 +10,9 @@ import android.widget.Toast;
 
 import com.google.firebase.firestore.FirebaseFirestore;
 
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class CreateHouseholdActivity extends AppCompatActivity {
@@ -32,9 +34,7 @@ public class CreateHouseholdActivity extends AppCompatActivity {
         CharSequence houseHoldName = houseHoldNameView.getText();
 
         Map<String, Object> houseHold = new HashMap<>();
-        Map<String, Object> residents = new HashMap<>();
-
-        residents.put("0", Uid);
+        List<String> residents = Arrays.asList(Uid);
 
         houseHold.put("name", houseHoldName.toString());
         houseHold.put("owner", Uid);
