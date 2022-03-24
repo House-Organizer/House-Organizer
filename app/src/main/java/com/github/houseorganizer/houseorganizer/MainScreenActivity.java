@@ -77,32 +77,23 @@ public class MainScreenActivity extends AppCompatActivity {
     }
 
     private void getCurrentHousehold(){
-        Intent intent = getIntent();
-        String householdId = intent.getStringExtra(HOUSEHOLD);
+        String householdId = getIntent().getStringExtra(HOUSEHOLD);
         TextView text = findViewById(R.id.last_button_activated);
-        currentHouse = null;
 
         if (householdId != null) {
             currentHouse = db.collection("households").document(householdId);
             text.setText("currentHouse: " + currentHouse.getId());
-
         } else {
-            // House by default
             db.collection("households")
-                    .whereArrayContains("residents", mUser.getEmail())
-                    .get()
+                    .whereArrayContains("residents", mUser.getEmail()).get()
                     .addOnCompleteListener(task -> {
                         if (task.isSuccessful()) {
                             ArrayList<String> households = new ArrayList<String>();
-                            for (QueryDocumentSnapshot document : task.getResult()) {
-                                String id = document.getId();
-                                households.add(id);
-                            }
+                            for (QueryDocumentSnapshot document : task.getResult())
+                                households.add(document.getId());
 
-                            if (households.isEmpty()) {
-                                Intent intentCreate = new Intent(this, CreateHouseholdActivity.class);
-                                startActivity(intentCreate);
-                            }
+                            if (households.isEmpty())
+                                startActivity(new Intent(this, CreateHouseholdActivity.class));
 
                             currentHouse = db.collection("households").document(households.get(0));
                             text.setText("currentHouse: " + currentHouse.getId() + " by default");

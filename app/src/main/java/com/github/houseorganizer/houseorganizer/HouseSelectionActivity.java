@@ -20,7 +20,6 @@ import com.google.firebase.firestore.Query;
 
 public class HouseSelectionActivity extends AppCompatActivity {
     RecyclerView housesView;
-    FirebaseFirestore firestore;
     String emailUser;
     FirestoreRecyclerAdapter<HouseModel, HouseViewHolder> adapter;
 
@@ -32,12 +31,9 @@ public class HouseSelectionActivity extends AppCompatActivity {
         housesView = findViewById(R.id.housesView);
         emailUser = getIntent().getStringExtra(MainScreenActivity.CURRENT_USER);
 
-        firestore = FirebaseFirestore.getInstance();
-        Query query = firestore.collection("households").whereArrayContains("residents", emailUser);
+        Query query = FirebaseFirestore.getInstance().collection("households").whereArrayContains("residents", emailUser);
         FirestoreRecyclerOptions<HouseModel> options = new FirestoreRecyclerOptions.Builder<HouseModel>()
-                .setQuery(query, HouseModel.class)
-                .build();
-
+                .setQuery(query, HouseModel.class).build();
         adapter = new FirestoreRecyclerAdapter<HouseModel, HouseViewHolder>(options) {
             @NonNull
             @Override
