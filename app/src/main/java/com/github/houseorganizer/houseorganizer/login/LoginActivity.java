@@ -24,6 +24,10 @@ import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.GoogleAuthProvider;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 public class LoginActivity extends AppCompatActivity {
 
     private GoogleSignInClient mGoogleSignInClient;
@@ -108,15 +112,17 @@ public class LoginActivity extends AppCompatActivity {
                         finish();
                     } else {
                         // If sign in fails, display a message to the user.
-                        logAndToast(getString(R.string.tag_login_activity),
-                                "signInAnonymously:failure", task.getException(),
+                        logAndToast(Arrays.asList(getString(R.string.tag_login_activity),
+                                "signInAnonymously:failure"), task.getException(),
                                 LoginActivity.this, "Authentication failed.");
                     }
                 });
     }
 
-    protected static void logAndToast(String logTag, String logMsg, Exception e, Context cx, String toastMsg) {
-        Log.w(logTag, logMsg, e);
+    protected static void logAndToast(List<String> logTagAndMsg, Exception e, Context cx, String toastMsg) {
+        assert logTagAndMsg.size() == 2;
+
+        Log.w(logTagAndMsg.get(0), logTagAndMsg.get(1), e);
         Toast.makeText(cx, toastMsg, Toast.LENGTH_SHORT).show();
     }
 
