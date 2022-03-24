@@ -20,10 +20,8 @@ public class SubTaskAdapter extends RecyclerView.Adapter<BiViewHolder<Button, Ed
     @NonNull
     @Override
     public BiViewHolder<Button, EditText> onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        LayoutInflater inflater = LayoutInflater.from(parent.getContext());
-        View view = inflater.inflate(R.layout.subtask_row, parent, false);
-
-        return new BiViewHolder<>(view, R.id.subtask_done_button, R.id.subtask_title_input);
+        return TaskView.makeViewHolder(parent, R.layout.subtask_row,
+                R.id.subtask_done_button, R.id.subtask_title_input);
     }
 
     @Override

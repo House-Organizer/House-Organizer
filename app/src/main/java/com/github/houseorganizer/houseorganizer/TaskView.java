@@ -2,13 +2,30 @@ package com.github.houseorganizer.houseorganizer;
 
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+
+import androidx.annotation.IdRes;
+import androidx.annotation.LayoutRes;
+import androidx.annotation.NonNull;
 
 import java.util.function.Consumer;
 
 public final class TaskView {
     public TaskView() {}
+
+    public static <S extends View, T extends View> BiViewHolder<S, T>
+    makeViewHolder(@NonNull ViewGroup parent, @LayoutRes int viewResId,
+                   @IdRes int leftResId, @IdRes int rightResId) {
+
+            LayoutInflater inflater = LayoutInflater.from(parent.getContext());
+            View view = inflater.inflate(viewResId, parent, false);
+
+            return new BiViewHolder<>(view, leftResId, rightResId);
+    }
 
     public static void setUpTaskView(Task task, EditText titleEditor, EditText descEditor, Button titleButton) {
         titleEditor.setText(task.getTitle());

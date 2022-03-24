@@ -21,10 +21,8 @@ public class TaskListAdapter extends RecyclerView.Adapter<BiViewHolder<Button, B
     @NonNull
     @Override
     public BiViewHolder<Button, Button> onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        LayoutInflater inflater = LayoutInflater.from(parent.getContext());
-        View view = inflater.inflate(R.layout.task_row, parent, false);
-
-        return new BiViewHolder<>(view, R.id.task_title, R.id.task_done_button);
+        return TaskView.makeViewHolder(parent, R.layout.task_row,
+                R.id.task_title, R.id.task_done_button);
     }
 
     @Override
