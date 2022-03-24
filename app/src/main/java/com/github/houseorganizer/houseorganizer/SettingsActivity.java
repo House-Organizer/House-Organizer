@@ -53,9 +53,9 @@ public class SettingsActivity extends AppCompatActivity {
         public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String s) {
             if(s.equals("nickname")){
                 Map<String, Object> user_nickname = new HashMap<>();
-                user_nickname.put(Uid.getUid(), sharedPreferences.getString("nickname",""));
-                db.collection("uid-to-nickname")
-                   .document("uid-to-nickname-translations")
+                user_nickname.put(Uid.getEmail(), sharedPreferences.getString("nickname",""));
+                db.collection("email-to-nickname")
+                   .document("email-to-nickname-translations")
                    .update(user_nickname);
             }
         }
