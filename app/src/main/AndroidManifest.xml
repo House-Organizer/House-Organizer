@@ -14,6 +14,9 @@
             android:exported="false"
             android:parentActivityName=".CreateHouseholdActivity"/>
         <activity
+            android:name=".RegisterEmail"
+            android:exported="false" />
+        <activity
             android:name=".CreateHouseholdActivity"
             android:exported="false"/>
         <activity
@@ -30,6 +33,9 @@
             android:parentActivityName=".MainScreenActivity" />
         <activity
             android:name=".MainScreenActivity"
+            android:exported="false" />
+        <activity
+            android:name=".LoginEmail"
             android:exported="false" />
         <activity
             android:name=".MainActivity"
