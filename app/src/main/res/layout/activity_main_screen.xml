@@ -79,13 +79,25 @@
         android:id="@+id/calendar_view_change"
         android:layout_width="40dp"
         android:layout_height="52dp"
-        android:text="@string/cycle_views"
+        android:text="@string/cycle_calendar_views"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.956"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/house_imageButton"
         app:layout_constraintVertical_bias="0.064" />
+
+    <Button
+        android:id="@+id/list_view_change"
+        android:layout_width="40dp"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        android:onClick="rotateLists"
+        android:text="@string/cycle_calendar_views"
+        app:layout_constraintBottom_toTopOf="@id/task_list"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.125"
+        app:layout_constraintStart_toEndOf="@id/new_task" />
 
     <Button
         android:id="@+id/sign_out_button"
@@ -113,7 +125,7 @@
         android:id="@+id/refresh_calendar"
         android:layout_width="wrap_content"
         android:layout_height="52dp"
-        android:text="@string/refresh"
+        android:text="@string/refresh_calendar"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.622"
@@ -132,5 +144,18 @@
         app:layout_constraintStart_toEndOf="@id/sign_out_button"
         app:layout_constraintTop_toBottomOf="@+id/last_button_activated"
         app:layout_constraintVertical_bias="0.526" />
+
+    <Button
+        android:id="@+id/add_household_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="100dp"
+        android:layout_marginEnd="56dp"
+        android:onClick="addHouseholdButtonPressed"
+        android:text="@string/add_household"
+        app:layout_constraintEnd_toStartOf="@+id/refresh_calendar"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
