@@ -2,17 +2,26 @@ package com.github.houseorganizer.houseorganizer;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.TextView;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-public class HouseSelectionActivity extends AppCompatActivity {
+import com.firebase.ui.firestore.FirestoreRecyclerAdapter;
+import com.firebase.ui.firestore.FirestoreRecyclerOptions;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.Query;
 
+public class HouseSelectionActivity extends AppCompatActivity {
     RecyclerView housesView;
-    final String[] houseNames = {"House 1", "House 2", "House 3", "House 4"};
-    final int[] houseImages = {R.drawable.home_icon, R.drawable.home_icon, R.drawable.home_icon, R.drawable.home_icon};
+    FirebaseFirestore firestore;
+    String uidUser;
+    FirestoreRecyclerAdapter<HouseModel, HouseViewHolder> adapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -20,15 +29,59 @@ public class HouseSelectionActivity extends AppCompatActivity {
         setContentView(R.layout.activity_house_selection);
 
         housesView = findViewById(R.id.housesView);
+        uidUser = getIntent().getStringExtra(MainScreenActivity.CURRENT_USER);
 
-        HouseAdapter adapter = new HouseAdapter(this, houseNames, houseImages);
-        housesView.setAdapter(adapter);
+        firestore = FirebaseFirestore.getInstance();
+        Query query = firestore.collection("households").whereArrayContains("residents", uidUser);
+        FirestoreRecyclerOptions<HouseModel> options = new FirestoreRecyclerOptions.Builder<HouseModel>()
+                .setQuery(query, HouseModel.class)
+                .build();
+
+        adapter = new FirestoreRecyclerAdapter<HouseModel, HouseViewHolder>(options) {
+            @NonNull
+            @Override
+            public HouseViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+                View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.house_row, parent, false);
+                return new HouseViewHolder(view);
+            }
+
+            @Override
+            protected void onBindViewHolder(@NonNull HouseViewHolder holder, int position, @NonNull HouseModel model) {
+                holder.houseName.setText(model.getName());
+                holder.houseName.setTag(adapter.getSnapshots().getSnapshot(position).getId());
+            }
+        };
+
+        housesView.setHasFixedSize(true);
         housesView.setLayoutManager(new LinearLayoutManager(this));
+        housesView.setAdapter(adapter);
     }
 
     @SuppressWarnings("unused")
     public void houseSelected(View view) {
         Intent intent = new Intent(this, MainScreenActivity.class);
+        intent.putExtra(MainScreenActivity.HOUSEHOLD, view.getTag().toString());
         startActivity(intent);
+    }
+
+    private static class HouseViewHolder extends RecyclerView.ViewHolder {
+        TextView houseName;
+
+        public HouseViewHolder(@NonNull View itemView) {
+            super(itemView);
+            houseName = itemView.findViewById(R.id.houseName);
+        }
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        adapter.stopListening();
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        adapter.startListening();
     }
 }
