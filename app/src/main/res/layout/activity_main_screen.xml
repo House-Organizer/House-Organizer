@@ -121,4 +121,16 @@
         app:layout_constraintTop_toBottomOf="@+id/house_imageButton"
         app:layout_constraintVertical_bias="0.064" />
 
+    <Button
+        android:id="@+id/new_task"
+        android:layout_width="40dp"
+        android:layout_height="wrap_content"
+        android:text="@string/add_task"
+        app:layout_constraintBottom_toTopOf="@id/task_list"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.08"
+        app:layout_constraintStart_toEndOf="@id/sign_out_button"
+        app:layout_constraintTop_toBottomOf="@+id/last_button_activated"
+        app:layout_constraintVertical_bias="0.526" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

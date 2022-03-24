@@ -44,5 +44,6 @@
     <string name="refresh_fail">Could not refresh.</string>
     <string name="task_title_hint">Name</string>
     <string name="task_description_hint">Description</string>
+    <string name="add_task">+</string>
 
 </resources>
