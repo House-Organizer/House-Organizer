@@ -1,9 +1,5 @@
 <resources>
     <string name="app_name">House Organizer</string>
-    <string name="mainNameHint">Name</string>
-    <string name="mainName" />
-    <string name="mainGoButton">Send</string>
-    <string name="greeting_message">Hello %1$s!</string>
     <string name="discoverButton"><u>Discover</u></string>
     <string name="appDescription">stub description of the app to appeal the user</string>
     <string name="cloudServerID">203269545085-bd0ji5p3615rboo0cjkmcg9fslr9d6q8.apps.googleusercontent.com</string>
@@ -14,7 +10,6 @@
     <string name="house_name">House name</string>>
     <string name="img_house_row_desc">Image for the given house name</string>
     <string name="home_logo">Home Logo</string>
-
     <string name="title_activity_settings">Settings</string>
 
     <!-- Preference Titles -->
