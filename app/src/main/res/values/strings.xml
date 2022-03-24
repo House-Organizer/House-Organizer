@@ -29,7 +29,6 @@
     <string name="email_not_valid">Email is not valid.</string>
     <string name="password_not_valid">Password is not valid.</string>
     <string name="inputs_not_empty">Inputs must not be empty.</string>
-  
     <string name="title_activity_settings">Settings</string>
 
     <!-- Preference Titles -->
