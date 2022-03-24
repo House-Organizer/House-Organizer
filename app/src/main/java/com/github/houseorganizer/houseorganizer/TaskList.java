@@ -63,7 +63,7 @@ public class TaskList {
 
     // todo test
     public List<Task> getTasks() {
-        return tasks;
+        return new ArrayList<>(tasks);
     }
 
 }

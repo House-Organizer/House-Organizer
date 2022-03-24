@@ -109,7 +109,7 @@ public class Task {
     }
 
     public List<SubTask> getSubTasks() {
-        return subtasks;
+        return new ArrayList<>(subtasks);
     }
 
     /*public boolean hasDueDate() {
