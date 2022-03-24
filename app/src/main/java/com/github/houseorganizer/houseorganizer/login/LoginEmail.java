@@ -28,7 +28,10 @@ public class LoginEmail extends AppCompatActivity {
 
         findViewById(R.id.log_email_signin_button).setOnClickListener(
                 v -> {
-                    if (inputsNotEmpty()) signInWithEmail(v);
+                    String email = ((EditText) findViewById(R.id.log_enter_email)).getText().toString();
+                    String password = ((EditText) findViewById(R.id.log_enter_password)).getText().toString();
+                    TextView error_message = findViewById(R.id.log_email_error_message);
+                    if (inputsNotEmpty(email, password, error_message)) signInWithEmail(v);
                 }
         );
         findViewById(R.id.log_email_register_button).setOnClickListener(
@@ -36,10 +39,7 @@ public class LoginEmail extends AppCompatActivity {
         );
     }
 
-    private boolean inputsNotEmpty() {
-        String email = ((EditText) findViewById(R.id.log_enter_email)).getText().toString();
-        String password = ((EditText) findViewById(R.id.log_enter_password)).getText().toString();
-        TextView error_message = findViewById(R.id.log_email_error_message);
+    public static boolean inputsNotEmpty(String email, String password, TextView error_message) {
 
         if (email.isEmpty() || password.isEmpty()) {
             error_message.setText(R.string.inputs_not_empty);
