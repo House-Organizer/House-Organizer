@@ -1,9 +1,13 @@
 package com.github.houseorganizer.houseorganizer;
 
 import android.annotation.SuppressLint;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -12,6 +16,7 @@ import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.github.houseorganizer.houseorganizer.Calendar.Event;
+import com.github.houseorganizer.houseorganizer.util.Util;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
@@ -20,6 +25,8 @@ import com.google.firebase.firestore.QueryDocumentSnapshot;
 
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
+import java.time.format.DateTimeFormatter;
+import java.time.temporal.TemporalAccessor;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -36,7 +43,6 @@ public class MainScreenActivity extends AppCompatActivity {
     private Calendar calendar;
     private int calendarColumns = 1;
     private FirebaseFirestore db;
-    private FirebaseAuth mAuth;
     private FirebaseUser mUser;
     private DocumentReference currentHouse;
     private EventsAdapter calendarAdapter;
@@ -48,7 +54,7 @@ public class MainScreenActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main_screen);
 
-        mAuth = FirebaseAuth.getInstance();
+        FirebaseAuth mAuth = FirebaseAuth.getInstance();
         mUser = mAuth.getCurrentUser();
         db = FirebaseFirestore.getInstance();
 
@@ -64,7 +70,7 @@ public class MainScreenActivity extends AppCompatActivity {
         findViewById(R.id.calendar_view_change).setOnClickListener(this::rotateView);
         findViewById(R.id.add_event).setOnClickListener(this::addEvent);
         findViewById(R.id.refresh_calendar).setOnClickListener(this::refreshCalendar);
-
+        refreshCalendar(findViewById(R.id.calendar));
         setUpTaskList();
     }
 
@@ -116,28 +122,42 @@ public class MainScreenActivity extends AppCompatActivity {
     }
 
     private void addEvent(View v) {
-        Map<String, Object> data = new HashMap<>();
-        Event event = new Event("added", "this is the event that i added using the add button", LocalDateTime.now(), 100);
-        data.put("title", "added");
-        data.put("description", "this is the event that i added using the add button");
-        data.put("start", LocalDateTime.now().toEpochSecond(ZoneOffset.UTC));
-        data.put("duration", 100);
-        data.put("household", currentHouse);
-        LocalDateTime.now().toEpochSecond(ZoneOffset.UTC);
-        db.collection("events").add(data)
-                .addOnSuccessListener(documentReference -> {
-                    Toast.makeText(v.getContext(), v.getContext().getString(R.string.add_success), Toast.LENGTH_SHORT).show();
-                    ArrayList<Event> newEvents = new ArrayList<>(calendar.getEvents());
-                    newEvents.add(event);
-                    calendarAdapter.notifyDataSetChanged();
-                    calendar.setEvents(newEvents);
-                })
-                .addOnFailureListener(documentReference -> Toast.makeText(v.getContext(), v.getContext().getString(R.string.add_fail), Toast.LENGTH_SHORT).show());
+        LayoutInflater inflater = LayoutInflater.from(MainScreenActivity.this);
+        final View dialogView = inflater.inflate(R.layout.event_creation, null);
+        new AlertDialog.Builder(MainScreenActivity.this)
+                .setTitle(R.string.event_creation_title)
+                .setView(dialogView)
+                .setPositiveButton(R.string.add, (dialog, id) -> pushEventAndDismiss(dialog, dialogView, v))
+                .setNegativeButton(R.string.cancel, (dialog, id) -> dialog.dismiss())
+                .show();
     }
 
-    private void refreshCalendar(View v) {
+    private void pushEventAndDismiss(DialogInterface dialog, View dialogView, View v) {
+        Map<String, Object> data = new HashMap<>();
+        final String title = ((EditText) dialogView.findViewById(R.id.new_event_title)).getText().toString();
+        final String desc = ((EditText) dialogView.findViewById(R.id.new_event_desc)).getText().toString();
+        final String date = ((EditText) dialogView.findViewById(R.id.new_event_date)).getText().toString();
+        final String duration = ((EditText) dialogView.findViewById(R.id.new_event_duration)).getText().toString();
+        Map<String, String> event = new HashMap<>();
+        event.put("title", title);
+        event.put("desc", desc);
+        event.put("date", date);
+        event.put("duration", duration);
+        if (Util.putEventStringsInData(event, data)) {
+            dialog.dismiss();
+            return;
+        }
+        data.put("household", currentHouse);
+        db.collection("events").add(data)
+                .addOnSuccessListener(documentReference -> refreshCalendar(v));
+        dialog.dismiss();
+    }
+
+    @SuppressLint("NotifyDataSetChanged")
+    void refreshCalendar(View v) {
         db.collection("events")
                 .whereEqualTo("household", currentHouse)
+                .whereGreaterThan("start", LocalDateTime.now().toEpochSecond(ZoneOffset.UTC))
                 .get()
                 .addOnCompleteListener(task -> {
                     if (task.isSuccessful()) {
@@ -148,14 +168,16 @@ public class MainScreenActivity extends AppCompatActivity {
                                     document.getString("title"),
                                     document.getString("description"),
                                     LocalDateTime.ofEpochSecond(document.getLong("start"), 0, ZoneOffset.UTC),
-                                    document.getLong("duration") == null ? 0 : document.getLong("duration"));
+                                    document.getLong("duration") == null ? 0 : document.getLong("duration"),
+                                    document.getId());
                             newEvents.add(event);
                         }
                         calendarAdapter.notifyDataSetChanged();
                         calendar.setEvents(newEvents);
-                        Toast.makeText(v.getContext(), v.getContext().getString(R.string.refresh_success), Toast.LENGTH_SHORT).show();
-                    } else {
-                        Toast.makeText(v.getContext(), v.getContext().getString(R.string.refresh_fail), Toast.LENGTH_SHORT).show();
+                        Toast.makeText(v.getContext(), v.getContext().getString(R.string.refresh_calendar_success), Toast.LENGTH_SHORT).show();
+                    }
+                    else {
+                        Toast.makeText(v.getContext(), v.getContext().getString(R.string.refresh_calendar_fail), Toast.LENGTH_SHORT).show();
                     }
                 });
 
