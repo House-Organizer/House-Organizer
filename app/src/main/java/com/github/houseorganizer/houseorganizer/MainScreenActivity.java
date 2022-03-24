@@ -96,8 +96,12 @@ public class MainScreenActivity extends AppCompatActivity {
                                 String id = document.getId();
                                 households.add(id);
                             }
-
-                            currentHouse = db.collection("households").document(households.get(0));
+                            if(households.size() > 0) {
+                                currentHouse = db.collection("households").document(households.get(0));
+                            }
+                            else {
+                                currentHouse = db.collection("households").document("test_house_0");
+                            }
                             text.setText("currentHouse: " + currentHouse.getId() + " by default");
 
                         } else {
