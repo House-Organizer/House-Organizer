@@ -108,9 +108,13 @@ public class Task {
         return subtasks.get(index);
     }
 
-    public boolean hasDueDate() {
-        return dueDate != LocalDateTime.MIN;
+    public List<SubTask> getSubTasks() {
+        return new ArrayList<>(subtasks);
     }
+
+    /*public boolean hasDueDate() {
+        return dueDate != LocalDateTime.MIN;
+    }*/
 
     public LocalDateTime getDueDate() {
         return dueDate;

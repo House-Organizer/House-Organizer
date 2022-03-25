@@ -1,5 +1,6 @@
 package com.github.houseorganizer.houseorganizer;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class TaskList {
@@ -10,7 +11,7 @@ public class TaskList {
     public TaskList(User owner, String title, List<Task> initialTasks) {
         this.owner = owner;
         this.title = title;
-        this.tasks = initialTasks;
+        this.tasks = new ArrayList<>(initialTasks);
     }
 
     // Setters
@@ -19,7 +20,7 @@ public class TaskList {
     }
 
     public void addTask(Task newTask) {
-        this.tasks.add(newTask);
+        tasks.add(newTask);
     }
 
     public void addTask(int index, Task newTask) {
@@ -62,7 +63,7 @@ public class TaskList {
 
     // todo test
     public List<Task> getTasks() {
-        return tasks;
+        return new ArrayList<>(tasks);
     }
 
 }

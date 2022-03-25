@@ -18,6 +18,7 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
+import java.util.Arrays;
 import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -113,9 +114,9 @@ public class RegisterEmail extends AppCompatActivity {
                                 "Verification email sent to " + user.getEmail(),
                                 Toast.LENGTH_SHORT).show();
                     } else {
-                        Log.e(getString(R.string.tag_register_email), "sendEmailVerification", task.getException());
-                        Toast.makeText(RegisterEmail.this, "Failed to send verification email.",
-                                Toast.LENGTH_SHORT).show();
+                        LoginActivity.logAndToast(Arrays.asList(getString(R.string.tag_register_email),
+                                "sendEmailVerification"), task.getException(),
+                                RegisterEmail.this, "Failed to send verification email.");
                     }
                 });
     }
