@@ -63,7 +63,7 @@ public class TaskUnitTest {
         assertEquals("stub description", t.getDescription());
 
         assertFalse(t.isFinished());
-        assertFalse(t.hasDueDate());
+        //assertFalse(t.hasDueDate());
         assertFalse(t.hasAssignees());
         assertFalse(t.hasSubTasks());
     }
@@ -84,7 +84,7 @@ public class TaskUnitTest {
         t.changeDueDate(ldt);
 
         assertEquals(ldt, t.getDueDate());
-        assertTrue(t.hasDueDate());
+        //assertTrue(t.hasDueDate());
     }
 
     @Test
