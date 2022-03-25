@@ -11,6 +11,7 @@
     <string name="img_house_row_desc">Image for the given house name</string>
     <string name="home_logo">Home Logo</string>
     <string name="title_activity_settings">Settings</string>
+    <string name="no_household_info">No info yet!</string>
 
     <!-- Edit Household -->
     <string name="user_name">User name</string>
@@ -30,6 +31,15 @@
     <string name="attachment_title">Download attachments</string>
     <string name="attachment_summary_on">Automatically download attachments for calendar </string>
     <string name="attachment_summary_off">Only download attachments when manually requested</string>
+
+    <!-- Task view and its buttons -->
+    <string name="task_title_hint">Name</string>
+    <string name="task_description_hint">Description</string>
+    <string name="add_task">+</string>
+    <string name="add_subtask">Add subtask</string>
+    <string name="task_completion_title">Congratulations!</string>
+    <string name="task_completion_desc">You just completed a task. Keep it up!</string>
+    <string name="subtask_completion_desc">You just completed a task. Keep it up!</string>
 
     <!-- Calendar view and its buttons -->
     <string name="add_event">+</string>

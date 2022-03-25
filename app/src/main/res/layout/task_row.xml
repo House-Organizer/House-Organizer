@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout android:orientation="horizontal"
+<LinearLayout xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="horizontal"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:paddingTop="0dp"
@@ -10,17 +11,20 @@
     <Button
         android:id="@+id/task_title"
         android:textSize="10sp"
-        android:layout_width="250dp"
+        android:gravity="start|center_vertical"
+        android:layout_width="0dp"
         android:layout_height="35dp"
-        android:layout_weight="0"
         android:background="#acd6d9"
-        android:layout_marginEnd="10dp"/>
+        android:layout_marginEnd="10dp"
+        tools:ignore="SmallSp"
+        android:layout_weight="1"/>
 
     <Button
         android:id="@+id/task_done_button"
         android:layout_width="25dp"
         android:layout_height="35dp"
         app:layout_constraintEnd_toEndOf="parent"
+        android:layout_weight="0"
         />
 
 </LinearLayout>

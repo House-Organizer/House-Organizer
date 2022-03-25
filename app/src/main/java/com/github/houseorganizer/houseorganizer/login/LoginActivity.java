@@ -2,6 +2,7 @@ package com.github.houseorganizer.houseorganizer.login;
 
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -22,6 +23,10 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.GoogleAuthProvider;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 public class LoginActivity extends AppCompatActivity {
 
@@ -53,9 +58,9 @@ public class LoginActivity extends AppCompatActivity {
         if(getIntent().hasExtra(getString(R.string.signout_intent))){
             mAuth.signOut();
             mGoogleSignInClient.signOut().addOnCompleteListener(this, l ->
-                    activateSignInButton());
+                    setUpSignInButtons());
         } else{
-            activateSignInButton();
+            setUpSignInButtons();
         }
     }
 
@@ -87,10 +92,10 @@ public class LoginActivity extends AppCompatActivity {
     );
 
     /**
-     *  Activates the discover and Google Sign-In buttons for
+     *  Sets up the discover and Google Sign-In buttons for
      *  the user to authenticate
      */
-    private void activateSignInButton(){
+    private void setUpSignInButtons(){
         findViewById(R.id.google_sign_in_button).setOnClickListener(
                 v -> googleSignInResultLauncher.launch(new Intent(mGoogleSignInClient.getSignInIntent())));
 
@@ -102,16 +107,23 @@ public class LoginActivity extends AppCompatActivity {
                 .addOnCompleteListener(this, task -> {
                     if (task.isSuccessful()) {
                         // Sign in success, update UI with the signed-in user's information
-                        //Log.d(TAG, "signInAnonymously:success");
+                        Log.d(getString(R.string.tag_login_activity), "signInAnonymously:success");
                         startActivity(new Intent(LoginActivity.this, MainScreenActivity.class));
                         finish();
                     } else {
                         // If sign in fails, display a message to the user.
-                        //Log.w(TAG, "signInAnonymously:failure", task.getException());
-                        Toast.makeText(LoginActivity.this, "Authentication failed.",
-                                Toast.LENGTH_SHORT).show();
+                        logAndToast(Arrays.asList(getString(R.string.tag_login_activity),
+                                "signInAnonymously:failure"), task.getException(),
+                                LoginActivity.this, "Authentication failed.");
                     }
                 });
+    }
+
+    protected static void logAndToast(List<String> logTagAndMsg, Exception e, Context cx, String toastMsg) {
+        assert logTagAndMsg.size() == 2;
+
+        Log.w(logTagAndMsg.get(0), logTagAndMsg.get(1), e);
+        Toast.makeText(cx, toastMsg, Toast.LENGTH_SHORT).show();
     }
 
     private void firebaseAuthWithGoogle(String idToken) {

@@ -1,0 +1,24 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:paddingStart="5dp"
+    android:paddingEnd="0dp">
+
+    <Button
+        android:id="@+id/subtask_done_button"
+        android:layout_width="22dp"
+        android:layout_height="33dp"
+        android:paddingStart="0dp"
+        android:paddingEnd="0dp"
+        android:layout_gravity="top"/>
+
+    <EditText
+        android:id="@+id/subtask_title_input"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:inputType="text"
+        android:hint="@string/task_title_hint"
+        android:autofillHints="" />
+
+</LinearLayout>

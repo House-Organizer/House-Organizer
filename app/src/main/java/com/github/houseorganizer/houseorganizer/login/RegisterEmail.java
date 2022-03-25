@@ -1,5 +1,7 @@
 package com.github.houseorganizer.houseorganizer.login;
 
+import static com.github.houseorganizer.houseorganizer.login.LoginEmail.inputsNotEmpty;
+
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -16,6 +18,7 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
+import java.util.Arrays;
 import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -34,7 +37,11 @@ public class RegisterEmail extends AppCompatActivity {
 
         findViewById(R.id.reg_email_register_button).setOnClickListener(
                 v -> {
-                    if (isValidEmail() && isValidPassword()) signUpWithEmail(v);
+                    String email = ((EditText) findViewById(R.id.reg_enter_email)).getText().toString();
+                    String password = ((EditText) findViewById(R.id.reg_enter_password)).getText().toString();
+                    TextView error_message = findViewById(R.id.reg_email_error_message);
+                    if (inputsNotEmpty(email, password, error_message) && isValidEmail() && isValidPassword())
+                        signUpWithEmail(v);
                 }
         );
     }
@@ -107,9 +114,9 @@ public class RegisterEmail extends AppCompatActivity {
                                 "Verification email sent to " + user.getEmail(),
                                 Toast.LENGTH_SHORT).show();
                     } else {
-                        Log.e(getString(R.string.tag_register_email), "sendEmailVerification", task.getException());
-                        Toast.makeText(RegisterEmail.this, "Failed to send verification email.",
-                                Toast.LENGTH_SHORT).show();
+                        LoginActivity.logAndToast(Arrays.asList(getString(R.string.tag_register_email),
+                                "sendEmailVerification"), task.getException(),
+                                RegisterEmail.this, "Failed to send verification email.");
                     }
                 });
     }
