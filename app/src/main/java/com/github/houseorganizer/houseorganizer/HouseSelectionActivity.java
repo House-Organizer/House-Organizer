@@ -69,6 +69,12 @@ public class HouseSelectionActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
+    public void addHouseholdButtonPressed(View view) {
+        Intent intent = new Intent(this, CreateHouseholdActivity.class);
+        intent.putExtra("mUserEmail", emailUser);
+        startActivity(intent);
+    }
+
     private class HouseViewHolder extends RecyclerView.ViewHolder {
         TextView houseName;
         ImageButton editButton;
