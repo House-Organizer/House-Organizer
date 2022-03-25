@@ -4,8 +4,8 @@
     <PreferenceCategory app:title="@string/general_header">
 
         <EditTextPreference
-            android:id="@+id/name_chosen"
-            app:key="signature"
+            android:id="@+id/nickname_chosen"
+            app:key="nickname"
             app:title="@string/signature_title"
             app:useSimpleSummaryProvider="true" />
 
