@@ -1,5 +1,7 @@
 package com.github.houseorganizer.houseorganizer.login;
 
+import static com.github.houseorganizer.houseorganizer.login.LoginEmail.inputsNotEmpty;
+
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -35,7 +37,11 @@ public class RegisterEmail extends AppCompatActivity {
 
         findViewById(R.id.reg_email_register_button).setOnClickListener(
                 v -> {
-                    if (isValidEmail() && isValidPassword()) signUpWithEmail(v);
+                    String email = ((EditText) findViewById(R.id.reg_enter_email)).getText().toString();
+                    String password = ((EditText) findViewById(R.id.reg_enter_password)).getText().toString();
+                    TextView error_message = findViewById(R.id.reg_email_error_message);
+                    if (inputsNotEmpty(email, password, error_message) && isValidEmail() && isValidPassword())
+                        signUpWithEmail(v);
                 }
         );
     }

@@ -10,3 +10,5 @@
 /.idea/workspace.xml
 /.idea/libraries
 /app/debug/app-debug.aab
+/firebase-debug.log
+/ui-debug.log
