@@ -13,6 +13,12 @@
     <string name="title_activity_settings">Settings</string>
     <string name="no_household_info">No info yet!</string>
 
+    <!-- Edit Household -->
+    <string name="user_name">User name</string>
+    <string name="edit_button_description">Press to edit the household</string>
+    <string name="confirm_button">Confirm changes</string>
+    <string name="edit_title">Household</string>
+
     <!-- Preference Titles -->
     <string name="general_header">General</string>
     <string name="cache_header">Cache</string>
