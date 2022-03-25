@@ -34,11 +34,11 @@ check_android_task:
   check_script: |
     chmod +x firebase_bin
     ./firebase_bin emulators:exec --project house-organizer-18a58 './gradlew check connectedCheck'
-  report_codeclimate_script: |
-    export JACOCO_SOURCE_PATH=app/src/main/java/
-    ./cc-test-reporter format-coverage ./app/build/reports/coverage/androidTest/debug/report.xml --input-type jacoco
-    ./cc-test-reporter format-coverage ./app/build/reports/jacoco/jacocoTestReport/jacocoTestReport.xml --input-type jacoco
-    ./cc-test-reporter upload-coverage
+  #report_codeclimate_script: |
+  #  export JACOCO_SOURCE_PATH=app/src/main/java/
+  #  ./cc-test-reporter format-coverage ./app/build/reports/coverage/androidTest/debug/report.xml --input-type jacoco
+  #  ./cc-test-reporter format-coverage ./app/build/reports/jacoco/jacocoTestReport/jacocoTestReport.xml --input-type jacoco
+  #  ./cc-test-reporter upload-coverage
   lint_script:
     ./gradlew lintDebug
   always:
