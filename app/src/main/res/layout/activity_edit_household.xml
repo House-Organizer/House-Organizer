@@ -7,7 +7,7 @@
     tools:context=".EditHousehold">
 
     <TextView
-        android:id="@+id/textView"
+        android:id="@+id/edit_household_name"
         android:layout_width="412dp"
         android:layout_height="38dp"
         android:layout_marginTop="48dp"
@@ -15,29 +15,17 @@
         android:textAlignment="center"
         android:textSize="24sp"
         android:textStyle="bold"
-        app:layout_constraintBottom_toTopOf="@+id/usersView"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/usersView"
-        android:layout_width="411dp"
-        android:layout_height="579dp"
-        android:layout_marginTop="3dp"
-        app:layout_constraintBottom_toTopOf="@+id/button"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView" />
-
     <Button
         android:id="@+id/button"
-        android:layout_width="406dp"
-        android:layout_height="64dp"
+        android:layout_width="287dp"
+        android:layout_height="59dp"
         android:onClick="confirmChanges"
         android:text="@string/confirm_button"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/usersView" />
+        app:layout_constraintStart_toStartOf="parent" />
 </androidx.constraintlayout.widget.ConstraintLayout>
