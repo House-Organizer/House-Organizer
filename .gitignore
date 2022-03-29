@@ -11,3 +11,5 @@
 /.idea/libraries
 /.idea/deploymentTargetDropDown.xml
 /app/debug/app-debug.aab
+/firebase-debug.log
+/ui-debug.log

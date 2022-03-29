@@ -1,4 +1,4 @@
-package com.github.houseorganizer.houseorganizer;
+package com.github.houseorganizer.houseorganizer.login;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -9,7 +9,11 @@ import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.github.houseorganizer.houseorganizer.MainScreenActivity;
+import com.github.houseorganizer.houseorganizer.R;
 import com.google.firebase.auth.FirebaseAuth;
+
+import java.util.Objects;
 
 public class LoginEmail extends AppCompatActivity {
 
@@ -24,7 +28,10 @@ public class LoginEmail extends AppCompatActivity {
 
         findViewById(R.id.log_email_signin_button).setOnClickListener(
                 v -> {
-                    if (inputsNotEmpty()) signInWithEmail(v);
+                    String email = ((EditText) findViewById(R.id.log_enter_email)).getText().toString();
+                    String password = ((EditText) findViewById(R.id.log_enter_password)).getText().toString();
+                    TextView error_message = findViewById(R.id.log_email_error_message);
+                    if (inputsNotEmpty(email, password, error_message)) signInWithEmail(v);
                 }
         );
         findViewById(R.id.log_email_register_button).setOnClickListener(
@@ -32,12 +39,7 @@ public class LoginEmail extends AppCompatActivity {
         );
     }
 
-    private boolean inputsNotEmpty() {
-        EditText email_field = findViewById(R.id.log_enter_email);
-        EditText password_field = findViewById(R.id.log_enter_password);
-        String email = email_field.getText().toString();
-        String password = password_field.getText().toString();
-        TextView error_message = findViewById(R.id.log_email_error_message);
+    public static boolean inputsNotEmpty(String email, String password, TextView error_message) {
 
         if (email.isEmpty() || password.isEmpty()) {
             error_message.setText(R.string.inputs_not_empty);
@@ -48,23 +50,22 @@ public class LoginEmail extends AppCompatActivity {
     }
 
     public void signInWithEmail(View v) {
-        EditText email_field = findViewById(R.id.log_enter_email);
-        EditText password_field = findViewById(R.id.log_enter_password);
-        String email = email_field.getText().toString();
-        String password = password_field.getText().toString();
-        TextView error_message = findViewById(R.id.log_email_error_message);
-
-        mAuth.signInWithEmailAndPassword(email, password)
-                .addOnCompleteListener(this, task -> {
+        String email = ((EditText) findViewById(R.id.log_enter_email)).getText().toString();
+        String password = ((EditText) findViewById(R.id.log_enter_password)).getText().toString();
+        mAuth.signInWithEmailAndPassword(email, password).addOnCompleteListener(this, task -> {
                     if (task.isSuccessful()) {
                         // Sign in success, update UI with the signed-in user's information
                         Log.d(getString(R.string.tag_login_email), "signInWithEmail:success");
-                        startActivity(new Intent(LoginEmail.this, MainScreenActivity.class));
+                        if (Objects.requireNonNull(mAuth.getCurrentUser()).isEmailVerified()) {
+                            startActivity(new Intent(LoginEmail.this, MainScreenActivity.class));
+                        } else {
+                            startActivity(new Intent(LoginEmail.this, VerifyEmail.class));
+                        }
                         finish();
                     } else {
                         // If sign in fails, display a message to the user.
                         Log.d(getString(R.string.tag_login_email), "signInWithEmail:failure");
-                        error_message.setText(R.string.log_email_auth_failed);
+                        ((TextView) findViewById(R.id.log_email_error_message)).setText(R.string.log_email_auth_failed);
                     }
                 });
     }

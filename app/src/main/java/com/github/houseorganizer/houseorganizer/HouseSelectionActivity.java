@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -14,12 +15,12 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter;
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
 
 public class HouseSelectionActivity extends AppCompatActivity {
     RecyclerView housesView;
-    FirebaseFirestore firestore;
     String emailUser;
     FirestoreRecyclerAdapter<HouseModel, HouseViewHolder> adapter;
 
@@ -31,12 +32,9 @@ public class HouseSelectionActivity extends AppCompatActivity {
         housesView = findViewById(R.id.housesView);
         emailUser = getIntent().getStringExtra(MainScreenActivity.CURRENT_USER);
 
-        firestore = FirebaseFirestore.getInstance();
-        Query query = firestore.collection("households").whereArrayContains("residents", emailUser);
+        Query query = FirebaseFirestore.getInstance().collection("households").whereArrayContains("residents", emailUser);
         FirestoreRecyclerOptions<HouseModel> options = new FirestoreRecyclerOptions.Builder<HouseModel>()
-                .setQuery(query, HouseModel.class)
-                .build();
-
+                .setQuery(query, HouseModel.class).build();
         adapter = new FirestoreRecyclerAdapter<HouseModel, HouseViewHolder>(options) {
             @NonNull
             @Override
@@ -49,6 +47,7 @@ public class HouseSelectionActivity extends AppCompatActivity {
             protected void onBindViewHolder(@NonNull HouseViewHolder holder, int position, @NonNull HouseModel model) {
                 holder.houseName.setText(model.getName());
                 holder.houseName.setTag(adapter.getSnapshots().getSnapshot(position).getId());
+                holder.editButton.setTag(adapter.getSnapshots().getSnapshot(position).getId());
             }
         };
 
@@ -64,12 +63,20 @@ public class HouseSelectionActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
-    private static class HouseViewHolder extends RecyclerView.ViewHolder {
+    public void editHousehold(View view) {
+        Intent intent = new Intent(this, EditHousehold.class);
+        intent.putExtra(MainScreenActivity.HOUSEHOLD, view.getTag().toString());
+        startActivity(intent);
+    }
+
+    private class HouseViewHolder extends RecyclerView.ViewHolder {
         TextView houseName;
+        ImageButton editButton;
 
         public HouseViewHolder(@NonNull View itemView) {
             super(itemView);
             houseName = itemView.findViewById(R.id.houseName);
+            editButton = itemView.findViewById(R.id.editButton);
         }
     }
 

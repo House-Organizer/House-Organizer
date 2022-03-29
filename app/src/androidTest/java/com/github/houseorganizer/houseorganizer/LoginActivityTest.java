@@ -10,6 +10,8 @@ import static androidx.test.espresso.matcher.ViewMatchers.withId;
 import androidx.test.ext.junit.rules.ActivityScenarioRule;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 
+import com.github.houseorganizer.houseorganizer.login.LoginActivity;
+
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -29,16 +31,6 @@ public class LoginActivityTest {
     @Test
     public void signInButtonIsEnabled() {
         onView(withId(R.id.google_sign_in_button)).check(matches(isEnabled()));
-    }
-
-    /*
-    // Test that when the sign in button is clicked an intent is fired
-    @Test
-    public void clickSignInButtonFiresIntent() {
-        Intents.init();
-        onView(withId(R.id.google_sign_in_button)).perform(click());
-        intended(toPackage("com.github.houseorganizer.houseorganizer"));
-        Intents.release();
     }
 
     /* Discover button */
