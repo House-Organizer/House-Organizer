@@ -3,7 +3,11 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="..\:/Users/sansi/AndroidStudioProjects/House-Organizer/app/src/main/res/layout/activity_edit_household.xml" value="0.1" />
         <entry key="..\:/Users/sansi/AndroidStudioProjects/House-Organizer/app/src/main/res/layout/activity_house_selection.xml" value="0.22" />
+        <entry key="..\:/Users/sansi/AndroidStudioProjects/House-Organizer/app/src/main/res/layout/activity_login.xml" value="0.1" />
+        <entry key="..\:/Users/sansi/AndroidStudioProjects/House-Organizer/app/src/main/res/layout/activity_main_screen.xml" value="0.3333333333333333" />
+        <entry key="..\:/Users/sansi/AndroidStudioProjects/House-Organizer/app/src/main/res/layout/activity_register_email.xml" value="0.22" />
         <entry key="..\:/Users/sansi/AndroidStudioProjects/House-Organizer/app/src/main/res/layout/house_row.xml" value="0.1796875" />
         <entry key="..\:/Users/thiba/Documents/GitHub/House-Organizer/app/src/main/res/layout/activity_main_screen.xml" value="0.264" />
         <entry key="..\:/Users/thiba/Documents/GitHub/House-Organizer/app/src/main/res/layout/calendar_upcoming_row.xml" value="0.24739583333333334" />

@@ -7,7 +7,7 @@
     tools:context=".EditHousehold">
 
     <TextView
-        android:id="@+id/textView"
+        android:id="@+id/householdName"
         android:layout_width="412dp"
         android:layout_height="38dp"
         android:layout_marginTop="48dp"
@@ -28,7 +28,7 @@
         app:layout_constraintBottom_toTopOf="@+id/button"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView" />
+        app:layout_constraintTop_toBottomOf="@+id/householdName" />
 
     <Button
         android:id="@+id/button"
