@@ -24,6 +24,7 @@ import androidx.test.espresso.matcher.BoundedMatcher;
 import androidx.test.ext.junit.rules.ActivityScenarioRule;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 
+import com.github.houseorganizer.houseorganizer.login.LoginActivity;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -51,7 +52,7 @@ import java.util.Map;
 public class MainScreenActivityTest {
 
     @BeforeClass
-    public static void settingUpMockFirebase(){
+    public static void settingUpEmulatorFirebase(){
 
         FirebaseAuth mAuth = FirebaseAuth.getInstance();
         mAuth.useEmulator("10.0.2.2", 9099);
