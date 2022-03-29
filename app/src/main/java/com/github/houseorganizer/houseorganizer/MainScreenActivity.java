@@ -71,7 +71,6 @@ public class MainScreenActivity extends AppCompatActivity {
         calendarEvents.setAdapter(calendarAdapter);
         calendarEvents.setLayoutManager(new GridLayoutManager(this, calendarColumns));
 
-        findViewById(R.id.sign_out_button).setOnClickListener(this::signOut);
         findViewById(R.id.calendar_view_change).setOnClickListener(this::rotateView);
         findViewById(R.id.add_event).setOnClickListener(this::addEvent);
         findViewById(R.id.refresh_calendar).setOnClickListener(this::refreshCalendar);
@@ -129,13 +128,6 @@ public class MainScreenActivity extends AppCompatActivity {
 
         editor.putString(MainScreenActivity.CURRENT_HOUSEHOLD, selectedHouse);
         editor.apply();
-    }
-
-    private void signOut(View v) {
-        Intent intent = new Intent(this, LoginActivity.class);
-        intent.putExtra(getString(R.string.signout_intent), true);
-        startActivity(intent);
-        finish();
     }
 
     private void rotateView(View v) {
