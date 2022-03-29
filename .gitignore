@@ -9,4 +9,5 @@
 /.idea/gradle.xml
 /.idea/workspace.xml
 /.idea/libraries
+/.idea/deploymentTargetDropDown.xml
 /app/debug/app-debug.aab

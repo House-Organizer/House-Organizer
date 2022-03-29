@@ -21,7 +21,6 @@ public class LoginEmail extends AppCompatActivity {
         setContentView(R.layout.activity_login_email);
 
         mAuth = FirebaseAuth.getInstance();
-        mAuth.useEmulator("10.0.2.2", 9099);
 
         findViewById(R.id.log_email_signin_button).setOnClickListener(
                 v -> {

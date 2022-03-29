@@ -19,7 +19,6 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         mAuth = FirebaseAuth.getInstance();
-        mAuth.useEmulator("10.0.2.2", 9099);
         FirebaseUser user = mAuth.getCurrentUser();
 
         /* If user is not authenticated, send him to LoginActivity to authenticate first.
