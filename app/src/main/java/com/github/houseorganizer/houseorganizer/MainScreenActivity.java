@@ -86,8 +86,11 @@ public class MainScreenActivity extends AppCompatActivity {
         SharedPreferences sharedPreferences = getSharedPreferences(SHARED_PREFS, MODE_PRIVATE);
         String householdId = sharedPreferences.getString(CURRENT_HOUSEHOLD, "");
 
-        db.collection("households")
-                .whereArrayContains("residents", mUser.getEmail()).get()
+        loadHousehold(householdId);
+    }
+
+    private void loadHousehold(String householdId) {
+        db.collection("households").whereArrayContains("residents", mUser.getEmail()).get()
                 .addOnCompleteListener(task -> {
                     if (task.isSuccessful()) {
                         ArrayList<String> households = new ArrayList<String>();
@@ -103,30 +106,34 @@ public class MainScreenActivity extends AppCompatActivity {
                             if (!households.isEmpty()) {
                                 currentHouse = db.collection("households").document(households.get(0));
                                 saveData(households.get(0));
-
                             } else {
                                 saveData("");
-                                findViewById(R.id.refresh_calendar).setVisibility(View.INVISIBLE);
-                                findViewById(R.id.calendar).setVisibility(View.INVISIBLE);
-                                findViewById(R.id.add_event).setVisibility(View.INVISIBLE);
-                                findViewById(R.id.calendar_view_change).setVisibility(View.INVISIBLE);
-                                findViewById(R.id.new_task).setVisibility(View.INVISIBLE);
-                                findViewById(R.id.list_view_change).setVisibility(View.INVISIBLE);
-                                findViewById(R.id.task_list).setVisibility(View.INVISIBLE);
+                                hideButtons();
                             }
                         }
-
+                        
                     } else {
                         Toast.makeText(getApplicationContext(), "Could not get a house.", Toast.LENGTH_SHORT).show();
                     }
                 });
     }
 
-    private void saveData(String selectedHouse) {
+
+    private void hideButtons() {
+        findViewById(R.id.refresh_calendar).setVisibility(View.INVISIBLE);
+        findViewById(R.id.calendar).setVisibility(View.INVISIBLE);
+        findViewById(R.id.add_event).setVisibility(View.INVISIBLE);
+        findViewById(R.id.calendar_view_change).setVisibility(View.INVISIBLE);
+        findViewById(R.id.new_task).setVisibility(View.INVISIBLE);
+        findViewById(R.id.list_view_change).setVisibility(View.INVISIBLE);
+        findViewById(R.id.task_list).setVisibility(View.INVISIBLE);
+    }
+
+    private void saveData(String currentHouseId) {
         SharedPreferences sharedPreferences = getSharedPreferences(MainScreenActivity.SHARED_PREFS, MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();
 
-        editor.putString(MainScreenActivity.CURRENT_HOUSEHOLD, selectedHouse);
+        editor.putString(CURRENT_HOUSEHOLD, currentHouseId);
         editor.apply();
     }
 
