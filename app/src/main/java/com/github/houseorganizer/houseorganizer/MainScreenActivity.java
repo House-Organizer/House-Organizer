@@ -57,8 +57,10 @@ public class MainScreenActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main_screen);
 
         FirebaseAuth mAuth = FirebaseAuth.getInstance();
+        //mAuth.useEmulator("10.0.2.2", 9099);
         mUser = mAuth.getCurrentUser();
         db = FirebaseFirestore.getInstance();
+        //db.useEmulator("10.0.2.2", 8080);
 
         getCurrentHousehold();
 
@@ -92,13 +94,12 @@ public class MainScreenActivity extends AppCompatActivity {
                     .whereArrayContains("residents", mUser.getEmail())
                     .get()
                     .addOnCompleteListener(task -> {
-                        if (task.isSuccessful()) {
+                        if (task.isSuccessful() && !task.getResult().isEmpty()) {
                             ArrayList<String> households = new ArrayList<String>();
                             for (QueryDocumentSnapshot document : task.getResult()) {
                                 String id = document.getId();
                                 households.add(id);
                             }
-
                             currentHouse = db.collection("households").document(households.get(0));
                             text.setText("currentHouse: " + currentHouse.getId() + " by default");
 

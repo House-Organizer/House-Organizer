@@ -1,5 +1,5 @@
 package com.github.houseorganizer.houseorganizer;
-/*
+
 import static androidx.test.espresso.Espresso.onView;
 import static androidx.test.espresso.action.ViewActions.click;
 import static androidx.test.espresso.assertion.ViewAssertions.matches;
@@ -7,7 +7,6 @@ import static androidx.test.espresso.intent.Checks.checkNotNull;
 import static androidx.test.espresso.intent.Intents.intended;
 import static androidx.test.espresso.intent.matcher.IntentMatchers.hasComponent;
 import static androidx.test.espresso.intent.matcher.IntentMatchers.hasExtra;
-import static androidx.test.espresso.intent.matcher.IntentMatchers.toPackage;
 import static androidx.test.espresso.matcher.ViewMatchers.hasChildCount;
 import static androidx.test.espresso.matcher.ViewMatchers.isClickable;
 import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
@@ -18,7 +17,6 @@ import static androidx.test.espresso.matcher.ViewMatchers.withText;
 import android.view.View;
 
 import androidx.annotation.NonNull;
-import androidx.lifecycle.Lifecycle;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.test.core.app.ApplicationProvider;
 import androidx.test.espresso.intent.Intents;
@@ -26,17 +24,76 @@ import androidx.test.espresso.matcher.BoundedMatcher;
 import androidx.test.ext.junit.rules.ActivityScenarioRule;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FirebaseFirestoreSettings;
+
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
+import org.junit.Before;
+import org.junit.BeforeClass;
+import org.junit.FixMethodOrder;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.junit.runners.MethodSorters;
 
 import java.time.LocalDate;
 import java.time.YearMonth;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @RunWith(AndroidJUnit4.class)
+@FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class MainScreenActivityTest {
+
+    @BeforeClass
+    public static void settingUpMockFirebase(){
+
+        FirebaseAuth mAuth = FirebaseAuth.getInstance();
+        mAuth.useEmulator("10.0.2.2", 9099);
+        mAuth.createUserWithEmailAndPassword("john@cena.us", "theRock");
+        mAuth.signInWithEmailAndPassword("john@cena.us", "theRock").addOnCompleteListener(t -> {
+            FirebaseUser user = mAuth.getCurrentUser();
+            FirebaseFirestore db = FirebaseFirestore.getInstance();
+            db.useEmulator("10.0.2.2", 8080);
+            FirebaseFirestoreSettings set = new FirebaseFirestoreSettings.Builder()
+                    .setPersistenceEnabled(false)
+                    .build();
+
+            db.collection("households").get().addOnCompleteListener(task -> {
+               if(task.getResult().isEmpty()){
+                   createHouseholdTable(db);
+               }
+            });
+        });
+
+    }
+
+    private static void createHouseholdTable(FirebaseFirestore db){
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        Map<String, Object> houseHold = new HashMap<>();
+        List<String> residents = Arrays.asList(user.getEmail());
+
+        houseHold.put("name", "theRing");
+        houseHold.put("owner", user.getEmail());
+        houseHold.put("num_members", 1);
+        houseHold.put("residents", residents);
+
+        db.collection("households").add(houseHold);
+    }
+
+    @Before
+    public void checkIfUserIsConnected() throws InterruptedException {
+        FirebaseAuth mAuth = FirebaseAuth.getInstance();
+        FirebaseUser user = mAuth.getCurrentUser();
+        if(user == null){
+            mAuth.signInWithEmailAndPassword("john@cena.us", "theRock");
+        }
+    }
 
     @Rule
     public ActivityScenarioRule<MainScreenActivity> mainScreenActivityActivityScenarioRule =
@@ -175,7 +232,7 @@ public class MainScreenActivityTest {
             }
         };
     }
-
+    /*
     @Test
     public void calendarUpcomingEventsDisplayed() {
         onView(withId(R.id.refresh_calendar)).perform(click());
@@ -194,7 +251,7 @@ public class MainScreenActivityTest {
     }
     */
 
-/*
+
     @Test
     public void calendarViewRotatesCorrectly() {
         // Test partially commented out because we do not know how many events are on the database on testing
@@ -225,7 +282,7 @@ public class MainScreenActivityTest {
     }
 
     @Test
-    public void signOutButtonFiresRightIntent(){
+    public void zSignOutButtonFiresRightIntent(){
         Intents.init();
         onView(withId(R.id.sign_out_button)).perform(click());
         intended(hasComponent(LoginActivity.class.getName()));
@@ -233,4 +290,4 @@ public class MainScreenActivityTest {
         Intents.release();
     }
 
-}*/
+}

@@ -26,6 +26,7 @@ public class RegisterEmail extends AppCompatActivity {
         setContentView(R.layout.activity_register_email);
 
         mAuth = FirebaseAuth.getInstance();
+        mAuth.useEmulator("10.0.2.2", 9099);
 
         findViewById(R.id.reg_email_register_button).setOnClickListener(
                 v -> {

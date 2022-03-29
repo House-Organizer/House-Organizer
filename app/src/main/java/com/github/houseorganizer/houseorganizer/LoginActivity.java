@@ -39,6 +39,7 @@ public class LoginActivity extends AppCompatActivity {
 
         // Firebase Auth Instance
         mAuth = FirebaseAuth.getInstance();
+        mAuth.useEmulator("10.0.2.2", 9099);
 
         findViewById(R.id.email_signin_button).setOnClickListener(
                 v -> startActivity(new Intent(this, LoginEmail.class))
