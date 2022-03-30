@@ -213,9 +213,12 @@ public class MainScreenActivity extends AppCompatActivity {
         taskListView.setLayoutManager(new LinearLayoutManager(this));
     }
 
+    // Adds a task iff. the task list is in view
     private void addTask(View v) {
+        if(isChoresList) {
             taskList.addTask(new Task(currentUser, "", ""));
             taskListAdapter.notifyItemInserted(taskListAdapter.getItemCount()-1);
+        }
     }
 
     @SuppressWarnings("unused")
