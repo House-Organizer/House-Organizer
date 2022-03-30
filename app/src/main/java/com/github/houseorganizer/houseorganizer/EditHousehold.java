@@ -62,31 +62,30 @@ public class EditHousehold extends AppCompatActivity {
         return s.matches(emailFormat);
     }
 
-    public void addUser(View view) {
-        TextView emailView = findViewById(R.id.editTextAddUser);
-        String email = emailView.getText().toString();
+    private boolean verifyEmail(String email, View view){
         if(!verifyEmailHasCorrectFormat(email)){
             Toast.makeText(getApplicationContext(),
                     view.getContext().getString(R.string.invalid_email),
                     Toast.LENGTH_SHORT).show();
+            return false;
+        }
+        return true;
+    }
+
+    public void addUser(View view) {
+        TextView emailView = findViewById(R.id.editTextAddUser);
+        String email = emailView.getText().toString();
+        if(!verifyEmail(email, view)){
             return;
         }
 
-        Task<SignInMethodQueryResult> signInMethodQueryResultTask =
-                mAuth.fetchSignInMethodsForEmail(email);
+        mAuth
+        .fetchSignInMethodsForEmail(email)
+        .addOnCompleteListener(task -> {
+            List<String> signInMethods = task.getResult().getSignInMethods();
 
-        signInMethodQueryResultTask
-        .addOnCompleteListener(new OnCompleteListener<SignInMethodQueryResult>() {
-            @Override
-            public void onComplete(@NonNull Task<SignInMethodQueryResult> task) {
-                SignInMethodQueryResult result = task.getResult();
-                List<String> signInMethods = result.getSignInMethods();
-
-                //Here we exceptionally fail silently because it would be a privacy leak if we
-                //could check if a given email address is registered in our App or not
-                if(signInMethods != null && signInMethods.size() > 0){
-                    addUserIfNotPresent(email, view);
-                }
+            if(signInMethods != null && signInMethods.size() > 0){
+                addUserIfNotPresent(email, view);
             }
         });
     }
@@ -95,30 +94,27 @@ public class EditHousehold extends AppCompatActivity {
         firestore.collection("households")
                 .document(householdId)
                 .get()
-                .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-                    @Override
-                    public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                        DocumentSnapshot document = task.getResult();
-                        Map<String, Object> householdData = document.getData();
-                        if(householdData != null) {
-                            List<String> listOfUsers =
-                                    (List<String>) householdData.getOrDefault("residents", "[]");
-                            if(!listOfUsers.contains(email)){ //If user not already there
-                                addUserToFirebase(email);
-                            } else {
-                                Toast.makeText(getApplicationContext(),
-                                        view.getContext().getString(R.string.duplicate_user),
-                                        Toast.LENGTH_SHORT).show();
-                            }
+                .addOnCompleteListener(task -> {
+                    Map<String, Object> householdData = task.getResult().getData();
+                    if(householdData != null) {
+                        List<String> listOfUsers =
+                                (List<String>) householdData.getOrDefault("residents", "[]");
+                        Long num_users = (Long) householdData.get("num_members");
+                        System.out.println(num_users);
+                        if(!listOfUsers.contains(email)){ //If user not already there
+                            DocumentReference currentHousehold = firestore
+                                    .collection("households")
+                                    .document(householdId);
+
+                            currentHousehold.update("residents", FieldValue.arrayUnion(email));
+                            currentHousehold.update("num_members",num_users+1);
+                        } else {
+                            Toast.makeText(getApplicationContext(),
+                                    view.getContext().getString(R.string.duplicate_user),
+                                    Toast.LENGTH_SHORT).show();
                         }
                     }
                 });
-    }
-
-    public void addUserToFirebase(String email){
-        DocumentReference currentHousehold = firestore.collection("households")
-                                                   .document(householdId);
-        currentHousehold.update("residents", FieldValue.arrayUnion(email));
     }
 
     public void confirmChanges(View view) {
