@@ -181,13 +181,12 @@ public class EditHousehold extends AppCompatActivity {
                  .addOnCompleteListener(task -> {
                      Map<String, Object> householdData = task.getResult().getData();
                      if(householdData != null) {
-                         List<String> listOfUsers =
+                         List<String> residents =
                                  (List<String>) householdData.getOrDefault("residents", "[]");
                          Long num_users = (Long) householdData.get("num_members");
-                         if(listOfUsers.contains(email)){
-                             currentHousehold.update("residents", FieldValue.arrayRemove(email));
+                         if(residents.contains(email)){
                              currentHousehold.update("num_members",num_users-1);
-
+                             currentHousehold.update("residents", FieldValue.arrayRemove(email));
                              Toast.makeText(getApplicationContext(),
                                      view.getContext().getString(R.string.remove_user_success),
                                      Toast.LENGTH_SHORT).show();
