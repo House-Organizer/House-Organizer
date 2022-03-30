@@ -124,7 +124,8 @@ public class EditHousehold extends AppCompatActivity {
         mAuth
         .fetchSignInMethodsForEmail(new_owner_email)
         .addOnCompleteListener(task -> {
-            List<String> signInMethods = task.getResult().getSignInMethods();
+            SignInMethodQueryResult querySignIn = task.getResult();
+            List<String> signInMethods = querySignIn.getSignInMethods();
             if(signInMethods != null && signInMethods.size() > 0){
                 changeOwner(new_owner_email, view);
             }
