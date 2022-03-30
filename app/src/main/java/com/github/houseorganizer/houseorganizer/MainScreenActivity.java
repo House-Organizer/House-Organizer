@@ -234,8 +234,16 @@ public class MainScreenActivity extends AppCompatActivity {
     }
 
     private void addTask(View v) {
-            taskList.addTask(new Task(currentUser, "", ""));
-            taskListAdapter.notifyItemInserted(taskListAdapter.getItemCount()-1);
+        db.collection("task_lists")
+                .add(new HashMap<String, Object>())
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        DocumentReference taskDocRef = task.getResult();
+
+                        taskList.addTask(new FirestoreTask(currentUser, "", "", taskDocRef));
+                        taskListAdapter.notifyItemInserted(taskListAdapter.getItemCount()-1);
+                    }
+                });
     }
 
     @SuppressWarnings("unused")
