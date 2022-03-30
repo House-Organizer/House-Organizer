@@ -62,116 +62,97 @@ public class EditHousehold extends AppCompatActivity {
         return s.matches(emailFormat);
     }
 
-    public void addUser(View view) {
-        TextView emailView = findViewById(R.id.editTextAddUser);
-        String email = emailView.getText().toString();
+    private boolean verifyEmail(String email, View view){
         if(!verifyEmailHasCorrectFormat(email)){
             Toast.makeText(getApplicationContext(),
                     view.getContext().getString(R.string.invalid_email),
                     Toast.LENGTH_SHORT).show();
+            return false;
+        }
+        return true;
+    }
+
+    public void addUser(View view) {
+        TextView emailView = findViewById(R.id.editTextAddUser);
+        String email = emailView.getText().toString();
+        if(!verifyEmail(email, view)){
             return;
         }
 
-        Task<SignInMethodQueryResult> signInMethodQueryResultTask =
-                mAuth.fetchSignInMethodsForEmail(email);
+        mAuth
+        .fetchSignInMethodsForEmail(email)
+        .addOnCompleteListener(task -> {
+            List<String> signInMethods = task.getResult().getSignInMethods();
 
-        signInMethodQueryResultTask
-        .addOnCompleteListener(new OnCompleteListener<SignInMethodQueryResult>() {
-            @Override
-            public void onComplete(@NonNull Task<SignInMethodQueryResult> task) {
-                SignInMethodQueryResult result = task.getResult();
-                List<String> signInMethods = result.getSignInMethods();
-
-                //Here we exceptionally fail silently because it would be a privacy leak if we
-                //could check if a given email address is registered in our App or not
-                if(signInMethods != null && signInMethods.size() > 0){
-                    addUserIfNotPresent(email, view);
-                }
+            if(signInMethods != null && signInMethods.size() > 0){
+                addUserIfNotPresent(email, view);
             }
         });
     }
 
     public void addUserIfNotPresent(String email, View view){
         firestore.collection("households")
-                .document(householdId)
-                .get()
-                .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-                    @Override
-                    public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                        DocumentSnapshot document = task.getResult();
-                        Map<String, Object> householdData = document.getData();
-                        if(householdData != null) {
-                            List<String> listOfUsers =
-                                    (List<String>) householdData.getOrDefault("residents", "[]");
-                            if(!listOfUsers.contains(email)){ //If user not already there
-                                addUserToFirebase(email);
-                                Toast.makeText(getApplicationContext(),
-                                        view.getContext().getString(R.string.add_user_success),
-                                        Toast.LENGTH_SHORT).show();
-                            } else {
-                                Toast.makeText(getApplicationContext(),
-                                        view.getContext().getString(R.string.duplicate_user),
-                                        Toast.LENGTH_SHORT).show();
-                            }
-                        }
-                    }
-                });
-    }
+        .document(householdId)
+        .get()
+        .addOnCompleteListener(task -> {
+            Map<String, Object> householdData = task.getResult().getData();
+            if(householdData != null) {
+                List<String> listOfUsers =
+                        (List<String>) householdData.getOrDefault("residents", "[]");
+                Long num_users = (Long) householdData.get("num_members");
+                System.out.println(num_users);
+                if(!listOfUsers.contains(email)){
+                    DocumentReference currentHousehold = firestore
+                            .collection("households")
+                            .document(householdId);
 
-    public void addUserToFirebase(String email){
-        DocumentReference currentHousehold = firestore.collection("households")
-                                                   .document(householdId);
-        currentHousehold.update("residents", FieldValue.arrayUnion(email));
+                    currentHousehold.update("residents", FieldValue.arrayUnion(email));
+                    currentHousehold.update("num_members",num_users+1);
+                    Toast.makeText(getApplicationContext(),
+                            view.getContext().getString(R.string.add_user_success),
+                            Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(getApplicationContext(),
+                            view.getContext().getString(R.string.duplicate_user),
+                            Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
     }
 
     public void transmitOwnership(View view) {
         TextView emailView = findViewById(R.id.editTextChangeOwner);
         String email = emailView.getText().toString();
-        if(!verifyEmailHasCorrectFormat(email)){
-            Toast.makeText(getApplicationContext(),
-                    view.getContext().getString(R.string.invalid_email),
-                    Toast.LENGTH_SHORT).show();
+        if(!verifyEmail(email, view)){
             return;
         }
-
-        Task<SignInMethodQueryResult> signInMethodQueryResultTask =
-                mAuth.fetchSignInMethodsForEmail(email);
-
-        signInMethodQueryResultTask
-                .addOnCompleteListener(new OnCompleteListener<SignInMethodQueryResult>() {
-                    @Override
-                    public void onComplete(@NonNull Task<SignInMethodQueryResult> task) {
-                        SignInMethodQueryResult result = task.getResult();
-                        List<String> signInMethods = result.getSignInMethods();
-
-                        //Here we exceptionally fail silently because it would be a privacy leak if we
-                        //could check if a given email address is registered in our App or not
-                        if(signInMethods != null && signInMethods.size() > 0){
-                            changeOwner(email, view);
-                        }
-                    }
-                });
+        mAuth
+        .fetchSignInMethodsForEmail(email)
+        .addOnCompleteListener(task -> {
+            List<String> signInMethods = task.getResult().getSignInMethods();
+            if(signInMethods != null && signInMethods.size() > 0){
+                changeOwner(email, view);
+            }
+        });
     }
 
     public void changeOwner(String email, View view){
         firestore.collection("households")
-                .document(householdId)
-                .get()
-                .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-                    @Override
-                    public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                        DocumentSnapshot document = task.getResult();
-                        Map<String, Object> householdData = document.getData();
-                        if(householdData != null) {
-                            List<String> listOfUsers =
-                                    (List<String>) householdData.getOrDefault("residents", "[]");
-                            if(listOfUsers.contains(email)){
-                                firestore.collection("households").document(householdId)
-                                         .update("owner", email);
-                                Toast.makeText(getApplicationContext(),
-                                        view.getContext().getString(R.string.owner_change_success),
-                                        Toast.LENGTH_SHORT).show();
-                            }
+                 .document(householdId)
+                 .get()
+                 .addOnCompleteListener(task -> {
+                    Map<String, Object> householdData = task.getResult().getData();
+                    if(householdData != null) {
+                        List<String> listOfUsers =
+                                (List<String>) householdData.getOrDefault("residents", "[]");
+                        if(listOfUsers.contains(email)){
+                            firestore.collection("households")
+                                    .document(householdId)
+                                    .update("owner", email);
+                            Toast.makeText(getApplicationContext(),
+                                    view.getContext().getString(R.string.owner_change_success),
+                                    Toast.LENGTH_SHORT).show();
+                            confirmChanges(view); //User is not owner anymore
                         }
                     }
                 });
@@ -180,10 +161,7 @@ public class EditHousehold extends AppCompatActivity {
     public void removeUser(View view) {
         TextView emailView = findViewById(R.id.editTextRemoveUser);
         String email = emailView.getText().toString();
-        if(!verifyEmailHasCorrectFormat(email)){
-            Toast.makeText(getApplicationContext(),
-                    view.getContext().getString(R.string.invalid_email),
-                    Toast.LENGTH_SHORT).show();
+        if(!verifyEmail(email, view)){
             return;
         }
 
@@ -198,44 +176,39 @@ public class EditHousehold extends AppCompatActivity {
                 mAuth.fetchSignInMethodsForEmail(email);
 
         signInMethodQueryResultTask
-                .addOnCompleteListener(new OnCompleteListener<SignInMethodQueryResult>() {
-                    @Override
-                    public void onComplete(@NonNull Task<SignInMethodQueryResult> task) {
-                        SignInMethodQueryResult result = task.getResult();
-                        List<String> signInMethods = result.getSignInMethods();
-
-                        //Here we exceptionally fail silently because it would be a privacy leak if we
-                        //could check if a given email address is registered in our App or not
-                        if(signInMethods != null && signInMethods.size() > 0){
-                            removeUserFromHousehold(email, view);
-                        }
+                .addOnCompleteListener(task -> {
+                    List<String> signInMethods = task.getResult().getSignInMethods();
+                    if(signInMethods != null && signInMethods.size() > 0){
+                        removeUserFromHousehold(email, view);
                     }
                 });
     }
 
     public void removeUserFromHousehold(String email, View view){
         firestore.collection("households")
-                .document(householdId)
-                .get()
-                .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-                    @Override
-                    public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                        DocumentSnapshot document = task.getResult();
-                        Map<String, Object> householdData = document.getData();
-                        if(householdData != null) {
-                            List<String> listOfUsers =
-                                    (List<String>) householdData.getOrDefault("residents", "[]");
-                            if(listOfUsers.contains(email)){
-                                DocumentReference currentHousehold = firestore.collection("households")
-                                        .document(householdId);
-                                currentHousehold.update("residents", FieldValue.arrayRemove(email));
-                                Toast.makeText(getApplicationContext(),
-                                        view.getContext().getString(R.string.remove_user_success),
-                                        Toast.LENGTH_SHORT).show();
-                            }
-                        }
-                    }
-                });
+                 .document(householdId)
+                 .get()
+                 .addOnCompleteListener(task -> {
+                     Map<String, Object> householdData = task.getResult().getData();
+                     if(householdData != null) {
+                         List<String> listOfUsers =
+                                 (List<String>) householdData.getOrDefault("residents", "[]");
+                         Long num_users = (Long) householdData.get("num_members");
+                         if(listOfUsers.contains(email)){
+                             DocumentReference currentHousehold =
+                                     firestore
+                                     .collection("households")
+                                     .document(householdId);
+
+                             currentHousehold.update("residents", FieldValue.arrayRemove(email));
+                             currentHousehold.update("num_members",num_users-1);
+
+                             Toast.makeText(getApplicationContext(),
+                                     view.getContext().getString(R.string.remove_user_success),
+                                     Toast.LENGTH_SHORT).show();
+                         }
+                     }
+                 });
     }
 
     public void confirmChanges(View view) {
