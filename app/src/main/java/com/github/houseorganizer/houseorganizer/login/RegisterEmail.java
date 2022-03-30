@@ -1,6 +1,9 @@
 package com.github.houseorganizer.houseorganizer.login;
 
-import static com.github.houseorganizer.houseorganizer.login.LoginEmail.inputsNotEmpty;
+import static com.github.houseorganizer.houseorganizer.login.LoginHelpers.displayRegisterErrorMessage;
+import static com.github.houseorganizer.houseorganizer.login.LoginHelpers.inputsEmpty;
+import static com.github.houseorganizer.houseorganizer.login.LoginHelpers.isValidEmail;
+import static com.github.houseorganizer.houseorganizer.login.LoginHelpers.isValidPassword;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -20,19 +23,12 @@ import com.google.firebase.auth.FirebaseUser;
 
 import java.util.Arrays;
 import java.util.Objects;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 public class RegisterEmail extends AppCompatActivity {
 
     private FirebaseAuth mAuth;
     private boolean isEmailAlreadyUsed = false;
 
-    private enum RegisterError {
-        INVALID_PASSWORD,
-        INVALID_EMAIL,
-        EMAIL_USED
-    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,38 +36,31 @@ public class RegisterEmail extends AppCompatActivity {
         setContentView(R.layout.activity_register_email);
 
         mAuth = FirebaseAuth.getInstance();
+        isEmailAlreadyUsed = false;
 
         findViewById(R.id.reg_email_register_button).setOnClickListener(
                 v -> {
                     String email = ((EditText) findViewById(R.id.reg_enter_email)).getText().toString();
                     String password = ((EditText) findViewById(R.id.reg_enter_password)).getText().toString();
                     String confPassword = ((EditText) findViewById(R.id.reg_confirm_password)).getText().toString();
-                    TextView error_message = findViewById(R.id.reg_email_error_message);
-                    if (inputsNotEmpty(email, password, error_message) && isValidEmail(email) && isValidPassword(password, confPassword))
+                    TextView error_field = findViewById(R.id.reg_email_error_message);
+                    checkIfEmailIsAlreadyUsed(email);
+                    if (isEmailAlreadyUsed) {
+                        displayRegisterErrorMessage(LoginHelpers.RegisterError.EMAIL_USED, error_field);
+                    } else if (inputsEmpty(email, password)) {
+                        displayRegisterErrorMessage(LoginHelpers.RegisterError.INPUTS_EMPTY, error_field);
+                    } else if (!isValidEmail(email)) {
+                        displayRegisterErrorMessage(LoginHelpers.RegisterError.INVALID_EMAIL, error_field);
+                    } else if (!isValidPassword(password, confPassword)) {
+                        displayRegisterErrorMessage(LoginHelpers.RegisterError.INVALID_PASSWORD, error_field);
+                    } else {
                         signUpWithEmail(v);
+                    }
                 }
         );
     }
 
-    private boolean isValidEmail(String email) {
 
-        // Regex to check valid email.
-        String regex = "^[\\w!#$%&'*+/=?`{|}~^-]+(?:\\.[\\w!#$%&'*+/=?`{|}~^-]+)*@(?:[a-zA-Z0-9-]+\\.)+[a-zA-Z]{2,6}$";
-        Pattern p = Pattern.compile(regex);
-        Matcher m = p.matcher(email);
-
-        checkIfEmailIsAlreadyUsed(email);
-
-        if (m.matches() && !isEmailAlreadyUsed) {
-            return true;
-        } else if (isEmailAlreadyUsed) {
-            displayErrorMessage(RegisterError.EMAIL_USED);
-            return false;
-        } else {
-            displayErrorMessage(RegisterError.INVALID_EMAIL);
-            return false;
-        }
-    }
 
     // Returns true if email address is in use.
     private void checkIfEmailIsAlreadyUsed(String emailAddress) {
@@ -83,41 +72,6 @@ public class RegisterEmail extends AppCompatActivity {
                         }
                     }
                 });
-    }
-
-    private boolean isValidPassword(String p1, String p2) {
-
-        boolean samePasswords = p1.equals(p2);
-
-        // Regex to check valid password.
-        String regex = "^(?=.*[0-9])"
-                + "(?=.*[a-z])(?=.*[A-Z])"
-                + "(?=.*[@#$%^&+=_.-])"
-                + "(?=\\S+$).{8,20}$";
-        Pattern p = Pattern.compile(regex);
-        Matcher m = p.matcher(p1);
-
-        if (m.matches() && samePasswords) {
-            return true;
-        } else {
-            displayErrorMessage(RegisterError.INVALID_PASSWORD);
-            return false;
-        }
-    }
-
-    private void displayErrorMessage(RegisterError err) {
-        TextView error_message = findViewById(R.id.reg_email_error_message);
-
-        switch (err) {
-            case INVALID_EMAIL:
-                error_message.setText(R.string.email_not_valid);
-                break;
-            case INVALID_PASSWORD:
-                error_message.setText(R.string.password_not_valid);
-                break;
-            case EMAIL_USED:
-                error_message.setText(R.string.email_already_used);
-        }
     }
 
     private void sendEmailVerif(FirebaseUser user, Task<AuthResult> task) {
