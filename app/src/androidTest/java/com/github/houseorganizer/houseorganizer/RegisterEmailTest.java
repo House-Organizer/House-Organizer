@@ -31,21 +31,24 @@ public class RegisterEmailTest {
     }
 
     @Test
-    public void isValidEmailShowsRightErrorWhenFalse() {
+    public void isValidEmailShowsRightErrorWhenFalse() throws InterruptedException {
         // INPUTS_EMPTY
         onView(withId(R.id.reg_enter_email)).perform(click(), typeText("test"), closeSoftKeyboard());
         onView(withId(R.id.reg_email_register_button)).perform(click());
+        Thread.sleep(500);
         onView(withId(R.id.reg_email_error_message)).check(matches(withText(R.string.inputs_empty)));
 
         // INVALID_EMAIL
         onView(withId(R.id.reg_enter_password)).perform(click(), typeText("test"), closeSoftKeyboard());
         onView(withId(R.id.reg_email_register_button)).perform(click());
+        Thread.sleep(500);
         onView(withId(R.id.reg_email_error_message)).check(matches(withText(R.string.email_not_valid)));
 
         // INVALID_PASSWORD
         onView(withId(R.id.reg_enter_email)).perform(clearText(), typeText("example@gmail.com"), closeSoftKeyboard());
         onView(withId(R.id.reg_confirm_password)).perform(click(), typeText("test"), closeSoftKeyboard());
         onView(withId(R.id.reg_email_register_button)).perform(click());
+        Thread.sleep(500);
         onView(withId(R.id.reg_email_error_message)).check(matches(withText(R.string.password_not_valid)));
     }
 }

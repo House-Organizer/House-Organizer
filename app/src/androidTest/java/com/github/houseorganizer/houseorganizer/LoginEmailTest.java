@@ -36,16 +36,18 @@ public class LoginEmailTest {
     }
 
     @Test
-    public void isValidEmailShowsRightErrorWhenFalse() {
+    public void isValidEmailShowsRightErrorWhenFalse() throws InterruptedException {
         // INPUTS_EMPTY
         onView(withId(R.id.log_enter_email)).perform(click(), typeText("test"), closeSoftKeyboard());
         onView(withId(R.id.log_email_signin_button)).perform(click());
+        Thread.sleep(500);
         onView(withId(R.id.log_email_error_message)).check(matches(withText(R.string.inputs_empty)));
 
         // Auth Failed
         onView(withId(R.id.log_enter_email)).perform(clearText(), typeText("test"), closeSoftKeyboard());
         onView(withId(R.id.log_enter_password)).perform(clearText(), typeText("test"), closeSoftKeyboard());
         onView(withId(R.id.log_email_signin_button)).perform(click());
+        Thread.sleep(500);
         onView(withId(R.id.log_email_error_message)).check(matches(withText(R.string.log_email_auth_failed)));
     }
 }
