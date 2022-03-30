@@ -105,6 +105,9 @@ public class EditHousehold extends AppCompatActivity {
                                     (List<String>) householdData.getOrDefault("residents", "[]");
                             if(!listOfUsers.contains(email)){ //If user not already there
                                 addUserToFirebase(email);
+                                Toast.makeText(getApplicationContext(),
+                                        view.getContext().getString(R.string.add_user_success),
+                                        Toast.LENGTH_SHORT).show();
                             } else {
                                 Toast.makeText(getApplicationContext(),
                                         view.getContext().getString(R.string.duplicate_user),
@@ -167,6 +170,67 @@ public class EditHousehold extends AppCompatActivity {
                                          .update("owner", email);
                                 Toast.makeText(getApplicationContext(),
                                         view.getContext().getString(R.string.owner_change_success),
+                                        Toast.LENGTH_SHORT).show();
+                            }
+                        }
+                    }
+                });
+    }
+
+    public void removeUser(View view) {
+        TextView emailView = findViewById(R.id.editTextRemoveUser);
+        String email = emailView.getText().toString();
+        if(!verifyEmailHasCorrectFormat(email)){
+            Toast.makeText(getApplicationContext(),
+                    view.getContext().getString(R.string.invalid_email),
+                    Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        if(email.equals(mAuth.getCurrentUser().getEmail().toString())){
+            Toast.makeText(getApplicationContext(),
+                    view.getContext().getString(R.string.cant_remove_yourself),
+                    Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        Task<SignInMethodQueryResult> signInMethodQueryResultTask =
+                mAuth.fetchSignInMethodsForEmail(email);
+
+        signInMethodQueryResultTask
+                .addOnCompleteListener(new OnCompleteListener<SignInMethodQueryResult>() {
+                    @Override
+                    public void onComplete(@NonNull Task<SignInMethodQueryResult> task) {
+                        SignInMethodQueryResult result = task.getResult();
+                        List<String> signInMethods = result.getSignInMethods();
+
+                        //Here we exceptionally fail silently because it would be a privacy leak if we
+                        //could check if a given email address is registered in our App or not
+                        if(signInMethods != null && signInMethods.size() > 0){
+                            removeUserFromHousehold(email, view);
+                        }
+                    }
+                });
+    }
+
+    public void removeUserFromHousehold(String email, View view){
+        firestore.collection("households")
+                .document(householdId)
+                .get()
+                .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                        DocumentSnapshot document = task.getResult();
+                        Map<String, Object> householdData = document.getData();
+                        if(householdData != null) {
+                            List<String> listOfUsers =
+                                    (List<String>) householdData.getOrDefault("residents", "[]");
+                            if(listOfUsers.contains(email)){
+                                DocumentReference currentHousehold = firestore.collection("households")
+                                        .document(householdId);
+                                currentHousehold.update("residents", FieldValue.arrayRemove(email));
+                                Toast.makeText(getApplicationContext(),
+                                        view.getContext().getString(R.string.remove_user_success),
                                         Toast.LENGTH_SHORT).show();
                             }
                         }
