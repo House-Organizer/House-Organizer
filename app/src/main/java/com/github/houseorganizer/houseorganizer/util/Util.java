@@ -6,7 +6,6 @@ import com.github.houseorganizer.houseorganizer.Task;
 import com.github.houseorganizer.houseorganizer.TaskList;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
-import com.google.firebase.firestore.DocumentSnapshot;
 
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
@@ -60,6 +59,7 @@ public class Util {
         return subTaskData;
     }
 
+    // Might be unnecessary in the future
     public static void storeTaskList(TaskList taskList, CollectionReference taskListRoot) {
         Map<String, Object> data = new HashMap<>();
 

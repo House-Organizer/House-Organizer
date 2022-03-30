@@ -5,7 +5,6 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.EditText;
@@ -20,7 +19,6 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.github.houseorganizer.houseorganizer.Calendar.Event;
 import com.github.houseorganizer.houseorganizer.login.LoginActivity;
 import com.github.houseorganizer.houseorganizer.util.Util;
-import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
@@ -34,7 +32,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-import java.util.Arrays;
 import java.util.Objects;
 
 @SuppressWarnings("unused")
@@ -57,7 +54,7 @@ public class MainScreenActivity extends AppCompatActivity {
     private TaskListAdapter taskListAdapter;
 
     /* for setting up the task owner. Not related to firebase */
-    private User currentUser = new DummyUser("Test User", "0");
+    private final User currentUser = new DummyUser("Test User", "0");
 
     @SuppressLint("NotifyDataSetChanged")
     @Override
@@ -200,6 +197,7 @@ public class MainScreenActivity extends AppCompatActivity {
                 DocumentSnapshot document = task.getResult();
                 Map<String, Object> data = document.getData();
 
+                assert data != null;
                 taskList.changeTitle((String)data.get("title"));
                 // todo: ownership: inferred, or read from DB?
 
