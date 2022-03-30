@@ -42,16 +42,22 @@ public class Util {
         data.put("owner", task.getOwner().uid());
 
         List<Map<String, String>> subTaskListData = new ArrayList<>();
+
         for (Task.SubTask subTask : task.getSubTasks()) {
-            Map<String, String> subTaskData = new HashMap<>();
-            subTaskData.put("title", subTask.getTitle());
-            subTaskData.put("status", subTask.isFinished() ? "completed" : "ongoing");
-            subTaskListData.add(subTaskData);
+            subTaskListData.add(makeSubTaskData(subTask));
         }
 
         data.put("sub tasks", subTaskListData);
 
         taskListRef.add(data);
+    }
+
+    public static Map<String, String> makeSubTaskData(Task.SubTask subTask) {
+        Map<String, String> subTaskData = new HashMap<>();
+        subTaskData.put("title", subTask.getTitle());
+        subTaskData.put("status", subTask.isFinished() ? "completed" : "ongoing");
+
+        return subTaskData;
     }
 
     public static void storeTaskList(TaskList taskList, CollectionReference taskListRoot) {

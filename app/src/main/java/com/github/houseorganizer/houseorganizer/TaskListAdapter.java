@@ -11,10 +11,13 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentReference;
+
 public class TaskListAdapter extends RecyclerView.Adapter<BiViewHolder<Button, Button>> {
     private final TaskList taskList;
 
-    public TaskListAdapter(TaskList taskList) {
+    public TaskListAdapter(TaskList taskList, CollectionReference taskListRef) {
         this.taskList     = taskList;
     }
 
@@ -46,6 +49,8 @@ public class TaskListAdapter extends RecyclerView.Adapter<BiViewHolder<Button, B
 
             taskList.removeTask(position);
             notifyItemRemoved(position);
+
+            ((FirestoreTask)(taskList.getTaskAt(position))).getTaskDocRef().delete();
         };
     }
 

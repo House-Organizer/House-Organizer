@@ -1,8 +1,8 @@
 package com.github.houseorganizer.houseorganizer;
 
+import com.github.houseorganizer.houseorganizer.util.Util;
 import com.google.firebase.firestore.DocumentReference;
-
-import java.time.LocalDateTime;
+import com.google.firebase.firestore.FieldValue;
 
 public class FirestoreTask extends Task{
     private final DocumentReference taskDocRef;
@@ -13,9 +13,12 @@ public class FirestoreTask extends Task{
         this.taskDocRef = taskDocRef;
     }
 
+    public DocumentReference getTaskDocRef() {
+        return taskDocRef;
+    }
+
     // Overrides [incomplete]
-    // Future work: reflect subtask changes (add / remove), and task deletions in
-    // the database
+    // Future work: add subtasks at a given index
 
     @Override
     public void changeTitle(String newTitle) {
@@ -31,21 +34,26 @@ public class FirestoreTask extends Task{
         taskDocRef.update("description", newDescription);
     }
 
-    /* TODO: [extremely important: adding / deleting subtasks to be reflected in firebase]
     public void addSubTask(SubTask subTask) {
-        subtasks.add(subTask);
+        super.addSubTask(subTask);
+
+        taskDocRef.update("sub tasks", FieldValue.arrayUnion(Util.makeSubTaskData(subTask)));
     }
 
+    /* TODO [ not urgent / not important ]
     public void addSubTask(int index, SubTask subtask) {
         assert index < subtasks.size();
 
         subtasks.add(index,subtask);
-    }
+    } */
 
     public void removeSubTask(int index) {
-        assert index < subtasks.size();
+        SubTask subTask = super.getSubTaskAt(index);
 
-        subtasks.remove(index);
-    } */
+        super.removeSubTask(index);
+
+        taskDocRef.update("sub tasks", FieldValue.arrayRemove(Util.makeSubTaskData(subTask)));
+
+    }
 
 }
