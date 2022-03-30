@@ -1,6 +1,7 @@
 package com.github.houseorganizer.houseorganizer;
 
 import static androidx.test.espresso.Espresso.onView;
+import static androidx.test.espresso.action.ViewActions.clearText;
 import static androidx.test.espresso.action.ViewActions.click;
 import static androidx.test.espresso.action.ViewActions.closeSoftKeyboard;
 import static androidx.test.espresso.action.ViewActions.typeText;
@@ -42,8 +43,8 @@ public class LoginEmailTest {
         onView(withId(R.id.log_email_error_message)).check(matches(withText(R.string.inputs_empty)));
 
         // Auth Failed
-        onView(withId(R.id.log_enter_email)).perform(click(), typeText("test"), closeSoftKeyboard());
-        onView(withId(R.id.log_enter_password)).perform(click(), typeText("test"), closeSoftKeyboard());
+        onView(withId(R.id.log_enter_email)).perform(clearText(), typeText("test"), closeSoftKeyboard());
+        onView(withId(R.id.log_enter_password)).perform(clearText(), typeText("test"), closeSoftKeyboard());
         onView(withId(R.id.log_email_signin_button)).perform(click());
         onView(withId(R.id.log_email_error_message)).check(matches(withText(R.string.log_email_auth_failed)));
     }
