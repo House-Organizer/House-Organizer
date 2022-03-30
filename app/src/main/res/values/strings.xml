@@ -22,6 +22,7 @@
     <string name="add_user_hint">Valid email address</string>
     <string name="invalid_email">Email provided is not valid</string>
     <string name="duplicate_user">User already present!</string>
+    <string name="not_owner">You are not the owner!</string>
 
     <!-- Preference Titles -->
     <string name="general_header">General</string>
