@@ -122,8 +122,8 @@ public class RegisterEmail extends AppCompatActivity {
     }
 
     public void signUpWithEmail(View v) {
-        String email = ((EditText) findViewById(R.id.log_enter_email)).getText().toString();
-        String password = ((EditText) findViewById(R.id.log_enter_password)).getText().toString();
+        String email = ((EditText) findViewById(R.id.reg_enter_email)).getText().toString();
+        String password = ((EditText) findViewById(R.id.reg_enter_password)).getText().toString();
 
         mAuth.createUserWithEmailAndPassword(email, password)
                 .addOnCompleteListener(this, task -> {
@@ -139,7 +139,7 @@ public class RegisterEmail extends AppCompatActivity {
                     } else {
                         // If sign in fails, display a message to the user.
                         Log.w(getString(R.string.tag_register_email), "createUserWithEmail:failure", task.getException());
-                        ((TextView) findViewById(R.id.log_email_error_message)).setText(R.string.reg_email_auth_failed);
+                        ((TextView) findViewById(R.id.reg_email_error_message)).setText(R.string.reg_email_auth_failed);
                     }
                 });
     }
