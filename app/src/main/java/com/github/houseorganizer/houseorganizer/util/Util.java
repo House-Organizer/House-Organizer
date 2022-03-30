@@ -1,6 +1,7 @@
 package com.github.houseorganizer.houseorganizer.util;
 
 import com.github.houseorganizer.houseorganizer.DummyUser;
+import com.github.houseorganizer.houseorganizer.FirestoreTask;
 import com.github.houseorganizer.houseorganizer.Task;
 import com.github.houseorganizer.houseorganizer.TaskList;
 import com.google.firebase.firestore.CollectionReference;
@@ -72,8 +73,8 @@ public class Util {
 
     }
 
-    public static Task recoverTask(Map<String, Object> data) {
-        return new Task(new DummyUser("Recovering-user", (String)data.get("owner")),
-                (String)data.get("title"), (String)data.get("description"));
+    public static FirestoreTask recoverTask(Map<String, Object> data, DocumentReference taskDocRef) {
+        return new FirestoreTask(new DummyUser("Recovering-user", (String)data.get("owner")),
+                (String)data.get("title"), (String)data.get("description"), taskDocRef);
     }
 }

@@ -208,7 +208,12 @@ public class MainScreenActivity extends AppCompatActivity {
                         .get()
                         .addOnCompleteListener(task2 -> {
                             for (DocumentSnapshot docSnapshot : task2.getResult().getDocuments()) {
-                                taskList.addTask(Util.recoverTask(Objects.requireNonNull(docSnapshot.getData())));
+                                Map<String, Object> taskData = Objects.requireNonNull(docSnapshot.getData());
+                                DocumentReference taskDocRef = docSnapshot.getReference();
+
+                                // We're adding a `FirestoreTask` now, and the in-app changes to
+                                // its title and description will be reflected in the database
+                                taskList.addTask(Util.recoverTask(taskData, taskDocRef));
                             }
                         });
 
