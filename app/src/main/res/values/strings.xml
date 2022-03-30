@@ -16,8 +16,12 @@
     <!-- Edit Household -->
     <string name="user_name">User name</string>
     <string name="edit_button_description">Press to edit the household</string>
-    <string name="confirm_button">Confirm changes</string>
+    <string name="confirm_button">Confirm</string>
     <string name="edit_title">Household</string>
+    <string name="add_user">Add user</string>
+    <string name="add_user_hint">Valid email address</string>
+    <string name="invalid_email">Email provided is not valid</string>
+    <string name="duplicate_user">User already present!</string>
 
     <!-- Preference Titles -->
     <string name="general_header">General</string>

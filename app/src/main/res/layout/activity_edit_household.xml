@@ -23,9 +23,40 @@
         android:id="@+id/button"
         android:layout_width="287dp"
         android:layout_height="59dp"
+        android:layout_marginBottom="8dp"
         android:onClick="confirmChanges"
         android:text="@string/confirm_button"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
+
+    <EditText
+        android:id="@+id/editTextAddUser"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="32dp"
+        android:layout_marginTop="32dp"
+        android:autofillHints=""
+        android:ems="10"
+        android:hint="@string/add_user_hint"
+        android:inputType="textEmailAddress"
+        android:minHeight="48dp"
+        android:textColorHint="#757575"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/edit_household_name" />
+
+    <ImageButton
+        android:id="@+id/imageButtonAddUser"
+        android:layout_width="49dp"
+        android:layout_height="48dp"
+        android:layout_marginTop="32dp"
+        android:layout_marginEnd="32dp"
+        android:background="#00000000"
+        android:contentDescription="@string/add_user"
+        android:minHeight="48dp"
+        android:onClick="addUser"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/edit_household_name"
+        app:srcCompat="@drawable/add_person" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>
