@@ -35,6 +35,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import java.util.Arrays;
+import java.util.Objects;
 
 @SuppressWarnings("unused")
 public class MainScreenActivity extends AppCompatActivity {
@@ -84,8 +85,8 @@ public class MainScreenActivity extends AppCompatActivity {
 
         refreshCalendar(findViewById(R.id.calendar));
 
-        initializeDummyTaskList();
-        setUpTaskList();
+        initializeTaskList();
+        recoverTaskList(db.collection("task_lists").document("85IW3cYzxOo1YTWnNOQl"));
     }
 
     private void getCurrentHousehold(){
@@ -193,21 +194,35 @@ public class MainScreenActivity extends AppCompatActivity {
 
     }
 
-    private void initializeDummyTaskList() {
-        Task t = new Task(currentUser, "Clean the kitchen counter", "scrub off all the grease marks!");
-        Task t2 = new Task(currentUser, "Stop by the post office", "send a postcard to Julia");
-        Task t3 = new Task(currentUser, "Catch up on lecture notes", "midterm on wednesday!!");
-        Task t4 = new Task(currentUser, "Fix the light bulb", "drop by the supermarket first");
-        Task t5 = new Task(currentUser, "Pick a gift for Jenny", "she likes bath bombs => check out Lush");
+    private void recoverTaskList(DocumentReference taskListRoot) {
+        taskListRoot.get().addOnCompleteListener(task -> {
+            if (task.isSuccessful()) {
+                DocumentSnapshot document = task.getResult();
+                Map<String, Object> data = document.getData();
 
-        t.addSubTask(new Task.SubTask("do the dishes"));
-        t.addSubTask(new Task.SubTask("swipe the floor"));
+                taskList.changeTitle((String)data.get("title"));
+                // todo: ownership: inferred, or read from DB?
 
-        this.taskList = new TaskList(currentUser, "My weekly todo", Arrays.asList(t, t2, t3, t4, t5));
+                document.getReference()
+                        .collection("tasks")
+                        .get()
+                        .addOnCompleteListener(task2 -> {
+                            for (DocumentSnapshot docSnapshot : task2.getResult().getDocuments()) {
+                                taskList.addTask(Util.recoverTask(Objects.requireNonNull(docSnapshot.getData())));
+                            }
+                        });
+
+                setUpTaskListView();
+            }
+        });
+    }
+
+    private void initializeTaskList() {
+        this.taskList = new TaskList(currentUser, "My weekly todo", new ArrayList<>());
         this.taskListAdapter = new TaskListAdapter(taskList);
     }
 
-    private void setUpTaskList() {
+    private void setUpTaskListView() {
         RecyclerView taskListView = findViewById(R.id.task_list);
         taskListView.setAdapter(taskListAdapter);
         taskListView.setLayoutManager(new LinearLayoutManager(this));
@@ -256,7 +271,7 @@ public class MainScreenActivity extends AppCompatActivity {
             rView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
             isChoresList = false;
         } else {
-            setUpTaskList();
+            setUpTaskListView();
             isChoresList = true;
         }
     }
