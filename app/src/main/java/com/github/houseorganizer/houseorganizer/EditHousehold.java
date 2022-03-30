@@ -27,6 +27,7 @@ public class EditHousehold extends AppCompatActivity {
     FirebaseFirestore firestore;
     FirebaseAuth mAuth;
     private String householdId;
+    DocumentReference currentHousehold;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,20 +40,17 @@ public class EditHousehold extends AppCompatActivity {
         this.householdId = intent.getStringExtra(MainScreenActivity.HOUSEHOLD);
 
         firestore = FirebaseFirestore.getInstance();
-        firestore.collection("households")
-                .document(householdId)
+        currentHousehold = firestore.collection("households").document(householdId);
+        currentHousehold
                 .get()
-                .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-                    @Override
-                    public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                        DocumentSnapshot document = task.getResult();
-                        Map<String, Object> householdData = document.getData();
-                        if(householdData != null) {
-                            TextView tv = findViewById(R.id.edit_household_name);
-                            tv.setText(householdData
-                              .getOrDefault("name", "No house name")
-                              .toString()); //Ignore IDE null warning as check is done above
-                        }
+                .addOnCompleteListener(task -> {
+                    DocumentSnapshot document = task.getResult();
+                    Map<String, Object> householdData = document.getData();
+                    if(householdData != null) {
+                        TextView tv = findViewById(R.id.edit_household_name);
+                        tv.setText(householdData
+                          .getOrDefault("name", "No house name")
+                          .toString()); //Ignore IDE null warning as check is done above
                     }
                 });
     }
@@ -103,11 +101,7 @@ public class EditHousehold extends AppCompatActivity {
                 List<String> listOfUsers =
                         (List<String>) householdData.getOrDefault("residents", "[]");
                 Long num_users = (Long) householdData.get("num_members");
-                System.out.println(num_users);
                 if(!listOfUsers.contains(email)){
-                    DocumentReference currentHousehold = firestore
-                            .collection("households")
-                            .document(householdId);
                     currentHousehold.update("residents", FieldValue.arrayUnion(email));
                     currentHousehold.update("num_members",num_users+1);
                     Toast.makeText(getApplicationContext(),view.getContext().getString(R.string.add_user_success),
@@ -145,9 +139,8 @@ public class EditHousehold extends AppCompatActivity {
                         List<String> listOfUsers =
                                 (List<String>) householdData.getOrDefault("residents", "[]");
                         if(listOfUsers.contains(email)){
-                            firestore.collection("households")
-                                    .document(householdId)
-                                    .update("owner", email);
+                            currentHousehold.update("owner", email);
+
                             Toast.makeText(getApplicationContext(),
                                     view.getContext().getString(R.string.owner_change_success),
                                     Toast.LENGTH_SHORT).show();
@@ -192,11 +185,6 @@ public class EditHousehold extends AppCompatActivity {
                                  (List<String>) householdData.getOrDefault("residents", "[]");
                          Long num_users = (Long) householdData.get("num_members");
                          if(listOfUsers.contains(email)){
-                             DocumentReference currentHousehold =
-                                     firestore
-                                     .collection("households")
-                                     .document(householdId);
-
                              currentHousehold.update("residents", FieldValue.arrayRemove(email));
                              currentHousehold.update("num_members",num_users-1);
 
