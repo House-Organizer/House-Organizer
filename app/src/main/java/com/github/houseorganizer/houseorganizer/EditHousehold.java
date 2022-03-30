@@ -77,7 +77,7 @@ public class EditHousehold extends AppCompatActivity {
 
     public void addUser(View view) {
         TextView emailView = findViewById(R.id.editTextAddUser);
-        if(!verifyEmailInput(emailView, view)){
+        if(!verifyEmailInput(findViewById(R.id.editTextAddUser), view)){
             return;
         }
         String email = emailView.getText().toString();
@@ -152,10 +152,10 @@ public class EditHousehold extends AppCompatActivity {
 
     public void removeUser(View view) {
         TextView emailView = findViewById(R.id.editTextRemoveUser);
-        String email = emailView.getText().toString();
-        if(!verifyEmail(email, view)){
+        if(!verifyEmailInput(emailView, view)){
             return;
         }
+        String email = emailView.getText().toString();
 
         if(email.equals(mAuth.getCurrentUser().getEmail().toString())){
             Toast.makeText(getApplicationContext(),
