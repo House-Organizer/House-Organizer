@@ -172,7 +172,7 @@ public class EditHousehold extends AppCompatActivity {
                 .addOnCompleteListener(task -> {
                     SignInMethodQueryResult querySignIn = task.getResult();
                     List<String> signInList = querySignIn.getSignInMethods();
-                    if(signInList != null && signInList.size() > 0){
+                    if(signInList != null && signInList.size() != 0){
                         removeUserFromHousehold(email, view);
                     }
                 });
