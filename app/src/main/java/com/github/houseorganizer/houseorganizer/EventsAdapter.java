@@ -79,34 +79,46 @@ public class EventsAdapter extends RecyclerView.Adapter<EventsAdapter.ViewHolder
     }
 
     @Override
-    public void onBindViewHolder(EventsAdapter.ViewHolder holder, int position) {
-        Button titleView = holder.titleView;
+    public void onBindViewHolder(@NonNull EventsAdapter.ViewHolder holder, int position) {
         switch (calendar.getView()) {
             case MONTHLY:
-                titleView.setText(String.format(Locale.ENGLISH, "%d", position + 1));
-                titleView.setOnClickListener(v -> new AlertDialog.Builder(v.getContext())
-                        .setTitle(Integer.toString(position + 1)).setMessage("List of events for this day somehow")
-                        .setMessage("List of events for this day somehow").show());
+                prepareMonthlyView(holder, position);
                 break;
             case WEEKLY:
-                String[] days = new String[]{"MON", "TUE", "WED", "THU", "FRI", "SAT", "SUN"};
-
-                titleView.setText(days[position]);
-                titleView.setOnClickListener(v -> new AlertDialog.Builder(v.getContext())
-                        .setTitle(days[position])
-                        .setMessage("List of events for this day somehow").show());
+                prepareWeeklyView(holder, position);
                 break;
             case UPCOMING:
-                Event event = calendar.getEvents().get(position);
-                titleView.setText(event.getTitle());
-                titleView.setOnClickListener(v -> eventButtonListener(event, v));
-                holder.dateView.setText(holder.dateView.getContext().getResources().getString(R.string.calendar_upcoming_date,
-                        event.getStart().format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm"))));
-                holder.attachView.setOnClickListener(v -> {
-                    this.eventToAttach = event.getId();
-                    getPicture.launch("image/*");
-                });
+                prepareUpcomingView(holder, position);
+
         }
+    }
+
+    private void prepareMonthlyView(ViewHolder holder, int position) {
+        holder.titleView.setText(String.format(Locale.ENGLISH, "%d", position + 1));
+        holder.titleView.setOnClickListener(v -> new AlertDialog.Builder(v.getContext())
+                .setTitle(Integer.toString(position + 1)).setMessage("List of events for this day somehow")
+                .setMessage("List of events for this day somehow").show());
+    }
+
+    private void prepareWeeklyView(ViewHolder holder, int position) {
+        String[] days = new String[]{"MON", "TUE", "WED", "THU", "FRI", "SAT", "SUN"};
+
+        holder.titleView.setText(days[position]);
+        holder.titleView.setOnClickListener(v -> new AlertDialog.Builder(v.getContext())
+                .setTitle(days[position])
+                .setMessage("List of events for this day somehow").show());
+    }
+
+    private void prepareUpcomingView(EventsAdapter.ViewHolder holder, int position) {
+        Event event = calendar.getEvents().get(position);
+        holder.titleView.setText(event.getTitle());
+        holder.titleView.setOnClickListener(v -> eventButtonListener(event, v));
+        holder.dateView.setText(holder.dateView.getContext().getResources().getString(R.string.calendar_upcoming_date,
+                event.getStart().format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm"))));
+        holder.attachView.setOnClickListener(v -> {
+            this.eventToAttach = event.getId();
+            getPicture.launch("image/*");
+        });
     }
 
     private void eventButtonListener(Event event, View v) {
