@@ -121,6 +121,59 @@ public class EditHousehold extends AppCompatActivity {
         currentHousehold.update("residents", FieldValue.arrayUnion(email));
     }
 
+    public void transmitOwnership(View view) {
+        TextView emailView = findViewById(R.id.editTextChangeOwner);
+        String email = emailView.getText().toString();
+        if(!verifyEmailHasCorrectFormat(email)){
+            Toast.makeText(getApplicationContext(),
+                    view.getContext().getString(R.string.invalid_email),
+                    Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        Task<SignInMethodQueryResult> signInMethodQueryResultTask =
+                mAuth.fetchSignInMethodsForEmail(email);
+
+        signInMethodQueryResultTask
+                .addOnCompleteListener(new OnCompleteListener<SignInMethodQueryResult>() {
+                    @Override
+                    public void onComplete(@NonNull Task<SignInMethodQueryResult> task) {
+                        SignInMethodQueryResult result = task.getResult();
+                        List<String> signInMethods = result.getSignInMethods();
+
+                        //Here we exceptionally fail silently because it would be a privacy leak if we
+                        //could check if a given email address is registered in our App or not
+                        if(signInMethods != null && signInMethods.size() > 0){
+                            changeOwner(email, view);
+                        }
+                    }
+                });
+    }
+
+    public void changeOwner(String email, View view){
+        firestore.collection("households")
+                .document(householdId)
+                .get()
+                .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                        DocumentSnapshot document = task.getResult();
+                        Map<String, Object> householdData = document.getData();
+                        if(householdData != null) {
+                            List<String> listOfUsers =
+                                    (List<String>) householdData.getOrDefault("residents", "[]");
+                            if(listOfUsers.contains(email)){
+                                firestore.collection("households").document(householdId)
+                                         .update("owner", email);
+                                Toast.makeText(getApplicationContext(),
+                                        view.getContext().getString(R.string.owner_change_success),
+                                        Toast.LENGTH_SHORT).show();
+                            }
+                        }
+                    }
+                });
+    }
+
     public void confirmChanges(View view) {
         Intent intent = new Intent(this, MainScreenActivity.class);
         intent.putExtra(MainScreenActivity.HOUSEHOLD, householdId);

@@ -19,10 +19,12 @@
     <string name="confirm_button">Confirm</string>
     <string name="edit_title">Household</string>
     <string name="add_user">Add user</string>
+    <string name="change_owner">Change owner</string>
     <string name="add_user_hint">Valid email address</string>
     <string name="invalid_email">Email provided is not valid</string>
     <string name="duplicate_user">User already present!</string>
     <string name="not_owner">You are not the owner!</string>
+    <string name="owner_change_success">Successfully changed owner</string>
 
     <!-- Preference Titles -->
     <string name="general_header">General</string>

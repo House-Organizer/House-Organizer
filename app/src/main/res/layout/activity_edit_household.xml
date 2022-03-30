@@ -6,6 +6,36 @@
     android:layout_height="match_parent"
     tools:context=".EditHousehold">
 
+    <ImageButton
+        android:id="@+id/imageButtonChangeOwner"
+        android:layout_width="49dp"
+        android:layout_height="48dp"
+        android:layout_marginTop="32dp"
+        android:layout_marginEnd="32dp"
+        android:background="#00000000"
+        android:contentDescription="@string/change_owner"
+        android:minHeight="48dp"
+        android:onClick="transmitOwnership"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/imageButtonAddUser"
+        app:srcCompat="@drawable/change_owner" />
+
+    <EditText
+        android:id="@+id/editTextChangeOwner"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="32dp"
+        android:layout_marginTop="32dp"
+        android:autofillHints=""
+        android:ems="10"
+        android:hint="@string/add_user_hint"
+        android:inputType="textEmailAddress"
+        android:minHeight="48dp"
+        android:textColorHint="#757575"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/editTextAddUser"
+        tools:ignore="DuplicateSpeakableTextCheck" />
+
     <TextView
         android:id="@+id/edit_household_name"
         android:layout_width="412dp"
