@@ -5,13 +5,14 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -20,21 +21,21 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.github.houseorganizer.houseorganizer.Calendar.Event;
 import com.github.houseorganizer.houseorganizer.login.LoginActivity;
 import com.github.houseorganizer.houseorganizer.util.Util;
-import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
-
-import java.util.Arrays;
 
 @SuppressWarnings("unused")
 public class MainScreenActivity extends AppCompatActivity {
@@ -72,7 +73,7 @@ public class MainScreenActivity extends AppCompatActivity {
 
         calendarEvents = findViewById(R.id.calendar);
         calendar = new Calendar();
-        calendarAdapter = new EventsAdapter(calendar);
+        calendarAdapter = new EventsAdapter(calendar, registerForEventImage());
         calendarEvents.setAdapter(calendarAdapter);
         calendarEvents.setLayoutManager(new GridLayoutManager(this, calendarColumns));
 
@@ -86,6 +87,18 @@ public class MainScreenActivity extends AppCompatActivity {
 
         initializeDummyTaskList();
         setUpTaskList();
+    }
+
+    private ActivityResultLauncher<String> registerForEventImage() {
+        // Prepare the activity to retrieve an image from the gallery
+        return registerForActivityResult(new ActivityResultContracts.GetContent(),
+                uri -> {
+                    // Store the image on firebase storage
+                    FirebaseStorage storage = FirebaseStorage.getInstance();
+                    // this creates the reference to the picture
+                    StorageReference imageRef = storage.getReference().child("myImage.jpg");
+                    imageRef.putFile(uri).addOnCompleteListener((complete) -> {});
+                });
     }
 
     private void getCurrentHousehold(){
