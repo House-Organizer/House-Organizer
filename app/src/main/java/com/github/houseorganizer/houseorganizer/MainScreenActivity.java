@@ -96,7 +96,7 @@ public class MainScreenActivity extends AppCompatActivity {
                     // Store the image on firebase storage
                     FirebaseStorage storage = FirebaseStorage.getInstance();
                     // this creates the reference to the picture
-                    StorageReference imageRef = storage.getReference().child(calendarAdapter.lastEventWithAttachments + ".jpg");
+                    StorageReference imageRef = storage.getReference().child(calendarAdapter.eventToAttach + ".jpg");
                     imageRef.putFile(uri).addOnCompleteListener((complete) -> {});
                 });
     }
@@ -113,7 +113,7 @@ public class MainScreenActivity extends AppCompatActivity {
                     .whereArrayContains("residents", mUser.getEmail()).get()
                     .addOnCompleteListener(task -> {
                         if (task.isSuccessful()) {
-                            ArrayList<String> households = new ArrayList<String>();
+                            ArrayList<String> households = new ArrayList<>();
                             for (QueryDocumentSnapshot document : task.getResult())
                                 households.add(document.getId());
 
