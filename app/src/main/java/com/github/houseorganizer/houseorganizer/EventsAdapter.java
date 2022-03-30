@@ -3,6 +3,7 @@ package com.github.houseorganizer.houseorganizer;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -23,6 +24,7 @@ import java.time.LocalDate;
 import java.time.YearMonth;
 import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
@@ -31,6 +33,9 @@ public class EventsAdapter extends RecyclerView.Adapter<EventsAdapter.ViewHolder
 
     private static final int DAYS_PER_WEEK = 7;
     private final ActivityResultLauncher<String> getPicture;
+
+    String lastEventWithAttachments;
+
     Calendar calendar;
     public EventsAdapter(Calendar calendar, ActivityResultLauncher<String> getPicture) {
         this.calendar = calendar;
@@ -99,7 +104,10 @@ public class EventsAdapter extends RecyclerView.Adapter<EventsAdapter.ViewHolder
                 titleView.setOnClickListener(v -> eventButtonListener(event, v));
                 holder.dateView.setText(holder.dateView.getContext().getResources().getString(R.string.calendar_upcoming_date,
                         event.getStart().format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm"))));
-                holder.attachView.setOnClickListener(v -> getPicture.launch("image/*"));
+                holder.attachView.setOnClickListener(v -> {
+                    this.lastEventWithAttachments = event.getTitle();
+                    getPicture.launch("image/*");
+                });
         }
     }
 
