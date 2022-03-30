@@ -72,12 +72,17 @@ public class EditHousehold extends AppCompatActivity {
         return true;
     }
 
+    private boolean verifyEmailInput(TextView emailView, View view){
+        String email = emailView.getText().toString();
+        return verifyEmail(email, view);
+    }
+
     public void addUser(View view) {
         TextView emailView = findViewById(R.id.editTextAddUser);
-        String email = emailView.getText().toString();
-        if(!verifyEmail(email, view)){
+        if(!verifyEmailInput(emailView, view)){
             return;
         }
+        String email = emailView.getText().toString();
 
         mAuth
         .fetchSignInMethodsForEmail(email)
@@ -91,9 +96,7 @@ public class EditHousehold extends AppCompatActivity {
     }
 
     public void addUserIfNotPresent(String email, View view){
-        firestore.collection("households")
-        .document(householdId)
-        .get()
+        firestore.collection("households").document(householdId).get()
         .addOnCompleteListener(task -> {
             Map<String, Object> householdData = task.getResult().getData();
             if(householdData != null) {
@@ -105,15 +108,12 @@ public class EditHousehold extends AppCompatActivity {
                     DocumentReference currentHousehold = firestore
                             .collection("households")
                             .document(householdId);
-
                     currentHousehold.update("residents", FieldValue.arrayUnion(email));
                     currentHousehold.update("num_members",num_users+1);
-                    Toast.makeText(getApplicationContext(),
-                            view.getContext().getString(R.string.add_user_success),
+                    Toast.makeText(getApplicationContext(),view.getContext().getString(R.string.add_user_success),
                             Toast.LENGTH_SHORT).show();
                 } else {
-                    Toast.makeText(getApplicationContext(),
-                            view.getContext().getString(R.string.duplicate_user),
+                    Toast.makeText(getApplicationContext(),view.getContext().getString(R.string.duplicate_user),
                             Toast.LENGTH_SHORT).show();
                 }
             }
@@ -122,24 +122,23 @@ public class EditHousehold extends AppCompatActivity {
 
     public void transmitOwnership(View view) {
         TextView emailView = findViewById(R.id.editTextChangeOwner);
-        String email = emailView.getText().toString();
-        if(!verifyEmail(email, view)){
+        if(!verifyEmailInput(emailView, view)){
             return;
         }
+        String new_owner_email = emailView.getText().toString();
+
         mAuth
-        .fetchSignInMethodsForEmail(email)
+        .fetchSignInMethodsForEmail(new_owner_email)
         .addOnCompleteListener(task -> {
             List<String> signInMethods = task.getResult().getSignInMethods();
             if(signInMethods != null && signInMethods.size() > 0){
-                changeOwner(email, view);
+                changeOwner(new_owner_email, view);
             }
         });
     }
 
     public void changeOwner(String email, View view){
-        firestore.collection("households")
-                 .document(householdId)
-                 .get()
+        firestore.collection("households").document(householdId).get()
                  .addOnCompleteListener(task -> {
                     Map<String, Object> householdData = task.getResult().getData();
                     if(householdData != null) {
@@ -185,9 +184,7 @@ public class EditHousehold extends AppCompatActivity {
     }
 
     public void removeUserFromHousehold(String email, View view){
-        firestore.collection("households")
-                 .document(householdId)
-                 .get()
+        firestore.collection("households").document(householdId).get()
                  .addOnCompleteListener(task -> {
                      Map<String, Object> householdData = task.getResult().getData();
                      if(householdData != null) {
