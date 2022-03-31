@@ -31,11 +31,8 @@ import com.google.firebase.storage.StorageReference;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
-
-import java.util.Objects;
 
 @SuppressWarnings("unused")
 public class MainScreenActivity extends AppCompatActivity {
@@ -54,7 +51,7 @@ public class MainScreenActivity extends AppCompatActivity {
     private TaskList taskList;
     private TaskListAdapter taskListAdapter;
     private ListFragmentView listView = ListFragmentView.CHORES_LIST;
-    private enum ListFragmentView { CHORES_LIST, GROCERY_LIST }
+    public enum ListFragmentView { CHORES_LIST, GROCERY_LIST }
 
     /* for setting up the task owner. Not related to firebase */
     private final User currentUser = new DummyUser("Test User", "0");
@@ -79,12 +76,18 @@ public class MainScreenActivity extends AppCompatActivity {
         findViewById(R.id.calendar_view_change).setOnClickListener(this::rotateView);
         findViewById(R.id.add_event).setOnClickListener(this::addEvent);
         findViewById(R.id.refresh_calendar).setOnClickListener(this::refreshCalendar);
-        findViewById(R.id.new_task).setOnClickListener(this::addTask);
+        findViewById(R.id.new_task).setOnClickListener(v -> TaskView.addTask(db, taskList, taskListAdapter, listView, currentUser));
 
         refreshCalendar(findViewById(R.id.calendar));
 
         initializeTaskList();
-        recoverTaskList(db.collection("task_lists").document("85IW3cYzxOo1YTWnNOQl"));
+        TaskView.recoverTaskList(this, taskList, taskListAdapter,
+                db.collection("task_lists").document("85IW3cYzxOo1YTWnNOQl"));
+    }
+
+    private void initializeTaskList() {
+        this.taskList = new TaskList(currentUser, "My weekly todo", new ArrayList<>());
+        this.taskListAdapter = new TaskListAdapter(taskList);
     }
 
     private ActivityResultLauncher<String> registerForEventImage() {
@@ -223,66 +226,6 @@ public class MainScreenActivity extends AppCompatActivity {
 
     }
 
-    private void recoverTaskList(DocumentReference taskListRoot) {
-        taskListRoot.get().addOnCompleteListener(task -> {
-            if (task.isSuccessful()) {
-                DocumentSnapshot document = task.getResult();
-                Map<String, Object> data = document.getData();
-
-                assert data != null;
-                taskList.changeTitle((String)data.get("title"));
-                // todo: ownership: inferred, or read from DB?
-
-                document.getReference()
-                        .collection("tasks")
-                        .get()
-                        .addOnCompleteListener(task2 -> {
-                            for (DocumentSnapshot docSnapshot : task2.getResult().getDocuments()) {
-                                Map<String, Object> taskData = Objects.requireNonNull(docSnapshot.getData());
-                                DocumentReference taskDocRef = docSnapshot.getReference();
-
-                                // We're adding a `FirestoreTask` now, and the in-app changes to
-                                // its title and description will be reflected in the database
-                                taskList.addTask(FirestoreTask.recoverTask(taskData, taskDocRef));
-                            }
-                        });
-
-                setUpTaskListView();
-            }
-        });
-    }
-
-    private void initializeTaskList() {
-        this.taskList = new TaskList(currentUser, "My weekly todo", new ArrayList<>());
-        this.taskListAdapter = new TaskListAdapter(taskList);
-    }
-
-    private void setUpTaskListView() {
-        RecyclerView taskListView = findViewById(R.id.task_list);
-        taskListView.setAdapter(taskListAdapter);
-        taskListView.setLayoutManager(new LinearLayoutManager(this));
-    }
-
-    // Adds a task iff. the task list is in view
-    private void addTask(View v) {
-        db.collection("task_lists")
-                .document("85IW3cYzxOo1YTWnNOQl")
-                .collection("tasks")
-                .add(new HashMap<String, Object>())
-                .addOnCompleteListener(task -> {
-                    if (task.isSuccessful()) {
-                        DocumentReference taskDocRef = task.getResult();
-
-                        taskList.addTask(new FirestoreTask(currentUser, "", "", new ArrayList<>(), taskDocRef));
-                        taskListAdapter.notifyItemInserted(taskListAdapter.getItemCount()-1);
-                    }
-                });
-        if(listView == ListFragmentView.CHORES_LIST) {
-            taskList.addTask(new Task(currentUser, "", ""));
-            taskListAdapter.notifyItemInserted(taskListAdapter.getItemCount()-1);
-        }
-    }
-
     @SuppressWarnings("unused")
     public void houseButtonPressed(View view) {
         Intent intent = new Intent(this, HouseSelectionActivity.class);
@@ -304,7 +247,7 @@ public class MainScreenActivity extends AppCompatActivity {
 
         switch(listView) {
             case CHORES_LIST:
-                setUpTaskList();
+                TaskView.setUpTaskListView(this, taskListAdapter);
                 break;
             case GROCERY_LIST:
                 ShopList shopList = new ShopList(new DummyUser("John", "uid"), "TestShopList");

@@ -11,7 +11,18 @@ import android.widget.EditText;
 import androidx.annotation.IdRes;
 import androidx.annotation.LayoutRes;
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Objects;
 import java.util.function.Consumer;
 
 public final class TaskView {
@@ -27,6 +38,7 @@ public final class TaskView {
             return new BiViewHolder<>(view, leftResId, rightResId);
     }
 
+    // (Sub)task views
     public static void setUpTaskView(Task task, EditText titleEditor, EditText descEditor, Button titleButton) {
         titleEditor.setText(task.getTitle());
         descEditor.setText(task.getDescription());
@@ -67,5 +79,62 @@ public final class TaskView {
         public void afterTextChanged(Editable s) {
             textConsumer.accept(editor.getText().toString());
         }
+    }
+
+    /* Used in MainScreenActivity */
+    protected static void recoverTaskList(AppCompatActivity parent, TaskList taskList, TaskListAdapter taskListAdapter, DocumentReference taskListRoot) {
+        taskListRoot.get().addOnCompleteListener(task -> {
+            if (task.isSuccessful()) {
+                DocumentSnapshot document = task.getResult();
+                Map<String, Object> data = document.getData();
+
+                assert data != null;
+                taskList.changeTitle((String)data.get("title"));
+                // todo: ownership: inferred, or read from DB?
+
+                document.getReference()
+                        .collection("tasks")
+                        .get()
+                        .addOnCompleteListener(task2 -> {
+                            for (DocumentSnapshot docSnapshot : task2.getResult().getDocuments()) {
+                                Map<String, Object> taskData = Objects.requireNonNull(docSnapshot.getData());
+                                DocumentReference taskDocRef = docSnapshot.getReference();
+
+                                // We're adding a `FirestoreTask` now, and the in-app changes to
+                                // its title and description will be reflected in the database
+                                taskList.addTask(FirestoreTask.recoverTask(taskData, taskDocRef));
+                            }
+                        });
+
+                setUpTaskListView(parent, taskListAdapter);
+            }
+        });
+    }
+
+    protected static void setUpTaskListView(AppCompatActivity parent, TaskListAdapter taskListAdapter) {
+        RecyclerView taskListView = parent.findViewById(R.id.task_list);
+        taskListView.setAdapter(taskListAdapter);
+        taskListView.setLayoutManager(new LinearLayoutManager(parent));
+    }
+
+    // Adds a task iff. the task list is in view
+    protected static void addTask(FirebaseFirestore db, TaskList taskList, TaskListAdapter taskListAdapter,
+                         MainScreenActivity.ListFragmentView listView, User currentUser) {
+        if (listView != MainScreenActivity.ListFragmentView.CHORES_LIST) {
+            return;
+        }
+
+        db.collection("task_lists")
+                .document("85IW3cYzxOo1YTWnNOQl")
+                .collection("tasks")
+                .add(new HashMap<String, Object>())
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        DocumentReference taskDocRef = task.getResult();
+
+                        taskList.addTask(new FirestoreTask(currentUser, "", "", new ArrayList<>(), taskDocRef));
+                        taskListAdapter.notifyItemInserted(taskListAdapter.getItemCount()-1);
+                    }
+                });
     }
 }
