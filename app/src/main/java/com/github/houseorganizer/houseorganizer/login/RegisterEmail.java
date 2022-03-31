@@ -1,9 +1,9 @@
 package com.github.houseorganizer.houseorganizer.login;
 
-import static com.github.houseorganizer.houseorganizer.login.LoginHelpers.displayRegisterErrorMessage;
-import static com.github.houseorganizer.houseorganizer.login.LoginHelpers.inputsEmpty;
-import static com.github.houseorganizer.houseorganizer.login.LoginHelpers.isValidEmail;
-import static com.github.houseorganizer.houseorganizer.login.LoginHelpers.isValidPassword;
+import static com.github.houseorganizer.houseorganizer.util.LoginHelpers.displayRegisterErrorMessage;
+import static com.github.houseorganizer.houseorganizer.util.LoginHelpers.inputsEmpty;
+import static com.github.houseorganizer.houseorganizer.util.LoginHelpers.isValidEmail;
+import static com.github.houseorganizer.houseorganizer.util.LoginHelpers.isValidPassword;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -16,6 +16,7 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.github.houseorganizer.houseorganizer.R;
+import com.github.houseorganizer.houseorganizer.util.LoginHelpers;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;

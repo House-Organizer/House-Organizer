@@ -1,7 +1,7 @@
 package com.github.houseorganizer.houseorganizer.login;
 
-import static com.github.houseorganizer.houseorganizer.login.LoginHelpers.displayRegisterErrorMessage;
-import static com.github.houseorganizer.houseorganizer.login.LoginHelpers.inputsEmpty;
+import static com.github.houseorganizer.houseorganizer.util.LoginHelpers.displayRegisterErrorMessage;
+import static com.github.houseorganizer.houseorganizer.util.LoginHelpers.inputsEmpty;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -14,6 +14,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.github.houseorganizer.houseorganizer.MainScreenActivity;
 import com.github.houseorganizer.houseorganizer.R;
+import com.github.houseorganizer.houseorganizer.util.LoginHelpers;
 import com.google.firebase.auth.FirebaseAuth;
 
 import java.util.Objects;

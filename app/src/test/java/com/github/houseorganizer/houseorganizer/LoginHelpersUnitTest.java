@@ -1,8 +1,8 @@
 package com.github.houseorganizer.houseorganizer;
 
-import static com.github.houseorganizer.houseorganizer.login.LoginHelpers.inputsEmpty;
-import static com.github.houseorganizer.houseorganizer.login.LoginHelpers.isValidEmail;
-import static com.github.houseorganizer.houseorganizer.login.LoginHelpers.isValidPassword;
+import static com.github.houseorganizer.houseorganizer.util.LoginHelpers.inputsEmpty;
+import static com.github.houseorganizer.houseorganizer.util.LoginHelpers.isValidEmail;
+import static com.github.houseorganizer.houseorganizer.util.LoginHelpers.isValidPassword;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 

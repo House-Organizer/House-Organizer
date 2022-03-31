@@ -1,4 +1,4 @@
-package com.github.houseorganizer.houseorganizer.login;
+package com.github.houseorganizer.houseorganizer.util;
 
 import android.widget.TextView;
 
