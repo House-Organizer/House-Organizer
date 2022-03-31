@@ -115,6 +115,10 @@ public class EventsAdapter extends RecyclerView.Adapter<EventsAdapter.ViewHolder
                 .setNeutralButton(R.string.edit, (dialog, id) ->{
                     LayoutInflater inflater = LayoutInflater.from(v.getContext());
                     final View dialogView = inflater.inflate(R.layout.event_creation, null);
+                    ((EditText) dialogView.findViewById(R.id.new_event_title)).setText(event.getTitle());
+                    ((EditText) dialogView.findViewById(R.id.new_event_desc)).setText(event.getDescription());
+                    ((EditText) dialogView.findViewById(R.id.new_event_date)).setText(event.getStart().format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm")));
+                    ((EditText) dialogView.findViewById(R.id.new_event_duration)).setText(Long.toString(event.getDuration()));
                     new AlertDialog.Builder(v.getContext())
                             .setTitle(R.string.event_editing_title)
                             .setView(dialogView)
