@@ -5,7 +5,6 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.EditText;
@@ -20,7 +19,6 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.github.houseorganizer.houseorganizer.Calendar.Event;
 import com.github.houseorganizer.houseorganizer.login.LoginActivity;
 import com.github.houseorganizer.houseorganizer.util.Util;
-import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
@@ -31,10 +29,9 @@ import com.google.firebase.firestore.QueryDocumentSnapshot;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
-
-import java.util.Arrays;
 
 @SuppressWarnings("unused")
 public class MainScreenActivity extends AppCompatActivity {
@@ -82,10 +79,14 @@ public class MainScreenActivity extends AppCompatActivity {
         findViewById(R.id.refresh_calendar).setOnClickListener(this::refreshCalendar);
         findViewById(R.id.new_task).setOnClickListener(this::addTask);
 
-        refreshCalendar(findViewById(R.id.calendar));
-
         initializeDummyTaskList();
         setUpTaskList();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        refreshCalendar(findViewById(R.id.calendar));
     }
 
     private void getCurrentHousehold(){
@@ -109,6 +110,7 @@ public class MainScreenActivity extends AppCompatActivity {
 
                             currentHouse = db.collection("households").document(households.get(0));
                             text.setText("currentHouse: " + currentHouse.getId() + " by default");
+                            refreshCalendar(findViewById(R.id.calendar));
 
                         } else {
                             Toast.makeText(getApplicationContext(), "Could not get a house.", Toast.LENGTH_SHORT).show();
@@ -184,7 +186,6 @@ public class MainScreenActivity extends AppCompatActivity {
                         }
                         calendarAdapter.notifyDataSetChanged();
                         calendar.setEvents(newEvents);
-                        Toast.makeText(v.getContext(), v.getContext().getString(R.string.refresh_calendar_success), Toast.LENGTH_SHORT).show();
                     }
                     else {
                         Toast.makeText(v.getContext(), v.getContext().getString(R.string.refresh_calendar_fail), Toast.LENGTH_SHORT).show();

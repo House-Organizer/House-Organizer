@@ -1,7 +1,9 @@
 package com.github.houseorganizer.houseorganizer;
 
 import static java.util.Objects.requireNonNull;
+
 import androidx.annotation.NonNull;
+
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Comparator;
