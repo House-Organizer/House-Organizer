@@ -46,6 +46,7 @@ public class TaskListAdapter extends RecyclerView.Adapter<BiViewHolder<Button, B
 
             taskList.removeTask(position);
             notifyItemRemoved(position);
+            notifyItemRangeChanged(0, getItemCount());
         };
     }
 
