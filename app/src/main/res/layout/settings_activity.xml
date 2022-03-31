@@ -6,15 +6,17 @@
     <FrameLayout
         android:id="@+id/settings"
         android:layout_width="match_parent"
-        android:layout_height="667dp">
+        android:layout_height="wrap_content">
 
     </FrameLayout>
 
     <Button
         android:id="@+id/sign_out_button"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:onClick="signOut"
-        android:text="@string/sign_out" />
+        android:text="@string/sign_out"
+        android:layout_gravity="center"
+        />
 
 </LinearLayout>
