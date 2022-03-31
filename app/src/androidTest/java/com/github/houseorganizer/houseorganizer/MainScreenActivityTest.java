@@ -46,49 +46,24 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ExecutionException;
 
 @RunWith(AndroidJUnit4.class)
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class MainScreenActivityTest {
 
     @BeforeClass
-    public static void settingUpEmulatorFirebase(){
+    public static void settingUpEmulatorFirebase() throws ExecutionException, InterruptedException {
 
-        FirebaseAuth mAuth = FirebaseAuth.getInstance();
-        if(!FirebaseTestsHelper.emulatorActivated){
-            mAuth.useEmulator("10.0.2.2", 9099);
-            FirebaseTestsHelper.emulatorActivated = true;
-        }
-        mAuth.createUserWithEmailAndPassword("john@cena.us", "theRock");
-        mAuth.signInWithEmailAndPassword("john@cena.us", "theRock").addOnCompleteListener(t -> {
-            FirebaseUser user = mAuth.getCurrentUser();
-            FirebaseFirestore db = FirebaseFirestore.getInstance();
-            db.useEmulator("10.0.2.2", 8080);
-            FirebaseFirestoreSettings set = new FirebaseFirestoreSettings.Builder()
-                    .setPersistenceEnabled(false)
-                    .build();
+        FirebaseTestsHelper.startAuthEmulator();
+        FirebaseTestsHelper.startFirestoreEmulator();
 
-            db.collection("households").get().addOnCompleteListener(task -> {
-               if(task.getResult().isEmpty()){
-                   createHouseholdTable(db);
-               }
-            });
-        });
+        FirebaseTestsHelper.createFirebaseTestUser();
+        FirebaseTestsHelper.signInTestUserInFirebaseAuth();
+        FirebaseTestsHelper.createTestHouseholdOnFirestore();
 
     }
 
-    private static void createHouseholdTable(FirebaseFirestore db){
-        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-        Map<String, Object> houseHold = new HashMap<>();
-        List<String> residents = Arrays.asList(user.getEmail());
-
-        houseHold.put("name", "theRing");
-        houseHold.put("owner", user.getEmail());
-        houseHold.put("num_members", 1);
-        houseHold.put("residents", residents);
-
-        db.collection("households").add(houseHold);
-    }
 
     @Before
     public void checkIfUserIsConnected() throws InterruptedException {

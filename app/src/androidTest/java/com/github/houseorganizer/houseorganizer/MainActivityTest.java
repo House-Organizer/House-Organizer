@@ -25,12 +25,10 @@ import org.junit.runners.MethodSorters;
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class MainActivityTest {
 
-    public static String TEST_USER_EMAIL = "test@gmail.com";
-    public static String TEST_USER_PASSWORD = "password";
-
     @Rule
     public ActivityScenarioRule<MainActivity> testRule = new ActivityScenarioRule<>(MainActivity.class);
 
+    /*
     @BeforeClass
     public static void initializingDatabase(){
         FirebaseAuth mAuth = FirebaseAuth.getInstance();
@@ -41,9 +39,9 @@ public class MainActivityTest {
         mAuth.createUserWithEmailAndPassword(TEST_USER_EMAIL, TEST_USER_PASSWORD);
         /*if(mAuth.getCurrentUser() != null){
             mAuth.signOut();
-        }*/
+        }
         Intents.init();
-    }
+    }*/
 
     /*@Before
     public void initIntents(){
@@ -82,10 +80,10 @@ public class MainActivityTest {
         intended(hasComponent(LoginActivity.class.getName()));
         //testRule.getScenario().moveToState(Lifecycle.State.DESTROYED);
 
-    }*/
+    }
 
     @AfterClass
     public static void releaseIntents(){
         Intents.release();
-    }
+    }*/
 }
