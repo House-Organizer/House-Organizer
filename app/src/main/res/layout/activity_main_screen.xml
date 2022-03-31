@@ -134,7 +134,7 @@
         android:layout_width="48dp"
         android:layout_height="wrap_content"
         android:text="@string/add_task"
-        android:backgroundTint="#3900BCD4"
+        android:backgroundTint="#65087785"
         android:textColor="@color/white"
         style="?android:attr/buttonBarButtonStyle"
         app:layout_constraintBottom_toTopOf="@id/task_list"
