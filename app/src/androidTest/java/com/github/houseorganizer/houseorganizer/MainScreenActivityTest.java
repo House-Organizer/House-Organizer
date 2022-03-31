@@ -66,12 +66,8 @@ public class MainScreenActivityTest {
 
 
     @Before
-    public void checkIfUserIsConnected() throws InterruptedException {
-        FirebaseAuth mAuth = FirebaseAuth.getInstance();
-        FirebaseUser user = mAuth.getCurrentUser();
-        if(user == null){
-            mAuth.signInWithEmailAndPassword("john@cena.us", "theRock");
-        }
+    public void checkIfUserIsConnected() throws InterruptedException, ExecutionException {
+        FirebaseTestsHelper.signInTestUserInFirebaseAuth();
     }
 
     @Rule
