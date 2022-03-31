@@ -17,7 +17,6 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.github.houseorganizer.houseorganizer.Calendar.Event;
-import com.github.houseorganizer.houseorganizer.login.LoginActivity;
 import com.github.houseorganizer.houseorganizer.util.Util;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -46,13 +45,14 @@ public class MainScreenActivity extends AppCompatActivity {
     private DocumentReference currentHouse;
     private EventsAdapter calendarAdapter;
     private RecyclerView calendarEvents;
-    private boolean isChoresList = true;
 
     private TaskList taskList;
     private TaskListAdapter taskListAdapter;
+    private ListFragmentView listView = ListFragmentView.CHORES_LIST;
+    private enum ListFragmentView { CHORES_LIST, GROCERY_LIST }
 
     /* for setting up the task owner. Not related to firebase */
-    private User currentUser = new DummyUser("Test User", "0");
+    private final User currentUser = new DummyUser("Test User", "0");
 
     @SuppressLint("NotifyDataSetChanged")
     @Override
@@ -228,7 +228,7 @@ public class MainScreenActivity extends AppCompatActivity {
 
     // Adds a task iff. the task list is in view
     private void addTask(View v) {
-        if(isChoresList) {
+        if(listView == ListFragmentView.CHORES_LIST) {
             taskList.addTask(new Task(currentUser, "", ""));
             taskListAdapter.notifyItemInserted(taskListAdapter.getItemCount()-1);
         }
@@ -251,20 +251,23 @@ public class MainScreenActivity extends AppCompatActivity {
     }
 
     public void rotateLists(View view) {
-        if (isChoresList) {
-            ShopList shopList = new ShopList(new DummyUser("John", "uid"), "TestShopList");
-            shopList.addItem(new ShopItem("Eggs", 4, ""));
-            shopList.addItem(new ShopItem("Flour", 2, "kg"));
-            shopList.addItem(new ShopItem("Raclette", 3, "tons"));
+        listView = ListFragmentView.values()[1 - listView.ordinal()];
 
-            ShopListAdapter itemAdapter = new ShopListAdapter(shopList);
-            RecyclerView rView = findViewById(R.id.task_list);
-            rView.setAdapter(itemAdapter);
-            rView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
-            isChoresList = false;
-        } else {
-            setUpTaskList();
-            isChoresList = true;
+        switch(listView) {
+            case CHORES_LIST:
+                setUpTaskList();
+                break;
+            case GROCERY_LIST:
+                ShopList shopList = new ShopList(new DummyUser("John", "uid"), "TestShopList");
+                shopList.addItem(new ShopItem("Eggs", 4, ""));
+                shopList.addItem(new ShopItem("Flour", 2, "kg"));
+                shopList.addItem(new ShopItem("Raclette", 3, "tons"));
+
+                ShopListAdapter itemAdapter = new ShopListAdapter(shopList);
+                RecyclerView rView = findViewById(R.id.task_list);
+                rView.setAdapter(itemAdapter);
+                rView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
+                break;
         }
     }
 }
