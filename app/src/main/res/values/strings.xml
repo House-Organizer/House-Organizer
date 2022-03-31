@@ -103,7 +103,7 @@
     <string name="log_email_auth_failed">Email or password is wrong.</string>
     <string name="email_not_valid">Email is not valid.</string>
     <string name="password_not_valid">Password is not valid.</string>
-    <string name="inputs_not_empty">Inputs must not be empty.</string>
+    <string name="inputs_empty">Inputs must not be empty.</string>
     <string name="signout_button">Sign Out</string>
     <string name="signout_intent">sign_out</string>
     <string name="signInFailed">The sign-in failed due to an error</string>
