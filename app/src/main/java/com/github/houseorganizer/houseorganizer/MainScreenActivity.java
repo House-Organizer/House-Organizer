@@ -179,7 +179,7 @@ public class MainScreenActivity extends AppCompatActivity {
     }
 
     @SuppressLint("NotifyDataSetChanged")
-    void refreshCalendar(View v) {
+    public void refreshCalendar(View v) {
         db.collection("events")
                 .whereEqualTo("household", currentHouse)
                 .whereGreaterThan("start", LocalDateTime.now().toEpochSecond(ZoneOffset.UTC))

@@ -88,6 +88,22 @@ class Calendar {
             return id;
         }
 
+        public void setTitle(String title) {
+            this.title = title;
+        }
+
+        public void setDescription(String description) {
+            this.description = description;
+        }
+
+        public void setStart(LocalDateTime start) {
+            this.start = start;
+        }
+
+        public void setDuration(long duration) {
+            this.duration = duration;
+        }
+
         @NonNull
         @Override
         public String toString() {
