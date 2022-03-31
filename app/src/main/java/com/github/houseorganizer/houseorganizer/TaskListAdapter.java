@@ -37,23 +37,21 @@ public class TaskListAdapter extends RecyclerView.Adapter<BiViewHolder<Button, B
     }
 
     private View.OnClickListener doneButtonListener(int position) {
-        return v -> {
-            ((FirestoreTask)(taskList.getTaskAt(position))).getTaskDocRef()
-                    .delete()
-                    .addOnCompleteListener(task -> {
-                        if (task.isSuccessful()) {
+        return v -> ((FirestoreTask)(taskList.getTaskAt(position))).getTaskDocRef()
+                .delete()
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
 
-                            new AlertDialog.Builder(v.getContext())
-                                    .setTitle(R.string.task_completion_title)
-                                    .setMessage(R.string.task_completion_desc)
-                                    .show();
+                        new AlertDialog.Builder(v.getContext())
+                                .setTitle(R.string.task_completion_title)
+                                .setMessage(R.string.task_completion_desc)
+                                .show();
 
-                            taskList.removeTask(position);
-                            notifyItemRemoved(position);
-                            notifyItemRangeChanged(0, getItemCount());
-                        }
-                    });
-        };
+                        taskList.removeTask(position);
+                        notifyItemRemoved(position);
+                        notifyItemRangeChanged(0, getItemCount());
+                    }
+                });
     }
 
     // todo: modify due date

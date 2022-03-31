@@ -76,7 +76,6 @@ public class Util {
                 }
             }
         });
-
     }
 
     public static FirestoreTask recoverTask(Map<String, Object> data, DocumentReference taskDocRef) {

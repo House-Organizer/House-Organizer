@@ -43,9 +43,8 @@ public final class TaskView {
     public static void setUpSubTaskView(FirestoreTask parentTask, int index, EditText titleEditor) {
         titleEditor.setText(parentTask.getSubTaskAt(index).getTitle());
 
-        titleEditor.addTextChangedListener(new TextChangeListener(titleEditor, newTitle -> {
-            parentTask.changeSubTaskTitle(index, newTitle);
-        }));
+        titleEditor.addTextChangedListener(new TextChangeListener(titleEditor,
+                newTitle -> parentTask.changeSubTaskTitle(index, newTitle)));
     }
 
     // Calls provided consumer once a text change is registered
