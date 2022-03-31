@@ -1,15 +1,12 @@
 package com.github.houseorganizer.houseorganizer;
 
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.view.View;
 
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.preference.PreferenceFragmentCompat;
 
-import com.github.houseorganizer.houseorganizer.login.LoginActivity;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -34,13 +31,6 @@ public class SettingsActivity extends AppCompatActivity {
         if (actionBar != null) {
             actionBar.setDisplayHomeAsUpEnabled(true);
         }
-    }
-
-    public void signOut(View v) {
-        Intent intent = new Intent(this, LoginActivity.class);
-        intent.putExtra(getString(R.string.signout_intent), true);
-        startActivity(intent);
-        finish();
     }
 
     public static class SettingsFragment extends PreferenceFragmentCompat implements SharedPreferences.OnSharedPreferenceChangeListener {
@@ -78,4 +68,6 @@ public class SettingsActivity extends AppCompatActivity {
             getPreferenceManager().getSharedPreferences().unregisterOnSharedPreferenceChangeListener(this);
         }
     }
+
+
 }
