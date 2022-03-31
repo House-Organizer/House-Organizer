@@ -32,6 +32,7 @@ public class EventsAdapter extends RecyclerView.Adapter<EventsAdapter.ViewHolder
 
     private static final int DAYS_PER_WEEK = 7;
     Calendar calendar;
+    FirebaseFirestore db = FirebaseFirestore.getInstance();
     public EventsAdapter(Calendar calendar) {
         this.calendar = calendar;
     }
@@ -103,7 +104,6 @@ public class EventsAdapter extends RecyclerView.Adapter<EventsAdapter.ViewHolder
     }
 
     private void eventButtonListener(Event event, View v, int position) {
-        FirebaseFirestore db = FirebaseFirestore.getInstance();
         new AlertDialog.Builder(v.getContext())
                 .setTitle(event.getTitle())
                 .setMessage(event.getDescription())
@@ -119,22 +119,27 @@ public class EventsAdapter extends RecyclerView.Adapter<EventsAdapter.ViewHolder
                     dialog.dismiss();
                 })
                 .setNeutralButton(R.string.edit, (dialog, id) ->{
-                    LayoutInflater inflater = LayoutInflater.from(v.getContext());
-                    final View dialogView = inflater.inflate(R.layout.event_creation, null);
-                    ((EditText) dialogView.findViewById(R.id.new_event_title)).setText(event.getTitle());
-                    ((EditText) dialogView.findViewById(R.id.new_event_desc)).setText(event.getDescription());
-                    ((EditText) dialogView.findViewById(R.id.new_event_date)).setText(event.getStart().format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm")));
-                    ((EditText) dialogView.findViewById(R.id.new_event_duration)).setText(Long.toString(event.getDuration()));
+                    final View dialogView = createEditDialog(v, event);
                     new AlertDialog.Builder(v.getContext())
                             .setTitle(R.string.event_editing_title)
                             .setView(dialogView)
-                            .setPositiveButton(R.string.confirm, (editForm, editFormId) -> editEventAndDismiss(event, editForm, dialogView, db, position))
+                            .setPositiveButton(R.string.confirm, (editForm, editFormId) -> editEventAndDismiss(event, editForm, dialogView, position))
                             .setNegativeButton(R.string.cancel, (editForm, editFormId) -> dialog.dismiss())
                             .show();
                 }).show();
     }
 
-    private void editEventAndDismiss(Event eventObj, DialogInterface editForm, View dialogView, FirebaseFirestore db, int position) {
+    private View createEditDialog(View v, Event event) {
+        LayoutInflater inflater = LayoutInflater.from(v.getContext());
+        View retView = inflater.inflate(R.layout.event_creation, null);
+        ((EditText) retView.findViewById(R.id.new_event_title)).setText(event.getTitle());
+        ((EditText) retView.findViewById(R.id.new_event_desc)).setText(event.getDescription());
+        ((EditText) retView.findViewById(R.id.new_event_date)).setText(event.getStart().format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm")));
+        ((EditText) retView.findViewById(R.id.new_event_duration)).setText(Long.toString(event.getDuration()));
+        return retView;
+    }
+
+    private void editEventAndDismiss(Event eventObj, DialogInterface editForm, View dialogView, int position) {
         Map<String, Object> data = new HashMap<>();
         final String title = ((EditText) dialogView.findViewById(R.id.new_event_title)).getText().toString();
         final String desc = ((EditText) dialogView.findViewById(R.id.new_event_desc)).getText().toString();
