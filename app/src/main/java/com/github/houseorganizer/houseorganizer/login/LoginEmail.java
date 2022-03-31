@@ -1,5 +1,8 @@
 package com.github.houseorganizer.houseorganizer.login;
 
+import static com.github.houseorganizer.houseorganizer.util.LoginHelpers.displayRegisterErrorMessage;
+import static com.github.houseorganizer.houseorganizer.util.LoginHelpers.inputsEmpty;
+
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -11,6 +14,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.github.houseorganizer.houseorganizer.MainScreenActivity;
 import com.github.houseorganizer.houseorganizer.R;
+import com.github.houseorganizer.houseorganizer.util.LoginHelpers;
 import com.google.firebase.auth.FirebaseAuth;
 
 import java.util.Objects;
@@ -31,22 +35,16 @@ public class LoginEmail extends AppCompatActivity {
                     String email = ((EditText) findViewById(R.id.log_enter_email)).getText().toString();
                     String password = ((EditText) findViewById(R.id.log_enter_password)).getText().toString();
                     TextView error_message = findViewById(R.id.log_email_error_message);
-                    if (inputsNotEmpty(email, password, error_message)) signInWithEmail(v);
+                    if (!inputsEmpty(email, password)) {
+                        signInWithEmail(v);
+                    } else {
+                        displayRegisterErrorMessage(LoginHelpers.RegisterError.INPUTS_EMPTY, error_message);
+                    }
                 }
         );
         findViewById(R.id.log_email_register_button).setOnClickListener(
                 v -> startActivity(new Intent(LoginEmail.this, RegisterEmail.class))
         );
-    }
-
-    public static boolean inputsNotEmpty(String email, String password, TextView error_message) {
-
-        if (email.isEmpty() || password.isEmpty()) {
-            error_message.setText(R.string.inputs_not_empty);
-            return false;
-        }
-
-        return true;
     }
 
     public void signInWithEmail(View v) {

@@ -10,8 +10,14 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import androidx.activity.result.ActivityResultLauncher;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.github.houseorganizer.houseorganizer.Calendar.Event;
+import com.github.houseorganizer.houseorganizer.util.Util;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.SetOptions;
 
 import java.time.LocalDate;
 import java.time.YearMonth;
@@ -20,39 +26,38 @@ import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 
-import com.github.houseorganizer.houseorganizer.Calendar.*;
-
-import com.github.houseorganizer.houseorganizer.util.Util;
-import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.SetOptions;
-
 
 public class EventsAdapter extends RecyclerView.Adapter<EventsAdapter.ViewHolder> {
 
     private static final int DAYS_PER_WEEK = 7;
+    private final ActivityResultLauncher<String> getPicture;
+
+    String eventToAttach;
+
     Calendar calendar;
-    public EventsAdapter(Calendar calendar) {
+    public EventsAdapter(Calendar calendar, ActivityResultLauncher<String> getPicture) {
         this.calendar = calendar;
+        this.getPicture = getPicture;
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {
         public Button titleView;
-        public TextView dateView;
+        public TextView dateView = null;
+        public Button attachView = null;
         public ViewHolder(View eventView) {
             super(eventView);
 
             switch (calendar.getView()) {
                 case MONTHLY:
                     titleView = eventView.findViewById(R.id.event_monthly_title);
-                    dateView = null;
                     break;
                 case WEEKLY:
                     titleView = eventView.findViewById(R.id.event_weekly_title);
-                    dateView = null;
                     break;
                 case UPCOMING:
                     titleView = eventView.findViewById(R.id.event_upcoming_title);
                     dateView = eventView.findViewById(R.id.event_upcoming_date);
+                    attachView = eventView.findViewById(R.id.event_upcoming_attach);
             }
         }
     }
@@ -74,31 +79,46 @@ public class EventsAdapter extends RecyclerView.Adapter<EventsAdapter.ViewHolder
     }
 
     @Override
-    public void onBindViewHolder(EventsAdapter.ViewHolder holder, int position) {
-        Button titleView = holder.titleView;
+    public void onBindViewHolder(@NonNull EventsAdapter.ViewHolder holder, int position) {
         switch (calendar.getView()) {
             case MONTHLY:
-                titleView.setText(String.format(Locale.ENGLISH, "%d", position + 1));
-                titleView.setOnClickListener(v -> new AlertDialog.Builder(v.getContext())
-                        .setTitle(Integer.toString(position + 1)).setMessage("List of events for this day somehow")
-                        .setMessage("List of events for this day somehow").show());
+                prepareMonthlyView(holder, position);
                 break;
             case WEEKLY:
-                String[] days = new String[]{"MON", "TUE", "WED", "THU", "FRI", "SAT", "SUN"};
-
-                titleView.setText(days[position]);
-                titleView.setOnClickListener(v -> new AlertDialog.Builder(v.getContext())
-                        .setTitle(days[position])
-                        .setMessage("List of events for this day somehow").show());
+                prepareWeeklyView(holder, position);
                 break;
             case UPCOMING:
-                Event event = calendar.getEvents().get(position);
-                titleView.setText(event.getTitle());
-                titleView.setOnClickListener(v -> eventButtonListener(event, v));
-                TextView dateView = holder.dateView;
-                dateView.setText(dateView.getContext().getResources().getString(R.string.calendar_upcoming_date,
-                        event.getStart().format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm"))));
+                prepareUpcomingView(holder, position);
+
         }
+    }
+
+    private void prepareMonthlyView(ViewHolder holder, int position) {
+        holder.titleView.setText(String.format(Locale.ENGLISH, "%d", position + 1));
+        holder.titleView.setOnClickListener(v -> new AlertDialog.Builder(v.getContext())
+                .setTitle(Integer.toString(position + 1)).setMessage("List of events for this day somehow")
+                .setMessage("List of events for this day somehow").show());
+    }
+
+    private void prepareWeeklyView(ViewHolder holder, int position) {
+        String[] days = new String[]{"MON", "TUE", "WED", "THU", "FRI", "SAT", "SUN"};
+
+        holder.titleView.setText(days[position]);
+        holder.titleView.setOnClickListener(v -> new AlertDialog.Builder(v.getContext())
+                .setTitle(days[position])
+                .setMessage("List of events for this day somehow").show());
+    }
+
+    private void prepareUpcomingView(EventsAdapter.ViewHolder holder, int position) {
+        Event event = calendar.getEvents().get(position);
+        holder.titleView.setText(event.getTitle());
+        holder.titleView.setOnClickListener(v -> eventButtonListener(event, v));
+        holder.dateView.setText(holder.dateView.getContext().getResources().getString(R.string.calendar_upcoming_date,
+                event.getStart().format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm"))));
+        holder.attachView.setOnClickListener(v -> {
+            this.eventToAttach = event.getId();
+            getPicture.launch("image/*");
+        });
     }
 
     private void eventButtonListener(Event event, View v) {
