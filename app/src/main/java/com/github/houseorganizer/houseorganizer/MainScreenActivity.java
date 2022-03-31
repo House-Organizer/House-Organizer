@@ -233,6 +233,8 @@ public class MainScreenActivity extends AppCompatActivity {
 
     private void addTask(View v) {
         db.collection("task_lists")
+                .document("85IW3cYzxOo1YTWnNOQl")
+                .collection("tasks")
                 .add(new HashMap<String, Object>())
                 .addOnCompleteListener(task -> {
                     if (task.isSuccessful()) {

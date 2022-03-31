@@ -34,6 +34,7 @@ public class FirestoreTask extends Task{
         taskDocRef.update("description", newDescription);
     }
 
+    @Override
     public void addSubTask(SubTask subTask) {
         super.addSubTask(subTask);
 
@@ -47,6 +48,7 @@ public class FirestoreTask extends Task{
         subtasks.add(index,subtask);
     } */
 
+    @Override
     public void removeSubTask(int index) {
         SubTask subTask = super.getSubTaskAt(index);
 
