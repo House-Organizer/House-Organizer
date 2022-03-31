@@ -119,7 +119,7 @@ public final class TaskView {
 
     // Adds a task iff. the task list is in view
     protected static void addTask(FirebaseFirestore db, TaskList taskList, TaskListAdapter taskListAdapter,
-                         MainScreenActivity.ListFragmentView listView, User currentUser) {
+                         MainScreenActivity.ListFragmentView listView) {
         if (listView != MainScreenActivity.ListFragmentView.CHORES_LIST) {
             return;
         }
@@ -132,7 +132,7 @@ public final class TaskView {
                     if (task.isSuccessful()) {
                         DocumentReference taskDocRef = task.getResult();
 
-                        taskList.addTask(new FirestoreTask(currentUser, "", "", new ArrayList<>(), taskDocRef));
+                        taskList.addTask(new FirestoreTask(taskList.getOwner(), "", "", new ArrayList<>(), taskDocRef));
                         taskListAdapter.notifyItemInserted(taskListAdapter.getItemCount()-1);
                     }
                 });
