@@ -16,7 +16,7 @@
         android:layout_height="35dp"
         android:background="#acd6d9"
         android:layout_marginEnd="10dp"
-        tools:ignore="ButtonStyle,SmallSp"
+        tools:ignore="SmallSp"
         android:layout_weight="1"/>
 
     <Button
@@ -24,7 +24,6 @@
         android:layout_width="25dp"
         android:layout_height="35dp"
         app:layout_constraintEnd_toEndOf="parent"
-        android:layout_weight="0"
-        tools:ignore="ButtonStyle" />
+        android:layout_weight="0" />
 
 </LinearLayout>
