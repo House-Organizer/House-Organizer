@@ -55,9 +55,9 @@ public class MainScreenActivityTest {
     public static void settingUpEmulatorFirebase(){
 
         FirebaseAuth mAuth = FirebaseAuth.getInstance();
-        if(!TestsHelper.emulatorActivated){
+        if(!FirebaseTestsHelper.emulatorActivated){
             mAuth.useEmulator("10.0.2.2", 9099);
-            TestsHelper.emulatorActivated = true;
+            FirebaseTestsHelper.emulatorActivated = true;
         }
         mAuth.createUserWithEmailAndPassword("john@cena.us", "theRock");
         mAuth.signInWithEmailAndPassword("john@cena.us", "theRock").addOnCompleteListener(t -> {

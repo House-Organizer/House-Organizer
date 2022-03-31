@@ -7,33 +7,19 @@ import static androidx.test.espresso.intent.matcher.IntentMatchers.hasComponent;
 import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
 
-import androidx.lifecycle.Lifecycle;
-import androidx.test.core.app.ActivityScenario;
 import androidx.test.espresso.intent.Intents;
 import androidx.test.ext.junit.rules.ActivityScenarioRule;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 
-import com.github.houseorganizer.houseorganizer.login.LoginActivity;
-import com.github.houseorganizer.houseorganizer.login.LoginEmail;
-import com.github.houseorganizer.houseorganizer.login.RegisterEmail;
-import com.google.android.gms.auth.api.signin.GoogleSignIn;
-import com.google.android.gms.auth.api.signin.GoogleSignInClient;
-import com.google.android.gms.tasks.Task;
-import com.google.android.gms.tasks.Tasks;
-import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 
-import org.junit.After;
 import org.junit.AfterClass;
-import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.FixMethodOrder;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.MethodSorters;
-
-import java.util.concurrent.ExecutionException;
 
 @RunWith(AndroidJUnit4.class)
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
@@ -48,9 +34,9 @@ public class MainActivityTest {
     @BeforeClass
     public static void initializingDatabase(){
         FirebaseAuth mAuth = FirebaseAuth.getInstance();
-        if(!TestsHelper.emulatorActivated){
+        if(!FirebaseTestsHelper.emulatorActivated){
             mAuth.useEmulator("10.0.2.2", 9099);
-            TestsHelper.emulatorActivated = true;
+            FirebaseTestsHelper.emulatorActivated = true;
         }
         mAuth.createUserWithEmailAndPassword(TEST_USER_EMAIL, TEST_USER_PASSWORD);
         /*if(mAuth.getCurrentUser() != null){
