@@ -41,7 +41,9 @@ public class SubTaskAdapter extends RecyclerView.Adapter<BiViewHolder<Button, Ed
                             .setMessage("You just completed a subtask. Keep it up!")
                             .show();
 
-                    // todo: remove finished sub tasks
+                    parentTask.removeSubTask(position);
+                    notifyItemRemoved(position);
+                    notifyItemRangeChanged(0, getItemCount());
                 }
         );
     }
