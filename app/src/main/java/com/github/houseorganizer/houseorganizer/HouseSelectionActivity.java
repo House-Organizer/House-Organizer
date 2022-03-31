@@ -31,7 +31,6 @@ import java.util.Map;
 public class HouseSelectionActivity extends AppCompatActivity {
 
     public static final String HOUSEHOLD_TO_EDIT = "com.github.houseorganizer.houseorganizer.HOUSEHOLD_TO_EDIT";
-
     private String emailUser;
     private RecyclerView housesView;
     FirestoreRecyclerAdapter<HouseModel, HouseViewHolder> adapter;
@@ -44,7 +43,7 @@ public class HouseSelectionActivity extends AppCompatActivity {
 
         housesView = findViewById(R.id.housesView);
 
-        emailUser = getIntent().getStringExtra(MainScreenActivity.CURRENT_USER);
+        emailUser = FirebaseAuth.getInstance().getCurrentUser().getEmail();
         this.firestore = FirebaseFirestore.getInstance();
 
         Query query = firestore.collection("households").whereArrayContains("residents", emailUser);
@@ -93,20 +92,17 @@ public class HouseSelectionActivity extends AppCompatActivity {
         firestore.collection("households")
                 .document(householdId)
                 .get()
-                .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-                    @Override
-                    public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                        DocumentSnapshot document = task.getResult();
-                        Map<String, Object> householdData = document.getData();
-                        if(householdData != null) {
-                            String owner = (String) householdData.getOrDefault("owner", null);
-                            if(owner == null || !owner.equals(emailUser)) {
-                                Toast.makeText(getApplicationContext(),
-                                        view.getContext().getString(R.string.not_owner),
-                                        Toast.LENGTH_SHORT).show();
-                            } else {
-                                sendToEditHouse(view);
-                            }
+                .addOnCompleteListener(task -> {
+                    DocumentSnapshot document = task.getResult();
+                    Map<String, Object> householdData = document.getData();
+                    if(householdData != null) {
+                        String owner = (String) householdData.getOrDefault("owner", null);
+                        if(owner == null || !owner.equals(emailUser)) {
+                            Toast.makeText(getApplicationContext(),
+                                    view.getContext().getString(R.string.not_owner),
+                                    Toast.LENGTH_SHORT).show();
+                        } else {
+                            sendToEditHouse(view);
                         }
                     }
                 });

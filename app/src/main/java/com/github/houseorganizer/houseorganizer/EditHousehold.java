@@ -29,11 +29,11 @@ import java.util.List;
 import java.util.Map;
 
 public class EditHousehold extends AppCompatActivity {
-    RecyclerView usersView;
-    FirebaseFirestore firestore;
-    FirebaseAuth mAuth;
+    private FirebaseFirestore firestore;
+    private FirebaseAuth mAuth;
     private String householdId;
-    DocumentReference currentHousehold;
+    private DocumentReference currentHousehold;
+    private RecyclerView usersView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,11 +43,14 @@ public class EditHousehold extends AppCompatActivity {
         mAuth = FirebaseAuth.getInstance();
 
         Intent intent = getIntent();
-        this.householdId = intent.getStringExtra(MainScreenActivity.HOUSEHOLD);
 
         firestore = FirebaseFirestore.getInstance();
-        currentHousehold = firestore.collection("households").document(householdId);
-        currentHousehold
+
+        this.householdId = intent.getStringExtra(HouseSelectionActivity.HOUSEHOLD_TO_EDIT);
+        this.currentHousehold = firestore.collection("households").document(householdId);
+
+        firestore.collection("households")
+                .document(householdId)
                 .get()
                 .addOnCompleteListener(task -> {
                     DocumentSnapshot document = task.getResult();
@@ -202,8 +205,7 @@ public class EditHousehold extends AppCompatActivity {
     }
 
     public void confirmChanges(View view) {
-        Intent intent = new Intent(this, MainScreenActivity.class);
-        intent.putExtra(MainScreenActivity.HOUSEHOLD, householdId);
+        Intent intent = new Intent(this, HouseSelectionActivity.class);
         startActivity(intent);
     }
 }
