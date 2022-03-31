@@ -114,7 +114,7 @@ public class MainScreenActivity extends AppCompatActivity {
                                 hideButtons();
                             }
                         }
-
+                        refreshCalendar(findViewById(R.id.calendar));
                     } else {
                         Toast.makeText(getApplicationContext(), "Could not get a house.", Toast.LENGTH_SHORT).show();
                     }
