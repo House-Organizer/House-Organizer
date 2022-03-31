@@ -24,7 +24,7 @@ import java.util.concurrent.ExecutionException;
 public class FirebaseTestsHelper {
 
     private static boolean authEmulatorActivated = false;
-    private static boolean firebaseEmulatorActivated = false;
+    private static boolean firestoreEmulatorActivated = false;
     private static boolean databaseEmulatorActivated = false;
 
     public static String TEST_USER_MAIL = "test@house.com";
@@ -34,12 +34,13 @@ public class FirebaseTestsHelper {
     public static void startAuthEmulator(){
         if(authEmulatorActivated) return;
         FirebaseAuth.getInstance().useEmulator("10.0.2.2", 9099);
+        authEmulatorActivated = true;
     }
 
     public static void startFirestoreEmulator(){
-        if(firebaseEmulatorActivated) return;
+        if(firestoreEmulatorActivated) return;
         FirebaseFirestore.getInstance().useEmulator("10.0.2.2", 8080);
-        firebaseEmulatorActivated = true;
+        firestoreEmulatorActivated = true;
     }
 
     public static void startStorageEmulator(){
