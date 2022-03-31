@@ -1,6 +1,7 @@
 package com.github.houseorganizer.houseorganizer;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -20,8 +21,11 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
 
 public class HouseSelectionActivity extends AppCompatActivity {
-    RecyclerView housesView;
-    String emailUser;
+
+    public static final String HOUSEHOLD_TO_EDIT = "com.github.houseorganizer.houseorganizer.HOUSEHOLD_TO_EDIT";
+
+    private String emailUser;
+    private RecyclerView housesView;
     FirestoreRecyclerAdapter<HouseModel, HouseViewHolder> adapter;
 
     @Override
@@ -30,7 +34,7 @@ public class HouseSelectionActivity extends AppCompatActivity {
         setContentView(R.layout.activity_house_selection);
 
         housesView = findViewById(R.id.housesView);
-        emailUser = getIntent().getStringExtra(MainScreenActivity.CURRENT_USER);
+        emailUser = FirebaseAuth.getInstance().getCurrentUser().getEmail();
 
         Query query = FirebaseFirestore.getInstance().collection("households").whereArrayContains("residents", emailUser);
         FirestoreRecyclerOptions<HouseModel> options = new FirestoreRecyclerOptions.Builder<HouseModel>()
@@ -56,20 +60,34 @@ public class HouseSelectionActivity extends AppCompatActivity {
         housesView.setAdapter(adapter);
     }
 
+    private void saveData(String selectedHouse) {
+        SharedPreferences sharedPreferences = getSharedPreferences(MainScreenActivity.SHARED_PREFS, MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+
+        editor.putString(MainScreenActivity.CURRENT_HOUSEHOLD, selectedHouse);
+        editor.apply();
+    }
+
     @SuppressWarnings("unused")
     public void houseSelected(View view) {
+        saveData(view.getTag().toString());
+
         Intent intent = new Intent(this, MainScreenActivity.class);
-        intent.putExtra(MainScreenActivity.HOUSEHOLD, view.getTag().toString());
         startActivity(intent);
     }
 
     public void editHousehold(View view) {
         Intent intent = new Intent(this, EditHousehold.class);
-        intent.putExtra(MainScreenActivity.HOUSEHOLD, view.getTag().toString());
+        intent.putExtra(HOUSEHOLD_TO_EDIT, view.getTag().toString());
         startActivity(intent);
     }
 
-    private class HouseViewHolder extends RecyclerView.ViewHolder {
+    public void addHouseholdButtonPressed(@SuppressWarnings("unused") View view) {
+        Intent intent = new Intent(this, CreateHouseholdActivity.class);
+        startActivity(intent);
+    }
+
+    private static class HouseViewHolder extends RecyclerView.ViewHolder {
         TextView houseName;
         ImageButton editButton;
 
