@@ -9,50 +9,54 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.HouseOrganizer">
+
         <activity
-            android:name=".EditHousehold"
+            android:name=".MainActivity"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".login.LoginActivity"
+            android:exported="false" />
+        <activity
+            android:name=".login.LoginEmail"
             android:exported="false"
-            android:parentActivityName=".CreateHouseholdActivity" />
+            android:parentActivityName=".login.LoginActivity" />
+        <activity
+            android:name=".login.RegisterEmail"
+            android:exported="false"
+            android:parentActivityName=".login.LoginEmail" />
+        <activity
+            android:name=".login.VerifyEmail"
+            android:exported="false"
+            android:parentActivityName=".login.LoginEmail" />
+        <activity
+            android:name=".MainScreenActivity"
+            android:exported="false" />
         <activity
             android:name=".InfoActivity"
             android:exported="false"
-            android:parentActivityName=".MainScreenActivity"/>
-        <activity
-            android:name=".login.VerifyEmail"
-            android:exported="false" />
-        <activity
-            android:name=".login.RegisterEmail"
-            android:exported="false" />
-        <activity
-            android:name=".CreateHouseholdActivity"
-            android:exported="false" />
+            android:parentActivityName=".MainScreenActivity" />
         <activity
             android:name=".SettingsActivity"
             android:exported="false"
             android:label="@string/title_activity_settings"
             android:parentActivityName=".MainScreenActivity" />
         <activity
-            android:name=".login.LoginActivity"
-            android:exported="false" />
-        <activity
             android:name=".HouseSelectionActivity"
             android:exported="false"
             android:parentActivityName=".MainScreenActivity" />
         <activity
-            android:name=".MainScreenActivity"
-            android:exported="false" />
+            android:name=".CreateHouseholdActivity"
+            android:exported="false"
+            android:parentActivityName=".HouseSelectionActivity" />
         <activity
-            android:name=".login.LoginEmail"
-            android:exported="false" />
-        <activity
-            android:name=".MainActivity"
-            android:exported="true">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
+            android:name=".EditHousehold"
+            android:exported="false"
+            android:parentActivityName=".HouseSelectionActivity" />
 
         <meta-data
             android:name="preloaded_fonts"
