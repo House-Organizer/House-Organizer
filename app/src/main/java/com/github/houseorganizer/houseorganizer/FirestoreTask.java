@@ -4,6 +4,8 @@ import com.github.houseorganizer.houseorganizer.util.Util;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FieldValue;
 
+import java.util.Map;
+
 public class FirestoreTask extends Task{
     private final DocumentReference taskDocRef;
 
@@ -55,7 +57,17 @@ public class FirestoreTask extends Task{
         super.removeSubTask(index);
 
         taskDocRef.update("sub tasks", FieldValue.arrayRemove(Util.makeSubTaskData(subTask)));
+    }
 
+    public void changeSubTaskTitle(int index, String newTitle) {
+        SubTask subTask = super.getSubTaskAt(index);
+        subTask.changeTitle(newTitle);
+
+        // Firestore
+        Map<String, String> subTaskData = Util.makeSubTaskData(subTask);
+
+        taskDocRef.update("sub tasks", FieldValue.arrayRemove(subTaskData));
+        taskDocRef.update("sub tasks", FieldValue.arrayUnion(subTaskData.replace("title", newTitle)));
     }
 
 }

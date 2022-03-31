@@ -40,10 +40,12 @@ public final class TaskView {
         descEditor.addTextChangedListener( new TextChangeListener(descEditor,  task::changeDescription));
     }
 
-    public static void setUpSubTaskView(Task.SubTask subTask, EditText titleEditor) {
-        titleEditor.setText(subTask.getTitle());
+    public static void setUpSubTaskView(FirestoreTask parentTask, int index, EditText titleEditor) {
+        titleEditor.setText(parentTask.getSubTaskAt(index).getTitle());
 
-        titleEditor.addTextChangedListener(new TextChangeListener(titleEditor, subTask::changeTitle));
+        titleEditor.addTextChangedListener(new TextChangeListener(titleEditor, newTitle -> {
+            parentTask.changeSubTaskTitle(index, newTitle);
+        }));
     }
 
     // Calls provided consumer once a text change is registered

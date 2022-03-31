@@ -59,7 +59,7 @@ public class TaskListAdapter extends RecyclerView.Adapter<BiViewHolder<Button, B
     // todo: modify due date
     private View.OnClickListener titleButtonListener(int position, Button titleButton) {
         return v -> {
-            Task t = taskList.getTaskAt(position);
+            FirestoreTask t = (FirestoreTask) taskList.getTaskAt(position);
 
             LayoutInflater inflater = LayoutInflater.from(v.getContext());
 
