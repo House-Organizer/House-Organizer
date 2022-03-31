@@ -20,7 +20,7 @@ import com.google.android.gms.tasks.Task;
 import com.google.android.gms.tasks.Tasks;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreSettings;
 
@@ -29,7 +29,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -38,8 +38,8 @@ import java.util.concurrent.ExecutionException;
 @RunWith(AndroidJUnit4.class)
 public class HouseSelectionActivityTest {
 
-    private static String email = "test.user@gmail.com";
-    private static String password = "123456";
+    private static final String email = "test.user@gmail.com";
+    private static final String password = "123456";
     private static FirebaseFirestore db;
     private static FirebaseAuth mAuth;
 
@@ -75,23 +75,22 @@ public class HouseSelectionActivityTest {
         Intent intent = new Intent(ApplicationProvider.getApplicationContext(), HouseSelectionActivity.class);
 
         Map<String, Object> houseHold = new HashMap<>();
-        List<String> residents = Arrays.asList(email);
+        List<String> residents = new ArrayList<>();
+        residents.add(email);
 
         houseHold.put("name", "testHousehold1");
         houseHold.put("owner", email);
         houseHold.put("num_members", 1);
         houseHold.put("residents", residents);
-        Task t1 = db.collection("households").add(houseHold);
+        Task<DocumentReference> t1 = db.collection("households").add(houseHold);
         Tasks.await(t1);
 
         houseHold.put("name", "testHousehold2");
-        Task t2 = db.collection("households").add(houseHold);
+        Task<DocumentReference> t2 = db.collection("households").add(houseHold);
         Tasks.await(t2);
 
-        try (ActivityScenario<HouseSelectionActivity> scenario = ActivityScenario.launch(intent)) {
-            onView(withId(R.id.housesView))
-                    .check(matches(hasDescendant(withText("testHousehold1"))));
-        }
+        ActivityScenario.launch(intent);
+        onView(withId(R.id.housesView)).check(matches(hasDescendant(withText("testHousehold1"))));
     }
 
     @Test
@@ -99,10 +98,9 @@ public class HouseSelectionActivityTest {
         Intents.init();
         Intent intent = new Intent(ApplicationProvider.getApplicationContext(), HouseSelectionActivity.class);
 
-        try (ActivityScenario<HouseSelectionActivity> scenario = ActivityScenario.launch(intent)) {
-            onView(withText("testHousehold1")).perform(click());
-            intended(toPackage("com.github.houseorganizer.houseorganizer"));
-        }
+        ActivityScenario.launch(intent);
+        onView(withText("testHousehold1")).perform(click());
+        intended(toPackage("com.github.houseorganizer.houseorganizer"));
 
         Intents.release();
     }
