@@ -11,6 +11,8 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -23,6 +25,8 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
@@ -65,7 +69,7 @@ public class MainScreenActivity extends AppCompatActivity {
 
         calendarEvents = findViewById(R.id.calendar);
         calendar = new Calendar();
-        calendarAdapter = new EventsAdapter(calendar);
+        calendarAdapter = new EventsAdapter(calendar, registerForEventImage());
         calendarEvents.setAdapter(calendarAdapter);
         calendarEvents.setLayoutManager(new GridLayoutManager(this, calendarColumns));
 
@@ -82,6 +86,18 @@ public class MainScreenActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         refreshCalendar(findViewById(R.id.calendar));
+    }
+
+    private ActivityResultLauncher<String> registerForEventImage() {
+        // Prepare the activity to retrieve an image from the gallery
+        return registerForActivityResult(new ActivityResultContracts.GetContent(),
+                uri -> {
+                    // Store the image on firebase storage
+                    FirebaseStorage storage = FirebaseStorage.getInstance();
+                    // this creates the reference to the picture
+                    StorageReference imageRef = storage.getReference().child(calendarAdapter.eventToAttach + ".jpg");
+                    imageRef.putFile(uri).addOnCompleteListener((complete) -> {});
+                });
     }
 
     private void loadData() {
