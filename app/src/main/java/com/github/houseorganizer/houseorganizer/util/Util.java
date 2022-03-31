@@ -78,8 +78,26 @@ public class Util {
         });
     }
 
+    // N.B. for now, if they are on the database,
+    // the (sub)tasks are ongoing
+    public static Task.SubTask recoverSubTask(Map<String, String> data) {
+        return new Task.SubTask(data.get("title"));
+    }
+
     public static FirestoreTask recoverTask(Map<String, Object> data, DocumentReference taskDocRef) {
+        List<Task.SubTask> subTasks = new ArrayList<>();
+
+        Object tmp = data.get("sub tasks");
+
+        if (null != tmp) {
+            for (Map<String, String> subTaskData : (List<Map<String, String>>) tmp) {
+                subTasks.add(recoverSubTask(subTaskData));
+            }
+        }
+
+
+
         return new FirestoreTask(new DummyUser("Recovering-user", (String)data.get("owner")),
-                (String)data.get("title"), (String)data.get("description"), taskDocRef);
+                (String)data.get("title"), (String)data.get("description"), subTasks, taskDocRef);
     }
 }

@@ -4,13 +4,16 @@ import com.github.houseorganizer.houseorganizer.util.Util;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FieldValue;
 
+import java.util.List;
 import java.util.Map;
 
 public class FirestoreTask extends Task{
     private final DocumentReference taskDocRef;
 
-    public FirestoreTask(User owner, String title, String description, DocumentReference taskDocRef) {
+    public FirestoreTask(User owner, String title, String description, List<SubTask> subTasks, DocumentReference taskDocRef) {
         super(owner, title, description);
+
+        subTasks.forEach(super::addSubTask);
 
         this.taskDocRef = taskDocRef;
     }
