@@ -21,8 +21,4 @@ public class RegisterEmailTest {
     public ActivityScenarioRule<RegisterEmail> registerEmailActivityScenarioRule =
             new ActivityScenarioRule<>(RegisterEmail.class);
 
-    @Test
-    public void registerButtonIsDisplayed() {
-        onView(withId(R.id.reg_email_register_button)).check(matches(isDisplayed()));
-    }
 }
