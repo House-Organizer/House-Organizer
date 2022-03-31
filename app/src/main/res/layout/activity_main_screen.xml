@@ -72,8 +72,10 @@
         android:text="@string/button_feedback_text"
         app:layout_constraintBottom_toTopOf="@+id/task_list"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.174"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/calendar" />
+        app:layout_constraintTop_toBottomOf="@+id/calendar"
+        app:layout_constraintVertical_bias="0.766" />
 
     <Button
         android:id="@+id/calendar_view_change"
@@ -93,23 +95,14 @@
         android:layout_height="wrap_content"
         android:onClick="rotateLists"
         android:text="@string/cycle_calendar_views"
+        android:backgroundTint="#6F1C739A"
+        android:textColor="@color/white"
         app:layout_constraintBottom_toTopOf="@id/task_list"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.166"
+        app:layout_constraintHorizontal_bias="0.281"
         app:layout_constraintStart_toEndOf="@id/new_task"
-        app:layout_constraintTop_toBottomOf="@+id/last_button_activated"
-        app:layout_constraintVertical_bias="0.526" />
-
-    <Button
-        android:id="@+id/sign_out_button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/sign_out"
-        app:layout_constraintBottom_toTopOf="@+id/task_list"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/last_button_activated"
-        app:layout_constraintVertical_bias="0.526" />
+        app:layout_constraintTop_toBottomOf="@id/calendar"
+        app:layout_constraintVertical_bias="0.855" />
 
     <Button
         android:id="@+id/add_event"
@@ -140,10 +133,12 @@
         android:layout_width="48dp"
         android:layout_height="wrap_content"
         android:text="@string/add_task"
+        android:backgroundTint="#3900BCD4"
+        android:textColor="@color/white"
         app:layout_constraintBottom_toTopOf="@id/task_list"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.086"
-        app:layout_constraintStart_toEndOf="@id/sign_out_button"
-        app:layout_constraintTop_toBottomOf="@+id/last_button_activated"
-        app:layout_constraintVertical_bias="0.526" />
+        app:layout_constraintHorizontal_bias="0.779"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/calendar"
+        app:layout_constraintVertical_bias="0.855" />
 </androidx.constraintlayout.widget.ConstraintLayout>
