@@ -55,7 +55,10 @@ public class MainScreenActivityTest {
     public static void settingUpEmulatorFirebase(){
 
         FirebaseAuth mAuth = FirebaseAuth.getInstance();
-        mAuth.useEmulator("10.0.2.2", 9099);
+        if(!TestsHelper.emulatorActivated){
+            mAuth.useEmulator("10.0.2.2", 9099);
+            TestsHelper.emulatorActivated = true;
+        }
         mAuth.createUserWithEmailAndPassword("john@cena.us", "theRock");
         mAuth.signInWithEmailAndPassword("john@cena.us", "theRock").addOnCompleteListener(t -> {
             FirebaseUser user = mAuth.getCurrentUser();
@@ -162,12 +165,6 @@ public class MainScreenActivityTest {
     @Test
     public void infoButtonIsClickable() {
         onView(withId(R.id.info_imageButton)).check(matches(isClickable()));
-    }
-
-    @Test
-    public void infoButtonDisplaysItHasBeenClicked() {
-        onView(withId(R.id.info_imageButton)).perform(click());
-        onView(withId(R.id.last_button_activated)).check(matches(withText("Info button pressed")));
     }
 
     // Calendar view and its buttons
