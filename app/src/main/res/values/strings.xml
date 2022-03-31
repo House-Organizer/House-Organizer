@@ -16,8 +16,19 @@
     <!-- Edit Household -->
     <string name="user_name">User name</string>
     <string name="edit_button_description">Press to edit the household</string>
-    <string name="confirm_button">Confirm changes</string>
+    <string name="confirm_button">Confirm</string>
     <string name="edit_title">Household</string>
+    <string name="add_user">Add user</string>
+    <string name="change_owner">Change owner</string>
+    <string name="add_user_hint">Valid email address</string>
+    <string name="invalid_email">Email provided is not valid</string>
+    <string name="duplicate_user">User already present!</string>
+    <string name="not_owner">You are not the owner!</string>
+    <string name="owner_change_success">Successfully changed owner</string>
+    <string name="add_user_success">Successfully added user</string>
+    <string name="remove_user_success">Successfully removed user</string>
+    <string name="remove_user">Remove user</string>
+    <string name="cant_remove_yourself">You cannot remove yourself</string>
 
     <!-- Preference Titles -->
     <string name="general_header">General</string>
