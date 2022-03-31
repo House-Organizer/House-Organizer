@@ -1,6 +1,5 @@
 package com.github.houseorganizer.houseorganizer;
 
-/*
 import static android.support.test.espresso.matcher.ViewMatchers.withText;
 import static androidx.test.espresso.Espresso.onView;
 import static androidx.test.espresso.action.ViewActions.click;
@@ -17,38 +16,92 @@ import androidx.test.core.app.ApplicationProvider;
 import androidx.test.espresso.intent.Intents;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 
+import com.google.android.gms.tasks.Task;
+import com.google.android.gms.tasks.Tasks;
+import com.google.firebase.auth.AuthResult;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FirebaseFirestoreSettings;
+
+import org.junit.AfterClass;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ExecutionException;
 
 @RunWith(AndroidJUnit4.class)
 public class HouseSelectionActivityTest {
 
-    // See list of houses
-    @Test
-    public void seeHousesList() {
-        Intent intent = new Intent(ApplicationProvider.getApplicationContext(), HouseSelectionActivity.class);
-        intent.putExtra(MainScreenActivity.CURRENT_USER, "7HqFNpg7CQTFyvVfrzReeV6YPYs2");
+    private static final String email = "test.user@gmail.com";
+    private static final String password = "123456";
+    private static FirebaseFirestore db;
+    private static FirebaseAuth mAuth;
 
-        try (ActivityScenario<HouseSelectionActivity> scenario = ActivityScenario.launch(intent)) {
-            onView(withId(R.id.housesView))
-                    .check(matches(hasDescendant(withText("Square"))))
-                    .check(matches(hasDescendant(withText("Atrium"))));
-        }
+    @BeforeClass
+    public static void createMockFirebase() {
+        db = FirebaseFirestore.getInstance();
+        // 10.0.2.2 is the special IP address to connect to the 'localhost' of
+        // the host computer from an Android emulator
+        db.useEmulator("10.0.2.2", 8080);
+        FirebaseFirestoreSettings set = new FirebaseFirestoreSettings.Builder()
+                .setPersistenceEnabled(false)
+                .build();
+        db.setFirestoreSettings(set);
     }
 
-    // House selected
+    @BeforeClass
+    public static void createMockFirebaseAuth() throws ExecutionException, InterruptedException {
+        mAuth = FirebaseAuth.getInstance();
+        mAuth.useEmulator("10.0.2.2", 9099);
+        mAuth.createUserWithEmailAndPassword(email, password);
+
+        Task<AuthResult> t = mAuth.signInWithEmailAndPassword(email, password);
+        Tasks.await(t);
+    }
+
+    @AfterClass
+    public static void signout() {
+        mAuth.signOut();
+    }
+
+    @Test
+    public void seeHousesList() throws ExecutionException, InterruptedException {
+        Intent intent = new Intent(ApplicationProvider.getApplicationContext(), HouseSelectionActivity.class);
+
+        Map<String, Object> houseHold = new HashMap<>();
+        List<String> residents = new ArrayList<>();
+        residents.add(email);
+
+        houseHold.put("name", "testHousehold1");
+        houseHold.put("owner", email);
+        houseHold.put("num_members", 1);
+        houseHold.put("residents", residents);
+        Task<DocumentReference> t1 = db.collection("households").add(houseHold);
+        Tasks.await(t1);
+
+        houseHold.put("name", "testHousehold2");
+        Task<DocumentReference> t2 = db.collection("households").add(houseHold);
+        Tasks.await(t2);
+
+        ActivityScenario.launch(intent);
+        onView(withId(R.id.housesView)).check(matches(hasDescendant(withText("testHousehold1"))));
+    }
+
     @Test
     public void selectHouse() {
         Intents.init();
-
         Intent intent = new Intent(ApplicationProvider.getApplicationContext(), HouseSelectionActivity.class);
-        intent.putExtra(MainScreenActivity.CURRENT_USER, "7HqFNpg7CQTFyvVfrzReeV6YPYs2");
 
-        try (ActivityScenario<HouseSelectionActivity> scenario = ActivityScenario.launch(intent)) {
-            onView(withText("Square")).perform(click());
-            intended(toPackage("com.github.houseorganizer.houseorganizer"));
-        }
+        ActivityScenario.launch(intent);
+        onView(withText("testHousehold1")).perform(click());
+        intended(toPackage("com.github.houseorganizer.houseorganizer"));
 
         Intents.release();
     }
-}*/
+}
