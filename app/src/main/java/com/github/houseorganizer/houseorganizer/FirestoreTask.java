@@ -61,13 +61,14 @@ public class FirestoreTask extends Task{
 
     public void changeSubTaskTitle(int index, String newTitle) {
         SubTask subTask = super.getSubTaskAt(index);
-        subTask.changeTitle(newTitle);
 
         // Firestore
         Map<String, String> subTaskData = Util.makeSubTaskData(subTask);
+        subTask.changeTitle(newTitle);
 
         taskDocRef.update("sub tasks", FieldValue.arrayRemove(subTaskData));
-        taskDocRef.update("sub tasks", FieldValue.arrayUnion(subTaskData.replace("title", newTitle)));
+        subTaskData.replace("title", newTitle);
+        taskDocRef.update("sub tasks", FieldValue.arrayUnion(subTaskData));
     }
 
 }
