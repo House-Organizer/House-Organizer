@@ -17,7 +17,6 @@ import java.util.Map;
 
 public class CreateHouseholdActivity extends AppCompatActivity {
 
-    private String Uid;
     private FirebaseFirestore db;
     private String mUserEmail;
 
@@ -43,11 +42,9 @@ public class CreateHouseholdActivity extends AppCompatActivity {
         houseHold.put("residents", residents);
 
         db.collection("households").add(houseHold)
-                .addOnSuccessListener(documentReference -> {
-                    Toast.makeText(view.getContext(),
-                                   view.getContext().getString(R.string.add_household_success),
-                                   Toast.LENGTH_SHORT).show();
-                })
+                .addOnSuccessListener(documentReference -> Toast.makeText(view.getContext(),
+                               view.getContext().getString(R.string.add_household_success),
+                               Toast.LENGTH_SHORT).show())
                 .addOnFailureListener(documentReference -> Toast.makeText(view.getContext(),
                                       view.getContext().getString(R.string.add_household_failure),
                                       Toast.LENGTH_SHORT).show());

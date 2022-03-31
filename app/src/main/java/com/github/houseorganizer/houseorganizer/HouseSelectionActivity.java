@@ -112,6 +112,7 @@ public class HouseSelectionActivity extends AppCompatActivity {
 
     public void addHouseholdButtonPressed(@SuppressWarnings("unused") View view) {
         Intent intent = new Intent(this, CreateHouseholdActivity.class);
+        intent.putExtra("mUserEmail", emailUser);
         startActivity(intent);
     }
 
