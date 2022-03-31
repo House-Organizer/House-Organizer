@@ -4,29 +4,29 @@ import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.EditText;
-import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.github.houseorganizer.houseorganizer.Calendar.Event;
-import com.github.houseorganizer.houseorganizer.login.LoginActivity;
 import com.github.houseorganizer.houseorganizer.util.Util;
-import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
-import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
@@ -34,14 +34,11 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-import java.util.Arrays;
-
 @SuppressWarnings("unused")
 public class MainScreenActivity extends AppCompatActivity {
 
-    public static final String HOUSEHOLD = "com.github.houseorganizer.houseorganizer.HOUSEHOLD";
-    // For testing purposes
-    public static final String CURRENT_USER = "com.github.houseorganizer.houseorganizer.CURRENT_USER";
+    public static final String SHARED_PREFS = "com.github.houseorganizer.houseorganizer.sharedPrefs";
+    public static final String CURRENT_HOUSEHOLD = "com.github.houseorganizer.houseorganizer.CURRENT_HOUSEHOLD";
 
     private Calendar calendar;
     private int calendarColumns = 1;
@@ -50,13 +47,14 @@ public class MainScreenActivity extends AppCompatActivity {
     private DocumentReference currentHouse;
     private EventsAdapter calendarAdapter;
     private RecyclerView calendarEvents;
-    private boolean isChoresList = true;
 
     private TaskList taskList;
     private TaskListAdapter taskListAdapter;
+    private ListFragmentView listView = ListFragmentView.CHORES_LIST;
+    public enum ListFragmentView { CHORES_LIST, GROCERY_LIST }
 
     /* for setting up the task owner. Not related to firebase */
-    private User currentUser = new DummyUser("Test User", "0");
+    private final User currentUser = new DummyUser("Test User", "0");
 
     @SuppressLint("NotifyDataSetChanged")
     @Override
@@ -64,64 +62,99 @@ public class MainScreenActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main_screen);
 
-        FirebaseAuth mAuth = FirebaseAuth.getInstance();
-        mUser = mAuth.getCurrentUser();
+        mUser = FirebaseAuth.getInstance().getCurrentUser();
         db = FirebaseFirestore.getInstance();
 
-        getCurrentHousehold();
+        loadData();
 
         calendarEvents = findViewById(R.id.calendar);
         calendar = new Calendar();
-        calendarAdapter = new EventsAdapter(calendar);
+        calendarAdapter = new EventsAdapter(calendar, registerForEventImage());
         calendarEvents.setAdapter(calendarAdapter);
         calendarEvents.setLayoutManager(new GridLayoutManager(this, calendarColumns));
 
-        findViewById(R.id.sign_out_button).setOnClickListener(this::signOut);
         findViewById(R.id.calendar_view_change).setOnClickListener(this::rotateView);
         findViewById(R.id.add_event).setOnClickListener(this::addEvent);
         findViewById(R.id.refresh_calendar).setOnClickListener(this::refreshCalendar);
-        findViewById(R.id.new_task).setOnClickListener(this::addTask);
+        findViewById(R.id.new_task).setOnClickListener(v -> TaskView.addTask(db, taskList, taskListAdapter, listView));
 
         refreshCalendar(findViewById(R.id.calendar));
 
-        initializeDummyTaskList();
-        setUpTaskList();
+        initializeTaskList();
+        TaskView.recoverTaskList(this, taskList, taskListAdapter,
+                db.collection("task_lists").document("85IW3cYzxOo1YTWnNOQl"));
     }
 
-    private void getCurrentHousehold(){
-        String householdId = getIntent().getStringExtra(HOUSEHOLD);
-        TextView text = findViewById(R.id.last_button_activated);
+    private void initializeTaskList() {
+        this.taskList = new TaskList(currentUser, "My weekly todo", new ArrayList<>());
+        this.taskListAdapter = new TaskListAdapter(taskList);
+    }
 
-        if (householdId != null) {
-            currentHouse = db.collection("households").document(householdId);
-            text.setText("currentHouse: " + currentHouse.getId());
-        } else {
-            db.collection("households")
-                    .whereArrayContains("residents", mUser.getEmail()).get()
-                    .addOnCompleteListener(task -> {
-                        if (task.isSuccessful() && !task.getResult().isEmpty()) {
-                            ArrayList<String> households = new ArrayList<String>();
-                            for (QueryDocumentSnapshot document : task.getResult())
+    private ActivityResultLauncher<String> registerForEventImage() {
+        // Prepare the activity to retrieve an image from the gallery
+        return registerForActivityResult(new ActivityResultContracts.GetContent(),
+                uri -> {
+                    // Store the image on firebase storage
+                    FirebaseStorage storage = FirebaseStorage.getInstance();
+                    // this creates the reference to the picture
+                    StorageReference imageRef = storage.getReference().child(calendarAdapter.eventToAttach + ".jpg");
+                    imageRef.putFile(uri).addOnCompleteListener((complete) -> {});
+                });
+    }
+
+    private void loadData() {
+        SharedPreferences sharedPreferences = getSharedPreferences(SHARED_PREFS, MODE_PRIVATE);
+        String householdId = sharedPreferences.getString(CURRENT_HOUSEHOLD, "");
+
+        loadHousehold(householdId);
+    }
+
+    private void loadHousehold(String householdId) {
+        db.collection("households").whereArrayContains("residents", mUser.getEmail()).get()
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        ArrayList<String> households = new ArrayList<String>();
+                        for (QueryDocumentSnapshot document : task.getResult()) {
+                            if (householdId.equals(document.getId())) {
                                 households.add(document.getId());
-
-                            if (households.isEmpty())
-                                startActivity(new Intent(this, CreateHouseholdActivity.class));
-
-                            currentHouse = db.collection("households").document(households.get(0));
-                            text.setText("currentHouse: " + currentHouse.getId() + " by default");
-
-                        } else {
-                            Toast.makeText(getApplicationContext(), "Could not get a house.", Toast.LENGTH_SHORT).show();
+                                currentHouse = db.collection("households").document(householdId);
+                                break;
+                            }
                         }
-                    });
-        }
+
+                        if (currentHouse == null) {
+                            if (!households.isEmpty()) {
+                                currentHouse = db.collection("households").document(households.get(0));
+                                saveData(households.get(0));
+                            } else {
+                                saveData("");
+                                hideButtons();
+                            }
+                        }
+
+                    } else {
+                        Toast.makeText(getApplicationContext(), "Could not get a house.", Toast.LENGTH_SHORT).show();
+                    }
+                });
     }
 
-    private void signOut(View v) {
-        Intent intent = new Intent(this, LoginActivity.class);
-        intent.putExtra(getString(R.string.signout_intent), true);
-        startActivity(intent);
-        finish();
+
+    private void hideButtons() {
+        findViewById(R.id.refresh_calendar).setVisibility(View.INVISIBLE);
+        findViewById(R.id.calendar).setVisibility(View.INVISIBLE);
+        findViewById(R.id.add_event).setVisibility(View.INVISIBLE);
+        findViewById(R.id.calendar_view_change).setVisibility(View.INVISIBLE);
+        findViewById(R.id.new_task).setVisibility(View.INVISIBLE);
+        findViewById(R.id.list_view_change).setVisibility(View.INVISIBLE);
+        findViewById(R.id.task_list).setVisibility(View.INVISIBLE);
+    }
+
+    private void saveData(String currentHouseId) {
+        SharedPreferences sharedPreferences = getSharedPreferences(MainScreenActivity.SHARED_PREFS, MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+
+        editor.putString(CURRENT_HOUSEHOLD, currentHouseId);
+        editor.apply();
     }
 
     private void rotateView(View v) {
@@ -193,35 +226,9 @@ public class MainScreenActivity extends AppCompatActivity {
 
     }
 
-    private void initializeDummyTaskList() {
-        Task t = new Task(currentUser, "Clean the kitchen counter", "scrub off all the grease marks!");
-        Task t2 = new Task(currentUser, "Stop by the post office", "send a postcard to Julia");
-        Task t3 = new Task(currentUser, "Catch up on lecture notes", "midterm on wednesday!!");
-        Task t4 = new Task(currentUser, "Fix the light bulb", "drop by the supermarket first");
-        Task t5 = new Task(currentUser, "Pick a gift for Jenny", "she likes bath bombs => check out Lush");
-
-        t.addSubTask(new Task.SubTask("do the dishes"));
-        t.addSubTask(new Task.SubTask("swipe the floor"));
-
-        this.taskList = new TaskList(currentUser, "My weekly todo", Arrays.asList(t, t2, t3, t4, t5));
-        this.taskListAdapter = new TaskListAdapter(taskList);
-    }
-
-    private void setUpTaskList() {
-        RecyclerView taskListView = findViewById(R.id.task_list);
-        taskListView.setAdapter(taskListAdapter);
-        taskListView.setLayoutManager(new LinearLayoutManager(this));
-    }
-
-    private void addTask(View v) {
-            taskList.addTask(new Task(currentUser, "", ""));
-            taskListAdapter.notifyItemInserted(taskListAdapter.getItemCount()-1);
-    }
-
     @SuppressWarnings("unused")
     public void houseButtonPressed(View view) {
         Intent intent = new Intent(this, HouseSelectionActivity.class);
-        intent.putExtra(CURRENT_USER, mUser.getEmail());
         startActivity(intent);
     }
 
@@ -231,40 +238,28 @@ public class MainScreenActivity extends AppCompatActivity {
     }
 
     public void infoButtonPressed(View view) {
-        if(currentHouse != null) {
-            currentHouse.get().addOnCompleteListener(task -> {
-                if(task.isSuccessful()){
-                    DocumentSnapshot document = task.getResult();
-                    Intent intent = new Intent(this, InfoActivity.class);
-                    intent.putExtra("info_on_house", document.getData().toString());
-                    startActivity(intent);
-                }
-            });
-        }
+        Intent intent = new Intent(this, InfoActivity.class);
+        startActivity(intent);
     }
 
     public void rotateLists(View view) {
-        if (isChoresList) {
-            ShopList shopList = new ShopList(new DummyUser("John", "uid"), "TestShopList");
-            shopList.addItem(new ShopItem("Eggs", 4, ""));
-            shopList.addItem(new ShopItem("Flour", 2, "kg"));
-            shopList.addItem(new ShopItem("Raclette", 3, "tons"));
+        listView = ListFragmentView.values()[1 - listView.ordinal()];
 
-            ShopListAdapter itemAdapter = new ShopListAdapter(shopList);
-            RecyclerView rView = findViewById(R.id.task_list);
-            rView.setAdapter(itemAdapter);
-            rView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
-            isChoresList = false;
-        } else {
-            setUpTaskList();
-            isChoresList = true;
+        switch(listView) {
+            case CHORES_LIST:
+                TaskView.setUpTaskListView(this, taskListAdapter);
+                break;
+            case GROCERY_LIST:
+                ShopList shopList = new ShopList(new DummyUser("John", "uid"), "TestShopList");
+                shopList.addItem(new ShopItem("Eggs", 4, ""));
+                shopList.addItem(new ShopItem("Flour", 2, "kg"));
+                shopList.addItem(new ShopItem("Raclette", 3, "tons"));
+
+                ShopListAdapter itemAdapter = new ShopListAdapter(shopList);
+                RecyclerView rView = findViewById(R.id.task_list);
+                rView.setAdapter(itemAdapter);
+                rView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
+                break;
         }
-    }
-
-    /* TEMPORARILY HERE */
-    public void addHouseholdButtonPressed(View view) {
-        Intent intent = new Intent(this, CreateHouseholdActivity.class);
-        intent.putExtra("mUserEmail", mUser.getEmail());
-        startActivity(intent);
     }
 }

@@ -1,6 +1,9 @@
 package com.github.houseorganizer.houseorganizer.login;
 
-import static com.github.houseorganizer.houseorganizer.login.LoginEmail.inputsNotEmpty;
+import static com.github.houseorganizer.houseorganizer.util.LoginHelpers.displayRegisterErrorMessage;
+import static com.github.houseorganizer.houseorganizer.util.LoginHelpers.inputsEmpty;
+import static com.github.houseorganizer.houseorganizer.util.LoginHelpers.isValidEmail;
+import static com.github.houseorganizer.houseorganizer.util.LoginHelpers.isValidPassword;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -13,6 +16,7 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.github.houseorganizer.houseorganizer.R;
+import com.github.houseorganizer.houseorganizer.util.LoginHelpers;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
@@ -20,13 +24,12 @@ import com.google.firebase.auth.FirebaseUser;
 
 import java.util.Arrays;
 import java.util.Objects;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 public class RegisterEmail extends AppCompatActivity {
 
     private FirebaseAuth mAuth;
     private boolean isEmailAlreadyUsed = false;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,40 +37,31 @@ public class RegisterEmail extends AppCompatActivity {
         setContentView(R.layout.activity_register_email);
 
         mAuth = FirebaseAuth.getInstance();
+        isEmailAlreadyUsed = false;
 
         findViewById(R.id.reg_email_register_button).setOnClickListener(
                 v -> {
                     String email = ((EditText) findViewById(R.id.reg_enter_email)).getText().toString();
                     String password = ((EditText) findViewById(R.id.reg_enter_password)).getText().toString();
-                    TextView error_message = findViewById(R.id.reg_email_error_message);
-                    if (inputsNotEmpty(email, password, error_message) && isValidEmail() && isValidPassword())
+                    String confPassword = ((EditText) findViewById(R.id.reg_confirm_password)).getText().toString();
+                    TextView error_field = findViewById(R.id.reg_email_error_message);
+                    checkIfEmailIsAlreadyUsed(email);
+                    if (isEmailAlreadyUsed) {
+                        displayRegisterErrorMessage(LoginHelpers.RegisterError.EMAIL_USED, error_field);
+                    } else if (inputsEmpty(email, password)) {
+                        displayRegisterErrorMessage(LoginHelpers.RegisterError.INPUTS_EMPTY, error_field);
+                    } else if (!isValidEmail(email)) {
+                        displayRegisterErrorMessage(LoginHelpers.RegisterError.INVALID_EMAIL, error_field);
+                    } else if (!isValidPassword(password, confPassword)) {
+                        displayRegisterErrorMessage(LoginHelpers.RegisterError.INVALID_PASSWORD, error_field);
+                    } else {
                         signUpWithEmail(v);
+                    }
                 }
         );
     }
 
-    private boolean isValidEmail() {
-        EditText email_field = findViewById(R.id.reg_enter_email);
-        String email = email_field.getText().toString();
-        TextView error_message = findViewById(R.id.reg_email_error_message);
 
-        // Regex to check valid email.
-        String regex = "^[\\w!#$%&'*+/=?`{|}~^-]+(?:\\.[\\w!#$%&'*+/=?`{|}~^-]+)*@(?:[a-zA-Z0-9-]+\\.)+[a-zA-Z]{2,6}$";
-        Pattern p = Pattern.compile(regex);
-        Matcher m = p.matcher(email);
-
-        checkIfEmailIsAlreadyUsed(email);
-
-        if (m.matches() && !isEmailAlreadyUsed) {
-            return true;
-        } else if (isEmailAlreadyUsed) {
-            error_message.setText(R.string.email_already_used);
-            return false;
-        } else {
-            error_message.setText(R.string.email_not_valid);
-            return false;
-        }
-    }
 
     // Returns true if email address is in use.
     private void checkIfEmailIsAlreadyUsed(String emailAddress) {
@@ -79,31 +73,6 @@ public class RegisterEmail extends AppCompatActivity {
                         }
                     }
                 });
-    }
-
-    private boolean isValidPassword() {
-        EditText password_field = findViewById(R.id.reg_enter_password);
-        String password = password_field.getText().toString();
-        EditText password2_field = findViewById(R.id.reg_confirm_password);
-        String password2 = password2_field.getText().toString();
-
-        boolean samePasswords = password.equals(password2);
-
-        // Regex to check valid password.
-        String regex = "^(?=.*[0-9])"
-                + "(?=.*[a-z])(?=.*[A-Z])"
-                + "(?=.*[@#$%^&+=_.-])"
-                + "(?=\\S+$).{8,20}$";
-        Pattern p = Pattern.compile(regex);
-        Matcher m = p.matcher(password);
-
-        if (m.matches() && samePasswords) {
-            return true;
-        } else {
-            TextView error_message = findViewById(R.id.reg_email_error_message);
-            error_message.setText(R.string.password_not_valid);
-            return false;
-        }
     }
 
     private void sendEmailVerif(FirebaseUser user, Task<AuthResult> task) {
@@ -122,8 +91,8 @@ public class RegisterEmail extends AppCompatActivity {
     }
 
     public void signUpWithEmail(View v) {
-        String email = ((EditText) findViewById(R.id.log_enter_email)).getText().toString();
-        String password = ((EditText) findViewById(R.id.log_enter_password)).getText().toString();
+        String email = ((EditText) findViewById(R.id.reg_enter_email)).getText().toString();
+        String password = ((EditText) findViewById(R.id.reg_enter_password)).getText().toString();
 
         mAuth.createUserWithEmailAndPassword(email, password)
                 .addOnCompleteListener(this, task -> {
@@ -139,7 +108,7 @@ public class RegisterEmail extends AppCompatActivity {
                     } else {
                         // If sign in fails, display a message to the user.
                         Log.w(getString(R.string.tag_register_email), "createUserWithEmail:failure", task.getException());
-                        ((TextView) findViewById(R.id.log_email_error_message)).setText(R.string.reg_email_auth_failed);
+                        ((TextView) findViewById(R.id.reg_email_error_message)).setText(R.string.reg_email_auth_failed);
                     }
                 });
     }
