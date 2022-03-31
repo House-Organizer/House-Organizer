@@ -211,7 +211,7 @@ public class MainScreenActivity extends AppCompatActivity {
 
                                 // We're adding a `FirestoreTask` now, and the in-app changes to
                                 // its title and description will be reflected in the database
-                                taskList.addTask(Util.recoverTask(taskData, taskDocRef));
+                                taskList.addTask(FirestoreTask.recoverTask(taskData, taskDocRef));
                             }
                         });
 
