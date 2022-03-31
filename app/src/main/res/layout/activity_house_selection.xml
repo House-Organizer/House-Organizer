@@ -14,7 +14,7 @@
         android:layout_marginTop="1dp"
         android:layout_marginEnd="1dp"
         android:layout_marginBottom="1dp"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/add_household_button"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
@@ -27,11 +27,11 @@
         android:layout_height="wrap_content"
         android:onClick="addHouseholdButtonPressed"
         android:text="@string/add_household"
-        app:layout_constraintBottom_toBottomOf="@+id/housesView"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.906" />
+        app:layout_constraintVertical_bias="0.928" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
