@@ -77,7 +77,7 @@
 
     <Button
         android:id="@+id/calendar_view_change"
-        android:layout_width="40dp"
+        android:layout_width="48dp"
         android:layout_height="52dp"
         android:text="@string/cycle_calendar_views"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -89,7 +89,7 @@
 
     <Button
         android:id="@+id/list_view_change"
-        android:layout_width="40dp"
+        android:layout_width="48dp"
         android:layout_height="wrap_content"
         android:onClick="rotateLists"
         android:text="@string/cycle_calendar_views"
@@ -113,12 +113,12 @@
 
     <Button
         android:id="@+id/add_event"
-        android:layout_width="40dp"
+        android:layout_width="48dp"
         android:layout_height="52dp"
         android:text="@string/add_event"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/calendar_view_change"
-        app:layout_constraintHorizontal_bias="0.45"
+        app:layout_constraintHorizontal_bias="0.55"
         app:layout_constraintStart_toEndOf="@+id/refresh_calendar"
         app:layout_constraintTop_toBottomOf="@+id/house_imageButton"
         app:layout_constraintVertical_bias="0.064" />
@@ -130,34 +130,20 @@
         android:text="@string/refresh_calendar"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.622"
+        app:layout_constraintHorizontal_bias="0.587"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/house_imageButton"
         app:layout_constraintVertical_bias="0.064" />
 
     <Button
         android:id="@+id/new_task"
-        android:layout_width="40dp"
+        android:layout_width="48dp"
         android:layout_height="wrap_content"
         android:text="@string/add_task"
         app:layout_constraintBottom_toTopOf="@id/task_list"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.116"
+        app:layout_constraintHorizontal_bias="0.086"
         app:layout_constraintStart_toEndOf="@id/sign_out_button"
         app:layout_constraintTop_toBottomOf="@+id/last_button_activated"
         app:layout_constraintVertical_bias="0.526" />
-
-    <Button
-        android:id="@+id/add_household_button"
-        android:layout_width="wrap_content"
-        android:layout_height="52dp"
-        android:onClick="addHouseholdButtonPressed"
-        android:text="@string/add_household"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@id/refresh_calendar"
-        app:layout_constraintHorizontal_bias="0.484"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/house_imageButton"
-        app:layout_constraintVertical_bias="0.064" />
-
 </androidx.constraintlayout.widget.ConstraintLayout>
