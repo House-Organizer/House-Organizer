@@ -31,7 +31,6 @@ import com.google.firebase.storage.StorageReference;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -52,7 +51,7 @@ public class MainScreenActivity extends AppCompatActivity {
     private TaskList taskList;
     private TaskListAdapter taskListAdapter;
     private ListFragmentView listView = ListFragmentView.CHORES_LIST;
-    private enum ListFragmentView { CHORES_LIST, GROCERY_LIST }
+    public enum ListFragmentView { CHORES_LIST, GROCERY_LIST }
 
     /* for setting up the task owner. Not related to firebase */
     private final User currentUser = new DummyUser("Test User", "0");
@@ -77,12 +76,18 @@ public class MainScreenActivity extends AppCompatActivity {
         findViewById(R.id.calendar_view_change).setOnClickListener(this::rotateView);
         findViewById(R.id.add_event).setOnClickListener(this::addEvent);
         findViewById(R.id.refresh_calendar).setOnClickListener(this::refreshCalendar);
-        findViewById(R.id.new_task).setOnClickListener(this::addTask);
+        findViewById(R.id.new_task).setOnClickListener(v -> TaskView.addTask(db, taskList, taskListAdapter, listView));
 
         refreshCalendar(findViewById(R.id.calendar));
 
-        initializeDummyTaskList();
-        setUpTaskList();
+        initializeTaskList();
+        TaskView.recoverTaskList(this, taskList, taskListAdapter,
+                db.collection("task_lists").document("85IW3cYzxOo1YTWnNOQl"));
+    }
+
+    private void initializeTaskList() {
+        this.taskList = new TaskList(currentUser, "My weekly todo", new ArrayList<>());
+        this.taskListAdapter = new TaskListAdapter(taskList);
     }
 
     private ActivityResultLauncher<String> registerForEventImage() {
@@ -126,7 +131,7 @@ public class MainScreenActivity extends AppCompatActivity {
                                 hideButtons();
                             }
                         }
-                        
+
                     } else {
                         Toast.makeText(getApplicationContext(), "Could not get a house.", Toast.LENGTH_SHORT).show();
                     }
@@ -221,34 +226,6 @@ public class MainScreenActivity extends AppCompatActivity {
 
     }
 
-    private void initializeDummyTaskList() {
-        Task t = new Task(currentUser, "Clean the kitchen counter", "scrub off all the grease marks!");
-        Task t2 = new Task(currentUser, "Stop by the post office", "send a postcard to Julia");
-        Task t3 = new Task(currentUser, "Catch up on lecture notes", "midterm on wednesday!!");
-        Task t4 = new Task(currentUser, "Fix the light bulb", "drop by the supermarket first");
-        Task t5 = new Task(currentUser, "Pick a gift for Jenny", "she likes bath bombs => check out Lush");
-
-        t.addSubTask(new Task.SubTask("do the dishes"));
-        t.addSubTask(new Task.SubTask("swipe the floor"));
-
-        this.taskList = new TaskList(currentUser, "My weekly todo", Arrays.asList(t, t2, t3, t4, t5));
-        this.taskListAdapter = new TaskListAdapter(taskList);
-    }
-
-    private void setUpTaskList() {
-        RecyclerView taskListView = findViewById(R.id.task_list);
-        taskListView.setAdapter(taskListAdapter);
-        taskListView.setLayoutManager(new LinearLayoutManager(this));
-    }
-
-    // Adds a task iff. the task list is in view
-    private void addTask(View v) {
-        if(listView == ListFragmentView.CHORES_LIST) {
-            taskList.addTask(new Task(currentUser, "", ""));
-            taskListAdapter.notifyItemInserted(taskListAdapter.getItemCount()-1);
-        }
-    }
-
     @SuppressWarnings("unused")
     public void houseButtonPressed(View view) {
         Intent intent = new Intent(this, HouseSelectionActivity.class);
@@ -270,7 +247,7 @@ public class MainScreenActivity extends AppCompatActivity {
 
         switch(listView) {
             case CHORES_LIST:
-                setUpTaskList();
+                TaskView.setUpTaskListView(this, taskListAdapter);
                 break;
             case GROCERY_LIST:
                 ShopList shopList = new ShopList(new DummyUser("John", "uid"), "TestShopList");
