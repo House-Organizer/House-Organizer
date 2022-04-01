@@ -31,7 +31,7 @@ public class RegisterEmailTest {
     public void registerButtonIsDisplayed() {
         onView(withId(R.id.reg_email_register_button)).check(matches(isDisplayed()));
     }
-
+/*
     @Test
     public void isValidEmailShowsRightErrorWhenFalse() throws InterruptedException, ExecutionException {
         // INPUTS_EMPTY
@@ -55,5 +55,5 @@ public class RegisterEmailTest {
         onView(withId(R.id.reg_email_register_button)).perform(click());
         Thread.sleep(500);
         onView(withId(R.id.reg_email_error_message)).check(matches(withText(R.string.password_not_valid)));
-    }
+    }*/
 }
