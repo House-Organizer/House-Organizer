@@ -78,8 +78,6 @@ public class MainScreenActivity extends AppCompatActivity {
         findViewById(R.id.refresh_calendar).setOnClickListener(this::refreshCalendar);
         findViewById(R.id.new_task).setOnClickListener(v -> TaskView.addTask(db, taskList, taskListAdapter, listView));
 
-        refreshCalendar(findViewById(R.id.calendar));
-
         initializeTaskList();
         TaskView.recoverTaskList(this, taskList, taskListAdapter,
                 db.collection("task_lists").document("85IW3cYzxOo1YTWnNOQl"));
@@ -88,6 +86,12 @@ public class MainScreenActivity extends AppCompatActivity {
     private void initializeTaskList() {
         this.taskList = new TaskList(currentUser, "My weekly todo", new ArrayList<>());
         this.taskListAdapter = new TaskListAdapter(taskList);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        refreshCalendar(findViewById(R.id.calendar));
     }
 
     private ActivityResultLauncher<String> registerForEventImage() {
@@ -131,7 +135,7 @@ public class MainScreenActivity extends AppCompatActivity {
                                 hideButtons();
                             }
                         }
-
+                        refreshCalendar(findViewById(R.id.calendar));
                     } else {
                         Toast.makeText(getApplicationContext(), "Could not get a house.", Toast.LENGTH_SHORT).show();
                     }
@@ -197,7 +201,7 @@ public class MainScreenActivity extends AppCompatActivity {
     }
 
     @SuppressLint("NotifyDataSetChanged")
-    void refreshCalendar(View v) {
+    public void refreshCalendar(View v) {
         db.collection("events")
                 .whereEqualTo("household", currentHouse)
                 .whereGreaterThan("start", LocalDateTime.now().toEpochSecond(ZoneOffset.UTC))
@@ -217,7 +221,6 @@ public class MainScreenActivity extends AppCompatActivity {
                         }
                         calendarAdapter.notifyDataSetChanged();
                         calendar.setEvents(newEvents);
-                        Toast.makeText(v.getContext(), v.getContext().getString(R.string.refresh_calendar_success), Toast.LENGTH_SHORT).show();
                     }
                     else {
                         Toast.makeText(v.getContext(), v.getContext().getString(R.string.refresh_calendar_fail), Toast.LENGTH_SHORT).show();

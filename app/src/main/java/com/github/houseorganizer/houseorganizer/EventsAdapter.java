@@ -1,5 +1,6 @@
 package com.github.houseorganizer.houseorganizer;
 
+import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -20,8 +21,10 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.SetOptions;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.YearMonth;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
@@ -31,10 +34,11 @@ public class EventsAdapter extends RecyclerView.Adapter<EventsAdapter.ViewHolder
 
     private static final int DAYS_PER_WEEK = 7;
     private final ActivityResultLauncher<String> getPicture;
-
     String eventToAttach;
 
     Calendar calendar;
+    FirebaseFirestore db = FirebaseFirestore.getInstance();
+
     public EventsAdapter(Calendar calendar, ActivityResultLauncher<String> getPicture) {
         this.calendar = calendar;
         this.getPicture = getPicture;
@@ -67,7 +71,6 @@ public class EventsAdapter extends RecyclerView.Adapter<EventsAdapter.ViewHolder
     public EventsAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         Context context = parent.getContext();
         LayoutInflater inflater = LayoutInflater.from(context);
-
         switch (calendar.getView()) {
             case MONTHLY:
                 return new ViewHolder(inflater.inflate(R.layout.calendar_monthly_cell, parent, false));
@@ -112,7 +115,7 @@ public class EventsAdapter extends RecyclerView.Adapter<EventsAdapter.ViewHolder
     private void prepareUpcomingView(EventsAdapter.ViewHolder holder, int position) {
         Event event = calendar.getEvents().get(position);
         holder.titleView.setText(event.getTitle());
-        holder.titleView.setOnClickListener(v -> eventButtonListener(event, v));
+        holder.titleView.setOnClickListener(v -> eventButtonListener(event, v, position));
         holder.dateView.setText(holder.dateView.getContext().getResources().getString(R.string.calendar_upcoming_date,
                 event.getStart().format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm"))));
         holder.attachView.setOnClickListener(v -> {
@@ -121,8 +124,7 @@ public class EventsAdapter extends RecyclerView.Adapter<EventsAdapter.ViewHolder
         });
     }
 
-    private void eventButtonListener(Event event, View v) {
-        FirebaseFirestore db = FirebaseFirestore.getInstance();
+    private void eventButtonListener(Event event, View v, int position) {
         new AlertDialog.Builder(v.getContext())
                 .setTitle(event.getTitle())
                 .setMessage(event.getDescription())
@@ -131,26 +133,43 @@ public class EventsAdapter extends RecyclerView.Adapter<EventsAdapter.ViewHolder
                     db.collection("events")
                             .document(event.getId())
                             .delete();
+                    ArrayList<Event> newEvents = new ArrayList<>(calendar.getEvents());
+                    newEvents.remove(event);
+                    calendar.setEvents(newEvents);
+                    this.notifyItemRemoved(position);
                     dialog.dismiss();
                 })
                 .setNeutralButton(R.string.edit, (dialog, id) ->{
-                    LayoutInflater inflater = LayoutInflater.from(v.getContext());
-                    final View dialogView = inflater.inflate(R.layout.event_creation, null);
+                    final View dialogView = createEditDialog(v, event);
                     new AlertDialog.Builder(v.getContext())
                             .setTitle(R.string.event_editing_title)
                             .setView(dialogView)
-                            .setPositiveButton(R.string.confirm, (editForm, editFormId) -> editEventAndDismiss(event.getId(), editForm, dialogView, db))
+                            .setPositiveButton(R.string.confirm, (editForm, editFormId) -> editEventAndDismiss(event, editForm, dialogView, position))
                             .setNegativeButton(R.string.cancel, (editForm, editFormId) -> dialog.dismiss())
                             .show();
                 }).show();
     }
 
-    private void editEventAndDismiss(String eventId, DialogInterface editForm, View dialogView, FirebaseFirestore db) {
+    private View createEditDialog(View v, Event event) {
+        LayoutInflater inflater = LayoutInflater.from(v.getContext());
+        @SuppressLint("InflateParams") View retView = inflater.inflate(R.layout.event_creation, null);
+        ((EditText) retView.findViewById(R.id.new_event_title)).setText(event.getTitle());
+        ((EditText) retView.findViewById(R.id.new_event_desc)).setText(event.getDescription());
+        ((EditText) retView.findViewById(R.id.new_event_date)).setText(event.getStart().format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm")));
+        ((EditText) retView.findViewById(R.id.new_event_duration)).setText(Long.toString(event.getDuration()));
+        return retView;
+    }
+
+    private void editEventAndDismiss(Event eventObj, DialogInterface editForm, View dialogView, int position) {
         Map<String, Object> data = new HashMap<>();
         final String title = ((EditText) dialogView.findViewById(R.id.new_event_title)).getText().toString();
         final String desc = ((EditText) dialogView.findViewById(R.id.new_event_desc)).getText().toString();
         final String date = ((EditText) dialogView.findViewById(R.id.new_event_date)).getText().toString();
         final String duration = ((EditText) dialogView.findViewById(R.id.new_event_duration)).getText().toString();
+        eventObj.setTitle(title);
+        eventObj.setDescription(desc);
+        eventObj.setStart(LocalDateTime.parse(date, DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm")));
+        eventObj.setDuration(Integer.parseInt(duration));
         Map<String, String> event = new HashMap<>();
         event.put("title", title);
         event.put("desc", desc);
@@ -160,8 +179,9 @@ public class EventsAdapter extends RecyclerView.Adapter<EventsAdapter.ViewHolder
             editForm.dismiss();
             return;
         }
-        db.collection("events").document(eventId).set(data, SetOptions.merge());
+        db.collection("events").document(eventObj.getId()).set(data, SetOptions.merge());
         editForm.dismiss();
+        this.notifyItemChanged(position);
     }
 
     @Override

@@ -1,14 +1,19 @@
 package com.github.houseorganizer.houseorganizer;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.assertThrows;
+import static org.junit.Assert.assertTrue;
+
+import com.github.houseorganizer.houseorganizer.Calendar.Event;
+
 import org.junit.Test;
-import static org.junit.Assert.*;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
-import com.github.houseorganizer.houseorganizer.Calendar.Event;
 
 public class CalendarUnitTest {
 

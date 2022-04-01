@@ -17,15 +17,11 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter;
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
 
-import java.util.List;
 import java.util.Map;
 
 public class HouseSelectionActivity extends AppCompatActivity {
@@ -116,6 +112,7 @@ public class HouseSelectionActivity extends AppCompatActivity {
 
     public void addHouseholdButtonPressed(@SuppressWarnings("unused") View view) {
         Intent intent = new Intent(this, CreateHouseholdActivity.class);
+        intent.putExtra("mUserEmail", emailUser);
         startActivity(intent);
     }
 

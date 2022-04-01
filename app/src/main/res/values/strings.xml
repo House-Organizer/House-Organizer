@@ -55,17 +55,8 @@
 
     <!-- Calendar view and its buttons -->
     <string name="add_event">+</string>
-    <string name="add_success">Event added!</string>
-    <string name="add_fail">Could not add event.</string>
-    <string name="cycle_views">↻</string>
-    <string name="refresh">Refresh</string>
-    <string name="refresh_success">Refreshed!</string>
-    <string name="refresh_fail">Could not refresh.</string>
-    <string name="add_event_success">Event added!</string>
-    <string name="add_event_fail">Could not add event.</string>
     <string name="cycle_calendar_views">↻</string>
     <string name="refresh_calendar">Refresh</string>
-    <string name="refresh_calendar_success">Refreshed!</string>
     <string name="refresh_calendar_fail">Could not refresh.</string>
     <string name="calendar_upcoming_date">\t On the %1$s.</string>
 
@@ -105,8 +96,6 @@
     <string name="email_not_valid">Email is not valid.</string>
     <string name="password_not_valid">Password is not valid.</string>
     <string name="inputs_empty">Inputs must not be empty.</string>
-    <string name="signout_button">Sign Out</string>
     <string name="signout_intent">sign_out</string>
-    <string name="signInFailed">The sign-in failed due to an error</string>
 
 </resources>
