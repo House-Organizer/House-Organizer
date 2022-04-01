@@ -9,9 +9,9 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 public class SubTaskAdapter extends RecyclerView.Adapter<BiViewHolder<Button, EditText>>{
-    private final Task parentTask;
+    private final FirestoreTask parentTask;
 
-    public SubTaskAdapter(Task parentTask) {
+    public SubTaskAdapter(FirestoreTask parentTask) {
         this.parentTask = parentTask;
     }
 
@@ -28,18 +28,20 @@ public class SubTaskAdapter extends RecyclerView.Adapter<BiViewHolder<Button, Ed
         EditText titleEditor = holder.rightView;
 
         /* Setup for subtask title change */
-        TaskView.setUpSubTaskView(parentTask.getSubTaskAt(position), titleEditor);
+        TaskView.setUpSubTaskView(parentTask, position, titleEditor);
 
         /* Setup to mark subtask as done */
         doneButton.setOnClickListener(
                 v -> {
-                    parentTask.getSubTaskAt(position).markAsFinished();
+                    //parentTask.getSubTaskAt(position).markAsFinished();
+                    parentTask.removeSubTask(position);
                     new AlertDialog.Builder(v.getContext())
                             .setTitle("Congratulations!")
                             .setMessage("You just completed a subtask. Keep it up!")
                             .show();
 
-                    // todo: remove finished sub tasks
+                    notifyItemRemoved(position);
+                    notifyItemRangeChanged(0, getItemCount());
                 }
         );
     }

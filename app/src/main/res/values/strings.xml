@@ -50,6 +50,8 @@
     <string name="add_subtask">Add subtask</string>
     <string name="task_completion_title">Congratulations!</string>
     <string name="task_completion_desc">You just completed a task. Keep it up!</string>
+    <string name="subtask_completion_desc">You just completed a task. Keep it up!</string>
+    <string name="tap_to_modify">\"Tap to modify\"</string>
 
     <!-- Calendar view and its buttons -->
     <string name="add_event">+</string>

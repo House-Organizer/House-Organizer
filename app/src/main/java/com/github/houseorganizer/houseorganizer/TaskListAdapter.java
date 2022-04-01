@@ -37,22 +37,27 @@ public class TaskListAdapter extends RecyclerView.Adapter<BiViewHolder<Button, B
     }
 
     private View.OnClickListener doneButtonListener(int position) {
-        return v -> {
-            taskList.getTaskAt(position).markAsFinished();
-            new AlertDialog.Builder(v.getContext())
-                    .setTitle(R.string.task_completion_title)
-                    .setMessage(R.string.task_completion_desc)
-                    .show();
+        return v -> ((FirestoreTask)(taskList.getTaskAt(position))).getTaskDocRef()
+                .delete()
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
 
-            taskList.removeTask(position);
-            notifyItemRemoved(position);
-        };
+                        new AlertDialog.Builder(v.getContext())
+                                .setTitle(R.string.task_completion_title)
+                                .setMessage(R.string.task_completion_desc)
+                                .show();
+
+                        taskList.removeTask(position);
+                        notifyItemRemoved(position);
+                        notifyItemRangeChanged(0, getItemCount());
+                    }
+                });
     }
 
     // todo: modify due date
     private View.OnClickListener titleButtonListener(int position, Button titleButton) {
         return v -> {
-            Task t = taskList.getTaskAt(position);
+            FirestoreTask t = (FirestoreTask) taskList.getTaskAt(position);
 
             LayoutInflater inflater = LayoutInflater.from(v.getContext());
 
