@@ -63,6 +63,7 @@ public class FirebaseTestsHelper {
     }
 
     public static void signInTestUserInFirebaseAuth() throws ExecutionException, InterruptedException {
+        FirebaseAuth.getInstance().signOut();
         Task<AuthResult> t = FirebaseAuth.getInstance().signInWithEmailAndPassword(TEST_USER_MAIL, TEST_USER_PASSWORD);
         Tasks.await(t);
     }

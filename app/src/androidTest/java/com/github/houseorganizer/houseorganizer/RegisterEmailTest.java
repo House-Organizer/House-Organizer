@@ -19,6 +19,8 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+import java.util.concurrent.ExecutionException;
+
 @RunWith(AndroidJUnit4.class)
 public class RegisterEmailTest {
     @Rule
@@ -31,7 +33,7 @@ public class RegisterEmailTest {
     }
 
     @Test
-    public void isValidEmailShowsRightErrorWhenFalse() throws InterruptedException {
+    public void isValidEmailShowsRightErrorWhenFalse() throws InterruptedException, ExecutionException {
         // INPUTS_EMPTY
         onView(withId(R.id.reg_enter_email)).perform(click(), typeText("test"), closeSoftKeyboard());
         onView(withId(R.id.reg_email_register_button)).perform(click());
@@ -44,8 +46,11 @@ public class RegisterEmailTest {
         Thread.sleep(500);
         onView(withId(R.id.reg_email_error_message)).check(matches(withText(R.string.email_not_valid)));
 
+        FirebaseTestsHelper.startAuthEmulator();
+        FirebaseTestsHelper.createFirebaseTestUser();
+
         // INVALID_PASSWORD
-        onView(withId(R.id.reg_enter_email)).perform(clearText(), typeText("example@gmail.com"), closeSoftKeyboard());
+        onView(withId(R.id.reg_enter_email)).perform(clearText(), typeText(FirebaseTestsHelper.TEST_USER_MAIL), closeSoftKeyboard());
         onView(withId(R.id.reg_confirm_password)).perform(click(), typeText("test"), closeSoftKeyboard());
         onView(withId(R.id.reg_email_register_button)).perform(click());
         Thread.sleep(500);
