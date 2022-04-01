@@ -1,5 +1,6 @@
 package com.github.houseorganizer.houseorganizer;
 
+import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -33,7 +34,6 @@ public class EventsAdapter extends RecyclerView.Adapter<EventsAdapter.ViewHolder
 
     private static final int DAYS_PER_WEEK = 7;
     private final ActivityResultLauncher<String> getPicture;
-    private ViewGroup parent;
     String eventToAttach;
 
     Calendar calendar;
@@ -71,7 +71,6 @@ public class EventsAdapter extends RecyclerView.Adapter<EventsAdapter.ViewHolder
     public EventsAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         Context context = parent.getContext();
         LayoutInflater inflater = LayoutInflater.from(context);
-        this.parent = parent;
         switch (calendar.getView()) {
             case MONTHLY:
                 return new ViewHolder(inflater.inflate(R.layout.calendar_monthly_cell, parent, false));
@@ -153,7 +152,7 @@ public class EventsAdapter extends RecyclerView.Adapter<EventsAdapter.ViewHolder
 
     private View createEditDialog(View v, Event event) {
         LayoutInflater inflater = LayoutInflater.from(v.getContext());
-        View retView = inflater.inflate(R.layout.event_creation, parent);
+        @SuppressLint("InflateParams") View retView = inflater.inflate(R.layout.event_creation, null);
         ((EditText) retView.findViewById(R.id.new_event_title)).setText(event.getTitle());
         ((EditText) retView.findViewById(R.id.new_event_desc)).setText(event.getDescription());
         ((EditText) retView.findViewById(R.id.new_event_date)).setText(event.getStart().format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm")));
