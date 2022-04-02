@@ -24,7 +24,6 @@ import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.GoogleAuthProvider;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 

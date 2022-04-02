@@ -61,9 +61,9 @@ dependencies {
     implementation 'com.google.android.gms:play-services-auth:20.1.0'
     implementation 'com.google.android.gms:play-services-base:18.0.1'
 
-    implementation 'com.google.firebase:firebase-database:20.0.4'
-    implementation 'com.google.firebase:firebase-firestore:24.0.2'
-    implementation 'com.google.firebase:firebase-storage:20.0.1'
+    implementation 'com.google.firebase:firebase-database:'
+    implementation 'com.google.firebase:firebase-firestore:'
+    implementation 'com.google.firebase:firebase-storage:'
     implementation 'androidx.preference:preference:1.2.0'
 
     testImplementation 'junit:junit:4.13.2'

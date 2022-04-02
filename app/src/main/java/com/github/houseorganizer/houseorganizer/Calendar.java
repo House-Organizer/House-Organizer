@@ -1,7 +1,9 @@
 package com.github.houseorganizer.houseorganizer;
 
 import static java.util.Objects.requireNonNull;
+
 import androidx.annotation.NonNull;
+
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -84,6 +86,22 @@ class Calendar {
 
         public String getId() {
             return id;
+        }
+
+        public void setTitle(String title) {
+            this.title = title;
+        }
+
+        public void setDescription(String description) {
+            this.description = description;
+        }
+
+        public void setStart(LocalDateTime start) {
+            this.start = start;
+        }
+
+        public void setDuration(long duration) {
+            this.duration = duration;
         }
 
         @NonNull
