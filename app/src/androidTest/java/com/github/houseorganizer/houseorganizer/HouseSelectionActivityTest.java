@@ -39,53 +39,38 @@ import java.util.concurrent.ExecutionException;
 
 @RunWith(AndroidJUnit4.class)
 public class HouseSelectionActivityTest {
-
-    private static final String email = "test.user@gmail.com";
-    private static final String password = "123456";
     private static FirebaseFirestore db;
-    private static FirebaseAuth mAuth;
+    private static FirebaseAuth auth;
 
     @BeforeClass
     public static void createMockFirebase() throws ExecutionException, InterruptedException {
-
-        // 10.0.2.2 is the special IP address to connect to the 'localhost' of
-        // the host computer from an Android emulator
-        FirebaseTestsHelper.startFirestoreEmulator();
-        FirebaseTestsHelper.createTestTaskList();
-        db = FirebaseFirestore.getInstance();
-    }
-
-    @BeforeClass
-    public static void createMockFirebaseAuth() throws ExecutionException, InterruptedException {
         FirebaseTestsHelper.startAuthEmulator();
-        FirebaseTestsHelper.createFirebaseTestUser();
-        FirebaseTestsHelper.signInTestUserInFirebaseAuth();
+        FirebaseTestsHelper.startFirestoreEmulator();
+        FirebaseTestsHelper.setUpFirebaseBis();
+
+        db = FirebaseFirestore.getInstance();
+        auth = FirebaseAuth.getInstance();
     }
 
     @AfterClass
-    public static void signout() {
-        mAuth.signOut();
+    public static void signOut(){
+        auth.signOut();
     }
 
     @Test
-    public void seeHousesList() throws ExecutionException, InterruptedException {
+    public void seeHousesList() {
         Intent intent = new Intent(ApplicationProvider.getApplicationContext(), HouseSelectionActivity.class);
-
-        FirebaseTestsHelper.createTestHouseholdOnFirestore();
-
         ActivityScenario.launch(intent);
-        onView(withId(R.id.housesView)).check(matches(hasDescendant(withText(FirebaseTestsHelper.TEST_HOUSEHOLD_NAME))));
+        onView(withId(R.id.housesView)).check(matches(hasDescendant(withText(FirebaseTestsHelper.TEST_HOUSEHOLD_NAMES[0]))));
     }
 
     @Test
-    public void selectHouse() throws InterruptedException, ExecutionException {
-        FirebaseTestsHelper.signInTestUserInFirebaseAuth();
-        FirebaseTestsHelper.createTestTaskList();
+    public void selectHouse() {
         Intents.init();
         Intent intent = new Intent(ApplicationProvider.getApplicationContext(), HouseSelectionActivity.class);
         ActivityScenario scenario = ActivityScenario.launch(intent);
         //scenario.moveToState(Lifecycle.State.RESUMED);
-        onView(withText(FirebaseTestsHelper.TEST_HOUSEHOLD_NAME)).perform(click());
+        onView(withText(FirebaseTestsHelper.TEST_HOUSEHOLD_NAMES[0])).perform(click());
         //intended(toPackage("com.github.houseorganizer.houseorganizer"));
         intended(hasComponent(MainScreenActivity.class.getName()));
         Intents.release();

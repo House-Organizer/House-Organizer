@@ -32,6 +32,7 @@ import com.google.firebase.firestore.FirebaseFirestoreSettings;
 
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
+import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.FixMethodOrder;
@@ -49,25 +50,25 @@ import java.util.Map;
 import java.util.concurrent.ExecutionException;
 
 @RunWith(AndroidJUnit4.class)
-@FixMethodOrder(MethodSorters.NAME_ASCENDING)
+@FixMethodOrder(MethodSorters.NAME_ASCENDING) //really useful now that its setup ?
 public class MainScreenActivityTest {
 
-    @BeforeClass
-    public static void settingUpEmulatorFirebase() throws ExecutionException, InterruptedException {
+    private static FirebaseFirestore db;
+    private static FirebaseAuth auth;
 
+    @BeforeClass
+    public static void createMockFirebase() throws ExecutionException, InterruptedException {
         FirebaseTestsHelper.startAuthEmulator();
         FirebaseTestsHelper.startFirestoreEmulator();
+        FirebaseTestsHelper.setUpFirebaseBis();
 
-        FirebaseTestsHelper.createFirebaseTestUser();
-        FirebaseTestsHelper.signInTestUserInFirebaseAuth();
-        FirebaseTestsHelper.createTestHouseholdOnFirestore();
-        FirebaseTestsHelper.createTestTaskList();
+        db = FirebaseFirestore.getInstance();
+        auth = FirebaseAuth.getInstance();
     }
 
-
-    @Before
-    public void checkIfUserIsConnected() throws InterruptedException, ExecutionException {
-        FirebaseTestsHelper.signInTestUserInFirebaseAuth();
+    @AfterClass
+    public static void signOut(){
+        auth.signOut();
     }
 
     @Rule
