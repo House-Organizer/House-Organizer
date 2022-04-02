@@ -79,7 +79,7 @@ public class FirestoreTask extends Task{
     }
 
     /* Static API */
-    private static void storeTask(Task task, CollectionReference taskListRef) throws ExecutionException, InterruptedException {
+    private static com.google.android.gms.tasks.Task<DocumentReference> storeTask(Task task, CollectionReference taskListRef) throws ExecutionException, InterruptedException {
         Map<String, Object> data = new HashMap<>();
 
         // Loading information
@@ -96,7 +96,7 @@ public class FirestoreTask extends Task{
 
         data.put("sub tasks", subTaskListData);
 
-        Tasks.await(taskListRef.add(data));
+        return taskListRef.add(data);
     }
 
     public static Map<String, String> makeSubTaskData(Task.SubTask subTask) {
@@ -122,11 +122,7 @@ public class FirestoreTask extends Task{
             CollectionReference taskListRef = documentReference.collection("tasks");
 
             for (Task t : taskList.getTasks()) {
-                try {
-                    storeTask(t, taskListRef);
-                } catch (ExecutionException | InterruptedException e) {
-                    e.printStackTrace();
-                }
+                Tasks.await(storeTask(t, taskListRef));
             }
         }
     }
