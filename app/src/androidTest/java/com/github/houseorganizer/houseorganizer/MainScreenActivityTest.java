@@ -61,6 +61,7 @@ public class MainScreenActivityTest {
         FirebaseTestsHelper.createFirebaseTestUser();
         FirebaseTestsHelper.signInTestUserInFirebaseAuth();
         FirebaseTestsHelper.createTestHouseholdOnFirestore();
+        FirebaseTestsHelper.createTestTaskList();
 
     }
 

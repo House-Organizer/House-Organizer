@@ -99,12 +99,6 @@ public class FirebaseTestsHelper {
      * @throws InterruptedException
      */
     public static void createTestTaskList() throws ExecutionException, InterruptedException {
-        // Commented those out because I'm unsure how to use them atm
-
-        /*signInTestUserInFirebaseAuth();
-        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-        */
-
         // Get DB ref
         FirebaseFirestore db = FirebaseFirestore.getInstance();
 
@@ -116,7 +110,7 @@ public class FirebaseTestsHelper {
         TaskList taskList = new TaskList(owner, "MyList", new ArrayList<>(Collections.singletonList(taskToAdd)));
 
         // Store instance on the database using a helper function
-        FirestoreTask.storeTaskList(taskList, db.collection("task lists"));
+        FirestoreTask.storeTaskList(taskList, db.collection("task lists"), "85IW3cYzxOo1YTWnNOQl");
     }
 
     public static void setUpFirebase() throws ExecutionException, InterruptedException {

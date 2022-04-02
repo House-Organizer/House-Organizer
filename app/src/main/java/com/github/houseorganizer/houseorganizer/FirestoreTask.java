@@ -106,15 +106,15 @@ public class FirestoreTask extends Task{
     }
 
     // Might be unnecessary in the future
-    public static void storeTaskList(TaskList taskList, CollectionReference taskListRoot) {
+    public static void storeTaskList(TaskList taskList, CollectionReference taskListRoot, String documentName) {
         Map<String, Object> data = new HashMap<>();
 
         data.put("title", taskList.getTitle());
         data.put("owner", taskList.getOwner().uid());
 
-        taskListRoot.add(data).addOnCompleteListener(task -> {
+        taskListRoot.document(documentName).set(data).addOnCompleteListener(task -> {
             if(task.isSuccessful()) {
-                DocumentReference documentReference = task.getResult();
+                DocumentReference documentReference = taskListRoot.document(documentName);
                 CollectionReference taskListRef = documentReference.collection("tasks");
 
                 for (Task t : taskList.getTasks()) {
