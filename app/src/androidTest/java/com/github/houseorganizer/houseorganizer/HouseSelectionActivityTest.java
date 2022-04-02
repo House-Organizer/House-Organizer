@@ -47,10 +47,11 @@ public class HouseSelectionActivityTest {
 
     @BeforeClass
     public static void createMockFirebase() {
-        db = FirebaseFirestore.getInstance();
+
         // 10.0.2.2 is the special IP address to connect to the 'localhost' of
         // the host computer from an Android emulator
         FirebaseTestsHelper.startFirestoreEmulator();
+        db = FirebaseFirestore.getInstance();
         FirebaseFirestoreSettings set = new FirebaseFirestoreSettings.Builder()
                 .setPersistenceEnabled(false)
                 .build();
@@ -78,16 +79,18 @@ public class HouseSelectionActivityTest {
         ActivityScenario.launch(intent);
         onView(withId(R.id.housesView)).check(matches(hasDescendant(withText(FirebaseTestsHelper.TEST_HOUSEHOLD_NAME))));
     }
-/*
+
     @Test
-    public void selectHouse() throws InterruptedException {
+    public void selectHouse() throws InterruptedException, ExecutionException {
+        FirebaseTestsHelper.signInTestUserInFirebaseAuth();
+        FirebaseTestsHelper.createTestTaskList();
         Intents.init();
         Intent intent = new Intent(ApplicationProvider.getApplicationContext(), HouseSelectionActivity.class);
         ActivityScenario scenario = ActivityScenario.launch(intent);
         //scenario.moveToState(Lifecycle.State.RESUMED);
-        onView(withText(FirebaseTestsHelper.TEST_HOUSEHOLD_NAME));//.perform(click());
+        onView(withText(FirebaseTestsHelper.TEST_HOUSEHOLD_NAME)).perform(click());
         //intended(toPackage("com.github.houseorganizer.houseorganizer"));
         intended(hasComponent(MainScreenActivity.class.getName()));
         Intents.release();
-    }*/
+    }
 }
