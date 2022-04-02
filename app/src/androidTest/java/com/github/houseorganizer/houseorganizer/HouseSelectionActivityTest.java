@@ -46,11 +46,12 @@ public class HouseSelectionActivityTest {
     private static FirebaseAuth mAuth;
 
     @BeforeClass
-    public static void createMockFirebase() {
+    public static void createMockFirebase() throws ExecutionException, InterruptedException {
 
         // 10.0.2.2 is the special IP address to connect to the 'localhost' of
         // the host computer from an Android emulator
         FirebaseTestsHelper.startFirestoreEmulator();
+        FirebaseTestsHelper.createTestTaskList();
         db = FirebaseFirestore.getInstance();
         FirebaseFirestoreSettings set = new FirebaseFirestoreSettings.Builder()
                 .setPersistenceEnabled(false)
