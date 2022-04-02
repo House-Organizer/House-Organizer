@@ -88,8 +88,8 @@ public final class TaskView {
                 DocumentSnapshot document = task.getResult();
                 Map<String, Object> data = document.getData();
 
-                assert data != null;
-                taskList.changeTitle((String)data.get("title"));
+                if(data != null)
+                    taskList.changeTitle((String)data.get("title"));
                 // todo: ownership: inferred, or read from DB?
 
                 document.getReference()

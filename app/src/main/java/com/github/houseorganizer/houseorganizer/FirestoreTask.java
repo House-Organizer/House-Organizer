@@ -1,5 +1,6 @@
 package com.github.houseorganizer.houseorganizer;
 
+import com.google.android.gms.tasks.Tasks;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FieldValue;
@@ -8,6 +9,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ExecutionException;
 
 public class FirestoreTask extends Task{
     private final DocumentReference taskDocRef;
@@ -77,7 +79,7 @@ public class FirestoreTask extends Task{
     }
 
     /* Static API */
-    private static void storeTask(Task task, CollectionReference taskListRef) {
+    private static com.google.android.gms.tasks.Task<DocumentReference> storeTask(Task task, CollectionReference taskListRef) throws ExecutionException, InterruptedException {
         Map<String, Object> data = new HashMap<>();
 
         // Loading information
@@ -94,7 +96,7 @@ public class FirestoreTask extends Task{
 
         data.put("sub tasks", subTaskListData);
 
-        taskListRef.add(data);
+        return taskListRef.add(data);
     }
 
     public static Map<String, String> makeSubTaskData(Task.SubTask subTask) {
@@ -106,22 +108,23 @@ public class FirestoreTask extends Task{
     }
 
     // Might be unnecessary in the future
-    public static void storeTaskList(TaskList taskList, CollectionReference taskListRoot) {
+    public static void storeTaskList(TaskList taskList, CollectionReference taskListRoot, String documentName) throws ExecutionException, InterruptedException {
         Map<String, Object> data = new HashMap<>();
 
         data.put("title", taskList.getTitle());
         data.put("owner", taskList.getOwner().uid());
 
-        taskListRoot.add(data).addOnCompleteListener(task -> {
-            if(task.isSuccessful()) {
-                DocumentReference documentReference = task.getResult();
-                CollectionReference taskListRef = documentReference.collection("tasks");
+        com.google.android.gms.tasks.Task<Void> task = taskListRoot.document(documentName).set(data);
+        Tasks.await(task);
 
-                for (Task t : taskList.getTasks()) {
-                    storeTask(t, taskListRef);
-                }
+        if(task.isSuccessful()) {
+            DocumentReference documentReference = taskListRoot.document(documentName);
+            CollectionReference taskListRef = documentReference.collection("tasks");
+
+            for (Task t : taskList.getTasks()) {
+                Tasks.await(storeTask(t, taskListRef));
             }
-        });
+        }
     }
 
     // N.B. for now, if they are on the database,

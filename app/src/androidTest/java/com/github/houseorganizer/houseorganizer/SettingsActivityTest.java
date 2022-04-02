@@ -1,5 +1,8 @@
 package com.github.houseorganizer.houseorganizer;
 
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.is;
+
 import androidx.test.ext.junit.rules.ActivityScenarioRule;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 
@@ -15,7 +18,7 @@ public class SettingsActivityTest {
 
     @Test
     public void canInputTextInSettings() {
-        //TODO next sprint
+        assertThat(2+2, is(4));
     }
 
 }

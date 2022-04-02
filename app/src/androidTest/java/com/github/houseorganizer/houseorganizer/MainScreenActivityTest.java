@@ -1,5 +1,5 @@
 package com.github.houseorganizer.houseorganizer;
-/*
+
 import static androidx.test.espresso.Espresso.onView;
 import static androidx.test.espresso.action.ViewActions.click;
 import static androidx.test.espresso.assertion.ViewAssertions.matches;
@@ -7,7 +7,6 @@ import static androidx.test.espresso.intent.Checks.checkNotNull;
 import static androidx.test.espresso.intent.Intents.intended;
 import static androidx.test.espresso.intent.matcher.IntentMatchers.hasComponent;
 import static androidx.test.espresso.intent.matcher.IntentMatchers.hasExtra;
-import static androidx.test.espresso.intent.matcher.IntentMatchers.toPackage;
 import static androidx.test.espresso.matcher.ViewMatchers.hasChildCount;
 import static androidx.test.espresso.matcher.ViewMatchers.isClickable;
 import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
@@ -18,7 +17,6 @@ import static androidx.test.espresso.matcher.ViewMatchers.withText;
 import android.view.View;
 
 import androidx.annotation.NonNull;
-import androidx.lifecycle.Lifecycle;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.test.core.app.ApplicationProvider;
 import androidx.test.espresso.intent.Intents;
@@ -26,17 +24,51 @@ import androidx.test.espresso.matcher.BoundedMatcher;
 import androidx.test.ext.junit.rules.ActivityScenarioRule;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 
+import com.github.houseorganizer.houseorganizer.login.LoginActivity;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FirebaseFirestoreSettings;
+
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
+import org.junit.Before;
+import org.junit.BeforeClass;
+import org.junit.FixMethodOrder;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.junit.runners.MethodSorters;
 
 import java.time.LocalDate;
 import java.time.YearMonth;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ExecutionException;
 
 @RunWith(AndroidJUnit4.class)
+@FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class MainScreenActivityTest {
+
+    @BeforeClass
+    public static void settingUpEmulatorFirebase() throws ExecutionException, InterruptedException {
+
+        FirebaseTestsHelper.startAuthEmulator();
+        FirebaseTestsHelper.startFirestoreEmulator();
+
+        FirebaseTestsHelper.createFirebaseTestUser();
+        FirebaseTestsHelper.signInTestUserInFirebaseAuth();
+        FirebaseTestsHelper.createTestHouseholdOnFirestore();
+        FirebaseTestsHelper.createTestTaskList();
+    }
+
+
+    @Before
+    public void checkIfUserIsConnected() throws InterruptedException, ExecutionException {
+        FirebaseTestsHelper.signInTestUserInFirebaseAuth();
+    }
 
     @Rule
     public ActivityScenarioRule<MainScreenActivity> mainScreenActivityActivityScenarioRule =
@@ -106,12 +138,6 @@ public class MainScreenActivityTest {
         onView(withId(R.id.info_imageButton)).check(matches(isClickable()));
     }
 
-    @Test
-    public void infoButtonDisplaysItHasBeenClicked() {
-        onView(withId(R.id.info_imageButton)).perform(click());
-        onView(withId(R.id.last_button_activated)).check(matches(withText("Info button pressed")));
-    }
-
     // Calendar view and its buttons
     @Test
     public void calendarUpcomingIsEnabled() {
@@ -175,7 +201,7 @@ public class MainScreenActivityTest {
             }
         };
     }
-
+    /*
     @Test
     public void calendarUpcomingEventsDisplayed() {
         onView(withId(R.id.refresh_calendar)).perform(click());
@@ -194,7 +220,7 @@ public class MainScreenActivityTest {
     }
     */
 
-/*
+
     @Test
     public void calendarViewRotatesCorrectly() {
         // Test partially commented out because we do not know how many events are on the database on testing
@@ -213,6 +239,7 @@ public class MainScreenActivityTest {
 
     // TODO : Add more meaningful tests for each row in the RecyclerViews (no idea how to do it)
 
+    /* TODO: Move sign-out button tests in rightful test class; This button is no longer on MainScreen
     @Test
     public void signOutButtonIsDisplayedAndEnabled(){
         onView(withId(R.id.sign_out_button)).check(matches(isDisplayed()));
@@ -225,12 +252,12 @@ public class MainScreenActivityTest {
     }
 
     @Test
-    public void signOutButtonFiresRightIntent(){
+    public void zSignOutButtonFiresRightIntent(){
         Intents.init();
         onView(withId(R.id.sign_out_button)).perform(click());
         intended(hasComponent(LoginActivity.class.getName()));
         intended(hasExtra(ApplicationProvider.getApplicationContext().getString(R.string.signout_intent), true));
         Intents.release();
     }
-
-}*/
+     */
+}

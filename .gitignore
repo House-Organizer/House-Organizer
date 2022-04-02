@@ -9,6 +9,18 @@
 /.idea/gradle.xml
 /.idea/workspace.xml
 /.idea/libraries
+/.idea/deploymentTargetDropDown.xml
 /app/debug/app-debug.aab
 /firebase-debug.log
 /ui-debug.log
+
+# Firebase emulators
+/public
+/functions
+/database-debug.log
+/database.rules.json
+/firestore-debug.log
+/firestore.indexes.json
+/firestore.rules
+/remoteconfig.template.json
+/storage.rules
