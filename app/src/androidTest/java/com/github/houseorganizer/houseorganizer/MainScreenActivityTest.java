@@ -62,8 +62,6 @@ public class MainScreenActivityTest {
         FirebaseTestsHelper.signInTestUserInFirebaseAuth();
         FirebaseTestsHelper.createTestHouseholdOnFirestore();
         FirebaseTestsHelper.createTestTaskList();
-
-        Thread.sleep(100);
     }
 
 

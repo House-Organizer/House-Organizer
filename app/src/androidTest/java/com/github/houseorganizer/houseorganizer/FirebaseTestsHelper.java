@@ -110,6 +110,7 @@ public class FirebaseTestsHelper {
         TaskList taskList = new TaskList(owner, "MyList", new ArrayList<>(Collections.singletonList(taskToAdd)));
 
         // Store instance on the database using a helper function
+        // returns only after storing is done
         FirestoreTask.storeTaskList(taskList, db.collection("task lists"), "85IW3cYzxOo1YTWnNOQl");
     }
 
