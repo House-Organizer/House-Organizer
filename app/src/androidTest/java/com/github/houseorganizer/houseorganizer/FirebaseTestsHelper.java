@@ -4,10 +4,8 @@ import com.google.android.gms.tasks.Task;
 import com.google.android.gms.tasks.Tasks;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.storage.FirebaseStorage;
 
 import java.util.ArrayList;
@@ -97,13 +95,11 @@ public class FirebaseTestsHelper {
      * This method will create a household with a given name
      * It is assumed the owner is logged in
      */
-    protected static void createTestHouseholdOnFirestoreWithName(String householdName, String owner, List<String> residents)
+    protected static void createTestHouseholdOnFirestoreWithName(String householdName, String owner,
+                                                                 List<String> residents, String docName)
             throws ExecutionException, InterruptedException {
 
         FirebaseFirestore db = FirebaseFirestore.getInstance();
-        Task<QuerySnapshot> t = db.collection("household").get();
-        Tasks.await(t);
-        if(!t.getResult().getDocuments().isEmpty()) return;
 
         Map<String, Object> houseHold = new HashMap<>();
 
@@ -112,7 +108,7 @@ public class FirebaseTestsHelper {
         houseHold.put("num_members", residents.size());
         houseHold.put("residents", residents);
 
-        Task task = db.collection("households").add(houseHold);
+        Task<Void> task = db.collection("households").document(docName).set(houseHold);
         Tasks.await(task);
     }
 
@@ -132,7 +128,7 @@ public class FirebaseTestsHelper {
 
         // Store instance on the database using a helper function
         // returns only after storing is done
-        FirestoreTask.storeTaskList(taskList, db.collection("task lists"), "85IW3cYzxOo1YTWnNOQl");
+        FirestoreTask.storeTaskList(taskList, db.collection("task lists"), "task_list_1");
     }
 
     /**
@@ -159,14 +155,15 @@ public class FirebaseTestsHelper {
         }
 
         createTestHouseholdOnFirestoreWithName(TEST_HOUSEHOLD_NAMES[0], TEST_USERS_EMAILS[0],
-                Arrays.asList(TEST_USERS_EMAILS[0], TEST_USERS_EMAILS[1]));
+                Arrays.asList(TEST_USERS_EMAILS[0], TEST_USERS_EMAILS[1]), TEST_HOUSEHOLD_NAMES[0]);
 
         createTestHouseholdOnFirestoreWithName(TEST_HOUSEHOLD_NAMES[1], TEST_USERS_EMAILS[0],
-                Arrays.asList(TEST_USERS_EMAILS[0], TEST_USERS_EMAILS[2]));
+                Arrays.asList(TEST_USERS_EMAILS[0], TEST_USERS_EMAILS[2]), TEST_HOUSEHOLD_NAMES[1]);
 
         createTestHouseholdOnFirestoreWithName(TEST_HOUSEHOLD_NAMES[2], TEST_USERS_EMAILS[1],
                 Arrays.asList(TEST_USERS_EMAILS[1], TEST_USERS_EMAILS[2], TEST_USERS_EMAILS[3],
-                              TEST_USERS_EMAILS[4], TEST_USERS_EMAILS[5], TEST_USERS_EMAILS[6]));
+                              TEST_USERS_EMAILS[4], TEST_USERS_EMAILS[5], TEST_USERS_EMAILS[6]),
+                TEST_HOUSEHOLD_NAMES[2]);
 
         signInTestUserWithCredentials(TEST_USERS_EMAILS[0], TEST_USERS_PWD[0]);
 
