@@ -83,7 +83,7 @@ public class FirebaseTestsHelper {
      * This method will create a household with a given name
      * It is assumed the owner is logged in
      */
-    public static void createTestHouseholdOnFirestoreWithName(String householdName, String owner, List<String> residents)
+    protected static void createTestHouseholdOnFirestoreWithName(String householdName, String owner, List<String> residents)
             throws ExecutionException, InterruptedException {
 
         FirebaseFirestore db = FirebaseFirestore.getInstance();
@@ -105,7 +105,7 @@ public class FirebaseTestsHelper {
     /**
      * This method will create a task list
      */
-    public static void createTestTaskList() throws ExecutionException, InterruptedException {
+    protected static void createTestTaskList() throws ExecutionException, InterruptedException {
         // Get DB ref
         FirebaseFirestore db = FirebaseFirestore.getInstance();
 
@@ -125,7 +125,7 @@ public class FirebaseTestsHelper {
      * This method will create 8 users, 3 households and a task list
      * After this call user_1 is logged in
      */
-    protected static void setUpFirebaseBis() throws ExecutionException, InterruptedException {
+    protected static void setUpFirebase() throws ExecutionException, InterruptedException {
         for(int u_index = 0; u_index < TEST_USERS_EMAILS.length; u_index++){
             createFirebaseTestUserWithCredentials(TEST_USERS_EMAILS[u_index], TEST_USERS_PWD[u_index]);
         }

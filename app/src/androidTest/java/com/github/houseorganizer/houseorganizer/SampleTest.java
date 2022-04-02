@@ -25,7 +25,7 @@ public class SampleTest {
     public static void createMockFirebase() throws ExecutionException, InterruptedException {
         FirebaseTestsHelper.startAuthEmulator();
         FirebaseTestsHelper.startFirestoreEmulator();
-        FirebaseTestsHelper.setUpFirebaseBis();
+        FirebaseTestsHelper.setUpFirebase();
 
         db = FirebaseFirestore.getInstance();
         auth = FirebaseAuth.getInstance();

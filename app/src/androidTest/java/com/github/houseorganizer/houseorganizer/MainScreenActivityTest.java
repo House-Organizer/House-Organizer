@@ -18,22 +18,17 @@ import android.view.View;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
-import androidx.test.core.app.ApplicationProvider;
 import androidx.test.espresso.intent.Intents;
 import androidx.test.espresso.matcher.BoundedMatcher;
 import androidx.test.ext.junit.rules.ActivityScenarioRule;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 
-import com.github.houseorganizer.houseorganizer.login.LoginActivity;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.FirebaseFirestoreSettings;
 
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
 import org.junit.AfterClass;
-import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.FixMethodOrder;
 import org.junit.Rule;
@@ -43,10 +38,6 @@ import org.junit.runners.MethodSorters;
 
 import java.time.LocalDate;
 import java.time.YearMonth;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 import java.util.concurrent.ExecutionException;
 
 @RunWith(AndroidJUnit4.class)
@@ -60,7 +51,7 @@ public class MainScreenActivityTest {
     public static void createMockFirebase() throws ExecutionException, InterruptedException {
         FirebaseTestsHelper.startAuthEmulator();
         FirebaseTestsHelper.startFirestoreEmulator();
-        FirebaseTestsHelper.setUpFirebaseBis();
+        FirebaseTestsHelper.setUpFirebase();
 
         db = FirebaseFirestore.getInstance();
         auth = FirebaseAuth.getInstance();
