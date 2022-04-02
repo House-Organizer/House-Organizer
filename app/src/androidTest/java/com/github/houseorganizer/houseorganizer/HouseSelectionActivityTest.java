@@ -1,6 +1,7 @@
 package com.github.houseorganizer.houseorganizer;
 
 import static android.support.test.espresso.matcher.ViewMatchers.withText;
+import static androidx.test.espresso.Espresso.onData;
 import static androidx.test.espresso.Espresso.onView;
 import static androidx.test.espresso.action.ViewActions.click;
 import static androidx.test.espresso.assertion.ViewAssertions.matches;
@@ -14,13 +15,16 @@ import android.content.Intent;
 import androidx.test.core.app.ActivityScenario;
 import androidx.test.core.app.ApplicationProvider;
 import androidx.test.espresso.intent.Intents;
+import androidx.test.ext.junit.rules.ActivityScenarioRule;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 
+import com.github.houseorganizer.houseorganizer.login.LoginActivity;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
+import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -46,21 +50,18 @@ public class HouseSelectionActivityTest {
         auth.signOut();
     }
 
+    @Rule
+    public ActivityScenarioRule<HouseSelectionActivity> testRule = new ActivityScenarioRule<>(HouseSelectionActivity.class);
+
     @Test
     public void seeHousesList() {
-        Intent intent = new Intent(ApplicationProvider.getApplicationContext(), HouseSelectionActivity.class);
-        ActivityScenario.launch(intent);
         onView(withId(R.id.housesView)).check(matches(hasDescendant(withText(FirebaseTestsHelper.TEST_HOUSEHOLD_NAMES[0]))));
     }
 
     @Test
     public void selectHouse() {
         Intents.init();
-        Intent intent = new Intent(ApplicationProvider.getApplicationContext(), HouseSelectionActivity.class);
-        ActivityScenario scenario = ActivityScenario.launch(intent);
-        //scenario.moveToState(Lifecycle.State.RESUMED);
         onView(withText(FirebaseTestsHelper.TEST_HOUSEHOLD_NAMES[0])).perform(click());
-        //intended(toPackage("com.github.houseorganizer.houseorganizer"));
         intended(hasComponent(MainScreenActivity.class.getName()));
         Intents.release();
     }

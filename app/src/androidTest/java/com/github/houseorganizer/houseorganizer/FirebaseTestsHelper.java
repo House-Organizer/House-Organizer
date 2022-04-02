@@ -4,9 +4,8 @@ import com.google.android.gms.tasks.Task;
 import com.google.android.gms.tasks.Tasks;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.storage.FirebaseStorage;
@@ -55,6 +54,21 @@ public class FirebaseTestsHelper {
         if(databaseEmulatorActivated) return;
         FirebaseStorage.getInstance().useEmulator("10.0.2.2", 9199);
         databaseEmulatorActivated = true;
+    }
+
+    /**
+     * This method will create a flag on the firebase which allows to decide if we have
+     * to create the data from scratch or if its already there
+     */
+    protected static void createFirebaseDoneFlag()
+            throws ExecutionException, InterruptedException {
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+
+        Map<String, Object> doneFlag = new HashMap<>();
+        doneFlag.put("done", true);
+
+        Task<Void> task = db.collection("done_flag").document("done_flag").set(doneFlag);
+        Tasks.await(task);
     }
 
     /**
@@ -124,8 +138,22 @@ public class FirebaseTestsHelper {
     /**
      * This method will create 8 users, 3 households and a task list
      * After this call user_1 is logged in
+     * A flag allows us to just login as user_1 if everything is already done
      */
     protected static void setUpFirebase() throws ExecutionException, InterruptedException {
+
+        //This allows us to run tests without creating everything on firebase each test
+        Task<DocumentSnapshot> task = FirebaseFirestore.getInstance()
+                                      .collection("done_flag")
+                                      .document("done_flag")
+                                      .get();
+        Tasks.await(task);
+        Map<String, Object> result = task.getResult().getData();
+        if(result != null){
+            signInTestUserWithCredentials(TEST_USERS_EMAILS[0], TEST_USERS_PWD[0]);
+            return;
+        }
+
         for(int u_index = 0; u_index < TEST_USERS_EMAILS.length; u_index++){
             createFirebaseTestUserWithCredentials(TEST_USERS_EMAILS[u_index], TEST_USERS_PWD[u_index]);
         }
@@ -143,5 +171,7 @@ public class FirebaseTestsHelper {
         signInTestUserWithCredentials(TEST_USERS_EMAILS[0], TEST_USERS_PWD[0]);
 
         createTestTaskList();
+
+        createFirebaseDoneFlag();
     }
 }
