@@ -239,6 +239,7 @@ public class MainScreenActivityTest {
 
     // TODO : Add more meaningful tests for each row in the RecyclerViews (no idea how to do it)
 
+    /* TODO: Move sign-out button tests in rightful test class; This button is no longer on MainScreen
     @Test
     public void signOutButtonIsDisplayedAndEnabled(){
         onView(withId(R.id.sign_out_button)).check(matches(isDisplayed()));
@@ -258,5 +259,5 @@ public class MainScreenActivityTest {
         intended(hasExtra(ApplicationProvider.getApplicationContext().getString(R.string.signout_intent), true));
         Intents.release();
     }
-
+     */
 }
