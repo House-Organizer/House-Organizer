@@ -13,6 +13,7 @@ import com.google.firebase.storage.FirebaseStorage;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -97,23 +98,25 @@ public class FirebaseTestsHelper {
      * @throws ExecutionException
      * @throws InterruptedException
      */
-    // TODO : does not work, need @aindreas help
     public static void createTestTaskList() throws ExecutionException, InterruptedException {
-        signInTestUserInFirebaseAuth();
-        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-        TaskList taskList = new TaskList(new DummyUser("Dummy", "User"), "MyList", new ArrayList<>());
-        taskList.addTask(new com.github.houseorganizer.houseorganizer.Task(new DummyUser("Dummy", "User"), "TestTask", "Testing"));
-        FirebaseFirestore.getInstance().collection("task_lists")
-                .document("85IW3cYzxOo1YTWnNOQl")
-                .collection("tasks")
-                .add(new HashMap<String, Object>())
-                .addOnCompleteListener(task -> {
-                    if (task.isSuccessful()) {
-                        DocumentReference taskDocRef = task.getResult();
+        // Commented those out because I'm unsure how to use them atm
 
-                        taskList.addTask(new FirestoreTask(taskList.getOwner(), "", "", new ArrayList<>(), taskDocRef));
-                    }
-                });
+        /*signInTestUserInFirebaseAuth();
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        */
+
+        // Get DB ref
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+
+        // Create task list instance
+        User owner = new DummyUser("Test User", "0");
+        com.github.houseorganizer.houseorganizer.Task taskToAdd =
+                new com.github.houseorganizer.houseorganizer.Task(owner, "TestTask", "Testing");
+
+        TaskList taskList = new TaskList(owner, "MyList", new ArrayList<>(Collections.singletonList(taskToAdd)));
+
+        // Store instance on the database using a helper function
+        FirestoreTask.storeTaskList(taskList, db.collection("task lists"));
     }
 
     public static void setUpFirebase() throws ExecutionException, InterruptedException {
