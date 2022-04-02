@@ -53,10 +53,6 @@ public class HouseSelectionActivityTest {
         FirebaseTestsHelper.startFirestoreEmulator();
         FirebaseTestsHelper.createTestTaskList();
         db = FirebaseFirestore.getInstance();
-        FirebaseFirestoreSettings set = new FirebaseFirestoreSettings.Builder()
-                .setPersistenceEnabled(false)
-                .build();
-        db.setFirestoreSettings(set);
     }
 
     @BeforeClass
