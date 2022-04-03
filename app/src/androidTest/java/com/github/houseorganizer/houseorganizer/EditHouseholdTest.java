@@ -23,15 +23,14 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
+import org.junit.After;
 import org.junit.AfterClass;
+import org.junit.Before;
 import org.junit.BeforeClass;
-import org.junit.FixMethodOrder;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.junit.runners.MethodSorters;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
@@ -61,17 +60,14 @@ public class EditHouseholdTest {
     @Rule
     public ActivityScenarioRule<EditHousehold> editHouseholdRule = new ActivityScenarioRule<>(intentFromHouseSelection);
 
-    // Might want to move this into some kind of utils for tests
-    private Map<String, Object> fetchHouseholdData(String houseName) throws ExecutionException, InterruptedException {
-        Task<DocumentSnapshot> task = db.collection("households").document(houseName).get();
-        Tasks.await(task);
-        return task.getResult().getData();
+    @Before
+    public void setupHouseholds() throws ExecutionException, InterruptedException {
+        FirebaseTestsHelper.createHouseholds();
     }
 
-    // Might want to move this into some kind of utils for tests
-    private void setHouseholdData(String houseName, Map<String, Object> data) throws ExecutionException, InterruptedException {
-        Task<Void> task = db.collection("households").document(houseName).set(data);
-        Tasks.await(task);
+    @After
+    public void dismantleHouseholds() throws ExecutionException, InterruptedException {
+        FirebaseTestsHelper.createHouseholds();
     }
 
     @Test
@@ -92,7 +88,7 @@ public class EditHouseholdTest {
     @Test
     public void addUserWorksWithCorrectEmail() throws ExecutionException, InterruptedException {
         // Get state of house
-        Map<String, Object> houseData_before = fetchHouseholdData("home_1");
+        Map<String, Object> houseData_before = FirebaseTestsHelper.fetchHouseholdData("home_1", db);
         List<String> resident_before = (List<String>) houseData_before.get("residents");
         Long num_residents_before = (Long) houseData_before.get("num_members");
 
@@ -101,7 +97,7 @@ public class EditHouseholdTest {
         onView(withId(R.id.imageButtonAddUser)).perform(click());
 
         // Get state of house
-        Map<String, Object> houseData_after = fetchHouseholdData("home_1");
+        Map<String, Object> houseData_after = FirebaseTestsHelper.fetchHouseholdData("home_1", db);
         List<String> resident_after = (List<String>) houseData_after.get("residents");
         Long num_residents_after = (Long) houseData_after.get("num_members");
 
@@ -110,15 +106,12 @@ public class EditHouseholdTest {
         Long expected_num_residents = num_residents_before + 1;
         assertEquals(expected_num_residents, num_residents_after);
         assertTrue(resident_after.contains("user_3@test.com"));
-
-        // Restore state
-        setHouseholdData("home_1", houseData_before);
     }
 
     @Test
     public void removeUserWorksWithCorrectEmail() throws ExecutionException, InterruptedException {
         // Get state of house
-        Map<String, Object> houseData_before = fetchHouseholdData("home_1");
+        Map<String, Object> houseData_before = FirebaseTestsHelper.fetchHouseholdData("home_1", db);
         List<String> resident_before = (List<String>) houseData_before.get("residents");
         Long num_residents_before = (Long) houseData_before.get("num_members");
 
@@ -127,7 +120,7 @@ public class EditHouseholdTest {
         onView(withId(R.id.imageButtonRemoveUser)).perform(click());
 
         // Get state of house
-        Map<String, Object> houseData_after = fetchHouseholdData("home_1");
+        Map<String, Object> houseData_after = FirebaseTestsHelper.fetchHouseholdData("home_1", db);
         List<String> resident_after = (List<String>) houseData_after.get("residents");
         Long num_residents_after = (Long) houseData_after.get("num_members");
 
@@ -136,15 +129,12 @@ public class EditHouseholdTest {
         Long expected_num_residents = num_residents_before - 1;
         assertEquals(expected_num_residents, num_residents_after);
         assertFalse(resident_after.contains("user_2@test.com"));
-
-        // Restore state
-        setHouseholdData("home_1", houseData_before);
     }
 
     @Test
     public void changeOwnerWorksWithCorrectEmail() throws ExecutionException, InterruptedException {
         // Get state of house
-        Map<String, Object> houseData_before = fetchHouseholdData("home_1");
+        Map<String, Object> houseData_before = FirebaseTestsHelper.fetchHouseholdData("home_1", db);
         String owner_before = (String) houseData_before.get("owner");
 
         // Perform clicks
@@ -152,14 +142,11 @@ public class EditHouseholdTest {
         onView(withId(R.id.imageButtonChangeOwner)).perform(click());
 
         // Get state of house
-        Map<String, Object> houseData_after = fetchHouseholdData("home_1");
+        Map<String, Object> houseData_after = FirebaseTestsHelper.fetchHouseholdData("home_1", db);
         String owner_after = (String) houseData_after.get("owner");
 
         // Compare states
         assertEquals("user_1@test.com", owner_before);
         assertEquals("user_2@test.com", owner_after);
-
-        // Restore state
-        setHouseholdData("home_1", houseData_before);
     }
 }
