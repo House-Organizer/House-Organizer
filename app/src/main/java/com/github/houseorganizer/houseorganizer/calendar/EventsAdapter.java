@@ -1,4 +1,4 @@
-package com.github.houseorganizer.houseorganizer;
+package com.github.houseorganizer.houseorganizer.calendar;
 
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
@@ -15,7 +15,8 @@ import androidx.activity.result.ActivityResultLauncher;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.github.houseorganizer.houseorganizer.Calendar.Event;
+import com.github.houseorganizer.houseorganizer.R;
+import com.github.houseorganizer.houseorganizer.calendar.Calendar.Event;
 import com.github.houseorganizer.houseorganizer.util.Util;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.SetOptions;
@@ -34,10 +35,10 @@ public class EventsAdapter extends RecyclerView.Adapter<EventsAdapter.ViewHolder
 
     private static final int DAYS_PER_WEEK = 7;
     private final ActivityResultLauncher<String> getPicture;
-    String eventToAttach;
 
-    Calendar calendar;
-    FirebaseFirestore db = FirebaseFirestore.getInstance();
+    private String eventToAttach;
+    private Calendar calendar;
+    private FirebaseFirestore db = FirebaseFirestore.getInstance();
 
     public EventsAdapter(Calendar calendar, ActivityResultLauncher<String> getPicture) {
         this.calendar = calendar;
@@ -94,6 +95,15 @@ public class EventsAdapter extends RecyclerView.Adapter<EventsAdapter.ViewHolder
                 prepareUpcomingView(holder, position);
 
         }
+    }
+
+
+    public String getEventToAttach() {
+        return eventToAttach;
+    }
+
+    public Calendar getCalendar() {
+        return calendar;
     }
 
     private void prepareMonthlyView(ViewHolder holder, int position) {

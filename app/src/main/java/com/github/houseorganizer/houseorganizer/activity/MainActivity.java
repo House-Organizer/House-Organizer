@@ -1,4 +1,4 @@
-package com.github.houseorganizer.houseorganizer;
+package com.github.houseorganizer.houseorganizer.activity;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -6,6 +6,7 @@ import android.os.Handler;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.github.houseorganizer.houseorganizer.R;
 import com.github.houseorganizer.houseorganizer.login.LoginActivity;
 import com.github.houseorganizer.houseorganizer.login.LoginEmail;
 import com.google.firebase.auth.FirebaseAuth;

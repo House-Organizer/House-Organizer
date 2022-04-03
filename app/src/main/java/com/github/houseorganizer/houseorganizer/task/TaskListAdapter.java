@@ -1,4 +1,4 @@
-package com.github.houseorganizer.houseorganizer;
+package com.github.houseorganizer.houseorganizer.task;
 
 import android.app.AlertDialog;
 import android.view.LayoutInflater;
@@ -10,6 +10,9 @@ import android.widget.EditText;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.github.houseorganizer.houseorganizer.util.BiViewHolder;
+import com.github.houseorganizer.houseorganizer.R;
 
 public class TaskListAdapter extends RecyclerView.Adapter<BiViewHolder<Button, Button>> {
     private final TaskList taskList;

@@ -1,4 +1,6 @@
-package com.github.houseorganizer.houseorganizer;
+package com.github.houseorganizer.houseorganizer.shop;
+
+import com.github.houseorganizer.houseorganizer.user.User;
 
 import java.util.ArrayList;
 import java.util.List;

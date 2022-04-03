@@ -12,7 +12,7 @@
         android:theme="@style/Theme.HouseOrganizer">
 
         <activity
-            android:name=".MainActivity"
+            android:name=".activity.MainActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -35,29 +35,29 @@
             android:exported="false"
             android:parentActivityName=".login.LoginEmail" />
         <activity
-            android:name=".MainScreenActivity"
+            android:name=".activity.MainScreenActivity"
             android:exported="false" />
         <activity
-            android:name=".InfoActivity"
+            android:name=".activity.InfoActivity"
             android:exported="false"
-            android:parentActivityName=".MainScreenActivity" />
+            android:parentActivityName=".activity.MainScreenActivity" />
         <activity
-            android:name=".SettingsActivity"
+            android:name=".activity.SettingsActivity"
             android:exported="false"
             android:label="@string/title_activity_settings"
-            android:parentActivityName=".MainScreenActivity" />
+            android:parentActivityName=".activity.MainScreenActivity" />
         <activity
-            android:name=".HouseSelectionActivity"
+            android:name=".house.HouseSelectionActivity"
             android:exported="false"
-            android:parentActivityName=".MainScreenActivity" />
+            android:parentActivityName=".activity.MainScreenActivity" />
         <activity
-            android:name=".CreateHouseholdActivity"
+            android:name=".house.CreateHouseholdActivity"
             android:exported="false"
-            android:parentActivityName=".HouseSelectionActivity" />
+            android:parentActivityName=".house.HouseSelectionActivity" />
         <activity
-            android:name=".EditHousehold"
+            android:name=".house.EditHousehold"
             android:exported="false"
-            android:parentActivityName=".HouseSelectionActivity" />
+            android:parentActivityName=".house.HouseSelectionActivity" />
 
         <meta-data
             android:name="preloaded_fonts"

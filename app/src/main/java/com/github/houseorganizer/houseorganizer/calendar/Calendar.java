@@ -1,4 +1,4 @@
-package com.github.houseorganizer.houseorganizer;
+package com.github.houseorganizer.houseorganizer.calendar;
 
 import static java.util.Objects.requireNonNull;
 
@@ -9,7 +9,7 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 
-class Calendar {
+public class Calendar {
     private ArrayList<Event> events;
     private CalendarView view;
 
@@ -48,7 +48,7 @@ class Calendar {
         return ret.toString();
     }
 
-    static class Event {
+    public static class Event {
 
         private  String title;
         private String description;
@@ -120,7 +120,7 @@ class Calendar {
         }
     }
 
-    enum CalendarView{
+    public enum CalendarView{
         MONTHLY,
         WEEKLY,
         UPCOMING;

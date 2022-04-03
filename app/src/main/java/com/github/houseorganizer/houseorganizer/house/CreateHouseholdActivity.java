@@ -1,4 +1,4 @@
-package com.github.houseorganizer.houseorganizer;
+package com.github.houseorganizer.houseorganizer.house;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -8,6 +8,8 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.github.houseorganizer.houseorganizer.activity.MainScreenActivity;
+import com.github.houseorganizer.houseorganizer.R;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.Arrays;

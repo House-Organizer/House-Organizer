@@ -12,7 +12,7 @@ import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.github.houseorganizer.houseorganizer.MainScreenActivity;
+import com.github.houseorganizer.houseorganizer.activity.MainScreenActivity;
 import com.github.houseorganizer.houseorganizer.R;
 import com.github.houseorganizer.houseorganizer.util.LoginHelpers;
 import com.google.firebase.auth.FirebaseAuth;

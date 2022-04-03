@@ -1,4 +1,4 @@
-package com.github.houseorganizer.houseorganizer;
+package com.github.houseorganizer.houseorganizer.task;
 
 import android.app.AlertDialog;
 import android.view.ViewGroup;
@@ -7,6 +7,9 @@ import android.widget.EditText;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.github.houseorganizer.houseorganizer.util.BiViewHolder;
+import com.github.houseorganizer.houseorganizer.R;
 
 public class SubTaskAdapter extends RecyclerView.Adapter<BiViewHolder<Button, EditText>>{
     private final FirestoreTask parentTask;

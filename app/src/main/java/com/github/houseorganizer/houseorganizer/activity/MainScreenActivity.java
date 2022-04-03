@@ -1,4 +1,4 @@
-package com.github.houseorganizer.houseorganizer;
+package com.github.houseorganizer.houseorganizer.activity;
 
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
@@ -18,7 +18,19 @@ import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.github.houseorganizer.houseorganizer.Calendar.Event;
+import com.github.houseorganizer.houseorganizer.R;
+import com.github.houseorganizer.houseorganizer.calendar.Calendar;
+import com.github.houseorganizer.houseorganizer.calendar.Calendar.Event;
+import com.github.houseorganizer.houseorganizer.calendar.EventsAdapter;
+import com.github.houseorganizer.houseorganizer.house.HouseSelectionActivity;
+import com.github.houseorganizer.houseorganizer.shop.ShopItem;
+import com.github.houseorganizer.houseorganizer.shop.ShopList;
+import com.github.houseorganizer.houseorganizer.shop.ShopListAdapter;
+import com.github.houseorganizer.houseorganizer.task.TaskList;
+import com.github.houseorganizer.houseorganizer.task.TaskListAdapter;
+import com.github.houseorganizer.houseorganizer.task.TaskView;
+import com.github.houseorganizer.houseorganizer.user.DummyUser;
+import com.github.houseorganizer.houseorganizer.user.User;
 import com.github.houseorganizer.houseorganizer.util.Util;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -101,7 +113,7 @@ public class MainScreenActivity extends AppCompatActivity {
                     // Store the image on firebase storage
                     FirebaseStorage storage = FirebaseStorage.getInstance();
                     // this creates the reference to the picture
-                    StorageReference imageRef = storage.getReference().child(calendarAdapter.eventToAttach + ".jpg");
+                    StorageReference imageRef = storage.getReference().child(calendarAdapter.getEventToAttach() + ".jpg");
                     imageRef.putFile(uri).addOnCompleteListener((complete) -> {});
                 });
     }
@@ -117,7 +129,7 @@ public class MainScreenActivity extends AppCompatActivity {
         db.collection("households").whereArrayContains("residents", mUser.getEmail()).get()
                 .addOnCompleteListener(task -> {
                     if (task.isSuccessful()) {
-                        ArrayList<String> households = new ArrayList<String>();
+                        ArrayList<String> households = new ArrayList<>();
                         for (QueryDocumentSnapshot document : task.getResult()) {
                             if (householdId.equals(document.getId())) {
                                 households.add(document.getId());

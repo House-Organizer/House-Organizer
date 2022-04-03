@@ -1,4 +1,4 @@
-package com.github.houseorganizer.houseorganizer;
+package com.github.houseorganizer.houseorganizer.task;
 
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -15,6 +15,9 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.github.houseorganizer.houseorganizer.util.BiViewHolder;
+import com.github.houseorganizer.houseorganizer.activity.MainScreenActivity;
+import com.github.houseorganizer.houseorganizer.R;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -82,7 +85,7 @@ public final class TaskView {
     }
 
     /* Used in MainScreenActivity */
-    protected static void recoverTaskList(AppCompatActivity parent, TaskList taskList, TaskListAdapter taskListAdapter, DocumentReference taskListRoot) {
+    public static void recoverTaskList(AppCompatActivity parent, TaskList taskList, TaskListAdapter taskListAdapter, DocumentReference taskListRoot) {
         taskListRoot.get().addOnCompleteListener(task -> {
             if (task.isSuccessful()) {
                 DocumentSnapshot document = task.getResult();
@@ -111,15 +114,15 @@ public final class TaskView {
         });
     }
 
-    protected static void setUpTaskListView(AppCompatActivity parent, TaskListAdapter taskListAdapter) {
+    public static void setUpTaskListView(AppCompatActivity parent, TaskListAdapter taskListAdapter) {
         RecyclerView taskListView = parent.findViewById(R.id.task_list);
         taskListView.setAdapter(taskListAdapter);
         taskListView.setLayoutManager(new LinearLayoutManager(parent));
     }
 
     // Adds a task iff. the task list is in view
-    protected static void addTask(FirebaseFirestore db, TaskList taskList, TaskListAdapter taskListAdapter,
-                         MainScreenActivity.ListFragmentView listView) {
+    public static void addTask(FirebaseFirestore db, TaskList taskList, TaskListAdapter taskListAdapter,
+                               MainScreenActivity.ListFragmentView listView) {
         if (listView != MainScreenActivity.ListFragmentView.CHORES_LIST) {
             return;
         }
