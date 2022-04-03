@@ -42,6 +42,7 @@ public class LoginEmail extends AppCompatActivity {
                     }
                 }
         );
+
         findViewById(R.id.log_email_register_button).setOnClickListener(
                 v -> startActivity(new Intent(LoginEmail.this, RegisterEmail.class))
         );
