@@ -26,11 +26,6 @@ public class RegisterEmailTest {
     @Rule
     public ActivityScenarioRule<RegisterEmail> regRule =
             new ActivityScenarioRule<>(RegisterEmail.class);
-
-    @Test
-    public void registerButtonIsDisplayed() {
-        onView(withId(R.id.reg_email_register_button)).check(matches(isDisplayed()));
-    }
 /*
     @Test
     public void isValidEmailShowsRightErrorWhenFalse() throws InterruptedException, ExecutionException {
