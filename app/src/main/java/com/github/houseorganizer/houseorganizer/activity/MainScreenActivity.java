@@ -1,5 +1,8 @@
 package com.github.houseorganizer.houseorganizer.activity;
 
+import static com.github.houseorganizer.houseorganizer.util.Util.getSharedPrefs;
+import static com.github.houseorganizer.houseorganizer.util.Util.getSharedPrefsEditor;
+
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
@@ -45,11 +48,11 @@ import java.time.ZoneOffset;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 @SuppressWarnings("unused")
 public class MainScreenActivity extends AppCompatActivity {
 
-    public static final String SHARED_PREFS = "com.github.houseorganizer.houseorganizer.sharedPrefs";
     public static final String CURRENT_HOUSEHOLD = "com.github.houseorganizer.houseorganizer.CURRENT_HOUSEHOLD";
 
     private Calendar calendar;
@@ -119,14 +122,14 @@ public class MainScreenActivity extends AppCompatActivity {
     }
 
     private void loadData() {
-        SharedPreferences sharedPreferences = getSharedPreferences(SHARED_PREFS, MODE_PRIVATE);
+        SharedPreferences sharedPreferences = getSharedPrefs(this);
         String householdId = sharedPreferences.getString(CURRENT_HOUSEHOLD, "");
 
         loadHousehold(householdId);
     }
 
     private void loadHousehold(String householdId) {
-        db.collection("households").whereArrayContains("residents", mUser.getEmail()).get()
+        db.collection("households").whereArrayContains("residents", Objects.requireNonNull(mUser.getEmail())).get()
                 .addOnCompleteListener(task -> {
                     if (task.isSuccessful()) {
                         ArrayList<String> households = new ArrayList<>();
@@ -166,8 +169,7 @@ public class MainScreenActivity extends AppCompatActivity {
     }
 
     private void saveData(String currentHouseId) {
-        SharedPreferences sharedPreferences = getSharedPreferences(MainScreenActivity.SHARED_PREFS, MODE_PRIVATE);
-        SharedPreferences.Editor editor = sharedPreferences.edit();
+        SharedPreferences.Editor editor = getSharedPrefsEditor(this);
 
         editor.putString(CURRENT_HOUSEHOLD, currentHouseId);
         editor.apply();
