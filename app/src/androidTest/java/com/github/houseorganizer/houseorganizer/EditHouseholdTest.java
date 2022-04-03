@@ -31,11 +31,11 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.MethodSorters;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
 
-@FixMethodOrder(MethodSorters.NAME_ASCENDING)
 @RunWith(AndroidJUnit4.class)
 public class EditHouseholdTest {
     private static FirebaseFirestore db;
@@ -68,23 +68,29 @@ public class EditHouseholdTest {
         return task.getResult().getData();
     }
 
+    // Might want to move this into some kind of utils for tests
+    private void setHouseholdData(String houseName, Map<String, Object> data) throws ExecutionException, InterruptedException {
+        Task<Void> task = db.collection("households").document(houseName).set(data);
+        Tasks.await(task);
+    }
+
     @Test
-    public void phase0_addUserIsDisplayed() {
+    public void addUserIsDisplayed() {
         onView(withId(R.id.editTextAddUser)).check(matches(isDisplayed()));
     }
 
     @Test
-    public void phase0_removeUserIsDisplayed() {
+    public void removeUserIsDisplayed() {
         onView(withId(R.id.editTextAddUser)).check(matches(isDisplayed()));
     }
 
     @Test
-    public void phase0_changeOwnerIsDisplayed() {
+    public void changeOwnerIsDisplayed() {
         onView(withId(R.id.editTextAddUser)).check(matches(isDisplayed()));
     }
 
     @Test
-    public void phase1_addUserWorksWithCorrectEmail() throws ExecutionException, InterruptedException {
+    public void addUserWorksWithCorrectEmail() throws ExecutionException, InterruptedException {
         // Get state of house
         Map<String, Object> houseData_before = fetchHouseholdData("home_1");
         List<String> resident_before = (List<String>) houseData_before.get("residents");
@@ -104,17 +110,20 @@ public class EditHouseholdTest {
         Long expected_num_residents = num_residents_before + 1;
         assertEquals(expected_num_residents, num_residents_after);
         assertTrue(resident_after.contains("user_3@test.com"));
+
+        // Restore state
+        setHouseholdData("home_1", houseData_before);
     }
 
     @Test
-    public void phase2_removeUserWorksWithCorrectEmail() throws ExecutionException, InterruptedException {
+    public void removeUserWorksWithCorrectEmail() throws ExecutionException, InterruptedException {
         // Get state of house
         Map<String, Object> houseData_before = fetchHouseholdData("home_1");
         List<String> resident_before = (List<String>) houseData_before.get("residents");
         Long num_residents_before = (Long) houseData_before.get("num_members");
 
         // Perform clicks
-        onView(withId(R.id.editTextRemoveUser)).perform(click(), typeText("user_3@test.com"), closeSoftKeyboard());
+        onView(withId(R.id.editTextRemoveUser)).perform(click(), typeText("user_2@test.com"), closeSoftKeyboard());
         onView(withId(R.id.imageButtonRemoveUser)).perform(click());
 
         // Get state of house
@@ -123,14 +132,17 @@ public class EditHouseholdTest {
         Long num_residents_after = (Long) houseData_after.get("num_members");
 
         // Compare states
-        assertTrue(resident_before.contains("user_3@test.com"));
+        assertTrue(resident_before.contains("user_2@test.com"));
         Long expected_num_residents = num_residents_before - 1;
         assertEquals(expected_num_residents, num_residents_after);
-        assertFalse(resident_after.contains("user_3@test.com"));
+        assertFalse(resident_after.contains("user_2@test.com"));
+
+        // Restore state
+        setHouseholdData("home_1", houseData_before);
     }
 
     @Test
-    public void phase3_changeOwnerWorksWithCorrectEmail() throws ExecutionException, InterruptedException {
+    public void changeOwnerWorksWithCorrectEmail() throws ExecutionException, InterruptedException {
         // Get state of house
         Map<String, Object> houseData_before = fetchHouseholdData("home_1");
         String owner_before = (String) houseData_before.get("owner");
@@ -146,5 +158,8 @@ public class EditHouseholdTest {
         // Compare states
         assertEquals("user_1@test.com", owner_before);
         assertEquals("user_2@test.com", owner_after);
+
+        // Restore state
+        setHouseholdData("home_1", houseData_before);
     }
 }
