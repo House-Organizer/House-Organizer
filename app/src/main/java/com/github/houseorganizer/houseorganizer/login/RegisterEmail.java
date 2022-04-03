@@ -4,6 +4,7 @@ import static com.github.houseorganizer.houseorganizer.util.LoginHelpers.display
 import static com.github.houseorganizer.houseorganizer.util.LoginHelpers.inputsEmpty;
 import static com.github.houseorganizer.houseorganizer.util.LoginHelpers.isValidEmail;
 import static com.github.houseorganizer.houseorganizer.util.LoginHelpers.isValidPassword;
+import static com.github.houseorganizer.houseorganizer.util.Util.logAndToast;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -83,7 +84,7 @@ public class RegisterEmail extends AppCompatActivity {
                                 "Verification email sent to " + user.getEmail(),
                                 Toast.LENGTH_SHORT).show();
                     } else {
-                        LoginActivity.logAndToast(Arrays.asList(getString(R.string.tag_register_email),
+                        logAndToast(Arrays.asList(getString(R.string.tag_register_email),
                                 "sendEmailVerification"), task.getException(),
                                 RegisterEmail.this, "Failed to send verification email.");
                     }

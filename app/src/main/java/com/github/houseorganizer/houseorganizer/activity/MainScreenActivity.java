@@ -2,6 +2,7 @@ package com.github.houseorganizer.houseorganizer.activity;
 
 import static com.github.houseorganizer.houseorganizer.util.Util.getSharedPrefs;
 import static com.github.houseorganizer.houseorganizer.util.Util.getSharedPrefsEditor;
+import static com.github.houseorganizer.houseorganizer.util.Util.logAndToast;
 
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
@@ -12,7 +13,6 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.EditText;
-import android.widget.Toast;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
@@ -46,6 +46,7 @@ import com.google.firebase.storage.StorageReference;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -152,7 +153,9 @@ public class MainScreenActivity extends AppCompatActivity {
                         }
                         refreshCalendar(findViewById(R.id.calendar));
                     } else {
-                        Toast.makeText(getApplicationContext(), "Could not get a house.", Toast.LENGTH_SHORT).show();
+                        logAndToast(Arrays.asList("MainScreenActivity",
+                                "loadHousehold:failure"), task.getException(),
+                                getApplicationContext(), "Could not get a house.");
                     }
                 });
     }
@@ -235,9 +238,10 @@ public class MainScreenActivity extends AppCompatActivity {
                         }
                         calendarAdapter.notifyDataSetChanged();
                         calendar.setEvents(newEvents);
-                    }
-                    else {
-                        Toast.makeText(v.getContext(), v.getContext().getString(R.string.refresh_calendar_fail), Toast.LENGTH_SHORT).show();
+                    } else {
+                        logAndToast(Arrays.asList("MainScreenActivity",
+                                "refreshCalendar:failureToRefresh"), task.getException(),
+                                v.getContext(), v.getContext().getString(R.string.refresh_calendar_fail));
                     }
                 });
 

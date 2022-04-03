@@ -1,12 +1,12 @@
 package com.github.houseorganizer.houseorganizer.login;
 
 
+import static com.github.houseorganizer.houseorganizer.util.Util.logAndToast;
+
 import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
-import android.widget.Toast;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
@@ -25,7 +25,6 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.GoogleAuthProvider;
 
 import java.util.Arrays;
-import java.util.List;
 
 public class LoginActivity extends AppCompatActivity {
 
@@ -118,26 +117,20 @@ public class LoginActivity extends AppCompatActivity {
                 });
     }
 
-    protected static void logAndToast(List<String> logTagAndMsg, Exception e, Context cx, String toastMsg) {
-        assert logTagAndMsg.size() == 2;
-
-        Log.w(logTagAndMsg.get(0), logTagAndMsg.get(1), e);
-        Toast.makeText(cx, toastMsg, Toast.LENGTH_SHORT).show();
-    }
-
     private void firebaseAuthWithGoogle(String idToken) {
         AuthCredential credential = GoogleAuthProvider.getCredential(idToken, null);
         mAuth.signInWithCredential(credential)
                 .addOnCompleteListener(this, task -> {
                     if (task.isSuccessful()) {
                         // Sign in success, update UI with the signed-in user's information
-                        Log.d(getString(R.string.tag_login_activity), "signInWithGoogleCredential:success");
+                        Log.d(getString(R.string.tag_login_activity), "firebaseAuthWithGoogle:success");
                         startActivity(new Intent(LoginActivity.this, MainScreenActivity.class));
                         finish();
                     } else {
                         // If sign in fails, display a message to the user.
-                        Log.d(getString(R.string.tag_login_activity), "signInWithGoogleCredential:failure");
-                        Toast.makeText(LoginActivity.this, "Login Failed !", Toast.LENGTH_SHORT).show();
+                        logAndToast(Arrays.asList(getString(R.string.tag_login_activity),
+                                "firebaseAuthWithGoogle:failure"), task.getException(),
+                                LoginActivity.this, "Authentication failed.");
                     }
                 });
     }
