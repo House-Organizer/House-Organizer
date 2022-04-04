@@ -104,7 +104,6 @@ public class LoginActivity extends AppCompatActivity {
         mAuth.signInAnonymously()
                 .addOnCompleteListener(this, task -> {
                     if (task.isSuccessful()) {
-                        // Sign in success, update UI with the signed-in user's information
                         Log.d(getString(R.string.tag_login_activity), "signInAnonymously:success");
                         startActivity(new Intent(LoginActivity.this, MainScreenActivity.class));
                         finish();
@@ -122,7 +121,6 @@ public class LoginActivity extends AppCompatActivity {
         mAuth.signInWithCredential(credential)
                 .addOnCompleteListener(this, task -> {
                     if (task.isSuccessful()) {
-                        // Sign in success, update UI with the signed-in user's information
                         Log.d(getString(R.string.tag_login_activity), "firebaseAuthWithGoogle:success");
                         startActivity(new Intent(LoginActivity.this, MainScreenActivity.class));
                         finish();

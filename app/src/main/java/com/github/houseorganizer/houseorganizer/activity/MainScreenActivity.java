@@ -140,9 +140,7 @@ public class MainScreenActivity extends AppCompatActivity {
                                 currentHouse = db.collection("households").document(householdId);
                                 break;
                             }
-                        }
-
-                        if (currentHouse == null) {
+                        } if (currentHouse == null) {
                             if (!households.isEmpty()) {
                                 currentHouse = db.collection("households").document(households.get(0));
                                 saveData(households.get(0));
@@ -153,8 +151,7 @@ public class MainScreenActivity extends AppCompatActivity {
                         }
                         refreshCalendar(findViewById(R.id.calendar));
                     } else {
-                        logAndToast(Arrays.asList("MainScreenActivity",
-                                "loadHousehold:failure"), task.getException(),
+                        logAndToast(Arrays.asList("MainScreenActivity", "loadHousehold:failure"), task.getException(),
                                 getApplicationContext(), "Could not get a house.");
                     }
                 });
