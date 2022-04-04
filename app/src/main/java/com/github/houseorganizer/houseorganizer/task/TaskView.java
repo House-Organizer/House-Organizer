@@ -15,9 +15,9 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.github.houseorganizer.houseorganizer.util.BiViewHolder;
-import com.github.houseorganizer.houseorganizer.activity.MainScreenActivity;
 import com.github.houseorganizer.houseorganizer.R;
+import com.github.houseorganizer.houseorganizer.activity.MainScreenActivity;
+import com.github.houseorganizer.houseorganizer.util.BiViewHolder;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;

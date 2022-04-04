@@ -8,8 +8,8 @@ import android.widget.EditText;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.github.houseorganizer.houseorganizer.util.BiViewHolder;
 import com.github.houseorganizer.houseorganizer.R;
+import com.github.houseorganizer.houseorganizer.util.BiViewHolder;
 
 public class SubTaskAdapter extends RecyclerView.Adapter<BiViewHolder<Button, EditText>>{
     private final FirestoreTask parentTask;

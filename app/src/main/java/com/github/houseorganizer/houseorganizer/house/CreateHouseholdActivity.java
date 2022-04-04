@@ -10,10 +10,11 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.github.houseorganizer.houseorganizer.activity.MainScreenActivity;
 import com.github.houseorganizer.houseorganizer.R;
+import com.github.houseorganizer.houseorganizer.activity.MainScreenActivity;
 import com.google.firebase.firestore.FirebaseFirestore;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -38,7 +39,8 @@ public class CreateHouseholdActivity extends AppCompatActivity {
         CharSequence houseHoldName = houseHoldNameView.getText();
 
         Map<String, Object> houseHold = new HashMap<>();
-        List<String> residents = Arrays.asList(mUserEmail);
+        List<String> residents = new ArrayList<>();
+        residents.add(mUserEmail);
 
         houseHold.put("name", houseHoldName.toString());
         houseHold.put("owner", mUserEmail);
