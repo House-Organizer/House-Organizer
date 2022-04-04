@@ -46,10 +46,11 @@ public class RegisterEmail extends AppCompatActivity {
                     String confPassword = ((EditText) findViewById(R.id.reg_confirm_password)).getText().toString();
                     TextView error_field = findViewById(R.id.reg_email_error_message);
                     checkIfEmailIsAlreadyUsed(email);
-                    if (isEmailAlreadyUsed) {
-                        displayRegisterErrorMessage(LoginHelpers.RegisterError.EMAIL_USED, error_field);
-                    } else if (inputsEmpty(email, password)) {
+                    if (inputsEmpty(email, password)) {
                         displayRegisterErrorMessage(LoginHelpers.RegisterError.INPUTS_EMPTY, error_field);
+                    } else if (isEmailAlreadyUsed) {
+                        displayRegisterErrorMessage(LoginHelpers.RegisterError.EMAIL_USED, error_field);
+                        isEmailAlreadyUsed = false;
                     } else if (!isValidEmail(email)) {
                         displayRegisterErrorMessage(LoginHelpers.RegisterError.INVALID_EMAIL, error_field);
                     } else if (!isValidPassword(password, confPassword)) {
