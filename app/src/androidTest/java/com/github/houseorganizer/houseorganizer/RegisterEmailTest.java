@@ -36,6 +36,8 @@ import java.util.concurrent.ExecutionException;
 public class RegisterEmailTest {
 
     private static FirebaseAuth auth;
+    private static final String email1 = "user_register1@test.com", email2 = "user_register2@test.com";
+    private static final String validPwd = "A3@ef678!";
 
     @Rule
     public ActivityScenarioRule<RegisterEmail> regRule =
@@ -46,7 +48,7 @@ public class RegisterEmailTest {
         FirebaseTestsHelper.startAuthEmulator();
         auth = FirebaseAuth.getInstance();
 
-        Task<AuthResult> t = auth.createUserWithEmailAndPassword("user_register2@test.com", "A3@ef678");
+        Task<AuthResult> t = auth.createUserWithEmailAndPassword(email2, validPwd);
         Tasks.await(t);
         auth.signOut();
     }
@@ -54,17 +56,28 @@ public class RegisterEmailTest {
     @AfterClass
     public static void end() throws ExecutionException, InterruptedException {
         try {
-            Task<Void> t = auth.getCurrentUser().delete();
+            auth.signOut();
+        } catch (Error ignored) {}
+        try {
+            Task<AuthResult> t = auth.signInWithEmailAndPassword(email1, validPwd);
             Tasks.await(t);
+            Task<Void> t2 = auth.getCurrentUser().delete();
+            Tasks.await(t2);
+        } catch (Error ignored) {}
+        try {
+            Task<AuthResult> t = auth.signInWithEmailAndPassword(email2, validPwd);
+            Tasks.await(t);
+            Task<Void> t2 = auth.getCurrentUser().delete();
+            Tasks.await(t2);
         } catch (Error ignored) {}
     }
 
     @Test
     public void signUpWithEmailWorksWithCorrectInputs() {
         Intents.init();
-        onView(withId(R.id.reg_enter_email)).perform(clearText(), typeText("user_register1@test.com"), closeSoftKeyboard());
-        onView(withId(R.id.reg_enter_password)).perform(clearText(), typeText("A3@ef678"), closeSoftKeyboard());
-        onView(withId(R.id.reg_confirm_password)).perform(clearText(), typeText("A3@ef678"), closeSoftKeyboard());
+        onView(withId(R.id.reg_enter_email)).perform(clearText(), typeText(email1), closeSoftKeyboard());
+        onView(withId(R.id.reg_enter_password)).perform(clearText(), typeText(validPwd), closeSoftKeyboard());
+        onView(withId(R.id.reg_confirm_password)).perform(clearText(), typeText(validPwd), closeSoftKeyboard());
         onView(withId(R.id.reg_email_register_button)).perform(click());
         intended(hasComponent(VerifyEmail.class.getName()));
         Intents.release();
@@ -92,9 +105,9 @@ public class RegisterEmailTest {
         onView(withId(R.id.reg_email_error_message)).check(matches(withText(R.string.password_not_valid)));
 
         // EMAIL_USED
-        onView(withId(R.id.reg_enter_email)).perform(clearText(), typeText("user_register2@test.com"), closeSoftKeyboard());
-        onView(withId(R.id.reg_enter_password)).perform(clearText(), typeText("A3@ef678!"), closeSoftKeyboard());
-        onView(withId(R.id.reg_confirm_password)).perform(clearText(), typeText("A3@ef678!"), closeSoftKeyboard());
+        onView(withId(R.id.reg_enter_email)).perform(clearText(), typeText(email2), closeSoftKeyboard());
+        onView(withId(R.id.reg_enter_password)).perform(clearText(), typeText(validPwd), closeSoftKeyboard());
+        onView(withId(R.id.reg_confirm_password)).perform(clearText(), typeText(validPwd), closeSoftKeyboard());
         onView(withId(R.id.reg_email_register_button)).perform(click());
         Thread.sleep(500);
         onView(withId(R.id.reg_email_error_message)).check(matches(withText(R.string.reg_email_auth_failed)));
