@@ -14,7 +14,11 @@ import androidx.test.ext.junit.rules.ActivityScenarioRule;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 
 import com.github.houseorganizer.houseorganizer.login.RegisterEmail;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.FirebaseFirestore;
 
+import org.junit.AfterClass;
+import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -23,17 +27,31 @@ import java.util.concurrent.ExecutionException;
 
 @RunWith(AndroidJUnit4.class)
 public class RegisterEmailTest {
+
+    private static FirebaseFirestore db;
+    private static FirebaseAuth auth;
+
+    @BeforeClass
+    public static void createMockFirebase() throws ExecutionException, InterruptedException {
+        FirebaseTestsHelper.startAuthEmulator();
+        FirebaseTestsHelper.startFirestoreEmulator();
+        FirebaseTestsHelper.setUpFirebase();
+
+        db = FirebaseFirestore.getInstance();
+        auth = FirebaseAuth.getInstance();
+    }
+
+    @AfterClass
+    public static void signOut(){
+        auth.signOut();
+    }
+
     @Rule
     public ActivityScenarioRule<RegisterEmail> regRule =
             new ActivityScenarioRule<>(RegisterEmail.class);
 
     @Test
-    public void registerButtonIsDisplayed() {
-        onView(withId(R.id.reg_email_register_button)).check(matches(isDisplayed()));
-    }
-/*
-    @Test
-    public void isValidEmailShowsRightErrorWhenFalse() throws InterruptedException, ExecutionException {
+    public void isValidEmailShowsRightErrorWhenFalse() throws InterruptedException {
         // INPUTS_EMPTY
         onView(withId(R.id.reg_enter_email)).perform(click(), typeText("test"), closeSoftKeyboard());
         onView(withId(R.id.reg_email_register_button)).perform(click());
@@ -46,14 +64,11 @@ public class RegisterEmailTest {
         Thread.sleep(500);
         onView(withId(R.id.reg_email_error_message)).check(matches(withText(R.string.email_not_valid)));
 
-        FirebaseTestsHelper.startAuthEmulator();
-        FirebaseTestsHelper.createFirebaseTestUser();
-
         // INVALID_PASSWORD
-        onView(withId(R.id.reg_enter_email)).perform(clearText(), typeText(FirebaseTestsHelper.TEST_USER_MAIL), closeSoftKeyboard());
+        onView(withId(R.id.reg_enter_email)).perform(clearText(), typeText(FirebaseTestsHelper.TEST_USERS_EMAILS[0]), closeSoftKeyboard());
         onView(withId(R.id.reg_confirm_password)).perform(click(), typeText("test"), closeSoftKeyboard());
         onView(withId(R.id.reg_email_register_button)).perform(click());
         Thread.sleep(500);
         onView(withId(R.id.reg_email_error_message)).check(matches(withText(R.string.password_not_valid)));
-    }*/
+    }
 }
