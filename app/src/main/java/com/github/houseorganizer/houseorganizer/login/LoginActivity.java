@@ -21,6 +21,7 @@ import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthCredential;
+import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.GoogleAuthProvider;
 
@@ -100,36 +101,30 @@ public class LoginActivity extends AppCompatActivity {
         findViewById(R.id.discoverButton).setOnClickListener(v -> signInAnonymously());
     }
 
+    private void manageTask(Task<AuthResult> task, String func) {
+        if (task.isSuccessful()) {
+            // If sign in succeeds launch MainScreenActivity
+            Log.d(getString(R.string.tag_login_activity), func + ":success");
+            startActivity(new Intent(LoginActivity.this, MainScreenActivity.class));
+            finish();
+        } else {
+            // If sign in fails, display a message to the user.
+            logAndToast(Arrays.asList(getString(R.string.tag_login_activity),
+                    func + ":failure"), task.getException(),
+                    LoginActivity.this, "Authentication failed.");
+        }
+    }
+
     private void signInAnonymously() {
-        mAuth.signInAnonymously()
-                .addOnCompleteListener(this, task -> {
-                    if (task.isSuccessful()) {
-                        Log.d(getString(R.string.tag_login_activity), "signInAnonymously:success");
-                        startActivity(new Intent(LoginActivity.this, MainScreenActivity.class));
-                        finish();
-                    } else {
-                        // If sign in fails, display a message to the user.
-                        logAndToast(Arrays.asList(getString(R.string.tag_login_activity),
-                                "signInAnonymously:failure"), task.getException(),
-                                LoginActivity.this, "Authentication failed.");
-                    }
-                });
+        mAuth.signInAnonymously().addOnCompleteListener(this,
+                        task -> manageTask(task, "signInAnonymously")
+                );
     }
 
     private void firebaseAuthWithGoogle(String idToken) {
         AuthCredential credential = GoogleAuthProvider.getCredential(idToken, null);
-        mAuth.signInWithCredential(credential)
-                .addOnCompleteListener(this, task -> {
-                    if (task.isSuccessful()) {
-                        Log.d(getString(R.string.tag_login_activity), "firebaseAuthWithGoogle:success");
-                        startActivity(new Intent(LoginActivity.this, MainScreenActivity.class));
-                        finish();
-                    } else {
-                        // If sign in fails, display a message to the user.
-                        logAndToast(Arrays.asList(getString(R.string.tag_login_activity),
-                                "firebaseAuthWithGoogle:failure"), task.getException(),
-                                LoginActivity.this, "Authentication failed.");
-                    }
-                });
+        mAuth.signInWithCredential(credential).addOnCompleteListener(this,
+                task -> manageTask(task, "firebaseAuthWithGoogle")
+        );
     }
 }
