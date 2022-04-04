@@ -110,6 +110,6 @@ public class RegisterEmailTest {
         onView(withId(R.id.reg_confirm_password)).perform(clearText(), typeText(validPwd), closeSoftKeyboard());
         onView(withId(R.id.reg_email_register_button)).perform(click());
         Thread.sleep(500);
-        onView(withId(R.id.reg_email_error_message)).check(matches(withText(R.string.reg_email_auth_failed)));
+        onView(withId(R.id.reg_email_error_message)).check(matches(withText(R.string.email_already_used)));
     }
 }
