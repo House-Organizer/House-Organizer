@@ -1,5 +1,7 @@
-package com.github.houseorganizer.houseorganizer;
+package com.github.houseorganizer.houseorganizer.task;
 
+import com.github.houseorganizer.houseorganizer.user.DummyUser;
+import com.github.houseorganizer.houseorganizer.user.User;
 import com.google.android.gms.tasks.Tasks;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
@@ -79,7 +81,7 @@ public class FirestoreTask extends Task{
     }
 
     /* Static API */
-    private static com.google.android.gms.tasks.Task<DocumentReference> storeTask(Task task, CollectionReference taskListRef) throws ExecutionException, InterruptedException {
+    private static com.google.android.gms.tasks.Task<DocumentReference> storeTask(Task task, CollectionReference taskListRef) {
         Map<String, Object> data = new HashMap<>();
 
         // Loading information

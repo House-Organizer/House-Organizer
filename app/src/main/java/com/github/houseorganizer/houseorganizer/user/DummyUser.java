@@ -1,4 +1,4 @@
-package com.github.houseorganizer.houseorganizer;
+package com.github.houseorganizer.houseorganizer.user;
 
 public class DummyUser extends User {
     private final String name, uid;

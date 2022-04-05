@@ -1,4 +1,6 @@
-package com.github.houseorganizer.houseorganizer;
+package com.github.houseorganizer.houseorganizer.house;
+
+import static com.github.houseorganizer.houseorganizer.util.Util.getSharedPrefsEditor;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -17,12 +19,15 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter;
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
+import com.github.houseorganizer.houseorganizer.R;
+import com.github.houseorganizer.houseorganizer.panels.MainScreenActivity;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
 
 import java.util.Map;
+import java.util.Objects;
 
 public class HouseSelectionActivity extends AppCompatActivity {
 
@@ -39,7 +44,7 @@ public class HouseSelectionActivity extends AppCompatActivity {
 
         housesView = findViewById(R.id.housesView);
 
-        emailUser = FirebaseAuth.getInstance().getCurrentUser().getEmail();
+        emailUser = Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser()).getEmail();
         this.firestore = FirebaseFirestore.getInstance();
 
         Query query = firestore.collection("households").whereArrayContains("residents", emailUser);
@@ -67,8 +72,7 @@ public class HouseSelectionActivity extends AppCompatActivity {
     }
 
     private void saveData(String selectedHouse) {
-        SharedPreferences sharedPreferences = getSharedPreferences(MainScreenActivity.SHARED_PREFS, MODE_PRIVATE);
-        SharedPreferences.Editor editor = sharedPreferences.edit();
+        SharedPreferences.Editor editor = getSharedPrefsEditor(this);
 
         editor.putString(MainScreenActivity.CURRENT_HOUSEHOLD, selectedHouse);
         editor.apply();
