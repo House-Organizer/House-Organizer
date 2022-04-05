@@ -90,7 +90,7 @@ public class Calendar {
                         calendarAdapter.notifyDataSetChanged();
                         setEvents(newEvents);
                     } else {
-                        logAndToast(funcAndErrMessage, task.getException(),
+                        logAndToast(funcAndErrMessage.get(0), funcAndErrMessage.get(1), task.getException(),
                                 v.getContext(), v.getContext().getString(R.string.refresh_calendar_fail));
                     }
                 });

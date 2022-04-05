@@ -84,8 +84,7 @@ public class RegisterEmail extends AppCompatActivity {
                                 "Verification email sent to " + user.getEmail(),
                                 Toast.LENGTH_SHORT).show();
                     } else {
-                        logAndToast(Arrays.asList(getString(R.string.tag_register_email),
-                                "sendEmailVerification"), task.getException(),
+                        logAndToast(getString(R.string.tag_register_email), "sendEmailVerification", task.getException(),
                                 RegisterEmail.this, "Failed to send verification email.");
                     }
                 });

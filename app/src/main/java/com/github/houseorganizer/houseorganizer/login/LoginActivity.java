@@ -109,8 +109,7 @@ public class LoginActivity extends AppCompatActivity {
             finish();
         } else {
             // If sign in fails, display a message to the user.
-            logAndToast(Arrays.asList(getString(R.string.tag_login_activity),
-                    func + ":failure"), task.getException(),
+            logAndToast(getString(R.string.tag_login_activity), func + ":failure", task.getException(),
                     LoginActivity.this, "Authentication failed.");
         }
     }

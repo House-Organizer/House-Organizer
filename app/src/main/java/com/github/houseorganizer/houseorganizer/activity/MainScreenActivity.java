@@ -141,7 +141,7 @@ public class MainScreenActivity extends AppCompatActivity {
                         }
                         refreshCalendar(findViewById(R.id.refresh_calendar));
                     } else {
-                        logAndToast(Arrays.asList("MainScreenActivity", "loadHousehold:failure"), task.getException(),
+                        logAndToast("MainScreenActivity", "loadHousehold:failure", task.getException(),
                                 getApplicationContext(), "Could not get a house.");
                     }
                 });

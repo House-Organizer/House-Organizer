@@ -54,10 +54,8 @@ public class CreateHouseholdActivity extends AppCompatActivity {
                                 view.getContext().getString(R.string.add_household_success),
                                 Toast.LENGTH_SHORT).show();
                     } else {
-                        logAndToast(Arrays.asList("CreateHouseHoldActivity",
-                                "submitHouseholdToFirestore:failure"), task.getException(),
-                                view.getContext(),
-                                view.getContext().getString(R.string.add_household_failure));
+                        logAndToast("CreateHouseHoldActivity", "submitHouseholdToFirestore:failure",
+                                task.getException(), view.getContext(), view.getContext().getString(R.string.add_household_failure));
                     }
                 });
 

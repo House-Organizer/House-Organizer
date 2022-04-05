@@ -37,10 +37,8 @@ public class Util {
         INPUTS_EMPTY
     }
 
-    public static void logAndToast(List<String> logTagAndMsg, Exception e, Context cx, String toastMsg) {
-        assert logTagAndMsg.size() == 2;
-
-        Log.w(logTagAndMsg.get(0), logTagAndMsg.get(1), e);
+    public static void logAndToast(String tag, String log, Exception e, Context cx, String toastMsg) {
+        Log.w(tag, log, e);
         Toast.makeText(cx, toastMsg, Toast.LENGTH_SHORT).show();
     }
 
