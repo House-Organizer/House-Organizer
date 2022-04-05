@@ -1,10 +1,20 @@
 package com.github.houseorganizer.houseorganizer.calendar;
 
+import static com.github.houseorganizer.houseorganizer.util.Util.logAndToast;
 import static java.util.Objects.requireNonNull;
+
+import android.annotation.SuppressLint;
+import android.view.View;
 
 import androidx.annotation.NonNull;
 
+import com.github.houseorganizer.houseorganizer.R;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+
 import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -46,6 +56,35 @@ public class Calendar {
             ret.append(event).append("\n");
         }
         return ret.toString();
+    }
+
+    @SuppressLint("NotifyDataSetChanged")
+    public void refreshCalendar(View v, FirebaseFirestore db, DocumentReference currentHouse, EventsAdapter calendarAdapter, List<String> funcAndErrMessage) {
+        db.collection("events")
+                .whereEqualTo("household", currentHouse)
+                .whereGreaterThan("start", LocalDateTime.now().toEpochSecond(ZoneOffset.UTC))
+                .get()
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        ArrayList<Event> newEvents = new ArrayList<>();
+                        for (QueryDocumentSnapshot document : task.getResult()) {
+                            // We assume the stored data is well behaved since it got added in a well behaved manner.
+                            Event event = new Event(
+                                    document.getString("title"),
+                                    document.getString("description"),
+                                    LocalDateTime.ofEpochSecond(document.getLong("start"), 0, ZoneOffset.UTC),
+                                    document.getLong("duration") == null ? 0 : document.getLong("duration"),
+                                    document.getId());
+                            newEvents.add(event);
+                        }
+                        calendarAdapter.notifyDataSetChanged();
+                        setEvents(newEvents);
+                    } else {
+                        logAndToast(funcAndErrMessage, task.getException(),
+                                v.getContext(), v.getContext().getString(R.string.refresh_calendar_fail));
+                    }
+                });
+
     }
 
     public static class Event {

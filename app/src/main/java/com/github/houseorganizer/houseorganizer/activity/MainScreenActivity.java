@@ -43,8 +43,6 @@ import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
-import java.time.LocalDateTime;
-import java.time.ZoneOffset;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -107,7 +105,7 @@ public class MainScreenActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        refreshCalendar(findViewById(R.id.calendar));
+        refreshCalendar(findViewById(R.id.refresh_calendar));
     }
 
     private ActivityResultLauncher<String> registerForEventImage() {
@@ -149,7 +147,7 @@ public class MainScreenActivity extends AppCompatActivity {
                                 hideButtons();
                             }
                         }
-                        refreshCalendar(findViewById(R.id.calendar));
+                        refreshCalendar(findViewById(R.id.refresh_calendar));
                     } else {
                         logAndToast(Arrays.asList("MainScreenActivity", "loadHousehold:failure"), task.getException(),
                                 getApplicationContext(), "Could not get a house.");
@@ -182,6 +180,11 @@ public class MainScreenActivity extends AppCompatActivity {
         calendarEvents.setLayoutManager(new GridLayoutManager(this, calendarColumns));
     }
 
+    private void refreshCalendar(View v) {
+        calendar.refreshCalendar(findViewById(R.id.refresh_calendar), db, currentHouse, calendarAdapter, Arrays.asList("MainScreenActivity",
+                "refreshCalendar:failureToRefresh"));
+    }
+
     private void addEvent(View v) {
         LayoutInflater inflater = LayoutInflater.from(MainScreenActivity.this);
         final View dialogView = inflater.inflate(R.layout.event_creation, null);
@@ -210,38 +213,8 @@ public class MainScreenActivity extends AppCompatActivity {
         }
         data.put("household", currentHouse);
         db.collection("events").add(data)
-                .addOnSuccessListener(documentReference -> refreshCalendar(v));
+                .addOnSuccessListener(documentReference -> refreshCalendar(findViewById(R.id.refresh_calendar)));
         dialog.dismiss();
-    }
-
-    @SuppressLint("NotifyDataSetChanged")
-    public void refreshCalendar(View v) {
-        db.collection("events")
-                .whereEqualTo("household", currentHouse)
-                .whereGreaterThan("start", LocalDateTime.now().toEpochSecond(ZoneOffset.UTC))
-                .get()
-                .addOnCompleteListener(task -> {
-                    if (task.isSuccessful()) {
-                        ArrayList<Event> newEvents = new ArrayList<>();
-                        for (QueryDocumentSnapshot document : task.getResult()) {
-                            // We assume the stored data is well behaved since it got added in a well behaved manner.
-                            Event event = new Event(
-                                    document.getString("title"),
-                                    document.getString("description"),
-                                    LocalDateTime.ofEpochSecond(document.getLong("start"), 0, ZoneOffset.UTC),
-                                    document.getLong("duration") == null ? 0 : document.getLong("duration"),
-                                    document.getId());
-                            newEvents.add(event);
-                        }
-                        calendarAdapter.notifyDataSetChanged();
-                        calendar.setEvents(newEvents);
-                    } else {
-                        logAndToast(Arrays.asList("MainScreenActivity",
-                                "refreshCalendar:failureToRefresh"), task.getException(),
-                                v.getContext(), v.getContext().getString(R.string.refresh_calendar_fail));
-                    }
-                });
-
     }
 
     @SuppressWarnings("unused")
