@@ -1,5 +1,7 @@
 package com.github.houseorganizer.houseorganizer.calendar;
 
+import static com.github.houseorganizer.houseorganizer.calendar.Calendar.Event.putEventStringsInData;
+
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.Context;
@@ -17,7 +19,6 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.github.houseorganizer.houseorganizer.R;
 import com.github.houseorganizer.houseorganizer.calendar.Calendar.Event;
-import com.github.houseorganizer.houseorganizer.util.Util;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.SetOptions;
 
@@ -185,7 +186,7 @@ public class EventsAdapter extends RecyclerView.Adapter<EventsAdapter.ViewHolder
         event.put("desc", desc);
         event.put("date", date);
         event.put("duration", duration);
-        if (Util.putEventStringsInData(event, data)) {
+        if (putEventStringsInData(event, data)) {
             editForm.dismiss();
             return;
         }

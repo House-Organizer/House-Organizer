@@ -14,19 +14,20 @@ import android.widget.EditText;
 import androidx.annotation.NonNull;
 
 import com.github.houseorganizer.houseorganizer.R;
-import com.github.houseorganizer.houseorganizer.util.Util;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
+import java.time.format.DateTimeFormatter;
+import java.time.temporal.TemporalAccessor;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 public class Calendar {
     private ArrayList<Event> events;
@@ -120,7 +121,7 @@ public class Calendar {
         event.put("desc", desc);
         event.put("date", date);
         event.put("duration", duration);
-        if (Util.putEventStringsInData(event, data)) {
+        if (Event.putEventStringsInData(event, data)) {
             dialog.dismiss();
             return;
         }
@@ -184,6 +185,19 @@ public class Calendar {
 
         public void setDuration(long duration) {
             this.duration = duration;
+        }
+
+        public static boolean putEventStringsInData(Map<String, String> event, Map<String, Object> data) {
+            data.put("title", event.get("title"));
+            data.put("description", event.get("desc"));
+            try {
+                TemporalAccessor start = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm").parse(event.get("date"));
+                data.put("start", LocalDateTime.from(start).toEpochSecond(ZoneOffset.UTC));
+                data.put("duration", Integer.valueOf(Objects.requireNonNull(event.get("duration"))));
+            } catch(Exception e) {
+                return true;
+            }
+            return false;
         }
 
         @NonNull
