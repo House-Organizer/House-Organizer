@@ -101,5 +101,6 @@
     <string name="show">Show</string>
     <string name="remove">Remove</string>
     <string name="three_dots">three dots</string>
+    <string name="event_attachment_content_description">attachment of the event</string>
 
 </resources>

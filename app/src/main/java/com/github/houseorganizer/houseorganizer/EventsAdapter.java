@@ -3,23 +3,27 @@ package com.github.houseorganizer.houseorganizer;
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.PopupMenu;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.github.houseorganizer.houseorganizer.Calendar.Event;
+import com.github.houseorganizer.houseorganizer.image.ImageHelper;
 import com.github.houseorganizer.houseorganizer.util.Util;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.SetOptions;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -38,6 +42,7 @@ public class EventsAdapter extends RecyclerView.Adapter<EventsAdapter.ViewHolder
     String eventToAttach;
 
     Calendar calendar;
+    FirebaseStorage storage = FirebaseStorage.getInstance();
     FirebaseFirestore db = FirebaseFirestore.getInstance();
 
     public EventsAdapter(Calendar calendar, ActivityResultLauncher<String> getPicture) {
@@ -116,16 +121,42 @@ public class EventsAdapter extends RecyclerView.Adapter<EventsAdapter.ViewHolder
     private void prepareUpcomingView(EventsAdapter.ViewHolder holder, int position) {
         Event event = calendar.getEvents().get(position);
         holder.titleView.setText(event.getTitle());
-        holder.titleView.setOnClickListener(v -> eventButtonListener(event, v, position));
+        holder.titleView.setOnClickListener(v -> titleOnClickListener(event, v, position));
         holder.dateView.setText(holder.dateView.getContext().getResources().getString(R.string.calendar_upcoming_date,
                 event.getStart().format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm"))));
-        holder.attachView.setOnClickListener(v -> {
-            this.eventToAttach = event.getId();
-            getPicture.launch("image/*");
-        });
+        holder.attachView.setOnClickListener(v -> setupPopupMenu(v, holder, event.getId()));
     }
 
-    private void eventButtonListener(Event event, View v, int position) {
+    private void setupPopupMenu(View v, ViewHolder holder, String eventId) {
+        PopupMenu attachmentMenu = new PopupMenu(v.getContext(), holder.attachView);
+
+        attachmentMenu.getMenuInflater().inflate(R.menu.event_attachment_menu, attachmentMenu.getMenu());
+        attachmentMenu.setOnMenuItemClickListener(menuItem -> {
+            StorageReference attachment = storage.getReference().child(eventId + ".jpg");
+            switch(menuItem.getTitle().toString()) {
+                case "Attach":
+                    eventToAttach = eventId;
+                    getPicture.launch("com/github/houseorganizer/houseorganizer/image/*");
+                    break;
+                case "Show":
+                    attachment.getDownloadUrl().addOnCompleteListener(task -> {
+                        if(task.isSuccessful()) {
+                            ImageHelper.showImagePopup(task.getResult(), v);
+                        }
+                        else {
+                            Toast.makeText(v.getContext(), "Could not find the attachment", Toast.LENGTH_SHORT).show();
+                        }
+                    });
+                    break;
+                case "Remove":
+                    attachment.delete();
+            }
+            return true;
+        });
+        attachmentMenu.show();
+    }
+
+    private void titleOnClickListener(Event event, View v, int position) {
         new AlertDialog.Builder(v.getContext())
                 .setTitle(event.getTitle())
                 .setMessage(event.getDescription())
@@ -145,7 +176,10 @@ public class EventsAdapter extends RecyclerView.Adapter<EventsAdapter.ViewHolder
                     new AlertDialog.Builder(v.getContext())
                             .setTitle(R.string.event_editing_title)
                             .setView(dialogView)
-                            .setPositiveButton(R.string.confirm, (editForm, editFormId) -> editEventAndDismiss(event, editForm, dialogView, position))
+                            .setPositiveButton(R.string.confirm, (editForm, editFormId) -> {
+                                    editEvent(event, dialogView, position);
+                                    editForm.dismiss();
+                            })
                             .setNegativeButton(R.string.cancel, (editForm, editFormId) -> dialog.dismiss())
                             .show();
                 }).show();
@@ -161,7 +195,7 @@ public class EventsAdapter extends RecyclerView.Adapter<EventsAdapter.ViewHolder
         return retView;
     }
 
-    private void editEventAndDismiss(Event eventObj, DialogInterface editForm, View dialogView, int position) {
+    private void editEvent(Event eventObj, View dialogView, int position) {
         Map<String, Object> data = new HashMap<>();
         final String title = ((EditText) dialogView.findViewById(R.id.new_event_title)).getText().toString();
         final String desc = ((EditText) dialogView.findViewById(R.id.new_event_desc)).getText().toString();
@@ -169,19 +203,21 @@ public class EventsAdapter extends RecyclerView.Adapter<EventsAdapter.ViewHolder
         final String duration = ((EditText) dialogView.findViewById(R.id.new_event_duration)).getText().toString();
         eventObj.setTitle(title);
         eventObj.setDescription(desc);
-        eventObj.setStart(LocalDateTime.parse(date, DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm")));
-        eventObj.setDuration(Integer.parseInt(duration));
+        try {
+            eventObj.setStart(LocalDateTime.parse(date, DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm")));
+            eventObj.setDuration(Integer.parseInt(duration));
+        } catch(Exception e) {
+            return;
+        }
         Map<String, String> event = new HashMap<>();
         event.put("title", title);
         event.put("desc", desc);
         event.put("date", date);
         event.put("duration", duration);
         if (Util.putEventStringsInData(event, data)) {
-            editForm.dismiss();
             return;
         }
         db.collection("events").document(eventObj.getId()).set(data, SetOptions.merge());
-        editForm.dismiss();
         this.notifyItemChanged(position);
     }
 

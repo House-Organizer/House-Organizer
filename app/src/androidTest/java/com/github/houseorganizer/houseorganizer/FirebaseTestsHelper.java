@@ -1,5 +1,6 @@
 package com.github.houseorganizer.houseorganizer;
 
+import com.github.houseorganizer.houseorganizer.util.Util;
 import com.google.android.gms.tasks.Task;
 import com.google.android.gms.tasks.Tasks;
 import com.google.firebase.auth.AuthResult;
@@ -8,6 +9,7 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.storage.FirebaseStorage;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -129,6 +131,23 @@ public class FirebaseTestsHelper {
         // Store instance on the database using a helper function
         // returns only after storing is done
         FirestoreTask.storeTaskList(taskList, db.collection("task lists"), "task_list_1");
+    }
+
+    /**
+     * This method will create events for testing
+     */
+    protected static void createTestEvents() throws ExecutionException, InterruptedException {
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+
+        // Probably dont need to create the events themselves
+        Calendar.Event to_delete = new Calendar.Event("title", "desc", LocalDateTime.of(2022, 10, 10, 10, 10), 10, "to_delete");
+        Calendar.Event has_attachment = new Calendar.Event("title", "desc", LocalDateTime.of(2022, 10, 10, 10, 10), 10, "has_attachment");
+        Map<String, Object> to_delete_data = new HashMap<>();
+        Map<String, Object> has_attachment_data = new HashMap<>();
+
+        // TODO finish this method
+        Task<Void> task = db.collection("events").document("to_delete").set(to_delete_data);
+        Tasks.await(task);
     }
 
     /**

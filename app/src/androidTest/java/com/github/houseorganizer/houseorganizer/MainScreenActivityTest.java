@@ -1,5 +1,6 @@
 package com.github.houseorganizer.houseorganizer;
 
+import static androidx.test.espresso.Espresso.onData;
 import static androidx.test.espresso.Espresso.onView;
 import static androidx.test.espresso.action.ViewActions.click;
 import static androidx.test.espresso.assertion.ViewAssertions.matches;
@@ -14,10 +15,19 @@ import static androidx.test.espresso.matcher.ViewMatchers.isEnabled;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
 import static androidx.test.espresso.matcher.ViewMatchers.withText;
 
+import static org.hamcrest.Matchers.allOf;
+import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.hasEntry;
+import static org.hamcrest.Matchers.hasToString;
+import static org.hamcrest.Matchers.instanceOf;
+import static org.hamcrest.Matchers.is;
+
+import android.support.test.espresso.contrib.RecyclerViewActions;
 import android.view.View;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.recyclerview.widget.RecyclerViewAccessibilityDelegate;
 import androidx.test.espresso.intent.Intents;
 import androidx.test.espresso.matcher.BoundedMatcher;
 import androidx.test.ext.junit.rules.ActivityScenarioRule;
@@ -170,48 +180,6 @@ public class MainScreenActivityTest {
     public void cycleIsDisplayed() {
         onView(withId(R.id.calendar_view_change)).check(matches(isDisplayed()));
     }
-
-
-    // Used in order to access RecyclerView items
-    public static Matcher<View> atPosition(final int position, @NonNull final Matcher<View> itemMatcher) {
-        checkNotNull(itemMatcher);
-        return new BoundedMatcher<View, RecyclerView>(RecyclerView.class) {
-            @Override
-            public void describeTo(Description description) {
-                description.appendText("has item at position " + position + ": ");
-                itemMatcher.describeTo(description);
-            }
-
-            @Override
-            protected boolean matchesSafely(final RecyclerView view) {
-                RecyclerView.ViewHolder viewHolder = view.findViewHolderForAdapterPosition(position);
-                if (viewHolder == null) {
-                    // has no item on such position
-                    return false;
-                }
-                return itemMatcher.matches(viewHolder.itemView);
-            }
-        };
-    }
-    /*
-    @Test
-    public void calendarUpcomingEventsDisplayed() {
-        onView(withId(R.id.refresh_calendar)).perform(click());
-        // Somehow wait for the calendar to retrieve the data and refresh the calendar
-        //onView(withId(R.id.calendar)).check(matches(hasChildCount(4)));
-    }
-
-    /* Need to find a way to run the check (the lambda here doesn't get run)
-    @Test
-    public void addEventWorks() {
-        mainScreenActivityActivityScenarioRule.getScenario().onActivity(activity -> {
-            int baseCount = ((ViewGroup)activity.findViewById(R.id.calendar)).getChildCount();
-            onView(withId(R.id.add_event)).perform(click());
-            onView(withId(R.id.calendar)).check(matches(hasChildCount(baseCount+1)));
-        });
-    }
-    */
-
 
     @Test
     public void calendarViewRotatesCorrectly() {
