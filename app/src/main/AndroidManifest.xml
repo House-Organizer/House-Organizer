@@ -12,7 +12,7 @@
         android:theme="@style/Theme.HouseOrganizer">
 
         <activity
-            android:name=".activity.MainActivity"
+            android:name=".panels.MainActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -35,21 +35,21 @@
             android:exported="false"
             android:parentActivityName=".login.LoginEmail" />
         <activity
-            android:name=".activity.MainScreenActivity"
+            android:name=".panels.MainScreenActivity"
             android:exported="false" />
         <activity
-            android:name=".activity.InfoActivity"
+            android:name=".panels.InfoActivity"
             android:exported="false"
-            android:parentActivityName=".activity.MainScreenActivity" />
+            android:parentActivityName=".panels.MainScreenActivity" />
         <activity
-            android:name=".activity.SettingsActivity"
+            android:name=".panels.SettingsActivity"
             android:exported="false"
             android:label="@string/title_activity_settings"
-            android:parentActivityName=".activity.MainScreenActivity" />
+            android:parentActivityName=".panels.MainScreenActivity" />
         <activity
             android:name=".house.HouseSelectionActivity"
             android:exported="false"
-            android:parentActivityName=".activity.MainScreenActivity" />
+            android:parentActivityName=".panels.MainScreenActivity" />
         <activity
             android:name=".house.CreateHouseholdActivity"
             android:exported="false"

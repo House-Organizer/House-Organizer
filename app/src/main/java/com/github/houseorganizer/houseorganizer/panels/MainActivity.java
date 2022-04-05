@@ -1,4 +1,4 @@
-package com.github.houseorganizer.houseorganizer.activity;
+package com.github.houseorganizer.houseorganizer.panels;
 
 import android.content.Intent;
 import android.os.Bundle;

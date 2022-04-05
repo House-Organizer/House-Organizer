@@ -1,4 +1,4 @@
-package com.github.houseorganizer.houseorganizer.activity;
+package com.github.houseorganizer.houseorganizer.panels;
 
 import static com.github.houseorganizer.houseorganizer.util.Util.getSharedPrefs;
 import static com.github.houseorganizer.houseorganizer.util.Util.getSharedPrefsEditor;
