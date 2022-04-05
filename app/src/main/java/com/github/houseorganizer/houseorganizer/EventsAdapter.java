@@ -9,6 +9,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.TextView;
 
 import androidx.activity.result.ActivityResultLauncher;
@@ -47,7 +48,7 @@ public class EventsAdapter extends RecyclerView.Adapter<EventsAdapter.ViewHolder
     public class ViewHolder extends RecyclerView.ViewHolder {
         public Button titleView;
         public TextView dateView = null;
-        public Button attachView = null;
+        public ImageButton attachView = null;
         public ViewHolder(View eventView) {
             super(eventView);
 
@@ -156,7 +157,7 @@ public class EventsAdapter extends RecyclerView.Adapter<EventsAdapter.ViewHolder
         ((EditText) retView.findViewById(R.id.new_event_title)).setText(event.getTitle());
         ((EditText) retView.findViewById(R.id.new_event_desc)).setText(event.getDescription());
         ((EditText) retView.findViewById(R.id.new_event_date)).setText(event.getStart().format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm")));
-        ((EditText) retView.findViewById(R.id.new_event_duration)).setText(Long.toString(event.getDuration()));
+        ((EditText) retView.findViewById(R.id.new_event_duration)).setText(String.format(Locale.getDefault(), "%d", event.getDuration()));
         return retView;
     }
 

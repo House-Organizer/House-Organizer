@@ -97,5 +97,9 @@
     <string name="password_not_valid">Password is not valid.</string>
     <string name="inputs_empty">Inputs must not be empty.</string>
     <string name="signout_intent">sign_out</string>
+    <string name="attach">Attach</string>
+    <string name="show">Show</string>
+    <string name="remove">Remove</string>
+    <string name="three_dots">three dots</string>
 
 </resources>
