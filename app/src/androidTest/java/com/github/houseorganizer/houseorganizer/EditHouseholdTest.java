@@ -1,7 +1,6 @@
 package com.github.houseorganizer.houseorganizer;
 
 import static android.support.test.espresso.matcher.ViewMatchers.isDisplayed;
-import static android.support.test.espresso.matcher.ViewMatchers.withText;
 import static androidx.test.espresso.Espresso.onView;
 import static androidx.test.espresso.action.ViewActions.click;
 import static androidx.test.espresso.action.ViewActions.closeSoftKeyboard;
@@ -15,6 +14,8 @@ import static com.github.houseorganizer.houseorganizer.FirebaseTestsHelper.TEST_
 import static com.github.houseorganizer.houseorganizer.FirebaseTestsHelper.TEST_USERS_EMAILS;
 import static com.github.houseorganizer.houseorganizer.FirebaseTestsHelper.UNKNOWN_USER;
 import static com.github.houseorganizer.houseorganizer.FirebaseTestsHelper.WRONG_EMAIL;
+import com.github.houseorganizer.houseorganizer.house.HouseSelectionActivity;
+import com.github.houseorganizer.houseorganizer.house.EditHousehold;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
