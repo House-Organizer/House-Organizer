@@ -12,6 +12,8 @@ import android.view.View;
 import android.widget.EditText;
 
 import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.github.houseorganizer.houseorganizer.R;
 import com.google.firebase.firestore.DocumentReference;
@@ -66,6 +68,15 @@ public class Calendar {
             ret.append(event).append("\n");
         }
         return ret.toString();
+    }
+
+    public int rotateCalendarView(View v, Context ctx, EventsAdapter calendarAdapter, RecyclerView calendarEvents) {
+        rotateView();
+        int calendarColumns = getView() == Calendar.CalendarView.UPCOMING ? 1 : 7;
+        calendarEvents.setAdapter(calendarAdapter);
+        calendarEvents.setLayoutManager(new GridLayoutManager(ctx, calendarColumns));
+
+        return calendarColumns;
     }
 
     @SuppressLint("NotifyDataSetChanged")

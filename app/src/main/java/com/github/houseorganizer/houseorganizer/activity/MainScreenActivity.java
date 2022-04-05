@@ -79,7 +79,7 @@ public class MainScreenActivity extends AppCompatActivity {
         calendarEvents.setAdapter(calendarAdapter);
         calendarEvents.setLayoutManager(new GridLayoutManager(this, calendarColumns));
 
-        findViewById(R.id.calendar_view_change).setOnClickListener(this::rotateView);
+        findViewById(R.id.calendar_view_change).setOnClickListener(v -> calendar.rotateCalendarView(v, this, calendarAdapter, calendarEvents));
         findViewById(R.id.add_event).setOnClickListener(this::addEvent);
         findViewById(R.id.refresh_calendar).setOnClickListener(this::refreshCalendar);
         findViewById(R.id.new_task).setOnClickListener(v -> TaskView.addTask(db, taskList, taskListAdapter, listView));
@@ -163,13 +163,6 @@ public class MainScreenActivity extends AppCompatActivity {
 
         editor.putString(CURRENT_HOUSEHOLD, currentHouseId);
         editor.apply();
-    }
-
-    private void rotateView(View v) {
-        calendar.rotateView();
-        calendarColumns = calendar.getView() == Calendar.CalendarView.UPCOMING ? 1 : 7;
-        calendarEvents.setAdapter(calendarAdapter);
-        calendarEvents.setLayoutManager(new GridLayoutManager(this, calendarColumns));
     }
 
     private void refreshCalendar(View v) {

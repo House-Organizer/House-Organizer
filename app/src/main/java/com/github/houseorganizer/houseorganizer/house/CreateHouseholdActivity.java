@@ -15,7 +15,6 @@ import com.github.houseorganizer.houseorganizer.activity.MainScreenActivity;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;

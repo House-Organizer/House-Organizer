@@ -11,8 +11,6 @@ import android.widget.Toast;
 
 import com.github.houseorganizer.houseorganizer.R;
 
-import java.util.List;
-
 public class Util {
 
     //<-------------------¦ Preferences ¦--------------------------------------------------->
