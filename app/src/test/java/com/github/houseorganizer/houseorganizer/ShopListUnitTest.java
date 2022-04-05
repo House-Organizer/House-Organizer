@@ -3,6 +3,10 @@ package com.github.houseorganizer.houseorganizer;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 
+import com.github.houseorganizer.houseorganizer.shop.ShopItem;
+import com.github.houseorganizer.houseorganizer.shop.ShopList;
+import com.github.houseorganizer.houseorganizer.user.DummyUser;
+
 import org.junit.Test;
 
 import java.util.ArrayList;
