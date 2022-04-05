@@ -1,5 +1,9 @@
 package com.github.houseorganizer.houseorganizer;
 
+import com.github.houseorganizer.houseorganizer.task.FirestoreTask;
+import com.github.houseorganizer.houseorganizer.task.TaskList;
+import com.github.houseorganizer.houseorganizer.user.DummyUser;
+import com.github.houseorganizer.houseorganizer.user.User;
 import com.google.android.gms.tasks.Task;
 import com.google.android.gms.tasks.Tasks;
 import com.google.firebase.auth.AuthResult;
@@ -124,8 +128,8 @@ public class FirebaseTestsHelper {
 
         // Create task list instance
         User owner = new DummyUser("Test User", "0");
-        com.github.houseorganizer.houseorganizer.Task taskToAdd =
-                new com.github.houseorganizer.houseorganizer.Task(owner, "TestTask", "Testing");
+        com.github.houseorganizer.houseorganizer.task.Task taskToAdd =
+                new com.github.houseorganizer.houseorganizer.task.Task(owner, "TestTask", "Testing");
 
         TaskList taskList = new TaskList(owner, "MyList", new ArrayList<>(Collections.singletonList(taskToAdd)));
 

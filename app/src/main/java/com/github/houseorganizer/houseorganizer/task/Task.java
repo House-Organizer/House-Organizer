@@ -1,4 +1,6 @@
-package com.github.houseorganizer.houseorganizer;
+package com.github.houseorganizer.houseorganizer.task;
+
+import com.github.houseorganizer.houseorganizer.user.User;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;

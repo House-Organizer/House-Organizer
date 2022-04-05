@@ -1,4 +1,4 @@
-package com.github.houseorganizer.houseorganizer;
+package com.github.houseorganizer.houseorganizer.house;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -9,6 +9,7 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.github.houseorganizer.houseorganizer.R;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.SignInMethodQueryResult;
@@ -159,7 +160,7 @@ public class EditHousehold extends AppCompatActivity {
         }
         String email = emailView.getText().toString();
 
-        if(email.equals(mAuth.getCurrentUser().getEmail().toString())){
+        if(email.equals(mAuth.getCurrentUser().getEmail())){
             Toast.makeText(getApplicationContext(),
                     view.getContext().getString(R.string.cant_remove_yourself),
                     Toast.LENGTH_SHORT).show();
