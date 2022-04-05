@@ -5,14 +5,10 @@ import static com.github.houseorganizer.houseorganizer.util.Util.getSharedPrefsE
 import static com.github.houseorganizer.houseorganizer.util.Util.logAndToast;
 
 import android.annotation.SuppressLint;
-import android.app.AlertDialog;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.EditText;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
@@ -23,7 +19,6 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.github.houseorganizer.houseorganizer.R;
 import com.github.houseorganizer.houseorganizer.calendar.Calendar;
-import com.github.houseorganizer.houseorganizer.calendar.Calendar.Event;
 import com.github.houseorganizer.houseorganizer.calendar.EventsAdapter;
 import com.github.houseorganizer.houseorganizer.house.HouseSelectionActivity;
 import com.github.houseorganizer.houseorganizer.shop.ShopItem;
@@ -34,7 +29,6 @@ import com.github.houseorganizer.houseorganizer.task.TaskListAdapter;
 import com.github.houseorganizer.houseorganizer.task.TaskView;
 import com.github.houseorganizer.houseorganizer.user.DummyUser;
 import com.github.houseorganizer.houseorganizer.user.User;
-import com.github.houseorganizer.houseorganizer.util.Util;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
@@ -45,8 +39,6 @@ import com.google.firebase.storage.StorageReference;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Objects;
 
 @SuppressWarnings("unused")
@@ -186,35 +178,8 @@ public class MainScreenActivity extends AppCompatActivity {
     }
 
     private void addEvent(View v) {
-        LayoutInflater inflater = LayoutInflater.from(MainScreenActivity.this);
-        final View dialogView = inflater.inflate(R.layout.event_creation, null);
-        new AlertDialog.Builder(MainScreenActivity.this)
-                .setTitle(R.string.event_creation_title)
-                .setView(dialogView)
-                .setPositiveButton(R.string.add, (dialog, id) -> pushEventAndDismiss(dialog, dialogView, v))
-                .setNegativeButton(R.string.cancel, (dialog, id) -> dialog.dismiss())
-                .show();
-    }
-
-    private void pushEventAndDismiss(DialogInterface dialog, View dialogView, View v) {
-        Map<String, Object> data = new HashMap<>();
-        final String title = ((EditText) dialogView.findViewById(R.id.new_event_title)).getText().toString();
-        final String desc = ((EditText) dialogView.findViewById(R.id.new_event_desc)).getText().toString();
-        final String date = ((EditText) dialogView.findViewById(R.id.new_event_date)).getText().toString();
-        final String duration = ((EditText) dialogView.findViewById(R.id.new_event_duration)).getText().toString();
-        Map<String, String> event = new HashMap<>();
-        event.put("title", title);
-        event.put("desc", desc);
-        event.put("date", date);
-        event.put("duration", duration);
-        if (Util.putEventStringsInData(event, data)) {
-            dialog.dismiss();
-            return;
-        }
-        data.put("household", currentHouse);
-        db.collection("events").add(data)
-                .addOnSuccessListener(documentReference -> refreshCalendar(findViewById(R.id.refresh_calendar)));
-        dialog.dismiss();
+        calendar.addEvent(v, MainScreenActivity.this, db, currentHouse, calendarAdapter, Arrays.asList("MainScreenActivity",
+                "addEvent:failure"));
     }
 
     @SuppressWarnings("unused")
