@@ -18,6 +18,8 @@ import static com.github.houseorganizer.houseorganizer.FirebaseTestsHelper.test4
 import static com.github.houseorganizer.houseorganizer.FirebaseTestsHelper.test8Input;
 import static com.github.houseorganizer.houseorganizer.FirebaseTestsHelper.validPassword;
 
+import static org.hamcrest.CoreMatchers.anyOf;
+
 import androidx.test.espresso.intent.Intents;
 import androidx.test.ext.junit.rules.ActivityScenarioRule;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
@@ -93,7 +95,9 @@ public class RegisterEmailTest {
     @Test
     public void signUpWithEmailShowsEmailUsedErrorWithAlreadyUsedEmail() throws InterruptedException {
         enterInputsAndClickRegister(email2, validPassword);
-        onView(withId(R.id.reg_email_error_message)).check(matches(withText(R.string.email_already_used)));
+        onView(withId(R.id.reg_email_error_message)).check(matches(anyOf(
+                withText(R.string.email_already_used), withText(R.string.reg_email_auth_failed)
+        )));
     }
 
     private void enterInputsAndClickRegister(String email, String password) throws InterruptedException {
