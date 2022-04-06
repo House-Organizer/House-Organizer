@@ -44,6 +44,8 @@ public class FirebaseTestsHelper {
     protected static final String validPassword = "A3@ef678!";
     protected static final String test4Input = "test";
     protected static final String test8Input = "testPassword";
+    protected static String UNKNOWN_USER = "unknown@test.com";
+    protected static String WRONG_EMAIL = "user_1.com";
 
     protected static void startAuthEmulator(){
         if(authEmulatorActivated) return;
@@ -150,6 +152,28 @@ public class FirebaseTestsHelper {
     }
 
     /**
+     * This method will create the three households
+     */
+    protected static void createHouseholds() throws ExecutionException, InterruptedException {
+        createTestHouseholdOnFirestoreWithName(TEST_HOUSEHOLD_NAMES[0], TEST_USERS_EMAILS[0],
+                Arrays.asList(TEST_USERS_EMAILS[0], TEST_USERS_EMAILS[1]), TEST_HOUSEHOLD_NAMES[0]);
+
+        createTestHouseholdOnFirestoreWithName(TEST_HOUSEHOLD_NAMES[1], TEST_USERS_EMAILS[0],
+                Arrays.asList(TEST_USERS_EMAILS[0], TEST_USERS_EMAILS[2]), TEST_HOUSEHOLD_NAMES[1]);
+
+        createTestHouseholdOnFirestoreWithName(TEST_HOUSEHOLD_NAMES[2], TEST_USERS_EMAILS[1],
+                Arrays.asList(TEST_USERS_EMAILS[1], TEST_USERS_EMAILS[2], TEST_USERS_EMAILS[3],
+                        TEST_USERS_EMAILS[4], TEST_USERS_EMAILS[5], TEST_USERS_EMAILS[6]),
+                TEST_HOUSEHOLD_NAMES[2]);
+    }
+
+    protected static Map<String, Object> fetchHouseholdData(String houseName, FirebaseFirestore db) throws ExecutionException, InterruptedException {
+        Task<DocumentSnapshot> task = db.collection("households").document(houseName).get();
+        Tasks.await(task);
+        return task.getResult().getData();
+    }
+
+    /**
      * This method will create 8 users, 3 households and a task list
      * After this call user_1 is logged in
      * A flag allows us to just login as user_1 if everything is already done
@@ -172,16 +196,7 @@ public class FirebaseTestsHelper {
             createFirebaseTestUserWithCredentials(TEST_USERS_EMAILS[u_index], TEST_USERS_PWD[u_index]);
         }
 
-        createTestHouseholdOnFirestoreWithName(TEST_HOUSEHOLD_NAMES[0], TEST_USERS_EMAILS[0],
-                Arrays.asList(TEST_USERS_EMAILS[0], TEST_USERS_EMAILS[1]), TEST_HOUSEHOLD_NAMES[0]);
-
-        createTestHouseholdOnFirestoreWithName(TEST_HOUSEHOLD_NAMES[1], TEST_USERS_EMAILS[0],
-                Arrays.asList(TEST_USERS_EMAILS[0], TEST_USERS_EMAILS[2]), TEST_HOUSEHOLD_NAMES[1]);
-
-        createTestHouseholdOnFirestoreWithName(TEST_HOUSEHOLD_NAMES[2], TEST_USERS_EMAILS[1],
-                Arrays.asList(TEST_USERS_EMAILS[1], TEST_USERS_EMAILS[2], TEST_USERS_EMAILS[3],
-                              TEST_USERS_EMAILS[4], TEST_USERS_EMAILS[5], TEST_USERS_EMAILS[6]),
-                TEST_HOUSEHOLD_NAMES[2]);
+        createHouseholds();
 
         signInTestUserWithCredentials(TEST_USERS_EMAILS[0], TEST_USERS_PWD[0]);
 
