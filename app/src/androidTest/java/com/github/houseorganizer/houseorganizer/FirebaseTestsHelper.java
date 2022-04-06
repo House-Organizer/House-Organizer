@@ -58,7 +58,7 @@ public class FirebaseTestsHelper {
 
     protected static void startFirestoreEmulator(){
         if(firestoreEmulatorActivated) return;
-        FirebaseFirestore.getInstance().useEmulator("10.0.2.2", 8082);
+        FirebaseFirestore.getInstance().useEmulator("10.0.2.2", 8080);
         firestoreEmulatorActivated = true;
     }
 
