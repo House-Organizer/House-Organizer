@@ -21,6 +21,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.github.houseorganizer.houseorganizer.R;
 import com.github.houseorganizer.houseorganizer.calendar.Calendar.Event;
+import com.github.houseorganizer.houseorganizer.image.ImageHelper;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.SetOptions;
 import com.google.firebase.storage.FirebaseStorage;
@@ -225,7 +226,6 @@ public class EventsAdapter extends RecyclerView.Adapter<EventsAdapter.ViewHolder
         event.put("date", date);
         event.put("duration", duration);
         if (putEventStringsInData(event, data)) {
-            editForm.dismiss();
             return;
         }
         db.collection("events").document(eventObj.getId()).set(data, SetOptions.merge());
