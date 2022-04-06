@@ -11,6 +11,8 @@ import static androidx.test.espresso.intent.matcher.IntentMatchers.hasComponent;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
 import static androidx.test.espresso.matcher.ViewMatchers.withText;
 import static com.github.houseorganizer.houseorganizer.FirebaseTestsHelper.TEST_USERS_EMAILS;
+import static com.github.houseorganizer.houseorganizer.FirebaseTestsHelper.test4Input;
+import static com.github.houseorganizer.houseorganizer.FirebaseTestsHelper.validPassword;
 
 import androidx.test.espresso.intent.Intents;
 import androidx.test.ext.junit.rules.ActivityScenarioRule;
@@ -37,6 +39,7 @@ import java.util.concurrent.ExecutionException;
 public class LoginEmailTest {
 
     private static FirebaseAuth auth;
+    private static final String email = "user_login1@test.com";
 
     @Rule
     public ActivityScenarioRule<LoginEmail> logRule =
@@ -47,7 +50,7 @@ public class LoginEmailTest {
         FirebaseTestsHelper.startAuthEmulator();
         auth = FirebaseAuth.getInstance();
 
-        Task<AuthResult> t = auth.createUserWithEmailAndPassword("user_login1@test.com", "A3@ef678!");
+        Task<AuthResult> t = auth.createUserWithEmailAndPassword(email, validPassword);
         Tasks.await(t);
         auth.signOut();
     }
@@ -63,8 +66,8 @@ public class LoginEmailTest {
     @Test
     public void signInWithEmailWorksWithCorrectInputs() {
         Intents.init();
-        onView(withId(R.id.log_enter_email)).perform(clearText(), typeText("user_login1@test.com"), closeSoftKeyboard());
-        onView(withId(R.id.log_enter_password)).perform(clearText(), typeText("A3@ef678!"), closeSoftKeyboard());
+        onView(withId(R.id.log_enter_email)).perform(clearText(), typeText(email), closeSoftKeyboard());
+        onView(withId(R.id.log_enter_password)).perform(clearText(), typeText(validPassword), closeSoftKeyboard());
         onView(withId(R.id.log_email_signin_button)).perform(click());
         intended(hasComponent(VerifyEmail.class.getName()));
         Intents.release();
@@ -73,7 +76,7 @@ public class LoginEmailTest {
 
     @Test
     public void signInWithEmailShowsInputsEmptyErrorWithEmptyInputs() throws InterruptedException {
-        onView(withId(R.id.log_enter_email)).perform(click(), typeText("test"), closeSoftKeyboard());
+        onView(withId(R.id.log_enter_email)).perform(click(), typeText(test4Input), closeSoftKeyboard());
         onView(withId(R.id.log_email_signin_button)).perform(click());
         Thread.sleep(100);
         onView(withId(R.id.log_email_error_message)).check(matches(withText(R.string.inputs_empty)));
@@ -81,8 +84,8 @@ public class LoginEmailTest {
 
     @Test
     public void signInWithEmailShowsAuthFailedErrorWithIncorrectInputs() throws InterruptedException {
-        onView(withId(R.id.log_enter_email)).perform(clearText(), typeText("test"), closeSoftKeyboard());
-        onView(withId(R.id.log_enter_password)).perform(clearText(), typeText("test"), closeSoftKeyboard());
+        onView(withId(R.id.log_enter_email)).perform(clearText(), typeText(test4Input), closeSoftKeyboard());
+        onView(withId(R.id.log_enter_password)).perform(clearText(), typeText(test4Input), closeSoftKeyboard());
         onView(withId(R.id.log_email_signin_button)).perform(click());
         Thread.sleep(100);
         onView(withId(R.id.log_email_error_message)).check(matches(withText(R.string.log_email_auth_failed)));

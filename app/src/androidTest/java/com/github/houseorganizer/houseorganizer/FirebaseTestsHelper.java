@@ -40,6 +40,10 @@ public class FirebaseTestsHelper {
     protected static String[] TEST_HOUSEHOLD_NAMES =
             {"home_1", "home_2", "home_3"};
 
+    protected static final String validPassword = "A3@ef678!";
+    protected static final String test4Input = "test";
+    protected static final String test8Input = "testPassword";
+
     protected static void startAuthEmulator(){
         if(authEmulatorActivated) return;
         FirebaseAuth.getInstance().useEmulator("10.0.2.2", 9099);

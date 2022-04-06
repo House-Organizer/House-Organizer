@@ -11,6 +11,9 @@ import static androidx.test.espresso.intent.matcher.IntentMatchers.hasComponent;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
 import static androidx.test.espresso.matcher.ViewMatchers.withText;
 import static com.github.houseorganizer.houseorganizer.FirebaseTestsHelper.TEST_USERS_EMAILS;
+import static com.github.houseorganizer.houseorganizer.FirebaseTestsHelper.test4Input;
+import static com.github.houseorganizer.houseorganizer.FirebaseTestsHelper.test8Input;
+import static com.github.houseorganizer.houseorganizer.FirebaseTestsHelper.validPassword;
 
 import androidx.test.espresso.intent.Intents;
 import androidx.test.ext.junit.rules.ActivityScenarioRule;
@@ -37,7 +40,6 @@ public class RegisterEmailTest {
 
     private static FirebaseAuth auth;
     private static final String email1 = "user_register1@test.com", email2 = "user_register2@test.com";
-    private static final String validPwd = "A3@ef678!";
 
     @Rule
     public ActivityScenarioRule<RegisterEmail> regRule =
@@ -48,7 +50,7 @@ public class RegisterEmailTest {
         FirebaseTestsHelper.startAuthEmulator();
         auth = FirebaseAuth.getInstance();
 
-        Task<AuthResult> t = auth.createUserWithEmailAndPassword(email2, validPwd);
+        Task<AuthResult> t = auth.createUserWithEmailAndPassword(email2, validPassword);
         Tasks.await(t);
         auth.signOut();
     }
@@ -59,13 +61,13 @@ public class RegisterEmailTest {
             auth.signOut();
         } catch (Error ignored) {}
         try {
-            Task<AuthResult> t = auth.signInWithEmailAndPassword(email1, validPwd);
+            Task<AuthResult> t = auth.signInWithEmailAndPassword(email1, validPassword);
             Tasks.await(t);
             Task<Void> t2 = auth.getCurrentUser().delete();
             Tasks.await(t2);
         } catch (Error ignored) {}
         try {
-            Task<AuthResult> t = auth.signInWithEmailAndPassword(email2, validPwd);
+            Task<AuthResult> t = auth.signInWithEmailAndPassword(email2, validPassword);
             Tasks.await(t);
             Task<Void> t2 = auth.getCurrentUser().delete();
             Tasks.await(t2);
@@ -76,8 +78,8 @@ public class RegisterEmailTest {
     public void signUpWithEmailWorksWithCorrectInputs() {
         Intents.init();
         onView(withId(R.id.reg_enter_email)).perform(clearText(), typeText(email1), closeSoftKeyboard());
-        onView(withId(R.id.reg_enter_password)).perform(clearText(), typeText(validPwd), closeSoftKeyboard());
-        onView(withId(R.id.reg_confirm_password)).perform(clearText(), typeText(validPwd), closeSoftKeyboard());
+        onView(withId(R.id.reg_enter_password)).perform(clearText(), typeText(validPassword), closeSoftKeyboard());
+        onView(withId(R.id.reg_confirm_password)).perform(clearText(), typeText(validPassword), closeSoftKeyboard());
         onView(withId(R.id.reg_email_register_button)).perform(click());
         intended(hasComponent(VerifyEmail.class.getName()));
         Intents.release();
@@ -85,7 +87,7 @@ public class RegisterEmailTest {
 
     @Test
     public void signUpWithEmailShowsInputsEmptyErrorWhenInputsEmpty() throws InterruptedException {
-        onView(withId(R.id.reg_enter_email)).perform(click(), typeText("test"), closeSoftKeyboard());
+        onView(withId(R.id.reg_enter_email)).perform(click(), typeText(test4Input), closeSoftKeyboard());
         onView(withId(R.id.reg_email_register_button)).perform(click());
         Thread.sleep(250);
         onView(withId(R.id.reg_email_error_message)).check(matches(withText(R.string.inputs_empty)));
@@ -93,7 +95,7 @@ public class RegisterEmailTest {
 
     @Test
     public void signUpWithEmailShowsInvalidEmailErrorWithInvalidInput() throws InterruptedException {
-        onView(withId(R.id.reg_enter_password)).perform(click(), typeText("testPassword"), closeSoftKeyboard());
+        onView(withId(R.id.reg_enter_password)).perform(click(), typeText(test8Input), closeSoftKeyboard());
         onView(withId(R.id.reg_email_register_button)).perform(click());
         Thread.sleep(250);
         onView(withId(R.id.reg_email_error_message)).check(matches(withText(R.string.email_not_valid)));
@@ -102,7 +104,7 @@ public class RegisterEmailTest {
     @Test
     public void signUpWithEmailShowsInvalidPasswordErrorWithInvalidInput() throws InterruptedException {
         onView(withId(R.id.reg_enter_email)).perform(clearText(), typeText(TEST_USERS_EMAILS[1]), closeSoftKeyboard());
-        onView(withId(R.id.reg_confirm_password)).perform(click(), typeText("testPassword"), closeSoftKeyboard());
+        onView(withId(R.id.reg_confirm_password)).perform(click(), typeText(test8Input), closeSoftKeyboard());
         onView(withId(R.id.reg_email_register_button)).perform(click());
         Thread.sleep(250);
         onView(withId(R.id.reg_email_error_message)).check(matches(withText(R.string.password_not_valid)));
@@ -111,8 +113,8 @@ public class RegisterEmailTest {
     @Test
     public void signUpWithEmailShowsEmailUsedErrorWithAlreadyUsedEmail() throws InterruptedException {
         onView(withId(R.id.reg_enter_email)).perform(clearText(), typeText(email2), closeSoftKeyboard());
-        onView(withId(R.id.reg_enter_password)).perform(clearText(), typeText(validPwd), closeSoftKeyboard());
-        onView(withId(R.id.reg_confirm_password)).perform(clearText(), typeText(validPwd), closeSoftKeyboard());
+        onView(withId(R.id.reg_enter_password)).perform(clearText(), typeText(validPassword), closeSoftKeyboard());
+        onView(withId(R.id.reg_confirm_password)).perform(clearText(), typeText(validPassword), closeSoftKeyboard());
         onView(withId(R.id.reg_email_register_button)).perform(click());
         Thread.sleep(250);
         onView(withId(R.id.reg_email_error_message)).check(matches(withText(R.string.email_already_used)));
