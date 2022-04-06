@@ -68,18 +68,20 @@ public class LoginEmailTest {
 
     @Test
     public void signInWithEmailShowsInputsEmptyErrorWithEmptyInputs() throws InterruptedException {
-        onView(withId(R.id.log_enter_email)).perform(click(), typeText(test4Input), closeSoftKeyboard());
-        onView(withId(R.id.log_email_signin_button)).perform(click());
-        Thread.sleep(100);
+        enterInputsAndClickSignIn(test4Input, "");
         onView(withId(R.id.log_email_error_message)).check(matches(withText(R.string.inputs_empty)));
     }
 
     @Test
     public void signInWithEmailShowsAuthFailedErrorWithIncorrectInputs() throws InterruptedException {
-        onView(withId(R.id.log_enter_email)).perform(clearText(), typeText(test4Input), closeSoftKeyboard());
-        onView(withId(R.id.log_enter_password)).perform(clearText(), typeText(test4Input), closeSoftKeyboard());
-        onView(withId(R.id.log_email_signin_button)).perform(click());
-        Thread.sleep(100);
+        enterInputsAndClickSignIn(test4Input, test4Input);
         onView(withId(R.id.log_email_error_message)).check(matches(withText(R.string.log_email_auth_failed)));
+    }
+
+    private void enterInputsAndClickSignIn(String email, String password) throws InterruptedException {
+        onView(withId(R.id.log_enter_email)).perform(clearText(), typeText(email), closeSoftKeyboard());
+        onView(withId(R.id.log_enter_password)).perform(clearText(), typeText(password), closeSoftKeyboard());
+        onView(withId(R.id.log_email_signin_button)).perform(click());
+        Thread.sleep(250);
     }
 }

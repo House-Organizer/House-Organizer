@@ -74,36 +74,33 @@ public class RegisterEmailTest {
 
     @Test
     public void signUpWithEmailShowsInputsEmptyErrorWhenInputsEmpty() throws InterruptedException {
-        onView(withId(R.id.reg_enter_email)).perform(click(), typeText(test4Input), closeSoftKeyboard());
-        onView(withId(R.id.reg_email_register_button)).perform(click());
-        Thread.sleep(250);
+        enterInputsAndClickRegister(test4Input, "");
         onView(withId(R.id.reg_email_error_message)).check(matches(withText(R.string.inputs_empty)));
     }
 
     @Test
     public void signUpWithEmailShowsInvalidEmailErrorWithInvalidInput() throws InterruptedException {
-        onView(withId(R.id.reg_enter_password)).perform(click(), typeText(test8Input), closeSoftKeyboard());
-        onView(withId(R.id.reg_email_register_button)).perform(click());
-        Thread.sleep(250);
+        enterInputsAndClickRegister(test4Input, test8Input);
         onView(withId(R.id.reg_email_error_message)).check(matches(withText(R.string.email_not_valid)));
     }
 
     @Test
     public void signUpWithEmailShowsInvalidPasswordErrorWithInvalidInput() throws InterruptedException {
-        onView(withId(R.id.reg_enter_email)).perform(clearText(), typeText(TEST_USERS_EMAILS[1]), closeSoftKeyboard());
-        onView(withId(R.id.reg_confirm_password)).perform(click(), typeText(test8Input), closeSoftKeyboard());
-        onView(withId(R.id.reg_email_register_button)).perform(click());
-        Thread.sleep(250);
+        enterInputsAndClickRegister(TEST_USERS_EMAILS[1], test8Input);
         onView(withId(R.id.reg_email_error_message)).check(matches(withText(R.string.password_not_valid)));
     }
 
     @Test
     public void signUpWithEmailShowsEmailUsedErrorWithAlreadyUsedEmail() throws InterruptedException {
-        onView(withId(R.id.reg_enter_email)).perform(clearText(), typeText(email2), closeSoftKeyboard());
-        onView(withId(R.id.reg_enter_password)).perform(clearText(), typeText(validPassword), closeSoftKeyboard());
-        onView(withId(R.id.reg_confirm_password)).perform(clearText(), typeText(validPassword), closeSoftKeyboard());
+        enterInputsAndClickRegister(email2, validPassword);
+        onView(withId(R.id.reg_email_error_message)).check(matches(withText(R.string.email_already_used)));
+    }
+
+    private void enterInputsAndClickRegister(String email, String password) throws InterruptedException {
+        onView(withId(R.id.reg_enter_email)).perform(clearText(), typeText(email), closeSoftKeyboard());
+        onView(withId(R.id.reg_enter_password)).perform(clearText(), typeText(password), closeSoftKeyboard());
+        onView(withId(R.id.reg_confirm_password)).perform(clearText(), typeText(password), closeSoftKeyboard());
         onView(withId(R.id.reg_email_register_button)).perform(click());
         Thread.sleep(250);
-        onView(withId(R.id.reg_email_error_message)).check(matches(withText(R.string.email_already_used)));
     }
 }
