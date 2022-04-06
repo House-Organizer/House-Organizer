@@ -5,7 +5,7 @@ import static androidx.test.espresso.Espresso.onView;
 import static androidx.test.espresso.action.ViewActions.click;
 import static androidx.test.espresso.assertion.ViewAssertions.matches;
 import static androidx.test.espresso.matcher.ViewMatchers.assertThat;
-import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
+import static androidx.test.espresso.matcher.ViewMatchers.hasChildCount;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
 import static org.hamcrest.CoreMatchers.is;
 
@@ -56,14 +56,18 @@ public class CalendarViewTest {
 
     @Test
     public void attachmentCorrectlyShows() {
-        onView(withId(R.id.calendar))
-                .perform(RecyclerViewActions.actionOnItemAtPosition(0, RecyclerViewHelperActions.clickChildViewWithId(R.id.event_upcoming_attach)));
-        onView(withId(R.id.show_image)).perform(click());
-        onView(withId(R.id.image_dialog)).check(matches(isDisplayed()));
+        onView(withId(R.id.house_imageButton)).perform(click());
+        onView(withId(R.id.housesView)).perform(RecyclerViewActions.actionOnItemAtPosition(0, click()));
+        onView(withId(R.id.calendar)).check(matches(hasChildCount(4)));
+                //.perform(RecyclerViewActions.actionOnItemAtPosition(0, RecyclerViewHelperActions.clickChildViewWithId(R.id.event_upcoming_attach)));
+        //onView(withId(R.id.show_image)).perform(click());
+        //onView(withId(R.id.image_dialog)).check(matches(isDisplayed()));
     }
 
     @Test
     public void removeAttachmentCorrectlyWorks() {
+        onView(withId(R.id.house_imageButton)).perform(click());
+        onView(withId(R.id.housesView)).perform(RecyclerViewActions.actionOnItemAtPosition(0, click()));
         onView(withId(R.id.calendar))
                 .perform(RecyclerViewActions.actionOnItemAtPosition(2, RecyclerViewHelperActions.clickChildViewWithId(R.id.event_upcoming_attach)));
         onView(withId(R.id.remove_image)).perform(click());
@@ -74,6 +78,8 @@ public class CalendarViewTest {
 
     @Test
     public void attachCorrectlyUploads() {
+        onView(withId(R.id.house_imageButton)).perform(click());
+        onView(withId(R.id.housesView)).perform(RecyclerViewActions.actionOnItemAtPosition(0, click()));
         onView(withId(R.id.calendar))
                 .perform(RecyclerViewActions.actionOnItemAtPosition(1, RecyclerViewHelperActions.clickChildViewWithId(R.id.event_upcoming_attach)));
         onView(withId(R.id.attach_image)).perform(click());
