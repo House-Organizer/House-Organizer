@@ -124,13 +124,18 @@ public class MainScreenActivity extends AppCompatActivity {
                 .addOnCompleteListener(task -> {
                     if (task.isSuccessful()) {
                         ArrayList<String> households = new ArrayList<>();
+                        String household = "";
+
                         for (QueryDocumentSnapshot document : task.getResult()) {
                             if (householdId.equals(document.getId())) {
-                                households.add(document.getId());
-                                currentHouse = db.collection("households").document(householdId);
+                                currentHouse = db.collection("households").document(document.getId());
+                                saveData(households.get(0));
                                 break;
                             }
-                        } if (currentHouse == null) {
+                            households.add(document.getId());
+                        }
+
+                        if (currentHouse == null) {
                             if (!households.isEmpty()) {
                                 currentHouse = db.collection("households").document(households.get(0));
                                 saveData(households.get(0));
