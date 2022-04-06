@@ -2,7 +2,6 @@ package com.github.houseorganizer.houseorganizer.task;
 
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
-import android.content.DialogInterface;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,7 +16,6 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.github.houseorganizer.houseorganizer.R;
 import com.github.houseorganizer.houseorganizer.util.BiViewHolder;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 
 public class TaskListAdapter extends RecyclerView.Adapter<BiViewHolder<Button, Button>> {

@@ -14,7 +14,7 @@ import java.time.LocalDateTime;
 
 public class TaskUnitTest {
     public static class DummyUser extends User {
-        private String name, uid;
+        private final String name, uid;
 
         DummyUser(String name, String uid) {
             this.name = name;
@@ -98,7 +98,7 @@ public class TaskUnitTest {
         Task t = new Task(NOBODY, "Task 1", "stub description");
 
         t.assignTo(NOBODY);
-        assertEquals(NOBODY.uid(), t.getAssigneeAt(0).uid());
+        assertEquals(NOBODY.uid(), t.getAssignees().get(0).uid());
         assertTrue(t.hasAssignees());
     }
 
