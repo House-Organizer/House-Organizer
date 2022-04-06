@@ -204,9 +204,9 @@ public class FirebaseTestsHelper {
 
         createHouseholds();
 
-        signInTestUserWithCredentials(TEST_USERS_EMAILS[0], TEST_USERS_PWD[0]);
-
         createTestTaskList();
+
+        signInTestUserWithCredentials(TEST_USERS_EMAILS[0], TEST_USERS_PWD[0]);
 
         createFirebaseDoneFlag();
     }
