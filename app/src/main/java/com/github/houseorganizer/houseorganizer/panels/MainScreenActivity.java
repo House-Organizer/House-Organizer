@@ -129,7 +129,7 @@ public class MainScreenActivity extends AppCompatActivity {
                         for (QueryDocumentSnapshot document : task.getResult()) {
                             if (householdId.equals(document.getId())) {
                                 currentHouse = db.collection("households").document(document.getId());
-                                saveData(households.get(0));
+                                saveData(document.getId());
                                 break;
                             }
                             households.add(document.getId());
