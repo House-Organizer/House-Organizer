@@ -5,7 +5,8 @@ import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.assertTrue;
 
-import com.github.houseorganizer.houseorganizer.Calendar.Event;
+import com.github.houseorganizer.houseorganizer.calendar.Calendar;
+import com.github.houseorganizer.houseorganizer.calendar.Calendar.Event;
 
 import org.junit.Test;
 

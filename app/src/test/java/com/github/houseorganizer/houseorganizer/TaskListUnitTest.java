@@ -4,6 +4,9 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
+import com.github.houseorganizer.houseorganizer.task.Task;
+import com.github.houseorganizer.houseorganizer.task.TaskList;
+
 import org.junit.Test;
 
 import java.util.ArrayList;
