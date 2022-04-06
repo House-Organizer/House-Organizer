@@ -1,6 +1,8 @@
 package com.github.houseorganizer.houseorganizer.task;
 
+import android.annotation.SuppressLint;
 import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -9,13 +11,21 @@ import android.widget.EditText;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.github.houseorganizer.houseorganizer.R;
 import com.github.houseorganizer.houseorganizer.util.BiViewHolder;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+
 public class TaskListAdapter extends RecyclerView.Adapter<BiViewHolder<Button, Button>> {
     private final TaskList taskList;
+
+    private static final String[] STATIC_HOUSEHOLD_MEMBERS =
+            {"aindreias@houseorganizer.com", "sansive@houseorganizer.com",
+                    "shau@reds.com", "oxydeas@houseorganizer.com"};
 
     public TaskListAdapter(TaskList taskList) {
         this.taskList     = taskList;
@@ -58,6 +68,7 @@ public class TaskListAdapter extends RecyclerView.Adapter<BiViewHolder<Button, B
     }
 
     // todo: modify due date
+    @SuppressLint("InflateParams")
     private View.OnClickListener titleButtonListener(int position, Button titleButton) {
         return v -> {
             FirestoreTask t = (FirestoreTask) taskList.getTaskAt(position);
@@ -81,6 +92,7 @@ public class TaskListAdapter extends RecyclerView.Adapter<BiViewHolder<Button, B
             final AlertDialog alertDialog
                     = new AlertDialog.Builder(v.getContext())
                     .setNeutralButton(R.string.add_subtask, null)
+                    .setPositiveButton("Assignees", null) // TODO extract string
                     .setView(taskEditor)
                     .show();
 
@@ -92,6 +104,34 @@ public class TaskListAdapter extends RecyclerView.Adapter<BiViewHolder<Button, B
                         subTaskAdapter.notifyItemInserted(t.getSubTasks().size() - 1);
                     });
 
+            alertDialog.getButton(AlertDialog.BUTTON_POSITIVE)
+                    .setOnClickListener(assigneeButtonListener(alertDialog, position));
+
+        };
+    }
+
+    private View.OnClickListener assigneeButtonListener(AlertDialog taskEditorDialog, int position) {
+        return v -> {
+            taskEditorDialog.dismiss();
+
+            final View assigneeEditor =
+                    LayoutInflater.from(v.getContext())
+                            .inflate(R.layout.assignee_editor, null);
+
+            /* Initialize RecyclerView for assignees */
+            RecyclerView assigneeView = assigneeEditor.findViewById(R.id.assignee_editor);
+            TaskAssigneeAdapter assigneeAdapter =
+                    new TaskAssigneeAdapter(taskList.getTaskAt(position),
+                            Arrays.asList(STATIC_HOUSEHOLD_MEMBERS));
+
+            assigneeView.setAdapter(assigneeAdapter);
+            assigneeView.setLayoutManager(new LinearLayoutManager(v.getContext()));
+
+
+            new AlertDialog.Builder(v.getContext())
+                    .setView(assigneeEditor)
+                    .setOnDismissListener(d -> taskEditorDialog.show())
+                    .show();
         };
     }
 

@@ -94,10 +94,9 @@ public class Task {
         return ! assignees.isEmpty();
     }
 
-    public User getAssigneeAt(int index) {
-        assert index < assignees.size();
-
-        return assignees.get(index);
+    /* [!] returns assignee list as-is s.t. adapters can modify it */
+    public List<User> getAssignees() {
+        return assignees;
     }
 
     public boolean hasSubTasks() {
