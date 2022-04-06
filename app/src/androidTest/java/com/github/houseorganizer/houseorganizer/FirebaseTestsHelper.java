@@ -44,6 +44,7 @@ public class FirebaseTestsHelper {
             {"home_1", "home_2", "home_3"};
 
     protected static ShopItem TEST_ITEM = new ShopItem("Egg", 3, "t");
+    protected static String TEST_SHOPLIST_NAME = "TestList1";
 
     protected static void startAuthEmulator(){
         if(authEmulatorActivated) return;
@@ -143,9 +144,9 @@ public class FirebaseTestsHelper {
     protected static void createTestShopList() throws ExecutionException, InterruptedException {
         FirebaseFirestore db = FirebaseFirestore.getInstance();
         User owner = new DummyUser("test", TEST_USERS_EMAILS[0]);
-        ShopList shopList = new ShopList(owner, "TestList");
+        ShopList shopList = new ShopList(owner, TEST_SHOPLIST_NAME);
         shopList.addItem(TEST_ITEM);
-        FirestoreShopItem.storeShopList(shopList, db.collection("shop_lists"), "TestShopList");
+        FirestoreShopItem.storeShopList(shopList, db.collection("shop_lists"), TEST_SHOPLIST_NAME);
     }
 
     /**

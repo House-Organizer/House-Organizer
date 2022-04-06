@@ -5,9 +5,12 @@ import com.google.android.gms.tasks.Task;
 import com.google.android.gms.tasks.Tasks;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
 
@@ -17,6 +20,11 @@ public class FirestoreShopItem extends ShopItem{
 
     public FirestoreShopItem(String name, int quantity, String unit, DocumentReference docRef) {
         super(name, quantity, unit);
+        this.shopItemDocRef = docRef;
+    }
+
+    public FirestoreShopItem(ShopItem item, DocumentReference docRef){
+        super(item.getName(), item.getQuantity(), item.getUnit());
         this.shopItemDocRef = docRef;
     }
 
@@ -63,23 +71,23 @@ public class FirestoreShopItem extends ShopItem{
     /**
      * To be called with the root directory and the name of the new list
      * @param shopList shopList to be stored
-     * @param shopListListRoot root folder of the shop lists
+     * @param shopListsRoot root folder of the shop lists
      * @param documentName doc where the shopList will be stored
      * @throws ExecutionException calls Tasks.await
      * @throws InterruptedException calls Tasks.await
      */
-    public static void storeShopList(ShopList shopList, CollectionReference shopListListRoot, String documentName) throws ExecutionException, InterruptedException {
+    public static void storeShopList(ShopList shopList, CollectionReference shopListsRoot, String documentName) throws ExecutionException, InterruptedException {
         Map<String, Object> newList = new HashMap<>();
 
         newList.put("name", shopList.getListName());
         newList.put("owner", shopList.getOwner().uid());
         newList.put("authorized", new ArrayList<User>());
 
-        Task<Void> t = shopListListRoot.document(documentName).set(newList);
+        Task<Void> t = shopListsRoot.document(documentName).set(newList);
         Tasks.await(t);
 
         if(t.isSuccessful()){
-            DocumentReference docRef = shopListListRoot.document(documentName);
+            DocumentReference docRef = shopListsRoot.document(documentName);
             CollectionReference shopListRef = docRef.collection("items");
 
             for(int i = 0; i < shopList.size(); ++i){
@@ -106,4 +114,18 @@ public class FirestoreShopItem extends ShopItem{
         return firestoreShopList.add(toStore);
     }
 
+    public static List<FirestoreShopItem> retrieveShopList(CollectionReference ref) throws ExecutionException, InterruptedException {
+        List<FirestoreShopItem> list = new ArrayList<>();
+        Task<QuerySnapshot> task = ref.get();
+        Tasks.await(task);
+        List<DocumentSnapshot> docs = task.getResult().getDocuments();
+        for(DocumentSnapshot doc : docs){
+            list.add(new FirestoreShopItem((String)doc.get("name"),
+                    new Long((long) doc.get("quantity")).intValue(), //TODO : undo black magic
+                    (String)doc.get("unit"),
+                    doc.getReference()));
+            list.get(list.size()-1).setPickedUp((boolean)doc.get("pickedUp"));
+        }
+        return list;
+    }
 }
