@@ -60,7 +60,8 @@ public class EditHouseholdTest {
     }
 
     @AfterClass
-    public static void signOut(){
+    public static void signOut() throws ExecutionException, InterruptedException {
+        FirebaseTestsHelper.createHouseholds();
         auth.signOut();
     }
 
@@ -69,11 +70,6 @@ public class EditHouseholdTest {
 
     @Before
     public void setupHouseholds() throws ExecutionException, InterruptedException {
-        FirebaseTestsHelper.createHouseholds();
-    }
-
-    @After
-    public void dismantleHouseholds() throws ExecutionException, InterruptedException {
         FirebaseTestsHelper.createHouseholds();
     }
 
