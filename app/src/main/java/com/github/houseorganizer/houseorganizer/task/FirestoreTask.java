@@ -12,6 +12,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
+import java.util.stream.Collectors;
 
 public class FirestoreTask extends Task{
     private final DocumentReference taskDocRef;
@@ -89,14 +90,17 @@ public class FirestoreTask extends Task{
         data.put("description", task.getDescription());
         data.put("status", task.isFinished() ? "completed" : "ongoing");
         data.put("owner", task.getOwner().uid());
+        data.put("assignees",
+                task.getAssignees()
+                .stream()
+                .map(User::uid)
+                .collect(Collectors.toList()));
 
-        List<Map<String, String>> subTaskListData = new ArrayList<>();
-
-        for (Task.SubTask subTask : task.getSubTasks()) {
-            subTaskListData.add(makeSubTaskData(subTask));
-        }
-
-        data.put("sub tasks", subTaskListData);
+        data.put("sub tasks",
+                task.getSubTasks()
+                .stream()
+                .map(FirestoreTask::makeSubTaskData)
+                .collect(Collectors.toList()));
 
         return taskListRef.add(data);
     }
@@ -137,17 +141,29 @@ public class FirestoreTask extends Task{
 
     public static FirestoreTask recoverTask(Map<String, Object> data, DocumentReference taskDocRef) {
         List<Task.SubTask> subTasks = new ArrayList<>();
+        List<User> assignees = new ArrayList<>();
 
-        Object tmp = data.get("sub tasks");
+        Object tmpSubTaskData = data.get("sub tasks");
 
-        if (null != tmp) {
-            for (Map<String, String> subTaskData : (List<Map<String, String>>) tmp) {
+        if (null != tmpSubTaskData) {
+            for (Map<String, String> subTaskData : (List<Map<String, String>>) tmpSubTaskData) {
                 subTasks.add(recoverSubTask(subTaskData));
             }
         }
 
-        return new FirestoreTask(new DummyUser("Recovering-user", (String)data.get("owner")),
+        FirestoreTask ft = new FirestoreTask(new DummyUser("Recovering-user", (String)data.get("owner")),
                 (String)data.get("title"), (String)data.get("description"), subTasks, taskDocRef);
+
+        Object assigneeData = data.get("assignees");
+        if (null != assigneeData) {
+            for(String assigneeEmail : (List<String>) assigneeData) {
+                assignees.add(new DummyUser("Dummy", assigneeEmail));
+            }
+        }
+
+        ft.getAssignees().addAll(assignees);
+
+        return ft;
     }
 
 }
