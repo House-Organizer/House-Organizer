@@ -102,7 +102,7 @@ public class MainScreenActivity extends AppCompatActivity {
                     FirebaseStorage storage = FirebaseStorage.getInstance();
                     // this creates the reference to the picture
                     StorageReference imageRef = storage.getReference().child(calendarAdapter.eventToAttach + ".jpg");
-                    imageRef.putFile(uri).addOnCompleteListener((complete) -> {});
+                    imageRef.putFile(uri);
                 });
     }
 

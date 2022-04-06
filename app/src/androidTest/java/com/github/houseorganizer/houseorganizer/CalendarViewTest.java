@@ -2,19 +2,21 @@ package com.github.houseorganizer.houseorganizer;
 
 
 
-import static android.support.test.espresso.Espresso.onView;
-import static android.support.test.espresso.action.ViewActions.click;
-import static android.support.test.espresso.assertion.ViewAssertions.matches;
-import static android.support.test.espresso.matcher.ViewMatchers.isDisplayed;
-import static android.support.test.espresso.matcher.ViewMatchers.withId;
 
-import android.support.test.espresso.UiController;
-import android.support.test.espresso.ViewAction;
-import android.support.test.espresso.contrib.RecyclerViewActions;
+import static androidx.test.espresso.Espresso.onView;
+import static androidx.test.espresso.action.ViewActions.click;
+import static androidx.test.espresso.assertion.ViewAssertions.matches;
+import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
+import static androidx.test.espresso.matcher.ViewMatchers.withId;
+
+import androidx.test.espresso.UiController;
+import androidx.test.espresso.ViewAction;
+import androidx.test.espresso.contrib.RecyclerViewActions;
 import android.view.View;
 
 
 import androidx.test.ext.junit.rules.ActivityScenarioRule;
+import androidx.test.ext.junit.runners.AndroidJUnit4;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -25,9 +27,11 @@ import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 
 import java.util.concurrent.ExecutionException;
 
+@RunWith(AndroidJUnit4.class)
 public class CalendarViewTest {
 
     private static FirebaseFirestore db;
@@ -55,7 +59,7 @@ public class CalendarViewTest {
             new ActivityScenarioRule<>(MainScreenActivity.class);
 
     @Test
-    public void attachImageUploadsToFirebase() {
+    public void attachmentCorrectlyShows() {
         onView(withId(R.id.calendar))
                 .perform(RecyclerViewActions.actionOnItemAtPosition(0, CalendarHelperActions.clickChildViewWithId(R.id.event_upcoming_attach)));
         onView(withId(R.id.show_image)).perform(click());

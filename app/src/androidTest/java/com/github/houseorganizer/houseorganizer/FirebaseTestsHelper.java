@@ -1,6 +1,5 @@
 package com.github.houseorganizer.houseorganizer;
 
-import com.github.houseorganizer.houseorganizer.util.Util;
 import com.google.android.gms.tasks.Task;
 import com.google.android.gms.tasks.Tasks;
 import com.google.firebase.auth.AuthResult;
@@ -9,7 +8,9 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.storage.FirebaseStorage;
 
+import java.io.ByteArrayOutputStream;
 import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -139,19 +140,45 @@ public class FirebaseTestsHelper {
     protected static void createTestEvents() throws ExecutionException, InterruptedException {
         FirebaseFirestore db = FirebaseFirestore.getInstance();
 
-        // Probably dont need to create the events themselves
-        Calendar.Event to_delete = new Calendar.Event("title", "desc", LocalDateTime.of(2022, 10, 10, 10, 10), 10, "to_delete");
-        Calendar.Event has_attachment = new Calendar.Event("title", "desc", LocalDateTime.of(2022, 10, 10, 10, 10), 10, "has_attachment");
-        Map<String, Object> to_delete_data = new HashMap<>();
-        Map<String, Object> has_attachment_data = new HashMap<>();
+        Map<String, Object> toDeleteData = new HashMap<>();
+        toDeleteData.put("title", "title");
+        toDeleteData.put("description", "desc");
+        toDeleteData.put("start", LocalDateTime.of(2022, 10, 10, 10, 10).toEpochSecond(ZoneOffset.UTC));
+        toDeleteData.put("duration", 10);
+        toDeleteData.put("household", TEST_HOUSEHOLD_NAMES[0]);
+        Map<String, Object> hasAttachmentData = new HashMap<>();
+        hasAttachmentData.put("title", "title");
+        hasAttachmentData.put("description", "desc");
+        hasAttachmentData.put("start", LocalDateTime.of(2022, 10, 10, 8, 10).toEpochSecond(ZoneOffset.UTC));
+        hasAttachmentData.put("duration", 10);
+        hasAttachmentData.put("household", TEST_HOUSEHOLD_NAMES[0]);
+        Map<String, Object> noAttachmentData = new HashMap<>();
+        noAttachmentData.put("title", "title");
+        noAttachmentData.put("description", "desc");
+        noAttachmentData.put("start", LocalDateTime.of(2022, 10, 10, 9, 10).toEpochSecond(ZoneOffset.UTC));
+        noAttachmentData.put("duration", 10);
+        noAttachmentData.put("household", TEST_HOUSEHOLD_NAMES[0]);
 
-        // TODO finish this method
-        Task<Void> task = db.collection("events").document("to_delete").set(to_delete_data);
-        Tasks.await(task);
+        Task<Void> task1 = db.collection("events").document("to_delete").set(toDeleteData);
+        Task<Void> task2 = db.collection("events").document("has_attachment").set(hasAttachmentData);
+        Task<Void> task3 = db.collection("events").document("no_attachment").set(noAttachmentData);
+        Tasks.await(task1);
+        Tasks.await(task2);
+        Tasks.await(task3);
+    }
+
+    protected static void createAttachments() throws ExecutionException, InterruptedException {
+        FirebaseStorage storage = FirebaseStorage.getInstance();
+
+        // For now a hardcoded bytestream instead of an image
+        // it will still create the popup just it wont display anything
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        baos.write(10000000);
+        storage.getReference().child("has_attachment.jpg").putBytes(baos.toByteArray());
     }
 
     /**
-     * This method will create 8 users, 3 households and a task list
+     * This method will create 8 users, 3 households, a task list and 3 events in the first household
      * After this call user_1 is logged in
      * A flag allows us to just login as user_1 if everything is already done
      */
@@ -187,6 +214,9 @@ public class FirebaseTestsHelper {
         signInTestUserWithCredentials(TEST_USERS_EMAILS[0], TEST_USERS_PWD[0]);
 
         createTestTaskList();
+
+        createTestEvents();
+        createAttachments();
 
         createFirebaseDoneFlag();
     }

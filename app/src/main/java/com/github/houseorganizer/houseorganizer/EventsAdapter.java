@@ -136,7 +136,7 @@ public class EventsAdapter extends RecyclerView.Adapter<EventsAdapter.ViewHolder
             switch(menuItem.getTitle().toString()) {
                 case "Attach":
                     eventToAttach = eventId;
-                    getPicture.launch("com/github/houseorganizer/houseorganizer/image/*");
+                    getPicture.launch("image/*");
                     break;
                 case "Show":
                     attachment.getDownloadUrl().addOnCompleteListener(task -> {
