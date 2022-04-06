@@ -30,6 +30,10 @@ import java.util.concurrent.ExecutionException;
  */
 public class FirebaseTestsHelper {
 
+    // Same as MainScreenActivity for now since RecyclerView tests depend on it
+    // Will be refined as soon as task lists are linked to households
+    public static final String TEST_TASK_LIST_DOCUMENT_NAME = "85IW3cYzxOo1YTWnNOQl";
+
     private static boolean authEmulatorActivated = false;
     private static boolean firestoreEmulatorActivated = false;
     private static boolean databaseEmulatorActivated = false;
@@ -54,7 +58,7 @@ public class FirebaseTestsHelper {
 
     protected static void startFirestoreEmulator(){
         if(firestoreEmulatorActivated) return;
-        FirebaseFirestore.getInstance().useEmulator("10.0.2.2", 8080);
+        FirebaseFirestore.getInstance().useEmulator("10.0.2.2", 8082);
         firestoreEmulatorActivated = true;
     }
 
@@ -150,7 +154,7 @@ public class FirebaseTestsHelper {
 
         // Store instance on the database using a helper function
         // returns only after storing is done
-        storeTaskList(taskList, db.collection("task_lists"), "task_list_1");
+        storeTaskList(taskList, db.collection("task_lists"), TEST_TASK_LIST_DOCUMENT_NAME);
     }
 
     /**

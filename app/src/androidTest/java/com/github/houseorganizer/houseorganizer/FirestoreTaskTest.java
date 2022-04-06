@@ -57,8 +57,8 @@ public class FirestoreTaskTest {
     }
 
     @AfterClass
-    public static void wipeAllData() throws ExecutionException, InterruptedException {
-        FirebaseTestsHelper.wipeTaskListData();
+    public static void recreateTestData() throws ExecutionException, InterruptedException {
+        FirebaseTestsHelper.createTestTaskList();
     }
 
     @Before
@@ -142,10 +142,10 @@ public class FirestoreTaskTest {
 
     @Test
     public void changeTitleAndDescriptionWorks() throws ExecutionException, InterruptedException {
-        FirestoreTask ft = recoverFirestoreTask("task_list_1");
+        FirestoreTask ft = recoverFirestoreTask(FirebaseTestsHelper.TEST_TASK_LIST_DOCUMENT_NAME);
         ft.changeTitle(NEW_FANCY_TITLE);
         ft.changeDescription(NEW_FANCY_DESCRIPTION);
-        FirestoreTask changedFT = recoverFirestoreTask("task_list_1");
+        FirestoreTask changedFT = recoverFirestoreTask(FirebaseTestsHelper.TEST_TASK_LIST_DOCUMENT_NAME);
 
         assertEquals(NEW_FANCY_TITLE, ft.getTitle());
         assertEquals(NEW_FANCY_TITLE, changedFT.getTitle());
@@ -156,7 +156,7 @@ public class FirestoreTaskTest {
 
     @Test
     public void subTaskModificationsWork() throws ExecutionException, InterruptedException {
-        FirestoreTask ft = recoverFirestoreTask("task_list_1");
+        FirestoreTask ft = recoverFirestoreTask(FirebaseTestsHelper.TEST_TASK_LIST_DOCUMENT_NAME);
 
         Task.SubTask st = new Task.SubTask(BASIC_SUBTASK_TITLE);
 
@@ -164,7 +164,7 @@ public class FirestoreTaskTest {
         ft.addSubTask(st);
         ft.changeSubTaskTitle(0, NEW_FANCY_TITLE);
 
-        FirestoreTask changedFT = recoverFirestoreTask("task_list_1");
+        FirestoreTask changedFT = recoverFirestoreTask(FirebaseTestsHelper.TEST_TASK_LIST_DOCUMENT_NAME);
 
         assertEquals(1, changedFT.getSubTasks().size());
         assertEquals(NEW_FANCY_TITLE, changedFT.getSubTaskAt(0).getTitle());
@@ -172,7 +172,7 @@ public class FirestoreTaskTest {
         // Remove subtask
         ft.removeSubTask(0);
 
-        changedFT = recoverFirestoreTask("task_list_1");
+        changedFT = recoverFirestoreTask(FirebaseTestsHelper.TEST_TASK_LIST_DOCUMENT_NAME);
 
         assertEquals(0, changedFT.getSubTasks().size());
     }
