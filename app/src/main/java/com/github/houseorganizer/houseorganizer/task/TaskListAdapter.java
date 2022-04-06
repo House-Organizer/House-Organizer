@@ -15,18 +15,24 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.github.houseorganizer.houseorganizer.R;
 import com.github.houseorganizer.houseorganizer.util.BiViewHolder;
+import com.google.android.gms.tasks.Tasks;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
+import java.util.Objects;
+import java.util.concurrent.ExecutionException;
 
 public class TaskListAdapter extends RecyclerView.Adapter<BiViewHolder<Button, Button>> {
     private final TaskList taskList;
+    private final List<String> memberEmails;
 
-    private static final String[] STATIC_HOUSEHOLD_MEMBERS =
-            {"aindreias@houseorganizer.com", "sansive@houseorganizer.com",
-                    "shau@reds.com", "oxydeas@houseorganizer.com"};
-
-    public TaskListAdapter(TaskList taskList) {
+    public TaskListAdapter(TaskList taskList, List<String> memberEmails) {
         this.taskList     = taskList;
+        this.memberEmails = memberEmails;
     }
 
     @NonNull
@@ -108,7 +114,7 @@ public class TaskListAdapter extends RecyclerView.Adapter<BiViewHolder<Button, B
         };
     }
 
-    private View.OnClickListener assigneeButtonListener(AlertDialog taskEditorDialog, int position) {
+    private View.OnClickListener assigneeButtonListener(AlertDialog taskEditorDialog, int position)  {
         return v -> {
             taskEditorDialog.dismiss();
 
@@ -118,9 +124,9 @@ public class TaskListAdapter extends RecyclerView.Adapter<BiViewHolder<Button, B
 
             /* Initialize RecyclerView for assignees */
             RecyclerView assigneeView = assigneeEditor.findViewById(R.id.assignee_editor);
+
             TaskAssigneeAdapter assigneeAdapter =
-                    new TaskAssigneeAdapter(taskList.getTaskAt(position),
-                            Arrays.asList(STATIC_HOUSEHOLD_MEMBERS));
+                    new TaskAssigneeAdapter(taskList.getTaskAt(position),memberEmails);
 
             assigneeView.setAdapter(assigneeAdapter);
             assigneeView.setLayoutManager(new LinearLayoutManager(v.getContext()));

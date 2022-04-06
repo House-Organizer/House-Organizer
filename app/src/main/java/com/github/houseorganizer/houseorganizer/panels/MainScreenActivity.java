@@ -39,6 +39,7 @@ import com.google.firebase.storage.StorageReference;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Objects;
 
 @SuppressWarnings("unused")
@@ -90,8 +91,11 @@ public class MainScreenActivity extends AppCompatActivity {
     }
 
     private void initializeTaskList() {
+        List<String> memberEmails = Arrays.asList("aindreias@houseorganizer.com", "sansive@houseorganizer.com",
+                "shau@reds.com", "oxydeas@houseorganizer.com");
+
         this.taskList = new TaskList(currentUser, "My weekly todo", new ArrayList<>());
-        this.taskListAdapter = new TaskListAdapter(taskList);
+        this.taskListAdapter = new TaskListAdapter(taskList, memberEmails);
     }
 
     @Override
