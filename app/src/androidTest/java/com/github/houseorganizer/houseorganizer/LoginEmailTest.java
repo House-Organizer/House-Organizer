@@ -10,7 +10,8 @@ import static androidx.test.espresso.intent.Intents.intended;
 import static androidx.test.espresso.intent.matcher.IntentMatchers.hasComponent;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
 import static androidx.test.espresso.matcher.ViewMatchers.withText;
-import static com.github.houseorganizer.houseorganizer.FirebaseTestsHelper.TEST_USERS_EMAILS;
+import static com.github.houseorganizer.houseorganizer.FirebaseTestsHelper.createFirebaseTestUserWithCredentials;
+import static com.github.houseorganizer.houseorganizer.FirebaseTestsHelper.deleteTestUserWithCredentials;
 import static com.github.houseorganizer.houseorganizer.FirebaseTestsHelper.test4Input;
 import static com.github.houseorganizer.houseorganizer.FirebaseTestsHelper.validPassword;
 
@@ -19,11 +20,7 @@ import androidx.test.ext.junit.rules.ActivityScenarioRule;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 
 import com.github.houseorganizer.houseorganizer.login.LoginEmail;
-import com.github.houseorganizer.houseorganizer.login.RegisterEmail;
 import com.github.houseorganizer.houseorganizer.login.VerifyEmail;
-import com.google.android.gms.tasks.Task;
-import com.google.android.gms.tasks.Tasks;
-import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 
 import org.junit.AfterClass;
@@ -50,17 +47,12 @@ public class LoginEmailTest {
         FirebaseTestsHelper.startAuthEmulator();
         auth = FirebaseAuth.getInstance();
 
-        Task<AuthResult> t = auth.createUserWithEmailAndPassword(email, validPassword);
-        Tasks.await(t);
-        auth.signOut();
+        createFirebaseTestUserWithCredentials(email, validPassword);
     }
 
     @AfterClass
     public static void end() throws ExecutionException, InterruptedException {
-        try {
-            Task<Void> t = auth.getCurrentUser().delete();
-            Tasks.await(t);
-        } catch (Error ignored) {}
+        deleteTestUserWithCredentials(email, validPassword);
     }
 
     @Test

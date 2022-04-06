@@ -11,6 +11,9 @@ import static androidx.test.espresso.intent.matcher.IntentMatchers.hasComponent;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
 import static androidx.test.espresso.matcher.ViewMatchers.withText;
 import static com.github.houseorganizer.houseorganizer.FirebaseTestsHelper.TEST_USERS_EMAILS;
+import static com.github.houseorganizer.houseorganizer.FirebaseTestsHelper.createFirebaseTestUserWithCredentials;
+import static com.github.houseorganizer.houseorganizer.FirebaseTestsHelper.deleteTestUserWithCredentials;
+import static com.github.houseorganizer.houseorganizer.FirebaseTestsHelper.signInTestUserWithCredentials;
 import static com.github.houseorganizer.houseorganizer.FirebaseTestsHelper.test4Input;
 import static com.github.houseorganizer.houseorganizer.FirebaseTestsHelper.test8Input;
 import static com.github.houseorganizer.houseorganizer.FirebaseTestsHelper.validPassword;
@@ -21,9 +24,6 @@ import androidx.test.ext.junit.runners.AndroidJUnit4;
 
 import com.github.houseorganizer.houseorganizer.login.RegisterEmail;
 import com.github.houseorganizer.houseorganizer.login.VerifyEmail;
-import com.google.android.gms.tasks.Task;
-import com.google.android.gms.tasks.Tasks;
-import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 
 import org.junit.AfterClass;
@@ -50,28 +50,15 @@ public class RegisterEmailTest {
         FirebaseTestsHelper.startAuthEmulator();
         auth = FirebaseAuth.getInstance();
 
-        Task<AuthResult> t = auth.createUserWithEmailAndPassword(email2, validPassword);
-        Tasks.await(t);
-        auth.signOut();
+        createFirebaseTestUserWithCredentials(email2, validPassword);
     }
 
     @AfterClass
     public static void end() throws ExecutionException, InterruptedException {
-        try {
-            auth.signOut();
-        } catch (Error ignored) {}
-        try {
-            Task<AuthResult> t = auth.signInWithEmailAndPassword(email1, validPassword);
-            Tasks.await(t);
-            Task<Void> t2 = auth.getCurrentUser().delete();
-            Tasks.await(t2);
-        } catch (Error ignored) {}
-        try {
-            Task<AuthResult> t = auth.signInWithEmailAndPassword(email2, validPassword);
-            Tasks.await(t);
-            Task<Void> t2 = auth.getCurrentUser().delete();
-            Tasks.await(t2);
-        } catch (Error ignored) {}
+        deleteTestUserWithCredentials(email1, validPassword);
+
+        signInTestUserWithCredentials(email2, validPassword);
+        deleteTestUserWithCredentials(email2, validPassword);
     }
 
     @Test

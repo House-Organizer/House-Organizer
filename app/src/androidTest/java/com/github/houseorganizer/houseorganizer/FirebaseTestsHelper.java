@@ -18,6 +18,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.concurrent.ExecutionException;
 
 /**
@@ -85,8 +86,17 @@ public class FirebaseTestsHelper {
     protected static void createFirebaseTestUserWithCredentials(String email, String pwd)
             throws ExecutionException, InterruptedException {
         Task<AuthResult> t = FirebaseAuth.getInstance().createUserWithEmailAndPassword(email, pwd);
-        FirebaseAuth.getInstance().signOut();
         Tasks.await(t);
+        FirebaseAuth.getInstance().signOut();
+    }
+
+    /**
+     * This method deletes a user, it is assumed the user is logged in.
+     */
+    protected static void deleteTestUserWithCredentials(String email, String password)
+            throws ExecutionException, InterruptedException {
+        Task<Void> t2 = Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser()).delete();
+        Tasks.await(t2);
     }
 
     /**
