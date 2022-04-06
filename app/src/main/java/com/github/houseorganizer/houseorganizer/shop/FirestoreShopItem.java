@@ -54,23 +54,25 @@ public class FirestoreShopItem extends ShopItem{
         return shopItemDocRef;
     }
 
-    public void store(){
-        storeShopItem(this, shopItemDocRef.getParent());
-    }
+    /* TODO : check if necessary or useful
+    public void store() throws ExecutionException, InterruptedException {
+        Task t = storeShopItem(this, shopItemDocRef.getParent());
+        Tasks.await(t);
+    }*/
 
     /**
      * To be called with the root directory and the name of the new list
-     * @param shopList
-     * @param shopListListRoot
-     * @param documentName
-     * @throws ExecutionException
-     * @throws InterruptedException
+     * @param shopList shopList to be stored
+     * @param shopListListRoot root folder of the shop lists
+     * @param documentName doc where the shopList will be stored
+     * @throws ExecutionException calls Tasks.await
+     * @throws InterruptedException calls Tasks.await
      */
     public static void storeShopList(ShopList shopList, CollectionReference shopListListRoot, String documentName) throws ExecutionException, InterruptedException {
         Map<String, Object> newList = new HashMap<>();
 
         newList.put("name", shopList.getListName());
-        newList.put("owner", shopList.getOwner());
+        newList.put("owner", shopList.getOwner().uid());
         newList.put("authorized", new ArrayList<User>());
 
         Task<Void> t = shopListListRoot.document(documentName).set(newList);
@@ -86,6 +88,12 @@ public class FirestoreShopItem extends ShopItem{
         }
     }
 
+    /**
+     * Stores the item in the given Firestore Shop List
+     * @param shopItem item to be stored
+     * @param firestoreShopList collection to store the item
+     * @return task of the firebase adding
+     */
     public static Task<DocumentReference> storeShopItem(ShopItem shopItem, CollectionReference firestoreShopList){
         Map<String, Object> toStore = new HashMap<>();
 

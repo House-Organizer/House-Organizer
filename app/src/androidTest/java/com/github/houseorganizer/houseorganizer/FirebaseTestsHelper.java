@@ -1,5 +1,8 @@
 package com.github.houseorganizer.houseorganizer;
 
+import com.github.houseorganizer.houseorganizer.shop.FirestoreShopItem;
+import com.github.houseorganizer.houseorganizer.shop.ShopItem;
+import com.github.houseorganizer.houseorganizer.shop.ShopList;
 import com.github.houseorganizer.houseorganizer.task.FirestoreTask;
 import com.github.houseorganizer.houseorganizer.task.TaskList;
 import com.github.houseorganizer.houseorganizer.user.DummyUser;
@@ -39,6 +42,8 @@ public class FirebaseTestsHelper {
 
     protected static String[] TEST_HOUSEHOLD_NAMES =
             {"home_1", "home_2", "home_3"};
+
+    protected static ShopItem TEST_ITEM = new ShopItem("Egg", 3, "t");
 
     protected static void startAuthEmulator(){
         if(authEmulatorActivated) return;
@@ -135,6 +140,14 @@ public class FirebaseTestsHelper {
         FirestoreTask.storeTaskList(taskList, db.collection("task lists"), "task_list_1");
     }
 
+    protected static void createTestShopList() throws ExecutionException, InterruptedException {
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        User owner = new DummyUser("test", TEST_USERS_EMAILS[0]);
+        ShopList shopList = new ShopList(owner, "TestList");
+        shopList.addItem(TEST_ITEM);
+        FirestoreShopItem.storeShopList(shopList, db.collection("shop_lists"), "TestShopList");
+    }
+
     /**
      * This method will create 8 users, 3 households and a task list
      * After this call user_1 is logged in
@@ -172,6 +185,8 @@ public class FirebaseTestsHelper {
         signInTestUserWithCredentials(TEST_USERS_EMAILS[0], TEST_USERS_PWD[0]);
 
         createTestTaskList();
+
+        createTestShopList();
 
         createFirebaseDoneFlag();
     }
