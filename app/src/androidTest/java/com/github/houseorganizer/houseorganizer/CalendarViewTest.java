@@ -1,20 +1,19 @@
 package com.github.houseorganizer.houseorganizer;
 
 
-
-
 import static androidx.test.espresso.Espresso.onView;
 import static androidx.test.espresso.action.ViewActions.click;
 import static androidx.test.espresso.assertion.ViewAssertions.matches;
+import static androidx.test.espresso.matcher.ViewMatchers.assertThat;
 import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
+import static org.hamcrest.CoreMatchers.is;
+
+import android.view.View;
 
 import androidx.test.espresso.UiController;
 import androidx.test.espresso.ViewAction;
 import androidx.test.espresso.contrib.RecyclerViewActions;
-import android.view.View;
-
-
 import androidx.test.ext.junit.rules.ActivityScenarioRule;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 
@@ -64,6 +63,26 @@ public class CalendarViewTest {
                 .perform(RecyclerViewActions.actionOnItemAtPosition(0, CalendarHelperActions.clickChildViewWithId(R.id.event_upcoming_attach)));
         onView(withId(R.id.show_image)).perform(click());
         onView(withId(R.id.image_dialog)).check(matches(isDisplayed()));
+    }
+
+    @Test
+    public void removeAttachmentCorrectlyWorks() {
+        onView(withId(R.id.calendar))
+                .perform(RecyclerViewActions.actionOnItemAtPosition(2, CalendarHelperActions.clickChildViewWithId(R.id.event_upcoming_attach)));
+        onView(withId(R.id.remove_image)).perform(click());
+        storage.getReference().child("to_delete_attachment.jpg").getDownloadUrl().addOnCompleteListener(
+                task -> assertThat(task.isSuccessful(), is(false))
+        );
+    }
+
+    @Test
+    public void attachCorrectlyUploads() {
+        onView(withId(R.id.calendar))
+                .perform(RecyclerViewActions.actionOnItemAtPosition(1, CalendarHelperActions.clickChildViewWithId(R.id.event_upcoming_attach)));
+        onView(withId(R.id.attach_image)).perform(click());
+        storage.getReference().child("no_attachment.jpg").getDownloadUrl().addOnCompleteListener(
+                task -> assertThat(task.isSuccessful(), is(true))
+        );
     }
 }
 

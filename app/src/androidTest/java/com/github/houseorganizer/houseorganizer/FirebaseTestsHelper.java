@@ -7,6 +7,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.UploadTask;
 
 import java.io.ByteArrayOutputStream;
 import java.time.LocalDateTime;
@@ -143,7 +144,7 @@ public class FirebaseTestsHelper {
         Map<String, Object> toDeleteData = new HashMap<>();
         toDeleteData.put("title", "title");
         toDeleteData.put("description", "desc");
-        toDeleteData.put("start", LocalDateTime.of(2022, 10, 10, 10, 10).toEpochSecond(ZoneOffset.UTC));
+        toDeleteData.put("start", LocalDateTime.of(2022, 10, 10, 11, 10).toEpochSecond(ZoneOffset.UTC));
         toDeleteData.put("duration", 10);
         toDeleteData.put("household", TEST_HOUSEHOLD_NAMES[0]);
         Map<String, Object> hasAttachmentData = new HashMap<>();
@@ -158,15 +159,26 @@ public class FirebaseTestsHelper {
         noAttachmentData.put("start", LocalDateTime.of(2022, 10, 10, 9, 10).toEpochSecond(ZoneOffset.UTC));
         noAttachmentData.put("duration", 10);
         noAttachmentData.put("household", TEST_HOUSEHOLD_NAMES[0]);
+        Map<String, Object> toDeleteAttachmentData = new HashMap<>();
+        toDeleteAttachmentData.put("title", "title");
+        toDeleteAttachmentData.put("description", "desc");
+        toDeleteAttachmentData.put("start", LocalDateTime.of(2022, 10, 10, 10, 10).toEpochSecond(ZoneOffset.UTC));
+        toDeleteAttachmentData.put("duration", 10);
+        toDeleteAttachmentData.put("household", TEST_HOUSEHOLD_NAMES[0]);
 
         Task<Void> task1 = db.collection("events").document("to_delete").set(toDeleteData);
         Task<Void> task2 = db.collection("events").document("has_attachment").set(hasAttachmentData);
         Task<Void> task3 = db.collection("events").document("no_attachment").set(noAttachmentData);
+        Task<Void> task4 = db.collection("events").document("to_delete_attachment").set(toDeleteAttachmentData);
         Tasks.await(task1);
         Tasks.await(task2);
         Tasks.await(task3);
+        Tasks.await(task4);
     }
 
+    /**
+     *  This method creates attachments linked to events for testing
+     */
     protected static void createAttachments() throws ExecutionException, InterruptedException {
         FirebaseStorage storage = FirebaseStorage.getInstance();
 
@@ -174,11 +186,14 @@ public class FirebaseTestsHelper {
         // it will still create the popup just it wont display anything
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         baos.write(10000000);
-        storage.getReference().child("has_attachment.jpg").putBytes(baos.toByteArray());
+        UploadTask task1 = storage.getReference().child("has_attachment.jpg").putBytes(baos.toByteArray());
+        UploadTask task2 = storage.getReference().child("to_delete_attachment.jpg").putBytes(baos.toByteArray());
+        Tasks.await(task1);
+        Tasks.await(task2);
     }
 
     /**
-     * This method will create 8 users, 3 households, a task list and 3 events in the first household
+     * This method will create 8 users, 3 households, a task list and 4 events in the first household
      * After this call user_1 is logged in
      * A flag allows us to just login as user_1 if everything is already done
      */

@@ -1,15 +1,5 @@
 package com.github.houseorganizer.houseorganizer.util;
 
-import android.annotation.SuppressLint;
-import android.app.Dialog;
-import android.net.Uri;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.widget.ImageView;
-
-import com.bumptech.glide.Glide;
-import com.github.houseorganizer.houseorganizer.R;
-
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
