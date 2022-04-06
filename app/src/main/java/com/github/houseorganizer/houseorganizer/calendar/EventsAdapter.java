@@ -173,12 +173,7 @@ public class EventsAdapter extends RecyclerView.Adapter<EventsAdapter.ViewHolder
                 .setMessage(event.getDescription())
                 .setPositiveButton(R.string.ok, (dialog, id) -> dialog.dismiss())
                 .setNegativeButton(R.string.delete, (dialog, id) -> {
-                    db.collection("events")
-                            .document(event.getId())
-                            .delete();
-                    ArrayList<Event> newEvents = new ArrayList<>(calendar.getEvents());
-                    newEvents.remove(event);
-                    calendar.setEvents(newEvents);
+                    removeEventFirestoreAndCalendar(event, calendar);
                     this.notifyItemRemoved(position);
                     dialog.dismiss();
                 })
@@ -194,6 +189,15 @@ public class EventsAdapter extends RecyclerView.Adapter<EventsAdapter.ViewHolder
                             .setNegativeButton(R.string.cancel, (editForm, editFormId) -> dialog.dismiss())
                             .show();
                 }).show();
+    }
+
+    private void removeEventFirestoreAndCalendar(Event event, Calendar calendar) {
+        db.collection("events")
+                .document(event.getId())
+                .delete();
+        ArrayList<Event> newEvents = new ArrayList<>(calendar.getEvents());
+        newEvents.remove(event);
+        calendar.setEvents(newEvents);
     }
 
     private View createEditDialog(View v, Event event) {
