@@ -97,5 +97,6 @@
     <string name="password_not_valid">Password is not valid.</string>
     <string name="inputs_empty">Inputs must not be empty.</string>
     <string name="signout_intent">sign_out</string>
+    <string name="add_remove_assignee">Add/remove assignee</string>
 
 </resources>
