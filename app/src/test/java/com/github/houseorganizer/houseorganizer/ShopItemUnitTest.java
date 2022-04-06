@@ -17,10 +17,12 @@ public class ShopItemUnitTest {
     }
 
     @Test
-    public void markPickedUpWorks(){
+    public void togglePickedUpWorks(){
         ShopItem item = new ShopItem("name", 4, "");
-        item.markPickedUp();
+        item.togglePickedUp();
         assertThat(item.isPickedUp(), is(true));
+        item.togglePickedUp();
+        assertThat(item.isPickedUp(), is(false));
     }
 
     // Testing setters

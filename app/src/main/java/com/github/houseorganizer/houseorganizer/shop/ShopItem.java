@@ -17,8 +17,8 @@ public class ShopItem {
     }
 
     //Setters
-    public void markPickedUp(){
-        this.isPickedUp = true;
+    public void togglePickedUp(){
+        this.isPickedUp = !this.isPickedUp;
     }
 
     public void changeName(String newName){
