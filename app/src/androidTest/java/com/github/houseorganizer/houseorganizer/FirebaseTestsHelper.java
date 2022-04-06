@@ -1,5 +1,9 @@
 package com.github.houseorganizer.houseorganizer;
 
+import com.github.houseorganizer.houseorganizer.task.FirestoreTask;
+import com.github.houseorganizer.houseorganizer.task.TaskList;
+import com.github.houseorganizer.houseorganizer.user.DummyUser;
+import com.github.houseorganizer.houseorganizer.user.User;
 import com.google.android.gms.tasks.Task;
 import com.google.android.gms.tasks.Tasks;
 import com.google.firebase.auth.AuthResult;
@@ -38,6 +42,9 @@ public class FirebaseTestsHelper {
 
     protected static String[] TEST_HOUSEHOLD_NAMES =
             {"home_1", "home_2", "home_3"};
+
+    protected static String UNKNOWN_USER = "unknown@test.com";
+    protected static String WRONG_EMAIL = "user_1.com";
 
     protected static void startAuthEmulator(){
         if(authEmulatorActivated) return;
@@ -136,14 +143,36 @@ public class FirebaseTestsHelper {
 
         // Create task list instance
         User owner = new DummyUser("Test User", "0");
-        com.github.houseorganizer.houseorganizer.Task taskToAdd =
-                new com.github.houseorganizer.houseorganizer.Task(owner, "TestTask", "Testing");
+        com.github.houseorganizer.houseorganizer.task.Task taskToAdd =
+                new com.github.houseorganizer.houseorganizer.task.Task(owner, "TestTask", "Testing");
 
         TaskList taskList = new TaskList(owner, "MyList", new ArrayList<>(Collections.singletonList(taskToAdd)));
 
         // Store instance on the database using a helper function
         // returns only after storing is done
         storeTaskList(taskList, db.collection("task_lists"), "task_list_1");
+    }
+
+    /**
+     * This method will create the three households
+     */
+    protected static void createHouseholds() throws ExecutionException, InterruptedException {
+        createTestHouseholdOnFirestoreWithName(TEST_HOUSEHOLD_NAMES[0], TEST_USERS_EMAILS[0],
+                Arrays.asList(TEST_USERS_EMAILS[0], TEST_USERS_EMAILS[1]), TEST_HOUSEHOLD_NAMES[0]);
+
+        createTestHouseholdOnFirestoreWithName(TEST_HOUSEHOLD_NAMES[1], TEST_USERS_EMAILS[0],
+                Arrays.asList(TEST_USERS_EMAILS[0], TEST_USERS_EMAILS[2]), TEST_HOUSEHOLD_NAMES[1]);
+
+        createTestHouseholdOnFirestoreWithName(TEST_HOUSEHOLD_NAMES[2], TEST_USERS_EMAILS[1],
+                Arrays.asList(TEST_USERS_EMAILS[1], TEST_USERS_EMAILS[2], TEST_USERS_EMAILS[3],
+                        TEST_USERS_EMAILS[4], TEST_USERS_EMAILS[5], TEST_USERS_EMAILS[6]),
+                TEST_HOUSEHOLD_NAMES[2]);
+    }
+
+    protected static Map<String, Object> fetchHouseholdData(String houseName, FirebaseFirestore db) throws ExecutionException, InterruptedException {
+        Task<DocumentSnapshot> task = db.collection("households").document(houseName).get();
+        Tasks.await(task);
+        return task.getResult().getData();
     }
 
     /**
@@ -169,16 +198,7 @@ public class FirebaseTestsHelper {
             createFirebaseTestUserWithCredentials(TEST_USERS_EMAILS[u_index], TEST_USERS_PWD[u_index]);
         }
 
-        createTestHouseholdOnFirestoreWithName(TEST_HOUSEHOLD_NAMES[0], TEST_USERS_EMAILS[0],
-                Arrays.asList(TEST_USERS_EMAILS[0], TEST_USERS_EMAILS[1]), TEST_HOUSEHOLD_NAMES[0]);
-
-        createTestHouseholdOnFirestoreWithName(TEST_HOUSEHOLD_NAMES[1], TEST_USERS_EMAILS[0],
-                Arrays.asList(TEST_USERS_EMAILS[0], TEST_USERS_EMAILS[2]), TEST_HOUSEHOLD_NAMES[1]);
-
-        createTestHouseholdOnFirestoreWithName(TEST_HOUSEHOLD_NAMES[2], TEST_USERS_EMAILS[1],
-                Arrays.asList(TEST_USERS_EMAILS[1], TEST_USERS_EMAILS[2], TEST_USERS_EMAILS[3],
-                              TEST_USERS_EMAILS[4], TEST_USERS_EMAILS[5], TEST_USERS_EMAILS[6]),
-                TEST_HOUSEHOLD_NAMES[2]);
+        createHouseholds();
 
         signInTestUserWithCredentials(TEST_USERS_EMAILS[0], TEST_USERS_PWD[0]);
 
@@ -188,7 +208,7 @@ public class FirebaseTestsHelper {
     }
 
     // Task list loading
-    private static com.google.android.gms.tasks.Task<DocumentReference> storeTask(com.github.houseorganizer.houseorganizer.Task task, CollectionReference taskListRef) {
+    private static com.google.android.gms.tasks.Task<DocumentReference> storeTask(com.github.houseorganizer.houseorganizer.task.Task task, CollectionReference taskListRef) {
         Map<String, Object> data = new HashMap<>();
 
         // Loading information
@@ -199,7 +219,7 @@ public class FirebaseTestsHelper {
 
         List<Map<String, String>> subTaskListData = new ArrayList<>();
 
-        for (com.github.houseorganizer.houseorganizer.Task.SubTask subTask : task.getSubTasks()) {
+        for (com.github.houseorganizer.houseorganizer.task.Task.SubTask subTask : task.getSubTasks()) {
             subTaskListData.add(FirestoreTask.makeSubTaskData(subTask));
         }
 
@@ -221,7 +241,7 @@ public class FirebaseTestsHelper {
             DocumentReference documentReference = taskListRoot.document(documentName);
             CollectionReference taskListRef = documentReference.collection("tasks");
 
-            for (com.github.houseorganizer.houseorganizer.Task t : taskList.getTasks()) {
+            for (com.github.houseorganizer.houseorganizer.task.Task t : taskList.getTasks()) {
                 Tasks.await(storeTask(t, taskListRef));
             }
         }

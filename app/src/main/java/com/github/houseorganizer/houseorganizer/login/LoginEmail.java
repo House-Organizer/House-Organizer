@@ -1,7 +1,7 @@
 package com.github.houseorganizer.houseorganizer.login;
 
-import static com.github.houseorganizer.houseorganizer.util.LoginHelpers.displayRegisterErrorMessage;
 import static com.github.houseorganizer.houseorganizer.util.LoginHelpers.inputsEmpty;
+import static com.github.houseorganizer.houseorganizer.util.Util.displayErrorMessage;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -12,9 +12,9 @@ import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.github.houseorganizer.houseorganizer.MainScreenActivity;
 import com.github.houseorganizer.houseorganizer.R;
-import com.github.houseorganizer.houseorganizer.util.LoginHelpers;
+import com.github.houseorganizer.houseorganizer.panels.MainScreenActivity;
+import com.github.houseorganizer.houseorganizer.util.Util;
 import com.google.firebase.auth.FirebaseAuth;
 
 import java.util.Objects;
@@ -38,10 +38,11 @@ public class LoginEmail extends AppCompatActivity {
                     if (!inputsEmpty(email, password)) {
                         signInWithEmail(v);
                     } else {
-                        displayRegisterErrorMessage(LoginHelpers.RegisterError.INPUTS_EMPTY, error_message);
+                        displayErrorMessage(Util.ErrorType.INPUTS_EMPTY, error_message);
                     }
                 }
         );
+
         findViewById(R.id.log_email_register_button).setOnClickListener(
                 v -> startActivity(new Intent(LoginEmail.this, RegisterEmail.class))
         );

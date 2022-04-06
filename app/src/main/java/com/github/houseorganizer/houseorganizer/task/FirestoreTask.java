@@ -1,5 +1,7 @@
-package com.github.houseorganizer.houseorganizer;
+package com.github.houseorganizer.houseorganizer.task;
 
+import com.github.houseorganizer.houseorganizer.user.DummyUser;
+import com.github.houseorganizer.houseorganizer.user.User;
 import com.google.android.gms.tasks.Tasks;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FieldValue;
@@ -84,7 +86,7 @@ public class FirestoreTask extends Task{
     /* Static API */
     // N.B. for now, if they are on the database,
     // the (sub)tasks are ongoing
-    public static Map<String, String> makeSubTaskData(com.github.houseorganizer.houseorganizer.Task.SubTask subTask) {
+    public static Map<String, String> makeSubTaskData(SubTask subTask) {
         Map<String, String> subTaskData = new HashMap<>();
         subTaskData.put("title", subTask.getTitle());
         subTaskData.put("status", subTask.isFinished() ? "completed" : "ongoing");

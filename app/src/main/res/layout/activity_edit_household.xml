@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".EditHousehold">
+    tools:context=".house.EditHousehold">
 
     <ImageButton
         android:id="@+id/imageButtonRemoveUser"
@@ -80,7 +80,7 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <Button
-        android:id="@+id/button"
+        android:id="@+id/confirmEditHouseholdButton"
         android:layout_width="287dp"
         android:layout_height="59dp"
         android:layout_marginBottom="8dp"

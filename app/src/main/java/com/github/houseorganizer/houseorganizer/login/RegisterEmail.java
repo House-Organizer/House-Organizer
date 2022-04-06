@@ -1,9 +1,10 @@
 package com.github.houseorganizer.houseorganizer.login;
 
-import static com.github.houseorganizer.houseorganizer.util.LoginHelpers.displayRegisterErrorMessage;
 import static com.github.houseorganizer.houseorganizer.util.LoginHelpers.inputsEmpty;
 import static com.github.houseorganizer.houseorganizer.util.LoginHelpers.isValidEmail;
 import static com.github.houseorganizer.houseorganizer.util.LoginHelpers.isValidPassword;
+import static com.github.houseorganizer.houseorganizer.util.Util.displayErrorMessage;
+import static com.github.houseorganizer.houseorganizer.util.Util.logAndToast;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -16,13 +17,12 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.github.houseorganizer.houseorganizer.R;
-import com.github.houseorganizer.houseorganizer.util.LoginHelpers;
+import com.github.houseorganizer.houseorganizer.util.Util;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
-import java.util.Arrays;
 import java.util.Objects;
 
 public class RegisterEmail extends AppCompatActivity {
@@ -47,13 +47,13 @@ public class RegisterEmail extends AppCompatActivity {
                     TextView error_field = findViewById(R.id.reg_email_error_message);
                     checkIfEmailIsAlreadyUsed(email);
                     if (isEmailAlreadyUsed) {
-                        displayRegisterErrorMessage(LoginHelpers.RegisterError.EMAIL_USED, error_field);
+                        displayErrorMessage(Util.ErrorType.EMAIL_USED, error_field);
                     } else if (inputsEmpty(email, password)) {
-                        displayRegisterErrorMessage(LoginHelpers.RegisterError.INPUTS_EMPTY, error_field);
+                        displayErrorMessage(Util.ErrorType.INPUTS_EMPTY, error_field);
                     } else if (!isValidEmail(email)) {
-                        displayRegisterErrorMessage(LoginHelpers.RegisterError.INVALID_EMAIL, error_field);
+                        displayErrorMessage(Util.ErrorType.INVALID_EMAIL, error_field);
                     } else if (!isValidPassword(password, confPassword)) {
-                        displayRegisterErrorMessage(LoginHelpers.RegisterError.INVALID_PASSWORD, error_field);
+                        displayErrorMessage(Util.ErrorType.INVALID_PASSWORD, error_field);
                     } else {
                         signUpWithEmail(v);
                     }
@@ -83,8 +83,7 @@ public class RegisterEmail extends AppCompatActivity {
                                 "Verification email sent to " + user.getEmail(),
                                 Toast.LENGTH_SHORT).show();
                     } else {
-                        LoginActivity.logAndToast(Arrays.asList(getString(R.string.tag_register_email),
-                                "sendEmailVerification"), task.getException(),
+                        logAndToast(getString(R.string.tag_register_email), "sendEmailVerification", task.getException(),
                                 RegisterEmail.this, "Failed to send verification email.");
                     }
                 });
