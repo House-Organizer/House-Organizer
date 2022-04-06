@@ -42,6 +42,7 @@ public class CalendarViewTest {
     public static void createMockFirebase() throws ExecutionException, InterruptedException {
         FirebaseTestsHelper.startAuthEmulator();
         FirebaseTestsHelper.startFirestoreEmulator();
+        FirebaseTestsHelper.startStorageEmulator();
         FirebaseTestsHelper.setUpFirebase();
 
         db = FirebaseFirestore.getInstance();
