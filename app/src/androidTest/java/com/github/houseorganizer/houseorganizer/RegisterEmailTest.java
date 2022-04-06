@@ -84,32 +84,37 @@ public class RegisterEmailTest {
     }
 
     @Test
-    public void signUpWithEmailShowsRightErrorWhenFalse() throws InterruptedException {
-        // INPUTS_EMPTY
+    public void signUpWithEmailShowsInputsEmptyErrorWhenInputsEmpty() throws InterruptedException {
         onView(withId(R.id.reg_enter_email)).perform(click(), typeText("test"), closeSoftKeyboard());
         onView(withId(R.id.reg_email_register_button)).perform(click());
-        Thread.sleep(500);
+        Thread.sleep(250);
         onView(withId(R.id.reg_email_error_message)).check(matches(withText(R.string.inputs_empty)));
+    }
 
-        // INVALID_EMAIL
+    @Test
+    public void signUpWithEmailShowsInvalidEmailErrorWithInvalidInput() throws InterruptedException {
         onView(withId(R.id.reg_enter_password)).perform(click(), typeText("testPassword"), closeSoftKeyboard());
         onView(withId(R.id.reg_email_register_button)).perform(click());
-        Thread.sleep(500);
+        Thread.sleep(250);
         onView(withId(R.id.reg_email_error_message)).check(matches(withText(R.string.email_not_valid)));
+    }
 
-        // INVALID_PASSWORD
+    @Test
+    public void signUpWithEmailShowsInvalidPasswordErrorWithInvalidInput() throws InterruptedException {
         onView(withId(R.id.reg_enter_email)).perform(clearText(), typeText(TEST_USERS_EMAILS[1]), closeSoftKeyboard());
         onView(withId(R.id.reg_confirm_password)).perform(click(), typeText("testPassword"), closeSoftKeyboard());
         onView(withId(R.id.reg_email_register_button)).perform(click());
-        Thread.sleep(500);
+        Thread.sleep(250);
         onView(withId(R.id.reg_email_error_message)).check(matches(withText(R.string.password_not_valid)));
+    }
 
-        // EMAIL_USED
+    @Test
+    public void signUpWithEmailShowsEmailUsedErrorWithAlreadyUsedEmail() throws InterruptedException {
         onView(withId(R.id.reg_enter_email)).perform(clearText(), typeText(email2), closeSoftKeyboard());
         onView(withId(R.id.reg_enter_password)).perform(clearText(), typeText(validPwd), closeSoftKeyboard());
         onView(withId(R.id.reg_confirm_password)).perform(clearText(), typeText(validPwd), closeSoftKeyboard());
         onView(withId(R.id.reg_email_register_button)).perform(click());
-        Thread.sleep(500);
+        Thread.sleep(250);
         onView(withId(R.id.reg_email_error_message)).check(matches(withText(R.string.email_already_used)));
     }
 }

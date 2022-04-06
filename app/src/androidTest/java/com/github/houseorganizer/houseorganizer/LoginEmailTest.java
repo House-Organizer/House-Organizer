@@ -72,14 +72,15 @@ public class LoginEmailTest {
 
 
     @Test
-    public void signInWithEmailShowsRightErrorWhenFalse() throws InterruptedException {
-        // INPUTS_EMPTY
+    public void signInWithEmailShowsInputsEmptyErrorWithEmptyInputs() throws InterruptedException {
         onView(withId(R.id.log_enter_email)).perform(click(), typeText("test"), closeSoftKeyboard());
         onView(withId(R.id.log_email_signin_button)).perform(click());
         Thread.sleep(100);
         onView(withId(R.id.log_email_error_message)).check(matches(withText(R.string.inputs_empty)));
+    }
 
-        // Auth Failed
+    @Test
+    public void signInWithEmailShowsAuthFailedErrorWithIncorrectInputs() throws InterruptedException {
         onView(withId(R.id.log_enter_email)).perform(clearText(), typeText("test"), closeSoftKeyboard());
         onView(withId(R.id.log_enter_password)).perform(clearText(), typeText("test"), closeSoftKeyboard());
         onView(withId(R.id.log_email_signin_button)).perform(click());
