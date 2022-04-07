@@ -29,8 +29,10 @@ import androidx.test.runner.lifecycle.ActivityLifecycleMonitorRegistry;
 import androidx.test.runner.lifecycle.Stage;
 
 import com.github.houseorganizer.houseorganizer.panels.MainScreenActivity;
+import com.google.android.gms.tasks.Tasks;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.UploadTask;
 
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
@@ -38,6 +40,7 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+import java.io.ByteArrayOutputStream;
 import java.util.concurrent.ExecutionException;
 
 @RunWith(AndroidJUnit4.class)
@@ -58,7 +61,12 @@ public class CalendarViewTest {
     }
 
     @AfterClass
-    public static void signOut(){
+    public static void signOut() throws ExecutionException, InterruptedException {
+        // Reset the attachment that was removed
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        baos.write(1);
+        UploadTask task = storage.getReference().child("to_delete_attachment.jpg").putBytes(baos.toByteArray());
+        Tasks.await(task);
         auth.signOut();
     }
 
