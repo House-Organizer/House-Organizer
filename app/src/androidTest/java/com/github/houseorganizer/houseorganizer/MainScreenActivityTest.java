@@ -161,8 +161,6 @@ public class MainScreenActivityTest {
         onView(withId(R.id.calendar_view_change)).check(matches(isDisplayed()));
     }
 
-    // TODO : Add more meaningful tests for each row in the RecyclerViews (no idea how to do it)
-
     /* TODO: Move sign-out button tests in rightful test class; This button is no longer on MainScreen
     @Test
     public void signOutButtonIsDisplayedAndEnabled(){

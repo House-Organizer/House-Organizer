@@ -47,6 +47,10 @@ dependencies {
     // FirebaseUI for Cloud Firestore
     implementation 'com.firebaseui:firebase-ui-firestore:8.0.0'
 
+    // FirebaseUI for Cloud storage
+    implementation 'com.firebaseui:firebase-ui-storage:7.2.0'
+
+
     // Import the BoM for the Firebase platform
     implementation platform('com.google.firebase:firebase-bom:29.2.1')
 
