@@ -10,10 +10,11 @@ import static androidx.test.espresso.intent.Intents.intended;
 import static androidx.test.espresso.intent.matcher.IntentMatchers.hasComponent;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
 import static androidx.test.espresso.matcher.ViewMatchers.withText;
+import static com.github.houseorganizer.houseorganizer.FirebaseTestsHelper.TEST_USERS_EMAILS;
+import static com.github.houseorganizer.houseorganizer.FirebaseTestsHelper.TEST_USERS_PWD;
+import static com.github.houseorganizer.houseorganizer.FirebaseTestsHelper.VALID_PASSWORD_FOR_APP;
 import static com.github.houseorganizer.houseorganizer.FirebaseTestsHelper.createFirebaseTestUserWithCredentials;
-import static com.github.houseorganizer.houseorganizer.FirebaseTestsHelper.deleteTestUserWithCredentials;
-import static com.github.houseorganizer.houseorganizer.FirebaseTestsHelper.test4Input;
-import static com.github.houseorganizer.houseorganizer.FirebaseTestsHelper.validPassword;
+import static com.github.houseorganizer.houseorganizer.FirebaseTestsHelper.deleteTestUser;
 
 import androidx.test.espresso.intent.Intents;
 import androidx.test.ext.junit.rules.ActivityScenarioRule;
@@ -47,19 +48,19 @@ public class LoginEmailTest {
         FirebaseTestsHelper.startAuthEmulator();
         auth = FirebaseAuth.getInstance();
 
-        createFirebaseTestUserWithCredentials(email, validPassword);
+        createFirebaseTestUserWithCredentials(email, VALID_PASSWORD_FOR_APP);
     }
 
     @AfterClass
     public static void end() throws ExecutionException, InterruptedException {
-        deleteTestUserWithCredentials(email, validPassword);
+        deleteTestUser();
     }
 
     @Test
     public void signInWithEmailWorksWithCorrectInputs() {
         Intents.init();
         onView(withId(R.id.log_enter_email)).perform(clearText(), typeText(email), closeSoftKeyboard());
-        onView(withId(R.id.log_enter_password)).perform(clearText(), typeText(validPassword), closeSoftKeyboard());
+        onView(withId(R.id.log_enter_password)).perform(clearText(), typeText(VALID_PASSWORD_FOR_APP), closeSoftKeyboard());
         onView(withId(R.id.log_email_signin_button)).perform(click());
         intended(hasComponent(VerifyEmail.class.getName()));
         Intents.release();
@@ -68,13 +69,13 @@ public class LoginEmailTest {
 
     @Test
     public void signInWithEmailShowsInputsEmptyErrorWithEmptyInputs() throws InterruptedException {
-        enterInputsAndClickSignIn(test4Input, "");
+        enterInputsAndClickSignIn(TEST_USERS_EMAILS[0], "");
         onView(withId(R.id.log_email_error_message)).check(matches(withText(R.string.inputs_empty)));
     }
 
     @Test
     public void signInWithEmailShowsAuthFailedErrorWithIncorrectInputs() throws InterruptedException {
-        enterInputsAndClickSignIn(test4Input, test4Input);
+        enterInputsAndClickSignIn(TEST_USERS_EMAILS[0], TEST_USERS_PWD[0]);
         onView(withId(R.id.log_email_error_message)).check(matches(withText(R.string.log_email_auth_failed)));
     }
 

@@ -41,9 +41,7 @@ public class FirebaseTestsHelper {
     protected static String[] TEST_HOUSEHOLD_NAMES =
             {"home_1", "home_2", "home_3"};
 
-    protected static final String validPassword = "A3@ef678!";
-    protected static final String test4Input = "test";
-    protected static final String test8Input = "testPassword";
+    protected static final String VALID_PASSWORD_FOR_APP = "A3@ef678!";
 
     protected static void startAuthEmulator(){
         if(authEmulatorActivated) return;
@@ -93,7 +91,7 @@ public class FirebaseTestsHelper {
     /**
      * This method deletes a user, it is assumed the user is logged in.
      */
-    protected static void deleteTestUserWithCredentials(String email, String password)
+    protected static void deleteTestUser()
             throws ExecutionException, InterruptedException {
         Task<Void> t2 = Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser()).delete();
         Tasks.await(t2);

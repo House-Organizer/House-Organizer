@@ -11,12 +11,11 @@ import static androidx.test.espresso.intent.matcher.IntentMatchers.hasComponent;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
 import static androidx.test.espresso.matcher.ViewMatchers.withText;
 import static com.github.houseorganizer.houseorganizer.FirebaseTestsHelper.TEST_USERS_EMAILS;
+import static com.github.houseorganizer.houseorganizer.FirebaseTestsHelper.TEST_USERS_PWD;
+import static com.github.houseorganizer.houseorganizer.FirebaseTestsHelper.VALID_PASSWORD_FOR_APP;
 import static com.github.houseorganizer.houseorganizer.FirebaseTestsHelper.createFirebaseTestUserWithCredentials;
-import static com.github.houseorganizer.houseorganizer.FirebaseTestsHelper.deleteTestUserWithCredentials;
+import static com.github.houseorganizer.houseorganizer.FirebaseTestsHelper.deleteTestUser;
 import static com.github.houseorganizer.houseorganizer.FirebaseTestsHelper.signInTestUserWithCredentials;
-import static com.github.houseorganizer.houseorganizer.FirebaseTestsHelper.test4Input;
-import static com.github.houseorganizer.houseorganizer.FirebaseTestsHelper.test8Input;
-import static com.github.houseorganizer.houseorganizer.FirebaseTestsHelper.validPassword;
 
 import static org.hamcrest.CoreMatchers.anyOf;
 
@@ -52,23 +51,23 @@ public class RegisterEmailTest {
         FirebaseTestsHelper.startAuthEmulator();
         auth = FirebaseAuth.getInstance();
 
-        createFirebaseTestUserWithCredentials(email2, validPassword);
+        createFirebaseTestUserWithCredentials(email2, VALID_PASSWORD_FOR_APP);
     }
 
     @AfterClass
     public static void end() throws ExecutionException, InterruptedException {
-        deleteTestUserWithCredentials(email1, validPassword);
+        deleteTestUser();
 
-        signInTestUserWithCredentials(email2, validPassword);
-        deleteTestUserWithCredentials(email2, validPassword);
+        signInTestUserWithCredentials(email2, VALID_PASSWORD_FOR_APP);
+        deleteTestUser();
     }
 
     @Test
     public void signUpWithEmailWorksWithCorrectInputs() {
         Intents.init();
         onView(withId(R.id.reg_enter_email)).perform(clearText(), typeText(email1), closeSoftKeyboard());
-        onView(withId(R.id.reg_enter_password)).perform(clearText(), typeText(validPassword), closeSoftKeyboard());
-        onView(withId(R.id.reg_confirm_password)).perform(clearText(), typeText(validPassword), closeSoftKeyboard());
+        onView(withId(R.id.reg_enter_password)).perform(clearText(), typeText(VALID_PASSWORD_FOR_APP), closeSoftKeyboard());
+        onView(withId(R.id.reg_confirm_password)).perform(clearText(), typeText(VALID_PASSWORD_FOR_APP), closeSoftKeyboard());
         onView(withId(R.id.reg_email_register_button)).perform(click());
         intended(hasComponent(VerifyEmail.class.getName()));
         Intents.release();
@@ -76,25 +75,25 @@ public class RegisterEmailTest {
 
     @Test
     public void signUpWithEmailShowsInputsEmptyErrorWhenInputsEmpty() throws InterruptedException {
-        enterInputsAndClickRegister(test4Input, "");
+        enterInputsAndClickRegister(TEST_USERS_EMAILS[0], "");
         onView(withId(R.id.reg_email_error_message)).check(matches(withText(R.string.inputs_empty)));
     }
 
     @Test
     public void signUpWithEmailShowsInvalidEmailErrorWithInvalidInput() throws InterruptedException {
-        enterInputsAndClickRegister(test4Input, test8Input);
+        enterInputsAndClickRegister(TEST_USERS_EMAILS[0], TEST_USERS_PWD[0]);
         onView(withId(R.id.reg_email_error_message)).check(matches(withText(R.string.email_not_valid)));
     }
 
     @Test
     public void signUpWithEmailShowsInvalidPasswordErrorWithInvalidInput() throws InterruptedException {
-        enterInputsAndClickRegister(TEST_USERS_EMAILS[1], test8Input);
+        enterInputsAndClickRegister(TEST_USERS_EMAILS[1], TEST_USERS_PWD[0]);
         onView(withId(R.id.reg_email_error_message)).check(matches(withText(R.string.password_not_valid)));
     }
 
     @Test
     public void signUpWithEmailShowsEmailUsedErrorWithAlreadyUsedEmail() throws InterruptedException {
-        enterInputsAndClickRegister(email2, validPassword);
+        enterInputsAndClickRegister(email2, VALID_PASSWORD_FOR_APP);
         onView(withId(R.id.reg_email_error_message)).check(matches(anyOf(
                 withText(R.string.email_already_used), withText(R.string.reg_email_auth_failed)
         )));
