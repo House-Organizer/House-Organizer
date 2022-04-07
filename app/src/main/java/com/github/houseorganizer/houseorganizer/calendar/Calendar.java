@@ -205,8 +205,10 @@ public class Calendar {
             if (this == oEvent) return true;
             if (!(oEvent instanceof Event)) return false;
             Event event = (Event) oEvent;
-            // Shortcut since toString depends of every variable Event has
-            return event.toString().equals(this.toString());
+            if (!(this.title.equals(event.title))) { return false; }
+            if (!(this.description.equals(event.description))) { return false; }
+            if (!(this.start.equals(event.start))) { return false; }
+            return this.duration == event.duration;
         }
     }
 
