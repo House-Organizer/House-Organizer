@@ -25,7 +25,6 @@ import androidx.test.ext.junit.runners.AndroidJUnit4;
 
 import com.github.houseorganizer.houseorganizer.login.RegisterEmail;
 import com.github.houseorganizer.houseorganizer.login.VerifyEmail;
-import com.google.firebase.auth.FirebaseAuth;
 
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
@@ -39,7 +38,6 @@ import java.util.concurrent.ExecutionException;
 @RunWith(AndroidJUnit4.class)
 public class RegisterEmailTest {
 
-    private static FirebaseAuth auth;
     private static final String email1 = "user_register1@test.com", email2 = "user_register2@test.com";
 
     @Rule
@@ -49,21 +47,18 @@ public class RegisterEmailTest {
     @BeforeClass
     public static void start() throws ExecutionException, InterruptedException {
         FirebaseTestsHelper.startAuthEmulator();
-        auth = FirebaseAuth.getInstance();
 
         createFirebaseTestUserWithCredentials(email2, VALID_PASSWORD_FOR_APP);
     }
 
     @AfterClass
     public static void end() throws ExecutionException, InterruptedException {
-        deleteTestUser();
-
         signInTestUserWithCredentials(email2, VALID_PASSWORD_FOR_APP);
         deleteTestUser();
     }
 
     @Test
-    public void signUpWithEmailWorksWithCorrectInputs() {
+    public void signUpWithEmailWorksWithCorrectInputs() throws ExecutionException, InterruptedException {
         Intents.init();
         onView(withId(R.id.reg_enter_email)).perform(clearText(), typeText(email1), closeSoftKeyboard());
         onView(withId(R.id.reg_enter_password)).perform(clearText(), typeText(VALID_PASSWORD_FOR_APP), closeSoftKeyboard());
@@ -71,6 +66,8 @@ public class RegisterEmailTest {
         onView(withId(R.id.reg_email_register_button)).perform(click());
         intended(hasComponent(VerifyEmail.class.getName()));
         Intents.release();
+
+        deleteTestUser();
     }
 
     @Test

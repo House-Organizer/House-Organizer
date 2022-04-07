@@ -22,7 +22,6 @@ import androidx.test.ext.junit.runners.AndroidJUnit4;
 
 import com.github.houseorganizer.houseorganizer.login.LoginEmail;
 import com.github.houseorganizer.houseorganizer.login.VerifyEmail;
-import com.google.firebase.auth.FirebaseAuth;
 
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
@@ -36,7 +35,6 @@ import java.util.concurrent.ExecutionException;
 @RunWith(AndroidJUnit4.class)
 public class LoginEmailTest {
 
-    private static FirebaseAuth auth;
     private static final String email = "user_login1@test.com";
 
     @Rule
@@ -46,24 +44,25 @@ public class LoginEmailTest {
     @BeforeClass
     public static void start() throws ExecutionException, InterruptedException {
         FirebaseTestsHelper.startAuthEmulator();
-        auth = FirebaseAuth.getInstance();
 
         createFirebaseTestUserWithCredentials(email, VALID_PASSWORD_FOR_APP);
     }
 
     @AfterClass
-    public static void end() throws ExecutionException, InterruptedException {
-        deleteTestUser();
+    public static void end() {
+
     }
 
     @Test
-    public void signInWithEmailWorksWithCorrectInputs() {
+    public void signInWithEmailWorksWithCorrectInputs() throws ExecutionException, InterruptedException {
         Intents.init();
         onView(withId(R.id.log_enter_email)).perform(clearText(), typeText(email), closeSoftKeyboard());
         onView(withId(R.id.log_enter_password)).perform(clearText(), typeText(VALID_PASSWORD_FOR_APP), closeSoftKeyboard());
         onView(withId(R.id.log_email_signin_button)).perform(click());
         intended(hasComponent(VerifyEmail.class.getName()));
         Intents.release();
+
+        deleteTestUser();
     }
 
 
