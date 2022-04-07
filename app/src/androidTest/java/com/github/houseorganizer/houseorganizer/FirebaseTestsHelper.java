@@ -141,6 +141,9 @@ public class FirebaseTestsHelper {
         FirestoreTask.storeTaskList(taskList, db.collection("task lists"), "task_list_1");
     }
 
+    /**
+     * This method will create a shopList on Firestore
+     */
     protected static void createTestShopList() throws ExecutionException, InterruptedException {
         FirebaseFirestore db = FirebaseFirestore.getInstance();
         User owner = new DummyUser("test", TEST_USERS_EMAILS[0]);

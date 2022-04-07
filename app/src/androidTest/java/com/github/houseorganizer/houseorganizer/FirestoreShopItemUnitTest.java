@@ -64,14 +64,19 @@ public class FirestoreShopItemUnitTest {
         testLocalItem.togglePickedUp();
     }
 
-    @Test
-    public void changeNameUpdatesFirestore() throws ExecutionException, InterruptedException {
+    private DocumentSnapshot getTestDoc() throws ExecutionException, InterruptedException {
         DocumentReference docRef = testLocalItem.getItemDocRef();
         Task<DocumentSnapshot> t = docRef.get();
         Tasks.await(t);
-        String oldName = (String)t.getResult().get("name");
+        return t.getResult();
+    }
+
+    @Test
+    public void changeNameUpdatesFirestore() throws ExecutionException, InterruptedException {
+        DocumentSnapshot snap = getTestDoc();
+        String oldName = (String)snap.get("name");
         testLocalItem.changeName("RandomNewName");
-        Task<DocumentSnapshot> t1 = docRef.get();
+        Task<DocumentSnapshot> t1 = testLocalItem.getItemDocRef().get();
         Tasks.await(t1);
         String newName = (String)t1.getResult().get("name");
         assertThat(oldName, is(not(newName)));
@@ -81,12 +86,10 @@ public class FirestoreShopItemUnitTest {
 
     @Test
     public void setQuantityUpdatesFirestore() throws ExecutionException, InterruptedException {
-        DocumentReference docRef = testLocalItem.getItemDocRef();
-        Task<DocumentSnapshot> t = docRef.get();
-        Tasks.await(t);
-        long oldQ = (long)t.getResult().get("quantity");
+        DocumentSnapshot snap = getTestDoc();
+        long oldQ = (long)snap.get("quantity");
         testLocalItem.setQuantity(9);
-        Task<DocumentSnapshot> t1 = docRef.get();
+        Task<DocumentSnapshot> t1 = testLocalItem.getItemDocRef().get();
         Tasks.await(t1);
         long newQ = (long)t1.getResult().get("quantity");
         assertThat(oldQ, is(not(newQ)));
@@ -96,12 +99,10 @@ public class FirestoreShopItemUnitTest {
 
     @Test
     public void setUnitUpdatesFirestore() throws ExecutionException, InterruptedException {
-        DocumentReference docRef = testLocalItem.getItemDocRef();
-        Task<DocumentSnapshot> t = docRef.get();
-        Tasks.await(t);
-        String old = (String)t.getResult().get("unit");
+        DocumentSnapshot snap = getTestDoc();
+        String old = (String)snap.get("unit");
         testLocalItem.setUnit("m^2");
-        Task<DocumentSnapshot> t1 = docRef.get();
+        Task<DocumentSnapshot> t1 = testLocalItem.getItemDocRef().get();
         Tasks.await(t1);
         String new1 = (String)t1.getResult().get("unit");
         assertThat(old, is(not(new1)));
@@ -111,12 +112,10 @@ public class FirestoreShopItemUnitTest {
 
     @Test
     public void setPickedUpUpdatesFirestore() throws ExecutionException, InterruptedException {
-        DocumentReference docRef = testLocalItem.getItemDocRef();
-        Task<DocumentSnapshot> t = docRef.get();
-        Tasks.await(t);
-        boolean old = (boolean)t.getResult().get("pickedUp");
+        DocumentSnapshot snap = getTestDoc();
+        boolean old = (boolean)snap.get("pickedUp");
         testLocalItem.setPickedUp(true);
-        Task<DocumentSnapshot> t1 = docRef.get();
+        Task<DocumentSnapshot> t1 = testLocalItem.getItemDocRef().get();
         Tasks.await(t1);
         boolean new1 = (boolean)t1.getResult().get("pickedUp");
         assertThat(old, is(not(new1)));
@@ -140,15 +139,16 @@ public class FirestoreShopItemUnitTest {
 
     @Test
     public void storeShopListWorks() throws ExecutionException, InterruptedException {
-        ShopList shopList = new ShopList(new DummyUser("Lolito", FirebaseTestsHelper.TEST_USERS_EMAILS[0]), "MyNewList");
+        String newListName = "MyNewList";
+        ShopList shopList = new ShopList(new DummyUser("Lolito", FirebaseTestsHelper.TEST_USERS_EMAILS[0]), newListName);
         shopList.addItem(FirebaseTestsHelper.TEST_ITEM);
         CollectionReference root = db.collection("shop_lists");
         FirestoreShopItem.storeShopList(shopList, root, shopList.getListName());
-        DocumentReference doc = root.document("MyNewList");
+        DocumentReference doc = root.document(newListName);
         Task<DocumentSnapshot> t0 = doc.get();
         Tasks.await(t0);
         doc.delete();
-        assertThat(t0.getResult().get("name"), is("MyNewList"));
+        assertThat(t0.getResult().get("name"), is(newListName));
         assertThat(t0.getResult().get("owner"), is(FirebaseTestsHelper.TEST_USERS_EMAILS[0]));
         assertThat(((ArrayList<User>)t0.getResult().get("authorized")).isEmpty(), is(true));
     }
