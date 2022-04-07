@@ -4,12 +4,25 @@ package com.github.houseorganizer.houseorganizer;
 import static androidx.test.espresso.Espresso.onView;
 import static androidx.test.espresso.action.ViewActions.click;
 import static androidx.test.espresso.assertion.ViewAssertions.matches;
+import static androidx.test.espresso.intent.Intents.getIntents;
+import static androidx.test.espresso.intent.Intents.intended;
+import static androidx.test.espresso.intent.Intents.intending;
+import static androidx.test.espresso.intent.matcher.IntentMatchers.hasAction;
 import static androidx.test.espresso.matcher.ViewMatchers.assertThat;
 import static androidx.test.espresso.matcher.ViewMatchers.hasChildCount;
+import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
+import static androidx.test.espresso.matcher.ViewMatchers.withEffectiveVisibility;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
+import static androidx.test.espresso.matcher.ViewMatchers.withText;
 import static org.hamcrest.CoreMatchers.is;
 
+import android.app.Activity;
+import android.app.Instrumentation;
+import android.content.Intent;
+
 import androidx.test.espresso.contrib.RecyclerViewActions;
+import androidx.test.espresso.intent.Intents;
+import androidx.test.espresso.matcher.ViewMatchers;
 import androidx.test.ext.junit.rules.ActivityScenarioRule;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 
@@ -24,6 +37,7 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+import java.io.ByteArrayOutputStream;
 import java.util.concurrent.ExecutionException;
 
 @RunWith(AndroidJUnit4.class)
@@ -58,10 +72,10 @@ public class CalendarViewTest {
     public void attachmentCorrectlyShows() {
         onView(withId(R.id.house_imageButton)).perform(click());
         onView(withId(R.id.housesView)).perform(RecyclerViewActions.actionOnItemAtPosition(0, click()));
-        onView(withId(R.id.calendar)).check(matches(hasChildCount(4)));
-                //.perform(RecyclerViewActions.actionOnItemAtPosition(0, RecyclerViewHelperActions.clickChildViewWithId(R.id.event_upcoming_attach)));
-        //onView(withId(R.id.show_image)).perform(click());
-        //onView(withId(R.id.image_dialog)).check(matches(isDisplayed()));
+        onView(withId(R.id.calendar))
+                .perform(RecyclerViewActions.actionOnItemAtPosition(0, RecyclerViewHelperActions.clickChildViewWithId(R.id.event_upcoming_attach)));
+        onView(withText("Show")).perform(click());
+        onView(withId(R.id.image_dialog)).check(matches(withEffectiveVisibility(ViewMatchers.Visibility.VISIBLE)));
     }
 
     @Test
@@ -70,22 +84,22 @@ public class CalendarViewTest {
         onView(withId(R.id.housesView)).perform(RecyclerViewActions.actionOnItemAtPosition(0, click()));
         onView(withId(R.id.calendar))
                 .perform(RecyclerViewActions.actionOnItemAtPosition(2, RecyclerViewHelperActions.clickChildViewWithId(R.id.event_upcoming_attach)));
-        onView(withId(R.id.remove_image)).perform(click());
+        onView(withText("Remove")).perform(click());
         storage.getReference().child("to_delete_attachment.jpg").getDownloadUrl().addOnCompleteListener(
                 task -> assertThat(task.isSuccessful(), is(false))
         );
     }
 
     @Test
-    public void attachCorrectlyUploads() {
+    public void attachCorrectlyFiresIntent() {
+        Intents.init();
         onView(withId(R.id.house_imageButton)).perform(click());
         onView(withId(R.id.housesView)).perform(RecyclerViewActions.actionOnItemAtPosition(0, click()));
         onView(withId(R.id.calendar))
                 .perform(RecyclerViewActions.actionOnItemAtPosition(1, RecyclerViewHelperActions.clickChildViewWithId(R.id.event_upcoming_attach)));
-        onView(withId(R.id.attach_image)).perform(click());
-        storage.getReference().child("no_attachment.jpg").getDownloadUrl().addOnCompleteListener(
-                task -> assertThat(task.isSuccessful(), is(true))
-        );
+        onView(withText("Attach")).perform(click());
+        intended(hasAction(Intent.ACTION_GET_CONTENT));
+        Intents.release();
     }
 }
 
