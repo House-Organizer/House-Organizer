@@ -60,6 +60,7 @@ import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Timer;
 import java.util.concurrent.ExecutionException;
 
 @RunWith(AndroidJUnit4.class)
@@ -227,8 +228,29 @@ public class CalendarViewTest {
         onView(withHint(R.string.date)).perform(clearText()).perform(typeText(date)).perform(closeSoftKeyboard());
         onView(withHint(R.string.duration)).perform(clearText()).perform(typeText("10")).perform(closeSoftKeyboard());
         onView(withText(R.string.add)).perform(click());
-        // Count is EVENTS_TO_DISPLAY because we removed one event and added one
+
+        // Makes sure the event has time to be added before the check
+        int i = 0;
+        while(i < 10) {
+            db.collection("events").whereEqualTo("title", "added")
+                    .get()
+                    .addOnCompleteListener(task -> {
+                        if (task.getResult().isEmpty()) {
+                            try {
+                                Thread.sleep(1000);
+                            } catch (InterruptedException e) {
+                                e.printStackTrace();
+                            }
+                        } else {
+                            // Count is EVENTS_TO_DISPLAY because we removed one event and added one
+                            onView(withId(R.id.calendar)).check(matches(hasChildCount(EVENTS_TO_DISPLAY)));
+                        }
+                    });
+        i++;
+        }
+
         onView(withId(R.id.calendar)).check(matches(hasChildCount(EVENTS_TO_DISPLAY)));
+
     }
 
     @Test
