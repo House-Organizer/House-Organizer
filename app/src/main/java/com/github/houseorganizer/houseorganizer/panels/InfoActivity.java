@@ -2,7 +2,6 @@ package com.github.houseorganizer.houseorganizer.panels;
 
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -16,7 +15,6 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.List;
-import java.util.Objects;
 
 public class InfoActivity extends AppCompatActivity {
 
