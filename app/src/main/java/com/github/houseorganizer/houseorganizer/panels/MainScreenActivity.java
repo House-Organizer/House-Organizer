@@ -124,8 +124,6 @@ public class MainScreenActivity extends AppCompatActivity {
                 .addOnCompleteListener(task -> {
                     if (task.isSuccessful()) {
                         ArrayList<String> households = new ArrayList<>();
-                        String household = "";
-
                         for (QueryDocumentSnapshot document : task.getResult()) {
                             if (householdId.equals(document.getId())) {
                                 currentHouse = db.collection("households").document(document.getId());
@@ -134,7 +132,6 @@ public class MainScreenActivity extends AppCompatActivity {
                             }
                             households.add(document.getId());
                         }
-
                         if (currentHouse == null) {
                             if (!households.isEmpty()) {
                                 currentHouse = db.collection("households").document(households.get(0));
@@ -145,10 +142,9 @@ public class MainScreenActivity extends AppCompatActivity {
                             }
                         }
                         refreshCalendar(findViewById(R.id.refresh_calendar));
-                    } else {
+                    } else
                         logAndToast("MainScreenActivity", "loadHousehold:failure", task.getException(),
                                 getApplicationContext(), "Could not get a house.");
-                    }
                 });
     }
 
