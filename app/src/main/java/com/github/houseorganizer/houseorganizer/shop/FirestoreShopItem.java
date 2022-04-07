@@ -1,5 +1,7 @@
 package com.github.houseorganizer.houseorganizer.shop;
 
+import android.annotation.SuppressLint;
+
 import com.github.houseorganizer.houseorganizer.user.User;
 import com.google.android.gms.tasks.Task;
 import com.google.android.gms.tasks.Tasks;
@@ -68,6 +70,10 @@ public class FirestoreShopItem extends ShopItem{
         Tasks.await(t);
     }*/
 
+    public Task<Void> delete(){
+        return shopItemDocRef.delete();
+    }
+
     /**
      * To be called with the root directory and the name of the new list
      * @param shopList shopList to be stored
@@ -114,14 +120,18 @@ public class FirestoreShopItem extends ShopItem{
         return firestoreShopList.add(toStore);
     }
 
-    public static List<FirestoreShopItem> retrieveShopList(CollectionReference ref) throws ExecutionException, InterruptedException {
+    @SuppressLint("UseValueOf")
+    public static List<FirestoreShopItem> retrieveShopItems(CollectionReference ref) throws ExecutionException, InterruptedException {
+        if(ref==null){
+
+        }
         List<FirestoreShopItem> list = new ArrayList<>();
         Task<QuerySnapshot> task = ref.get();
         Tasks.await(task);
         List<DocumentSnapshot> docs = task.getResult().getDocuments();
         for(DocumentSnapshot doc : docs){
             list.add(new FirestoreShopItem((String)doc.get("name"),
-                    new Long((long) doc.get("quantity")).intValue(), //TODO : undo black magic
+                    new Long((long) doc.get("quantity")).intValue(), //Firestore only gives long
                     (String)doc.get("unit"),
                     doc.getReference()));
             list.get(list.size()-1).setPickedUp((boolean)doc.get("pickedUp"));
