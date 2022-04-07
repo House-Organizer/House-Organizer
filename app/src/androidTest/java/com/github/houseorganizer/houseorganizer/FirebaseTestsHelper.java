@@ -11,8 +11,11 @@ import com.google.android.gms.tasks.Task;
 import com.google.android.gms.tasks.Tasks;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.storage.FirebaseStorage;
 
 import java.util.ArrayList;
@@ -30,6 +33,10 @@ import java.util.concurrent.ExecutionException;
  */
 public class FirebaseTestsHelper {
 
+    // Same as MainScreenActivity for now since RecyclerView tests depend on it
+    // Will be refined as soon as task lists are linked to households
+    public static final String TEST_TASK_LIST_DOCUMENT_NAME = "85IW3cYzxOo1YTWnNOQl";
+
     private static boolean authEmulatorActivated = false;
     private static boolean firestoreEmulatorActivated = false;
     private static boolean databaseEmulatorActivated = false;
@@ -45,6 +52,9 @@ public class FirebaseTestsHelper {
 
     protected static ShopItem TEST_ITEM = new ShopItem("Egg", 3, "t");
     protected static String TEST_SHOPLIST_NAME = "TestList1";
+
+    protected static String UNKNOWN_USER = "unknown@test.com";
+    protected static String WRONG_EMAIL = "user_1.com";
 
     protected static void startAuthEmulator(){
         if(authEmulatorActivated) return;
@@ -62,6 +72,18 @@ public class FirebaseTestsHelper {
         if(databaseEmulatorActivated) return;
         FirebaseStorage.getInstance().useEmulator("10.0.2.2", 9199);
         databaseEmulatorActivated = true;
+    }
+
+    protected static void wipeTaskListData() throws ExecutionException, InterruptedException {
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+
+        Task<QuerySnapshot> task = db.collection("task_lists").get();
+        Tasks.await(task);
+
+        if(! task.isSuccessful()) return; // assume collection doesn't exist
+
+        QuerySnapshot rootSnap = task.getResult();
+        rootSnap.getDocuments().forEach(docSnap -> docSnap.getReference().delete());
     }
 
     /**
@@ -138,7 +160,29 @@ public class FirebaseTestsHelper {
 
         // Store instance on the database using a helper function
         // returns only after storing is done
-        FirestoreTask.storeTaskList(taskList, db.collection("task lists"), "task_list_1");
+        storeTaskList(taskList, db.collection("task_lists"), TEST_TASK_LIST_DOCUMENT_NAME);
+    }
+
+    /**
+     * This method will create the three households
+     */
+    protected static void createHouseholds() throws ExecutionException, InterruptedException {
+        createTestHouseholdOnFirestoreWithName(TEST_HOUSEHOLD_NAMES[0], TEST_USERS_EMAILS[0],
+                Arrays.asList(TEST_USERS_EMAILS[0], TEST_USERS_EMAILS[1]), TEST_HOUSEHOLD_NAMES[0]);
+
+        createTestHouseholdOnFirestoreWithName(TEST_HOUSEHOLD_NAMES[1], TEST_USERS_EMAILS[0],
+                Arrays.asList(TEST_USERS_EMAILS[0], TEST_USERS_EMAILS[2]), TEST_HOUSEHOLD_NAMES[1]);
+
+        createTestHouseholdOnFirestoreWithName(TEST_HOUSEHOLD_NAMES[2], TEST_USERS_EMAILS[1],
+                Arrays.asList(TEST_USERS_EMAILS[1], TEST_USERS_EMAILS[2], TEST_USERS_EMAILS[3],
+                        TEST_USERS_EMAILS[4], TEST_USERS_EMAILS[5], TEST_USERS_EMAILS[6]),
+                TEST_HOUSEHOLD_NAMES[2]);
+    }
+
+    protected static Map<String, Object> fetchHouseholdData(String houseName, FirebaseFirestore db) throws ExecutionException, InterruptedException {
+        Task<DocumentSnapshot> task = db.collection("households").document(houseName).get();
+        Tasks.await(task);
+        return task.getResult().getData();
     }
 
     protected static void createTestShopList() throws ExecutionException, InterruptedException {
@@ -172,23 +216,54 @@ public class FirebaseTestsHelper {
             createFirebaseTestUserWithCredentials(TEST_USERS_EMAILS[u_index], TEST_USERS_PWD[u_index]);
         }
 
-        createTestHouseholdOnFirestoreWithName(TEST_HOUSEHOLD_NAMES[0], TEST_USERS_EMAILS[0],
-                Arrays.asList(TEST_USERS_EMAILS[0], TEST_USERS_EMAILS[1]), TEST_HOUSEHOLD_NAMES[0]);
+        createHouseholds();
 
-        createTestHouseholdOnFirestoreWithName(TEST_HOUSEHOLD_NAMES[1], TEST_USERS_EMAILS[0],
-                Arrays.asList(TEST_USERS_EMAILS[0], TEST_USERS_EMAILS[2]), TEST_HOUSEHOLD_NAMES[1]);
-
-        createTestHouseholdOnFirestoreWithName(TEST_HOUSEHOLD_NAMES[2], TEST_USERS_EMAILS[1],
-                Arrays.asList(TEST_USERS_EMAILS[1], TEST_USERS_EMAILS[2], TEST_USERS_EMAILS[3],
-                              TEST_USERS_EMAILS[4], TEST_USERS_EMAILS[5], TEST_USERS_EMAILS[6]),
-                TEST_HOUSEHOLD_NAMES[2]);
+        createTestTaskList();
+      
+        createTestShopList();
 
         signInTestUserWithCredentials(TEST_USERS_EMAILS[0], TEST_USERS_PWD[0]);
 
-        createTestTaskList();
-
-        createTestShopList();
-
         createFirebaseDoneFlag();
+    }
+
+    // Task list loading
+    private static com.google.android.gms.tasks.Task<DocumentReference> storeTask(com.github.houseorganizer.houseorganizer.task.Task task, CollectionReference taskListRef) {
+        Map<String, Object> data = new HashMap<>();
+
+        // Loading information
+        data.put("title", task.getTitle());
+        data.put("description", task.getDescription());
+        data.put("status", task.isFinished() ? "completed" : "ongoing");
+        data.put("owner", task.getOwner().uid());
+
+        List<Map<String, String>> subTaskListData = new ArrayList<>();
+
+        for (com.github.houseorganizer.houseorganizer.task.Task.SubTask subTask : task.getSubTasks()) {
+            subTaskListData.add(FirestoreTask.makeSubTaskData(subTask));
+        }
+
+        data.put("sub tasks", subTaskListData);
+
+        return taskListRef.add(data);
+    }
+
+    protected static void storeTaskList(TaskList taskList, CollectionReference taskListRoot, String documentName) throws ExecutionException, InterruptedException {
+        Map<String, Object> data = new HashMap<>();
+
+        data.put("title", taskList.getTitle());
+        data.put("owner", taskList.getOwner().uid());
+
+        com.google.android.gms.tasks.Task<Void> task = taskListRoot.document(documentName).set(data);
+        Tasks.await(task);
+
+        if(task.isSuccessful()) {
+            DocumentReference documentReference = taskListRoot.document(documentName);
+            CollectionReference taskListRef = documentReference.collection("tasks");
+
+            for (com.github.houseorganizer.houseorganizer.task.Task t : taskList.getTasks()) {
+                Tasks.await(storeTask(t, taskListRef));
+            }
+        }
     }
 }
