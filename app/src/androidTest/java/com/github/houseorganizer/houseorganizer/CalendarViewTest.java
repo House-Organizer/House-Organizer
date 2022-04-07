@@ -8,23 +8,30 @@ import static androidx.test.espresso.intent.Intents.getIntents;
 import static androidx.test.espresso.intent.Intents.intended;
 import static androidx.test.espresso.intent.Intents.intending;
 import static androidx.test.espresso.intent.matcher.IntentMatchers.hasAction;
+import static androidx.test.espresso.matcher.RootMatchers.withDecorView;
 import static androidx.test.espresso.matcher.ViewMatchers.assertThat;
 import static androidx.test.espresso.matcher.ViewMatchers.hasChildCount;
 import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static androidx.test.espresso.matcher.ViewMatchers.withEffectiveVisibility;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
 import static androidx.test.espresso.matcher.ViewMatchers.withText;
+import static androidx.test.platform.app.InstrumentationRegistry.getInstrumentation;
 import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.Matchers.not;
 
 import android.app.Activity;
 import android.app.Instrumentation;
 import android.content.Intent;
 
 import androidx.test.espresso.contrib.RecyclerViewActions;
+import androidx.test.espresso.core.internal.deps.guava.collect.Iterables;
 import androidx.test.espresso.intent.Intents;
 import androidx.test.espresso.matcher.ViewMatchers;
 import androidx.test.ext.junit.rules.ActivityScenarioRule;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
+import androidx.test.runner.lifecycle.ActivityLifecycleMonitor;
+import androidx.test.runner.lifecycle.ActivityLifecycleMonitorRegistry;
+import androidx.test.runner.lifecycle.Stage;
 
 import com.github.houseorganizer.houseorganizer.panels.MainScreenActivity;
 import com.google.firebase.auth.FirebaseAuth;
@@ -64,6 +71,14 @@ public class CalendarViewTest {
         auth.signOut();
     }
 
+    Activity getCurrentActivity() throws Throwable {
+        getInstrumentation().waitForIdleSync();
+        final Activity[] activity = new Activity[1];
+        java.util.Collection<Activity> activities = ActivityLifecycleMonitorRegistry.getInstance().getActivitiesInStage(Stage.RESUMED);
+        activity[0] = Iterables.getOnlyElement(activities);
+        return activity[0];
+    }
+
     @Rule
     public ActivityScenarioRule<MainScreenActivity> mainScreenActivityActivityScenarioRule =
             new ActivityScenarioRule<>(MainScreenActivity.class);
@@ -100,6 +115,25 @@ public class CalendarViewTest {
         onView(withText("Attach")).perform(click());
         intended(hasAction(Intent.ACTION_GET_CONTENT));
         Intents.release();
+    }
+
+    @Test
+    public void showCorrectlyToastsOnNoAttachment() {
+        onView(withId(R.id.house_imageButton)).perform(click());
+        onView(withId(R.id.housesView)).perform(RecyclerViewActions.actionOnItemAtPosition(0, click()));
+        onView(withId(R.id.calendar))
+                .perform(RecyclerViewActions.actionOnItemAtPosition(1, RecyclerViewHelperActions.clickChildViewWithId(R.id.event_upcoming_attach)));
+        onView(withText("Show")).perform(click());
+
+        try {
+            onView(withText("Could not find the attachment")).
+                    inRoot(withDecorView(
+                            not(is(getCurrentActivity()
+                                    .getWindow().getDecorView())))).
+                    check(matches(isDisplayed()));
+        } catch (Throwable throwable) {
+            throwable.printStackTrace();
+        }
     }
 }
 
