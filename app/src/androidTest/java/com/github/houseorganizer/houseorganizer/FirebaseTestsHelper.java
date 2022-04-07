@@ -53,6 +53,9 @@ public class FirebaseTestsHelper {
 
     protected static String UNKNOWN_USER = "unknown@test.com";
     protected static String WRONG_EMAIL = "user_1.com";
+    protected static final int EVENTS_TO_DISPLAY = 5;
+    protected static final int EVENTS_NOT_TO_DISPLAY = 2;
+    protected static LocalDateTime DELETED_EVENT_TIME;
 
     protected static void startAuthEmulator(){
         if(authEmulatorActivated) return;
@@ -188,40 +191,46 @@ public class FirebaseTestsHelper {
      */
     protected static void createTestEvents() throws ExecutionException, InterruptedException {
         FirebaseFirestore db = FirebaseFirestore.getInstance();
+        ArrayList<Task<Void>> tasks = new ArrayList<>();
+        Map<String, Object> eventBuilder = new HashMap<>();
+        eventBuilder.put("title", "title");
+        eventBuilder.put("description", "desc");
+        eventBuilder.put("duration", 10);
+        eventBuilder.put("household", db.collection("households").document(TEST_HOUSEHOLD_NAMES[0]));
 
-        Map<String, Object> toDeleteData = new HashMap<>();
-        toDeleteData.put("title", "title");
-        toDeleteData.put("description", "desc");
-        toDeleteData.put("start", LocalDateTime.of(2022, 10, 10, 11, 10).toEpochSecond(ZoneOffset.UTC));
-        toDeleteData.put("duration", 10);
-        toDeleteData.put("household", TEST_HOUSEHOLD_NAMES[0]);
-        Map<String, Object> hasAttachmentData = new HashMap<>();
-        hasAttachmentData.put("title", "title");
-        hasAttachmentData.put("description", "desc");
-        hasAttachmentData.put("start", LocalDateTime.of(2022, 10, 10, 8, 10).toEpochSecond(ZoneOffset.UTC));
-        hasAttachmentData.put("duration", 10);
-        hasAttachmentData.put("household", TEST_HOUSEHOLD_NAMES[0]);
-        Map<String, Object> noAttachmentData = new HashMap<>();
-        noAttachmentData.put("title", "title");
-        noAttachmentData.put("description", "desc");
-        noAttachmentData.put("start", LocalDateTime.of(2022, 10, 10, 9, 10).toEpochSecond(ZoneOffset.UTC));
-        noAttachmentData.put("duration", 10);
-        noAttachmentData.put("household", TEST_HOUSEHOLD_NAMES[0]);
-        Map<String, Object> toDeleteAttachmentData = new HashMap<>();
-        toDeleteAttachmentData.put("title", "title");
-        toDeleteAttachmentData.put("description", "desc");
-        toDeleteAttachmentData.put("start", LocalDateTime.of(2022, 10, 10, 10, 10).toEpochSecond(ZoneOffset.UTC));
-        toDeleteAttachmentData.put("duration", 10);
-        toDeleteAttachmentData.put("household", TEST_HOUSEHOLD_NAMES[0]);
+        eventBuilder.put("start", LocalDateTime.now().plusHours(1).toEpochSecond(ZoneOffset.UTC));
+        Task<Void> task1 = db.collection("events").document("has_attachment").set(eventBuilder);
 
-        Task<Void> task1 = db.collection("events").document("to_delete").set(toDeleteData);
-        Task<Void> task2 = db.collection("events").document("has_attachment").set(hasAttachmentData);
-        Task<Void> task3 = db.collection("events").document("no_attachment").set(noAttachmentData);
-        Task<Void> task4 = db.collection("events").document("to_delete_attachment").set(toDeleteAttachmentData);
-        Tasks.await(task1);
-        Tasks.await(task2);
-        Tasks.await(task3);
-        Tasks.await(task4);
+        eventBuilder.put("start", LocalDateTime.now().plusHours(2).toEpochSecond(ZoneOffset.UTC));
+        Task<Void> task2 = db.collection("events").document("no_attachment").set(eventBuilder);
+
+        eventBuilder.put("start", LocalDateTime.now().plusHours(3).toEpochSecond(ZoneOffset.UTC));
+        Task<Void> task3 = db.collection("events").document("to_delete_attachment").set(eventBuilder);
+
+        eventBuilder.put("start", LocalDateTime.now().plusHours(4).toEpochSecond(ZoneOffset.UTC));
+        Task<Void> task4 = db.collection("events").document("to_edit").set(eventBuilder);
+
+        DELETED_EVENT_TIME = LocalDateTime.now().plusHours(5);
+        eventBuilder.put("start", DELETED_EVENT_TIME.toEpochSecond(ZoneOffset.UTC));
+        Task<Void> task5 = db.collection("events").document("to_delete").set(eventBuilder);
+
+        eventBuilder.put("start", LocalDateTime.now().minusHours(6).toEpochSecond(ZoneOffset.UTC));
+        Task<Void> task6 = db.collection("events").document("is_already_past").set(eventBuilder);
+
+        eventBuilder.put("household", db.collection("households").document(TEST_HOUSEHOLD_NAMES[1]));
+        eventBuilder.put("start", LocalDateTime.now().plusHours(7).toEpochSecond(ZoneOffset.UTC));
+        Task<Void> task7 = db.collection("events").document("is_in_other_house").set(eventBuilder);
+
+        tasks.add(task1);
+        tasks.add(task2);
+        tasks.add(task3);
+        tasks.add(task4);
+        tasks.add(task5);
+        tasks.add(task6);
+        tasks.add(task7);
+        for(int i = 0; i < EVENTS_TO_DISPLAY + EVENTS_NOT_TO_DISPLAY; i++) {
+            Tasks.await(tasks.get(i));
+        }
     }
 
     /**

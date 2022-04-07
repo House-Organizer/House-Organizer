@@ -3,32 +3,23 @@ package com.github.houseorganizer.houseorganizer;
 import static androidx.test.espresso.Espresso.onView;
 import static androidx.test.espresso.action.ViewActions.click;
 import static androidx.test.espresso.assertion.ViewAssertions.matches;
-import static androidx.test.espresso.intent.Checks.checkNotNull;
 import static androidx.test.espresso.intent.Intents.intended;
 import static androidx.test.espresso.intent.matcher.IntentMatchers.hasComponent;
-import static androidx.test.espresso.matcher.ViewMatchers.hasChildCount;
 import static androidx.test.espresso.matcher.ViewMatchers.isClickable;
 import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static androidx.test.espresso.matcher.ViewMatchers.isEnabled;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
 
-import android.view.View;
-
-import androidx.annotation.NonNull;
-import androidx.recyclerview.widget.RecyclerView;
 import androidx.test.espresso.intent.Intents;
-import androidx.test.espresso.matcher.BoundedMatcher;
 import androidx.test.ext.junit.rules.ActivityScenarioRule;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 
+import com.github.houseorganizer.houseorganizer.house.HouseSelectionActivity;
 import com.github.houseorganizer.houseorganizer.panels.MainScreenActivity;
 import com.github.houseorganizer.houseorganizer.panels.SettingsActivity;
-import com.github.houseorganizer.houseorganizer.house.HouseSelectionActivity;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
 
-import org.hamcrest.Description;
-import org.hamcrest.Matcher;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.FixMethodOrder;
@@ -37,8 +28,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.MethodSorters;
 
-import java.time.LocalDate;
-import java.time.YearMonth;
 import java.util.concurrent.ExecutionException;
 
 @RunWith(AndroidJUnit4.class)
@@ -170,64 +159,6 @@ public class MainScreenActivityTest {
     @Test
     public void cycleIsDisplayed() {
         onView(withId(R.id.calendar_view_change)).check(matches(isDisplayed()));
-    }
-
-
-    // Used in order to access RecyclerView items
-    public static Matcher<View> atPosition(final int position, @NonNull final Matcher<View> itemMatcher) {
-        checkNotNull(itemMatcher);
-        return new BoundedMatcher<View, RecyclerView>(RecyclerView.class) {
-            @Override
-            public void describeTo(Description description) {
-                description.appendText("has item at position " + position + ": ");
-                itemMatcher.describeTo(description);
-            }
-
-            @Override
-            protected boolean matchesSafely(final RecyclerView view) {
-                RecyclerView.ViewHolder viewHolder = view.findViewHolderForAdapterPosition(position);
-                if (viewHolder == null) {
-                    // has no item on such position
-                    return false;
-                }
-                return itemMatcher.matches(viewHolder.itemView);
-            }
-        };
-    }
-    /*
-    @Test
-    public void calendarUpcomingEventsDisplayed() {
-        onView(withId(R.id.refresh_calendar)).perform(click());
-        // Somehow wait for the calendar to retrieve the data and refresh the calendar
-        //onView(withId(R.id.calendar)).check(matches(hasChildCount(4)));
-    }
-
-    /* Need to find a way to run the check (the lambda here doesn't get run)
-    @Test
-    public void addEventWorks() {
-        mainScreenActivityActivityScenarioRule.getScenario().onActivity(activity -> {
-            int baseCount = ((ViewGroup)activity.findViewById(R.id.calendar)).getChildCount();
-            onView(withId(R.id.add_event)).perform(click());
-            onView(withId(R.id.calendar)).check(matches(hasChildCount(baseCount+1)));
-        });
-    }
-    */
-
-
-    @Test
-    public void calendarViewRotatesCorrectly() {
-        // Test partially commented out because we do not know how many events are on the database on testing
-        // => NEED MOCKING OF THE DATABASE
-        //final int UPCOMING_CHILDREN = 0;
-        final int MONTHLY_CHILDREN = YearMonth.of(LocalDate.now().getYear(), LocalDate.now().getMonth()).lengthOfMonth();
-        final int WEEKLY_CHILDREN = 7;
-        //onView(withId(R.id.calendar)).check(matches(hasChildCount(UPCOMING_CHILDREN)));
-        onView(withId(R.id.calendar_view_change)).perform(click());
-        onView(withId(R.id.calendar)).check(matches(hasChildCount(MONTHLY_CHILDREN)));
-        onView(withId(R.id.calendar_view_change)).perform(click());
-        onView(withId(R.id.calendar)).check(matches(hasChildCount(WEEKLY_CHILDREN)));
-        onView(withId(R.id.calendar_view_change)).perform(click());
-        //onView(withId(R.id.calendar)).check(matches(hasChildCount(UPCOMING_CHILDREN)));
     }
 
     // TODO : Add more meaningful tests for each row in the RecyclerViews (no idea how to do it)
