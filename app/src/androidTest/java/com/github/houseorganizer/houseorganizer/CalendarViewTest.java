@@ -70,12 +70,6 @@ public class CalendarViewTest {
         auth.signOut();
     }
 
-    Activity getCurrentActivity() {
-        getInstrumentation().waitForIdleSync();
-        java.util.Collection<Activity> activities = ActivityLifecycleMonitorRegistry.getInstance().getActivitiesInStage(Stage.RESUMED);
-        return Iterables.getOnlyElement(activities);
-    }
-
     @Rule
     public ActivityScenarioRule<MainScreenActivity> mainScreenActivityActivityScenarioRule =
             new ActivityScenarioRule<>(MainScreenActivity.class);
@@ -124,12 +118,15 @@ public class CalendarViewTest {
                 .perform(RecyclerViewActions.actionOnItemAtPosition(1, RecyclerViewHelperActions.clickChildViewWithId(R.id.event_upcoming_attach)));
         onView(withText("Show")).perform(click());
 
-        // This checks that the toast with the text "Could not find the attachment" is displayed
-        onView(withText("Could not find the attachment"))
-                .inRoot(withDecorView(
-                        not(is(getCurrentActivity()
-                                .getWindow().getDecorView()))))
-                .check(matches(isDisplayed()));
+        mainScreenActivityActivityScenarioRule.getScenario().onActivity(activity -> {
+            // This checks that the toast with the text "Could not find the attachment" is displayed
+            onView(withText("Could not find the attachment"))
+                    .inRoot(withDecorView(
+                            not(is(activity
+                                    .getWindow().getDecorView()))))
+                    .check(matches(isDisplayed()));
+        });
+
     }
 }
 
