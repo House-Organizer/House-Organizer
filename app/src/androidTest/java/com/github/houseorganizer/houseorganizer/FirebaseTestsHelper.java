@@ -197,7 +197,7 @@ public class FirebaseTestsHelper {
         hasAttachment.put("description", "desc");
         hasAttachment.put("duration", 10);
         hasAttachment.put("household", db.collection("households").document(TEST_HOUSEHOLD_NAMES[0]));
-        hasAttachment.put("start", LocalDateTime.now().plusHours(1).toEpochSecond(ZoneOffset.UTC));
+        hasAttachment.put("start", LocalDateTime.now().plusDays(1).toEpochSecond(ZoneOffset.UTC));
         Task<Void> task1 = db.collection("events").document("has_attachment").set(hasAttachment);
 
         Map<String, Object> noAttachment = new HashMap<>();
@@ -205,7 +205,7 @@ public class FirebaseTestsHelper {
         noAttachment.put("description", "desc");
         noAttachment.put("duration", 10);
         noAttachment.put("household", db.collection("households").document(TEST_HOUSEHOLD_NAMES[0]));
-        noAttachment.put("start", LocalDateTime.now().plusHours(2).toEpochSecond(ZoneOffset.UTC));
+        noAttachment.put("start", LocalDateTime.now().plusDays(2).toEpochSecond(ZoneOffset.UTC));
         Task<Void> task2 = db.collection("events").document("no_attachment").set(noAttachment);
 
         Map<String, Object> toDeleteAttachment = new HashMap<>();
@@ -213,7 +213,7 @@ public class FirebaseTestsHelper {
         toDeleteAttachment.put("description", "desc");
         toDeleteAttachment.put("duration", 10);
         toDeleteAttachment.put("household", db.collection("households").document(TEST_HOUSEHOLD_NAMES[0]));
-        toDeleteAttachment.put("start", LocalDateTime.now().plusHours(3).toEpochSecond(ZoneOffset.UTC));
+        toDeleteAttachment.put("start", LocalDateTime.now().plusDays(3).toEpochSecond(ZoneOffset.UTC));
         Task<Void> task3 = db.collection("events").document("to_delete_attachment").set(toDeleteAttachment);
 
         Map<String, Object> toEdit = new HashMap<>();
@@ -221,10 +221,10 @@ public class FirebaseTestsHelper {
         toEdit.put("description", "desc");
         toEdit.put("duration", 10);
         toEdit.put("household", db.collection("households").document(TEST_HOUSEHOLD_NAMES[0]));
-        toEdit.put("start", LocalDateTime.now().plusHours(4).toEpochSecond(ZoneOffset.UTC));
+        toEdit.put("start", LocalDateTime.now().plusDays(4).toEpochSecond(ZoneOffset.UTC));
         Task<Void> task4 = db.collection("events").document("to_edit").set(toEdit);
 
-        DELETED_EVENT_TIME = LocalDateTime.now().plusHours(5);
+        DELETED_EVENT_TIME = LocalDateTime.now().plusDays(5);
         Map<String, Object> toDelete = new HashMap<>();
         toDelete.put("title", "title");
         toDelete.put("description", "desc");
@@ -246,7 +246,7 @@ public class FirebaseTestsHelper {
         isInOtherHouse.put("description", "desc");
         isInOtherHouse.put("duration", 10);
         isInOtherHouse.put("household", db.collection("households").document(TEST_HOUSEHOLD_NAMES[1]));
-        isInOtherHouse.put("start", LocalDateTime.now().plusHours(7).toEpochSecond(ZoneOffset.UTC));
+        isInOtherHouse.put("start", LocalDateTime.now().plusDays(7).toEpochSecond(ZoneOffset.UTC));
         Task<Void> task7 = db.collection("events").document("is_in_other_house").set(isInOtherHouse);
 
         Tasks.await(task1);
