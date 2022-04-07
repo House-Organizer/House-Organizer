@@ -11,8 +11,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
+import java.util.stream.Collectors;
 
-public class FirestoreTask extends Task{
+public final class FirestoreTask extends HTask {
     private final DocumentReference taskDocRef;
 
     public FirestoreTask(User owner, String title, String description, List<SubTask> subTasks, DocumentReference taskDocRef) {
@@ -84,8 +85,6 @@ public class FirestoreTask extends Task{
     }
 
     /* Static API */
-    // N.B. for now, if they are on the database,
-    // the (sub)tasks are ongoing
     public static Map<String, String> makeSubTaskData(SubTask subTask) {
         Map<String, String> subTaskData = new HashMap<>();
         subTaskData.put("title", subTask.getTitle());
@@ -94,22 +93,45 @@ public class FirestoreTask extends Task{
         return subTaskData;
     }
 
-    public static Task.SubTask recoverSubTask(Map<String, String> data) {
-        return new Task.SubTask(data.get("title"));
+    public static HTask.SubTask recoverSubTask(Map<String, String> data) {
+        return new HTask.SubTask(data.get("title"));
     }
 
     public static FirestoreTask recoverTask(Map<String, Object> data, DocumentReference taskDocRef) {
-        List<Task.SubTask> subTasks = new ArrayList<>();
+        List<SubTask> subTasks = collectSubTasks(data);
+        List<User> assignees = collectAssignees(data);
 
-        Object tmp = data.get("sub tasks");
+        FirestoreTask ft = new FirestoreTask(new DummyUser("Recovering-user", (String)data.get("owner")),
+                (String)data.get("title"), (String)data.get("description"), subTasks, taskDocRef);
 
-        if (null != tmp) {
-            for (Map<String, String> subTaskData : (List<Map<String, String>>) tmp) {
-                subTasks.add(recoverSubTask(subTaskData));
-            }
+        ft.getAssignees().addAll(assignees);
+
+        return ft;
+    }
+
+    private static List<SubTask> collectSubTasks(Map<String, Object> taskData) {
+        List<SubTask> subTasks = new ArrayList<>();
+        Object tmpSubTaskData = taskData.get("sub tasks");
+
+        if (null != tmpSubTaskData) {
+            subTasks = ((List<Map<String, String>>) tmpSubTaskData).stream()
+                    .map(FirestoreTask::recoverSubTask)
+                    .collect(Collectors.toList());
         }
 
-        return new FirestoreTask(new DummyUser("Recovering-user", (String)data.get("owner")),
-                (String)data.get("title"), (String)data.get("description"), subTasks, taskDocRef);
+        return subTasks;
+    }
+
+    private static List<User> collectAssignees(Map<String, Object> taskData) {
+        List<User> assignees = new ArrayList<>();
+        Object assigneeData = taskData.get("assignees");
+
+        if (null != assigneeData) {
+            assignees = ((List<String>) assigneeData).stream()
+                    .map(assigneeEmail -> new DummyUser("Dummy", assigneeEmail))
+                    .collect(Collectors.toList());
+        }
+
+        return assignees;
     }
 }

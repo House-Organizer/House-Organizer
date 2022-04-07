@@ -4,6 +4,7 @@ import com.github.houseorganizer.houseorganizer.shop.FirestoreShopItem;
 import com.github.houseorganizer.houseorganizer.shop.ShopItem;
 import com.github.houseorganizer.houseorganizer.shop.ShopList;
 import com.github.houseorganizer.houseorganizer.task.FirestoreTask;
+import com.github.houseorganizer.houseorganizer.task.HTask;
 import com.github.houseorganizer.houseorganizer.task.TaskList;
 import com.github.houseorganizer.houseorganizer.user.DummyUser;
 import com.github.houseorganizer.houseorganizer.user.User;
@@ -29,6 +30,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
+import java.util.stream.Collectors;
 
 /**
  *
@@ -90,7 +92,15 @@ public class FirebaseTestsHelper {
         if(! task.isSuccessful()) return; // assume collection doesn't exist
 
         QuerySnapshot rootSnap = task.getResult();
-        rootSnap.getDocuments().forEach(docSnap -> docSnap.getReference().delete());
+
+        List<Task<Void>> tasks = rootSnap.getDocuments()
+                .stream()
+                .map(docSnap -> docSnap.getReference().delete())
+                .collect(Collectors.toList());
+
+        for  (Task<Void> task2 : tasks) {
+            Tasks.await(task2);
+        }
     }
 
     /**
@@ -160,8 +170,8 @@ public class FirebaseTestsHelper {
 
         // Create task list instance
         User owner = new DummyUser("Test User", "0");
-        com.github.houseorganizer.houseorganizer.task.Task taskToAdd =
-                new com.github.houseorganizer.houseorganizer.task.Task(owner, "TestTask", "Testing");
+        HTask taskToAdd =
+                new HTask(owner, "TestTask", "Testing");
 
         TaskList taskList = new TaskList(owner, "MyList", new ArrayList<>(Collections.singletonList(taskToAdd)));
 
@@ -338,7 +348,7 @@ public class FirebaseTestsHelper {
     }
 
     // Task list loading
-    private static com.google.android.gms.tasks.Task<DocumentReference> storeTask(com.github.houseorganizer.houseorganizer.task.Task task, CollectionReference taskListRef) {
+    private static Task<DocumentReference> storeTask(HTask task, CollectionReference taskListRef) {
         Map<String, Object> data = new HashMap<>();
 
         // Loading information
@@ -346,14 +356,17 @@ public class FirebaseTestsHelper {
         data.put("description", task.getDescription());
         data.put("status", task.isFinished() ? "completed" : "ongoing");
         data.put("owner", task.getOwner().uid());
+        data.put("assignees",
+                task.getAssignees()
+                        .stream()
+                        .map(User::uid)
+                        .collect(Collectors.toList()));
 
-        List<Map<String, String>> subTaskListData = new ArrayList<>();
-
-        for (com.github.houseorganizer.houseorganizer.task.Task.SubTask subTask : task.getSubTasks()) {
-            subTaskListData.add(FirestoreTask.makeSubTaskData(subTask));
-        }
-
-        data.put("sub tasks", subTaskListData);
+        data.put("sub tasks",
+                task.getSubTasks()
+                        .stream()
+                        .map(FirestoreTask::makeSubTaskData)
+                        .collect(Collectors.toList()));
 
         return taskListRef.add(data);
     }
@@ -364,14 +377,14 @@ public class FirebaseTestsHelper {
         data.put("title", taskList.getTitle());
         data.put("owner", taskList.getOwner().uid());
 
-        com.google.android.gms.tasks.Task<Void> task = taskListRoot.document(documentName).set(data);
+        Task<Void> task = taskListRoot.document(documentName).set(data);
         Tasks.await(task);
 
         if(task.isSuccessful()) {
             DocumentReference documentReference = taskListRoot.document(documentName);
             CollectionReference taskListRef = documentReference.collection("tasks");
 
-            for (com.github.houseorganizer.houseorganizer.task.Task t : taskList.getTasks()) {
+            for (HTask t : taskList.getTasks()) {
                 Tasks.await(storeTask(t, taskListRef));
             }
         }
