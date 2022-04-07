@@ -125,7 +125,7 @@ public class FirestoreShopItemUnitTest {
     }
 
     @Test
-    public void storeTaskWorks() throws ExecutionException, InterruptedException {
+    public void storeShopItemWorks() throws ExecutionException, InterruptedException {
         ShopItem item = new ShopItem("lol", 3, "omegalul");
         CollectionReference colRef = testLocalItem.getItemDocRef().getParent();
         Task<DocumentReference> t = FirestoreShopItem.storeShopItem(item, colRef);
