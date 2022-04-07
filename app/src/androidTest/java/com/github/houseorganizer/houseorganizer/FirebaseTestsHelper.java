@@ -83,7 +83,15 @@ public class FirebaseTestsHelper {
         if(! task.isSuccessful()) return; // assume collection doesn't exist
 
         QuerySnapshot rootSnap = task.getResult();
-        rootSnap.getDocuments().forEach(docSnap -> docSnap.getReference().delete());
+
+        List<Task<Void>> tasks = rootSnap.getDocuments()
+                .stream()
+                .map(docSnap -> docSnap.getReference().delete())
+                .collect(Collectors.toList());
+
+        for  (Task<Void> task2 : tasks) {
+            Tasks.await(task2);
+        }
     }
 
     /**
