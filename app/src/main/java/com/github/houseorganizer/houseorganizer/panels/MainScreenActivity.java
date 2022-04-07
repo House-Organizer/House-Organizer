@@ -112,7 +112,7 @@ public class MainScreenActivity extends AppCompatActivity {
                     FirebaseStorage storage = FirebaseStorage.getInstance();
                     // this creates the reference to the picture
                     StorageReference imageRef = storage.getReference().child(calendarAdapter.getEventToAttach() + ".jpg");
-                    imageRef.putFile(uri).addOnCompleteListener((complete) -> {});
+                    imageRef.putFile(uri);
                 });
     }
 
@@ -124,17 +124,18 @@ public class MainScreenActivity extends AppCompatActivity {
     }
 
     private void loadHousehold(String householdId) {
-        db.collection("households").whereArrayContains("residents", Objects.requireNonNull(mUser.getEmail())).get()
-                .addOnCompleteListener(task -> {
+        db.collection("households").whereArrayContains("residents", Objects.requireNonNull(mUser.getEmail())).get().addOnCompleteListener(task -> {
                     if (task.isSuccessful()) {
                         ArrayList<String> households = new ArrayList<>();
                         for (QueryDocumentSnapshot document : task.getResult()) {
                             if (householdId.equals(document.getId())) {
-                                households.add(document.getId());
-                                currentHouse = db.collection("households").document(householdId);
+                                currentHouse = db.collection("households").document(document.getId());
+                                saveData(document.getId());
                                 break;
                             }
-                        } if (currentHouse == null) {
+                            households.add(document.getId());
+                        }
+                        if (currentHouse == null) {
                             if (!households.isEmpty()) {
                                 currentHouse = db.collection("households").document(households.get(0));
                                 saveData(households.get(0));
@@ -144,10 +145,9 @@ public class MainScreenActivity extends AppCompatActivity {
                             }
                         }
                         refreshCalendar(findViewById(R.id.refresh_calendar));
-                    } else {
+                    } else
                         logAndToast("MainScreenActivity", "loadHousehold:failure", task.getException(),
                                 getApplicationContext(), "Could not get a house.");
-                    }
                 });
     }
 

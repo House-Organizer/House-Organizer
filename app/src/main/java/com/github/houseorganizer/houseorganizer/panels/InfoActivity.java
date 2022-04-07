@@ -2,22 +2,25 @@ package com.github.houseorganizer.houseorganizer.panels;
 
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.github.houseorganizer.houseorganizer.R;
+import com.github.houseorganizer.houseorganizer.user.UserAdapter;
 import com.github.houseorganizer.houseorganizer.util.Util;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
-import java.util.Objects;
+import java.util.List;
 
 public class InfoActivity extends AppCompatActivity {
 
     private FirebaseFirestore firestore;
     private DocumentReference currentHouse;
+    private RecyclerView usersView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -27,12 +30,17 @@ public class InfoActivity extends AppCompatActivity {
         firestore = FirebaseFirestore.getInstance();
         loadData();
 
+        usersView = findViewById(R.id.info_recycler_view);
+
         if (currentHouse != null) {
             currentHouse.get().addOnCompleteListener(task -> {
                 if(task.isSuccessful()){
                     DocumentSnapshot document = task.getResult();
-                    TextView info_view = findViewById(R.id.info_text_view);
-                    info_view.setText(Objects.requireNonNull(document.getData()).toString());
+                    List<String> residents = (List<String>) document.get("residents");
+
+                    UserAdapter adapter = new UserAdapter(getApplicationContext(),residents);
+                    usersView.setAdapter(adapter);
+                    usersView.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
                 }
             });
         }
