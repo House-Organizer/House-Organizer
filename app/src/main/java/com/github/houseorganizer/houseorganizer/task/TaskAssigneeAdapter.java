@@ -14,10 +14,10 @@ import com.github.houseorganizer.houseorganizer.util.BiViewHolder;
 import java.util.List;
 
 public class TaskAssigneeAdapter extends RecyclerView.Adapter<BiViewHolder<TextView, ImageButton>> {
-    private final Task parentTask;
+    private final HTask parentTask;
     private final List<String> allHouseHoldMembers;
 
-    public TaskAssigneeAdapter(Task parentTask, List<String> allHouseHoldMembers) {
+    public TaskAssigneeAdapter(HTask parentTask, List<String> allHouseHoldMembers) {
         this.parentTask = parentTask;
         this.allHouseHoldMembers = allHouseHoldMembers;
     }

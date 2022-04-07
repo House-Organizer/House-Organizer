@@ -13,7 +13,7 @@ import java.util.Map;
 import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
 
-public final class FirestoreTask extends Task{
+public final class FirestoreTask extends HTask {
     private final DocumentReference taskDocRef;
 
     public FirestoreTask(User owner, String title, String description, List<SubTask> subTasks, DocumentReference taskDocRef) {
@@ -93,8 +93,8 @@ public final class FirestoreTask extends Task{
         return subTaskData;
     }
 
-    public static Task.SubTask recoverSubTask(Map<String, String> data) {
-        return new Task.SubTask(data.get("title"));
+    public static HTask.SubTask recoverSubTask(Map<String, String> data) {
+        return new HTask.SubTask(data.get("title"));
     }
 
     public static FirestoreTask recoverTask(Map<String, Object> data, DocumentReference taskDocRef) {

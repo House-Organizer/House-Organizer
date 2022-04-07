@@ -42,7 +42,7 @@ public final class TaskView {
     }
 
     // (Sub)task views
-    public static void setUpTaskView(Task task, EditText titleEditor, EditText descEditor, Button titleButton) {
+    public static void setUpTaskView(HTask task, EditText titleEditor, EditText descEditor, Button titleButton) {
         titleEditor.setText(task.getTitle());
         descEditor.setText(task.getDescription());
 

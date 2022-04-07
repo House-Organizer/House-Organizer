@@ -1,6 +1,7 @@
 package com.github.houseorganizer.houseorganizer;
 
 import com.github.houseorganizer.houseorganizer.task.FirestoreTask;
+import com.github.houseorganizer.houseorganizer.task.HTask;
 import com.github.houseorganizer.houseorganizer.task.TaskList;
 import com.github.houseorganizer.houseorganizer.user.DummyUser;
 import com.github.houseorganizer.houseorganizer.user.User;
@@ -152,8 +153,8 @@ public class FirebaseTestsHelper {
 
         // Create task list instance
         User owner = new DummyUser("Test User", "0");
-        com.github.houseorganizer.houseorganizer.task.Task taskToAdd =
-                new com.github.houseorganizer.houseorganizer.task.Task(owner, "TestTask", "Testing");
+        HTask taskToAdd =
+                new HTask(owner, "TestTask", "Testing");
 
         TaskList taskList = new TaskList(owner, "MyList", new ArrayList<>(Collections.singletonList(taskToAdd)));
 
@@ -278,7 +279,7 @@ public class FirebaseTestsHelper {
     }
 
     // Task list loading
-    private static com.google.android.gms.tasks.Task<DocumentReference> storeTask(com.github.houseorganizer.houseorganizer.task.Task task, CollectionReference taskListRef) {
+    private static Task<DocumentReference> storeTask(HTask task, CollectionReference taskListRef) {
         Map<String, Object> data = new HashMap<>();
 
         // Loading information
@@ -307,14 +308,14 @@ public class FirebaseTestsHelper {
         data.put("title", taskList.getTitle());
         data.put("owner", taskList.getOwner().uid());
 
-        com.google.android.gms.tasks.Task<Void> task = taskListRoot.document(documentName).set(data);
+        Task<Void> task = taskListRoot.document(documentName).set(data);
         Tasks.await(task);
 
         if(task.isSuccessful()) {
             DocumentReference documentReference = taskListRoot.document(documentName);
             CollectionReference taskListRef = documentReference.collection("tasks");
 
-            for (com.github.houseorganizer.houseorganizer.task.Task t : taskList.getTasks()) {
+            for (HTask t : taskList.getTasks()) {
                 Tasks.await(storeTask(t, taskListRef));
             }
         }

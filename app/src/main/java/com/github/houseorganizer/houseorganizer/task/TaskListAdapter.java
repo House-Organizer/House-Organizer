@@ -96,7 +96,7 @@ public final class TaskListAdapter extends RecyclerView.Adapter<BiViewHolder<But
             // after pressing `Add subtask`
             alertDialog.getButton(AlertDialog.BUTTON_NEUTRAL).setOnClickListener(
                     dialog -> {
-                        t.addSubTask(new Task.SubTask(""));
+                        t.addSubTask(new HTask.SubTask(""));
                         subTaskAdapter.notifyItemInserted(t.getSubTasks().size() - 1);
                     });
 

@@ -7,10 +7,10 @@ import java.util.List;
 
 public final class TaskList {
     private final User owner;
-    private final List<Task> tasks;
+    private final List<HTask> tasks;
     private String title;
 
-    public TaskList(User owner, String title, List<Task> initialTasks) {
+    public TaskList(User owner, String title, List<HTask> initialTasks) {
         this.owner = owner;
         this.title = title;
         this.tasks = new ArrayList<>(initialTasks);
@@ -21,11 +21,11 @@ public final class TaskList {
         this.title = newTitle;
     }
 
-    public void addTask(Task newTask) {
+    public void addTask(HTask newTask) {
         tasks.add(newTask);
     }
 
-    public void addTask(int index, Task newTask) {
+    public void addTask(int index, HTask newTask) {
         assert index < tasks.size();
 
         tasks.add(index, newTask);
@@ -39,9 +39,9 @@ public final class TaskList {
 
     public void removeFinishedTasks(boolean removeSubTasks) {
         if (removeSubTasks) {
-            tasks.forEach(Task::removeFinishedSubTasks);
+            tasks.forEach(HTask::removeFinishedSubTasks);
         }
-        tasks.removeIf(Task::isFinished);
+        tasks.removeIf(HTask::isFinished);
     }
 
     // Getters
@@ -57,13 +57,13 @@ public final class TaskList {
         return ! tasks.isEmpty();
     }
 
-    public Task getTaskAt(int index) {
+    public HTask getTaskAt(int index) {
         assert index < tasks.size();
 
         return tasks.get(index);
     }
 
-    public List<Task> getTasks() {
+    public List<HTask> getTasks() {
         return new ArrayList<>(tasks);
     }
 

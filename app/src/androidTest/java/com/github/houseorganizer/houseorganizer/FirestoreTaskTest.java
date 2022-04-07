@@ -6,8 +6,9 @@ import static org.junit.Assert.assertNotNull;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 
 import com.github.houseorganizer.houseorganizer.task.FirestoreTask;
-import com.github.houseorganizer.houseorganizer.task.Task;
+import com.github.houseorganizer.houseorganizer.task.HTask;
 import com.github.houseorganizer.houseorganizer.user.DummyUser;
+import com.google.android.gms.tasks.Task;
 import com.google.android.gms.tasks.Tasks;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
@@ -74,7 +75,7 @@ public class FirestoreTaskTest {
     /* Tests of static API */ /*(makeSubTaskData, recoverSubTask, recoverTask) */
     @Test
     public void makeSubTaskDataWorksForOngoingSubTask() {
-        Task.SubTask st = new Task.SubTask(BASIC_SUBTASK_TITLE);
+        HTask.SubTask st = new HTask.SubTask(BASIC_SUBTASK_TITLE);
 
         Map<String, String> data = FirestoreTask.makeSubTaskData(st);
 
@@ -85,7 +86,7 @@ public class FirestoreTaskTest {
 
     @Test
     public void makeSubTaskDataWorksForCompletedSubTask() {
-        Task.SubTask st = new Task.SubTask(BASIC_SUBTASK_TITLE);
+        HTask.SubTask st = new HTask.SubTask(BASIC_SUBTASK_TITLE);
         st.markAsFinished();
 
         Map<String, String> data = FirestoreTask.makeSubTaskData(st);
@@ -101,7 +102,7 @@ public class FirestoreTaskTest {
         subTaskData.put("title", BASIC_SUBTASK_TITLE);
         subTaskData.put("status", STATUS_COMPLETED);
 
-        Task.SubTask st = FirestoreTask.recoverSubTask(subTaskData);
+        HTask.SubTask st = FirestoreTask.recoverSubTask(subTaskData);
 
         assertEquals(BASIC_SUBTASK_TITLE, st.getTitle());
         // todo: test for "status", at this point in the development only ongoing tasks are recovered
@@ -109,14 +110,14 @@ public class FirestoreTaskTest {
 
     @Test
     public void recoverTaskWorks() throws ExecutionException, InterruptedException {
-        Task task = new Task(new DummyUser("Dummy", "0"), BASIC_TASK_TITLE, BASIC_TASK_NAME);
+        HTask task = new HTask(new DummyUser("Dummy", "0"), BASIC_TASK_TITLE, BASIC_TASK_NAME);
         CollectionReference taskListRef = db.collection("task_lists");
 
         Map<String, Object> taskData = makeTaskData(task);
 
         Tasks.await(taskListRef.document("tl1_test").set(taskData));
 
-        Task recoveredTask = FirestoreTask.recoverTask(taskData, taskListRef.document("tl1_test"));
+        HTask recoveredTask = FirestoreTask.recoverTask(taskData, taskListRef.document("tl1_test"));
 
         assertEquals(task.getTitle(), recoveredTask.getTitle());
         assertEquals(task.getOwner().uid(), recoveredTask.getOwner().uid());
@@ -127,7 +128,7 @@ public class FirestoreTaskTest {
 
     /* Override tests: most of them check reflection on database */
     private FirestoreTask recoverFirestoreTask(String docName) throws ExecutionException, InterruptedException {
-        com.google.android.gms.tasks.Task<DocumentSnapshot> task =
+        Task<DocumentSnapshot> task =
                 db.collection("task_lists")
                         .document(docName)
                         .get();
@@ -158,7 +159,7 @@ public class FirestoreTaskTest {
     public void subTaskModificationsWork() throws ExecutionException, InterruptedException {
         FirestoreTask ft = recoverFirestoreTask(FirebaseTestsHelper.TEST_TASK_LIST_DOCUMENT_NAME);
 
-        Task.SubTask st = new Task.SubTask(BASIC_SUBTASK_TITLE);
+        HTask.SubTask st = new HTask.SubTask(BASIC_SUBTASK_TITLE);
 
         // Add subtask & change its title
         ft.addSubTask(st);
@@ -178,7 +179,7 @@ public class FirestoreTaskTest {
     }
 
     // HELPERS [FOR THIS CLASS ONLY]
-    private static Map<String, Object> makeTaskData(Task task) {
+    private static Map<String, Object> makeTaskData(HTask task) {
         Map<String, Object> data = new HashMap<>();
 
         // Loading information
@@ -189,7 +190,7 @@ public class FirestoreTaskTest {
 
         List<Map<String, String>> subTaskListData = new ArrayList<>();
 
-        for (Task.SubTask subTask : task.getSubTasks()) {
+        for (HTask.SubTask subTask : task.getSubTasks()) {
             subTaskListData.add(FirestoreTask.makeSubTaskData(subTask));
         }
 

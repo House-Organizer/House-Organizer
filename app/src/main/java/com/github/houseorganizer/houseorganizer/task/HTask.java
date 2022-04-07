@@ -6,7 +6,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Task {
+public class HTask {
     private boolean isFinished;
     private String title, description;
     private final List<SubTask> subtasks;
@@ -16,7 +16,7 @@ public class Task {
 
     private LocalDateTime dueDate;
 
-    public Task(User owner, String title, String description) {
+    public HTask(User owner, String title, String description) {
         this.title       = title;
         this.description = description;
         this.subtasks    = new ArrayList<>();
@@ -66,7 +66,7 @@ public class Task {
     }
 
     public void removeFinishedSubTasks() {
-        subtasks.removeIf(Task.SubTask::isFinished);
+        subtasks.removeIf(HTask.SubTask::isFinished);
     }
 
     public void changeDueDate(LocalDateTime newDueDate) {
