@@ -61,7 +61,7 @@ public class CalendarViewTest {
     }
 
     @AfterClass
-    public static void signOut() throws ExecutionException, InterruptedException {
+    public static void cleanUp() throws ExecutionException, InterruptedException {
         // Reset the attachment that was removed
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         baos.write(1);
@@ -108,25 +108,6 @@ public class CalendarViewTest {
         // Check that a "GET_CONTENT" intent was fired
         intended(hasAction(Intent.ACTION_GET_CONTENT));
         Intents.release();
-    }
-
-    @Test
-    public void showCorrectlyToastsOnNoAttachment() {
-        onView(withId(R.id.house_imageButton)).perform(click());
-        onView(withId(R.id.housesView)).perform(RecyclerViewActions.actionOnItemAtPosition(0, click()));
-        onView(withId(R.id.calendar))
-                .perform(RecyclerViewActions.actionOnItemAtPosition(1, RecyclerViewHelperActions.clickChildViewWithId(R.id.event_upcoming_attach)));
-        onView(withText("Show")).perform(click());
-
-        mainScreenActivityActivityScenarioRule.getScenario().onActivity(activity -> {
-            // This checks that the toast with the text "Could not find the attachment" is displayed
-            onView(withText("Could not find the attachment"))
-                    .inRoot(withDecorView(
-                            not(is(activity
-                                    .getWindow().getDecorView()))))
-                    .check(matches(isDisplayed()));
-        });
-
     }
 }
 
