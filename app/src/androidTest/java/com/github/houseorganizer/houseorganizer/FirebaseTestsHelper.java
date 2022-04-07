@@ -1,5 +1,8 @@
 package com.github.houseorganizer.houseorganizer;
 
+import com.github.houseorganizer.houseorganizer.shop.FirestoreShopItem;
+import com.github.houseorganizer.houseorganizer.shop.ShopItem;
+import com.github.houseorganizer.houseorganizer.shop.ShopList;
 import com.github.houseorganizer.houseorganizer.task.FirestoreTask;
 import com.github.houseorganizer.houseorganizer.task.HTask;
 import com.github.houseorganizer.houseorganizer.task.TaskList;
@@ -52,6 +55,9 @@ public class FirebaseTestsHelper {
 
     protected static String[] TEST_HOUSEHOLD_NAMES =
             {"home_1", "home_2", "home_3"};
+
+    protected static ShopItem TEST_ITEM = new ShopItem("Egg", 3, "t");
+    protected static String TEST_SHOPLIST_NAME = "TestList1";
 
     protected static String UNKNOWN_USER = "unknown@test.com";
     protected static String WRONG_EMAIL = "user_1.com";
@@ -197,6 +203,17 @@ public class FirebaseTestsHelper {
     }
 
     /**
+     * This method will create a shopList on Firestore
+     */
+    protected static void createTestShopList() throws ExecutionException, InterruptedException {
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        User owner = new DummyUser("test", TEST_USERS_EMAILS[0]);
+        ShopList shopList = new ShopList(owner, TEST_SHOPLIST_NAME);
+        shopList.addItem(TEST_ITEM);
+        FirestoreShopItem.storeShopList(shopList, db.collection("shop_lists"), TEST_SHOPLIST_NAME);
+    }
+    
+     /**
      * This method will create events for testing
      */
     protected static void createTestEvents() throws ExecutionException, InterruptedException {
@@ -319,6 +336,8 @@ public class FirebaseTestsHelper {
                 TEST_HOUSEHOLD_NAMES[2]);
 
         createTestTaskList();
+      
+        createTestShopList();
 
         createTestEvents();
         createAttachments();

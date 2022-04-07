@@ -10,6 +10,7 @@ public class ShopList {
     private final User owner;
     private List<ShopItem> items;
     private String name;
+    private List<User> authorizedUsers;
 
     public ShopList(User owner, String listName){
         this.owner = owner;
@@ -17,10 +18,11 @@ public class ShopList {
         items = new ArrayList<>();
     }
 
-    public ShopList(User owner, String listName, List<ShopItem> list){
+    public ShopList(User owner, String listName, List<ShopItem> list, List<User> authorizedUsers){
         this.owner = owner;
         this.name = listName;
-        items = new ArrayList<>(list);
+        this.items = new ArrayList<>(list);
+        this.authorizedUsers = authorizedUsers;
     }
 
     public void addItem(ShopItem item){

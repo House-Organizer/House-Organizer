@@ -38,7 +38,7 @@ public class ShopListUnitTest {
     public void constructorWithNonEmptyListIsNotEmpty(){
         List<ShopItem> list = new ArrayList<>();
         list.add(new ShopItem("egg", 4, "kg"));
-        ShopList shopList = new ShopList(user, "My list", list);
+        ShopList shopList = new ShopList(user, "My list", list, new ArrayList<>());
         assertThat(shopList.isEmpty(), is(false));
     }
 
@@ -70,7 +70,7 @@ public class ShopListUnitTest {
         ShopList shopList = createBasicList();
         shopList.addItem(basicItem);
         shopList.addItem(new ShopItem("Basic", 3, "ua"));
-        shopList.getItemAt(0).markPickedUp();
+        shopList.getItemAt(0).setPickedUp(true);
         shopList.removedPickedUpItems();
         assertThat(shopList.size(), is(1));
     }
