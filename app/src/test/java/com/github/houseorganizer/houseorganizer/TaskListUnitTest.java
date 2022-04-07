@@ -10,6 +10,7 @@ import com.github.houseorganizer.houseorganizer.task.TaskList;
 import org.junit.Test;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class TaskListUnitTest {
@@ -145,5 +146,19 @@ public class TaskListUnitTest {
         tl.removeFinishedTasks(true);
         assertEquals(t2, tl.getTaskAt(0));
         assertEquals(s2, tl.getTaskAt(0).getSubTaskAt(0));
+    }
+
+    @Test
+    public void taskListReturnsCorrectTasks() {
+        Task t  = new Task(TaskUnitTest.NOBODY, "Task 1", "description 1");
+        Task t2 = new Task(TaskUnitTest.NOBODY, "Task 2", "description 2");
+
+        List<Task> expected = new ArrayList<>(Arrays.asList(t, t2));
+        TaskList tl = new TaskList(TaskUnitTest.NOBODY, "TaskList 1", expected);
+
+        List<Task> actual = tl.getTasks();
+        assertEquals(2, expected.size());
+        assertTrue(actual.contains(t));
+        assertTrue(actual.contains(t2));
     }
 }
