@@ -10,6 +10,7 @@ import com.github.houseorganizer.houseorganizer.user.User;
 import org.junit.Test;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 
 public class TaskUnitTest {
@@ -213,5 +214,24 @@ public class TaskUnitTest {
         t.addSubTask(s3);
         assertTrue(t.hasSubTasks());
         assertEquals(s3, t.getSubTaskAt(0));
+    }
+
+    @Test
+    public void taskReturnsCorrectSubTasks() {
+        Task t = new Task(NOBODY, "Task 1", "stub description");
+        Task.SubTask s = new Task.SubTask("Subtask 1");
+        Task.SubTask s2 = new Task.SubTask("Subtask 2");
+        Task.SubTask s3 = new Task.SubTask("Subtask 3");
+
+        t.addSubTask(s);
+        t.addSubTask(s2);
+        t.addSubTask(s3);
+
+        List<Task.SubTask> subTasks = t.getSubTasks();
+
+        assertEquals(3, subTasks.size());
+        assertTrue(subTasks.contains(s));
+        assertTrue(subTasks.contains(s2));
+        assertTrue(subTasks.contains(s3));
     }
 }
