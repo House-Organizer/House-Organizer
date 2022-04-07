@@ -1,12 +1,10 @@
 package com.github.houseorganizer.houseorganizer.storage;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.nio.charset.StandardCharsets;
-
 import android.content.Context;
+
+import java.io.File;
+import java.io.FileOutputStream;
+import java.nio.charset.StandardCharsets;
 
 public class LocalStorage {
     public static boolean writeTxtToFile(Context context, String fileName, String content){
