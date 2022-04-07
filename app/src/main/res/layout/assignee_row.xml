@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:paddingTop="0dp"
+    android:paddingBottom="0dp">
+
+    <TextView
+        android:id="@+id/assignee_email"
+        android:layout_width="0dp"
+        android:layout_height="42dp"
+        android:layout_marginEnd="10dp"
+        android:layout_weight="1"
+        android:textSize="15sp"
+        android:gravity="center_vertical"
+        tools:ignore="SmallSp" />
+
+    <ImageButton
+        android:id="@+id/assignee_interaction_button"
+        android:layout_width="42dp"
+        android:layout_height="42dp"
+        android:layout_weight="0"
+        android:gravity="center_vertical"
+        android:backgroundTint="#D31C739A"
+        android:contentDescription="@string/add_remove_assignee" />
+
+</LinearLayout>

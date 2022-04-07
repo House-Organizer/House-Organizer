@@ -42,7 +42,7 @@ public final class TaskView {
     }
 
     // (Sub)task views
-    public static void setUpTaskView(Task task, EditText titleEditor, EditText descEditor, Button titleButton) {
+    public static void setUpTaskView(HTask task, EditText titleEditor, EditText descEditor, Button titleButton) {
         titleEditor.setText(task.getTitle());
         descEditor.setText(task.getDescription());
 
@@ -60,28 +60,6 @@ public final class TaskView {
 
         titleEditor.addTextChangedListener(new TextChangeListener(titleEditor,
                 newTitle -> parentTask.changeSubTaskTitle(index, newTitle)));
-    }
-
-    // Calls provided consumer once a text change is registered
-    private static class TextChangeListener implements TextWatcher {
-        private final Consumer<String> textConsumer;
-        private final EditText editor;
-
-        public TextChangeListener(EditText editor, Consumer<String> textConsumer) {
-            this.editor = editor;
-            this.textConsumer = textConsumer;
-        }
-
-        @Override
-        public void beforeTextChanged(CharSequence s, int start, int count, int after) { }
-
-        @Override
-        public void onTextChanged(CharSequence s, int start, int before, int count) { }
-
-        @Override
-        public void afterTextChanged(Editable s) {
-            textConsumer.accept(editor.getText().toString());
-        }
     }
 
     /* Used in MainScreenActivity */
@@ -139,5 +117,28 @@ public final class TaskView {
                         taskListAdapter.notifyItemInserted(taskListAdapter.getItemCount()-1);
                     }
                 });
+    }
+
+    /* Helper */
+    // Calls provided consumer once a text change is registered
+    private static class TextChangeListener implements TextWatcher {
+        private final Consumer<String> textConsumer;
+        private final EditText editor;
+
+        public TextChangeListener(EditText editor, Consumer<String> textConsumer) {
+            this.editor = editor;
+            this.textConsumer = textConsumer;
+        }
+
+        @Override
+        public void beforeTextChanged(CharSequence s, int start, int count, int after) { }
+
+        @Override
+        public void onTextChanged(CharSequence s, int start, int before, int count) { }
+
+        @Override
+        public void afterTextChanged(Editable s) {
+            textConsumer.accept(editor.getText().toString());
+        }
     }
 }

@@ -1,5 +1,6 @@
 package com.github.houseorganizer.houseorganizer.task;
 
+import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -9,16 +10,21 @@ import android.widget.EditText;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.github.houseorganizer.houseorganizer.R;
 import com.github.houseorganizer.houseorganizer.util.BiViewHolder;
 
-public class TaskListAdapter extends RecyclerView.Adapter<BiViewHolder<Button, Button>> {
-    private final TaskList taskList;
+import java.util.List;
 
-    public TaskListAdapter(TaskList taskList) {
+public final class TaskListAdapter extends RecyclerView.Adapter<BiViewHolder<Button, Button>> {
+    private final TaskList taskList;
+    private final List<String> memberEmails;
+
+    public TaskListAdapter(TaskList taskList, List<String> memberEmails) {
         this.taskList     = taskList;
+        this.memberEmails = memberEmails;
     }
 
     @NonNull
@@ -58,6 +64,7 @@ public class TaskListAdapter extends RecyclerView.Adapter<BiViewHolder<Button, B
     }
 
     // todo: modify due date
+    @SuppressLint("InflateParams")
     private View.OnClickListener titleButtonListener(int position, Button titleButton) {
         return v -> {
             FirestoreTask t = (FirestoreTask) taskList.getTaskAt(position);
@@ -81,6 +88,7 @@ public class TaskListAdapter extends RecyclerView.Adapter<BiViewHolder<Button, B
             final AlertDialog alertDialog
                     = new AlertDialog.Builder(v.getContext())
                     .setNeutralButton(R.string.add_subtask, null)
+                    .setPositiveButton(R.string.assignees_button, null)
                     .setView(taskEditor)
                     .show();
 
@@ -88,10 +96,38 @@ public class TaskListAdapter extends RecyclerView.Adapter<BiViewHolder<Button, B
             // after pressing `Add subtask`
             alertDialog.getButton(AlertDialog.BUTTON_NEUTRAL).setOnClickListener(
                     dialog -> {
-                        t.addSubTask(new Task.SubTask(""));
+                        t.addSubTask(new HTask.SubTask(""));
                         subTaskAdapter.notifyItemInserted(t.getSubTasks().size() - 1);
                     });
 
+            alertDialog.getButton(AlertDialog.BUTTON_POSITIVE)
+                    .setOnClickListener(assigneeButtonListener(alertDialog, position));
+
+        };
+    }
+
+    private View.OnClickListener assigneeButtonListener(AlertDialog taskEditorDialog, int position)  {
+        return v -> {
+            taskEditorDialog.dismiss();
+
+            final View assigneeEditor =
+                    LayoutInflater.from(v.getContext())
+                            .inflate(R.layout.assignee_editor, null);
+
+            /* Initialize RecyclerView for assignees */
+            RecyclerView assigneeView = assigneeEditor.findViewById(R.id.assignee_editor);
+
+            TaskAssigneeAdapter assigneeAdapter =
+                    new TaskAssigneeAdapter(taskList.getTaskAt(position),memberEmails);
+
+            assigneeView.setAdapter(assigneeAdapter);
+            assigneeView.setLayoutManager(new LinearLayoutManager(v.getContext()));
+
+
+            new AlertDialog.Builder(v.getContext())
+                    .setView(assigneeEditor)
+                    .setOnDismissListener(d -> taskEditorDialog.show())
+                    .show();
         };
     }
 
