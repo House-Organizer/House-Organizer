@@ -205,10 +205,10 @@ public class Calendar {
             if (this == oEvent) return true;
             if (!(oEvent instanceof Event)) return false;
             Event event = (Event) oEvent;
-            if (!(this.title.equals(event.title))) { return false; }
-            if (!(this.description.equals(event.description))) { return false; }
-            if (!(this.start.equals(event.start))) { return false; }
-            return this.duration == event.duration;
+            return ((this.title.equals(event.title)) &&
+                    (this.description.equals(event.description)) &&
+                    (this.start.equals(event.start)) &&
+                    (this.duration == event.duration));
         }
     }
 
