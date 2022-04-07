@@ -219,7 +219,7 @@ public class CalendarViewTest {
     }
 
     @Test
-    public void pressingAddEventAddsAnEventToCalendar() {
+    public void pressingAddEventAddsAnEventToCalendar() throws InterruptedException {
         onView(withId(R.id.add_event)).perform(click());
         onView(withHint(R.string.title)).perform(clearText()).perform(typeText("added")).perform(closeSoftKeyboard());
         onView(withHint(R.string.description)).perform(clearText()).perform(typeText("desc")).perform(closeSoftKeyboard());
@@ -227,6 +227,7 @@ public class CalendarViewTest {
         onView(withHint(R.string.date)).perform(clearText()).perform(typeText(date)).perform(closeSoftKeyboard());
         onView(withHint(R.string.duration)).perform(clearText()).perform(typeText("10")).perform(closeSoftKeyboard());
         onView(withText(R.string.add)).perform(click());
+        Thread.sleep(10000);
         // Count is EVENTS_TO_DISPLAY because we removed one event and added one
         onView(withId(R.id.calendar)).check(matches(hasChildCount(EVENTS_TO_DISPLAY)));
     }
