@@ -10,7 +10,6 @@ import static androidx.test.espresso.intent.Intents.intended;
 import static androidx.test.espresso.intent.matcher.IntentMatchers.hasComponent;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
 import static androidx.test.espresso.matcher.ViewMatchers.withText;
-import static com.github.houseorganizer.houseorganizer.FirebaseTestsHelper.TEST_USERS_EMAILS;
 import static com.github.houseorganizer.houseorganizer.FirebaseTestsHelper.TEST_USERS_PWD;
 import static com.github.houseorganizer.houseorganizer.FirebaseTestsHelper.VALID_PASSWORD_FOR_APP;
 import static com.github.houseorganizer.houseorganizer.FirebaseTestsHelper.createFirebaseTestUserWithCredentials;
@@ -38,7 +37,8 @@ import java.util.concurrent.ExecutionException;
 @RunWith(AndroidJUnit4.class)
 public class RegisterEmailTest {
 
-    private static final String email1 = "user_register1@test.com", email2 = "user_register2@test.com";
+    private static final String email1 = "user_register1@test.com", email2 = "user_register2@test.com",
+            email3 = "user_register3@test.com";
     private static final String invalidEmail = "invalidEmail";
 
     @Rule
@@ -73,7 +73,7 @@ public class RegisterEmailTest {
 
     @Test
     public void signUpWithEmailShowsInputsEmptyErrorWhenInputsEmpty() throws InterruptedException {
-        enterInputsAndClickRegister(TEST_USERS_EMAILS[0], "");
+        enterInputsAndClickRegister(email3, "");
         onView(withId(R.id.reg_email_error_message)).check(matches(withText(R.string.inputs_empty)));
     }
 
@@ -85,7 +85,7 @@ public class RegisterEmailTest {
 
     @Test
     public void signUpWithEmailShowsInvalidPasswordErrorWithInvalidInput() throws InterruptedException {
-        enterInputsAndClickRegister(TEST_USERS_EMAILS[1], TEST_USERS_PWD[0]);
+        enterInputsAndClickRegister(email3, TEST_USERS_PWD[0]);
         onView(withId(R.id.reg_email_error_message)).check(matches(withText(R.string.password_not_valid)));
     }
 
