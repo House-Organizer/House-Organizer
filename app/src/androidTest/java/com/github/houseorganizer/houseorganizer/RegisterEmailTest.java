@@ -39,6 +39,7 @@ import java.util.concurrent.ExecutionException;
 public class RegisterEmailTest {
 
     private static final String email1 = "user_register1@test.com", email2 = "user_register2@test.com";
+    private static final String invalidEmail = "invalidEmail";
 
     @Rule
     public ActivityScenarioRule<RegisterEmail> regRule =
@@ -78,7 +79,7 @@ public class RegisterEmailTest {
 
     @Test
     public void signUpWithEmailShowsInvalidEmailErrorWithInvalidInput() throws InterruptedException {
-        enterInputsAndClickRegister(TEST_USERS_EMAILS[0], TEST_USERS_PWD[0]);
+        enterInputsAndClickRegister(invalidEmail, TEST_USERS_PWD[0]);
         onView(withId(R.id.reg_email_error_message)).check(matches(withText(R.string.email_not_valid)));
     }
 
