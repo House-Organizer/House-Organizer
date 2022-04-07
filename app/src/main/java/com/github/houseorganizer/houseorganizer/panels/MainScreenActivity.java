@@ -120,8 +120,7 @@ public class MainScreenActivity extends AppCompatActivity {
     }
 
     private void loadHousehold(String householdId) {
-        db.collection("households").whereArrayContains("residents", Objects.requireNonNull(mUser.getEmail())).get()
-                .addOnCompleteListener(task -> {
+        db.collection("households").whereArrayContains("residents", Objects.requireNonNull(mUser.getEmail())).get().addOnCompleteListener(task -> {
                     if (task.isSuccessful()) {
                         ArrayList<String> households = new ArrayList<>();
                         for (QueryDocumentSnapshot document : task.getResult()) {
