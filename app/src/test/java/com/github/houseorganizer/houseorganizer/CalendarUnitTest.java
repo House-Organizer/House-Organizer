@@ -69,15 +69,6 @@ public class CalendarUnitTest {
         assertEquals(Calendar.CalendarView.UPCOMING, calendar.getView());
     }
 
-    @Test
-    public void toStringHasRightFormat() {
-        Calendar calendar = new Calendar();
-        ArrayList<Event> events = new ArrayList<>();
-        events.add(new Event("My event", "this is my event", LocalDateTime.of(LocalDate.now(), LocalTime.NOON), 100, TEST_ID));
-        calendar.setEvents(events);
-        assertEquals("Calendar with view : UPCOMING and the following events :\n" + calendar.getEvents().get(0).toString() + "\n", calendar.toString());
-    }
-
     //Event tests
     @Test
     public void throwsExceptionOnNullTitle() {
@@ -121,13 +112,6 @@ public class CalendarUnitTest {
         int duration = 100;
         Event event = new Event("title", "", LocalDateTime.now(), duration, TEST_ID);
         assertEquals(duration, event.getDuration());
-    }
-
-    @Test
-    public void toStringHasRightFormatEvent() {
-        Event event = new Event("title", "desc", LocalDateTime.of(LocalDate.now(), LocalTime.NOON), 100, TEST_ID);
-
-        assertEquals("title at " + event.getStart() + ", lasts 100 seconds. : desc", event.toString());
     }
 
     @Test
