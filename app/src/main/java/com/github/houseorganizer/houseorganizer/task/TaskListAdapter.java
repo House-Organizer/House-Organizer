@@ -88,7 +88,7 @@ public final class TaskListAdapter extends RecyclerView.Adapter<BiViewHolder<But
             final AlertDialog alertDialog
                     = new AlertDialog.Builder(v.getContext())
                     .setNeutralButton(R.string.add_subtask, null)
-                    .setPositiveButton("Assignees", null) // TODO extract string
+                    .setPositiveButton(R.string.assignees_button, null)
                     .setView(taskEditor)
                     .show();
 
