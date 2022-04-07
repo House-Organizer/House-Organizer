@@ -140,10 +140,20 @@ public class FirestoreTask extends Task{
     }
 
     public static FirestoreTask recoverTask(Map<String, Object> data, DocumentReference taskDocRef) {
-        List<Task.SubTask> subTasks = new ArrayList<>();
-        List<User> assignees = new ArrayList<>();
+        List<SubTask> subTasks = collectSubTasks(data);
+        List<User> assignees = collectAssignees(data);
 
-        Object tmpSubTaskData = data.get("sub tasks");
+        FirestoreTask ft = new FirestoreTask(new DummyUser("Recovering-user", (String)data.get("owner")),
+                (String)data.get("title"), (String)data.get("description"), subTasks, taskDocRef);
+
+        ft.getAssignees().addAll(assignees);
+
+        return ft;
+    }
+
+    private static List<SubTask> collectSubTasks(Map<String, Object> taskData) {
+        List<SubTask> subTasks = new ArrayList<>();
+        Object tmpSubTaskData = taskData.get("sub tasks");
 
         if (null != tmpSubTaskData) {
             for (Map<String, String> subTaskData : (List<Map<String, String>>) tmpSubTaskData) {
@@ -151,19 +161,20 @@ public class FirestoreTask extends Task{
             }
         }
 
-        FirestoreTask ft = new FirestoreTask(new DummyUser("Recovering-user", (String)data.get("owner")),
-                (String)data.get("title"), (String)data.get("description"), subTasks, taskDocRef);
+        return subTasks;
+    }
 
-        Object assigneeData = data.get("assignees");
+    private static List<User> collectAssignees(Map<String, Object> taskData) {
+        List<User> assignees = new ArrayList<>();
+        Object assigneeData = taskData.get("assignees");
+
         if (null != assigneeData) {
             for(String assigneeEmail : (List<String>) assigneeData) {
                 assignees.add(new DummyUser("Dummy", assigneeEmail));
             }
         }
 
-        ft.getAssignees().addAll(assignees);
-
-        return ft;
+        return assignees;
     }
 
 }
