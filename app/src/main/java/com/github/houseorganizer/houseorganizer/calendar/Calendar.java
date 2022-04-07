@@ -59,17 +59,6 @@ public class Calendar {
         return view;
     }
 
-
-    @NonNull
-    @Override
-    public String toString() {
-        StringBuilder ret = new StringBuilder("Calendar with view : " + view + " and the following events :\n");
-        for(Event event : events) {
-            ret.append(event).append("\n");
-        }
-        return ret.toString();
-    }
-
     public int rotateCalendarView(View v, Context ctx, EventsAdapter calendarAdapter, RecyclerView calendarEvents) {
         rotateView();
         int calendarColumns = getView() == Calendar.CalendarView.UPCOMING ? 1 : 7;
@@ -209,12 +198,6 @@ public class Calendar {
                 return true;
             }
             return false;
-        }
-
-        @NonNull
-        @Override
-        public String toString() {
-            return this.title + " at " + start.toString() + ", lasts " + duration + " seconds. : " + description;
         }
 
         @Override

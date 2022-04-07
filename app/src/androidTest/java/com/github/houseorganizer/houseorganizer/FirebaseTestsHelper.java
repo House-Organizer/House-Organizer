@@ -165,64 +165,6 @@ public class FirebaseTestsHelper {
     }
 
     /**
-     * This method will create events for testing
-     */
-    protected static void createTestEvents() throws ExecutionException, InterruptedException {
-        FirebaseFirestore db = FirebaseFirestore.getInstance();
-
-        Map<String, Object> toDeleteData = new HashMap<>();
-        toDeleteData.put("title", "title");
-        toDeleteData.put("description", "desc");
-        toDeleteData.put("start", LocalDateTime.of(2022, 10, 10, 11, 10).toEpochSecond(ZoneOffset.UTC));
-        toDeleteData.put("duration", 10);
-        toDeleteData.put("household", db.collection("households").document(TEST_HOUSEHOLD_NAMES[0]));
-        Map<String, Object> hasAttachmentData = new HashMap<>();
-        hasAttachmentData.put("title", "title");
-        hasAttachmentData.put("description", "desc");
-        hasAttachmentData.put("start", LocalDateTime.of(2022, 10, 10, 8, 10).toEpochSecond(ZoneOffset.UTC));
-        hasAttachmentData.put("duration", 10);
-        hasAttachmentData.put("household", db.collection("households").document(TEST_HOUSEHOLD_NAMES[0]));
-        Map<String, Object> noAttachmentData = new HashMap<>();
-        noAttachmentData.put("title", "title");
-        noAttachmentData.put("description", "desc");
-        noAttachmentData.put("start", LocalDateTime.of(2022, 10, 10, 9, 10).toEpochSecond(ZoneOffset.UTC));
-        noAttachmentData.put("duration", 10);
-        noAttachmentData.put("household", db.collection("households").document(TEST_HOUSEHOLD_NAMES[0]));
-        Map<String, Object> toDeleteAttachmentData = new HashMap<>();
-        toDeleteAttachmentData.put("title", "title");
-        toDeleteAttachmentData.put("description", "desc");
-        toDeleteAttachmentData.put("start", LocalDateTime.of(2022, 10, 10, 10, 10).toEpochSecond(ZoneOffset.UTC));
-        toDeleteAttachmentData.put("duration", 10);
-        toDeleteAttachmentData.put("household", db.collection("households").document(TEST_HOUSEHOLD_NAMES[0]));
-
-        Task<Void> task1 = db.collection("events").document("to_delete").set(toDeleteData);
-        Task<Void> task2 = db.collection("events").document("has_attachment").set(hasAttachmentData);
-        Task<Void> task3 = db.collection("events").document("no_attachment").set(noAttachmentData);
-        Task<Void> task4 = db.collection("events").document("to_delete_attachment").set(toDeleteAttachmentData);
-        Tasks.await(task1);
-        Tasks.await(task2);
-        Tasks.await(task3);
-        Tasks.await(task4);
-    }
-
-    /**
-     *  This method creates attachments linked to events for testing
-     */
-    protected static void createAttachments() throws ExecutionException, InterruptedException {
-        FirebaseStorage storage = FirebaseStorage.getInstance();
-
-        // For now a hardcoded bytestream instead of an image
-        // it will still create the popup just it wont display anything
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        baos.write(1);
-        UploadTask task1 = storage.getReference().child("has_attachment.jpg").putBytes(baos.toByteArray());
-        UploadTask task2 = storage.getReference().child("to_delete_attachment.jpg").putBytes(baos.toByteArray());
-        Tasks.await(task1);
-        Tasks.await(task2);
-    }
-
-
-    /**
      * This method will create the three households
      */
     protected static void createHouseholds() throws ExecutionException, InterruptedException {
@@ -249,46 +191,71 @@ public class FirebaseTestsHelper {
      */
     protected static void createTestEvents() throws ExecutionException, InterruptedException {
         FirebaseFirestore db = FirebaseFirestore.getInstance();
-        ArrayList<Task<Void>> tasks = new ArrayList<>();
-        Map<String, Object> eventBuilder = new HashMap<>();
-        eventBuilder.put("title", "title");
-        eventBuilder.put("description", "desc");
-        eventBuilder.put("duration", 10);
-        eventBuilder.put("household", db.collection("households").document(TEST_HOUSEHOLD_NAMES[0]));
 
-        eventBuilder.put("start", LocalDateTime.now().plusHours(1).toEpochSecond(ZoneOffset.UTC));
-        Task<Void> task1 = db.collection("events").document("has_attachment").set(eventBuilder);
+        Map<String, Object> hasAttachment = new HashMap<>();
+        hasAttachment.put("title", "title");
+        hasAttachment.put("description", "desc");
+        hasAttachment.put("duration", 10);
+        hasAttachment.put("household", db.collection("households").document(TEST_HOUSEHOLD_NAMES[0]));
+        hasAttachment.put("start", LocalDateTime.now().plusHours(1).toEpochSecond(ZoneOffset.UTC));
+        Task<Void> task1 = db.collection("events").document("has_attachment").set(hasAttachment);
 
-        eventBuilder.put("start", LocalDateTime.now().plusHours(2).toEpochSecond(ZoneOffset.UTC));
-        Task<Void> task2 = db.collection("events").document("no_attachment").set(eventBuilder);
+        Map<String, Object> noAttachment = new HashMap<>();
+        noAttachment.put("title", "title");
+        noAttachment.put("description", "desc");
+        noAttachment.put("duration", 10);
+        noAttachment.put("household", db.collection("households").document(TEST_HOUSEHOLD_NAMES[0]));
+        noAttachment.put("start", LocalDateTime.now().plusHours(2).toEpochSecond(ZoneOffset.UTC));
+        Task<Void> task2 = db.collection("events").document("no_attachment").set(noAttachment);
 
-        eventBuilder.put("start", LocalDateTime.now().plusHours(3).toEpochSecond(ZoneOffset.UTC));
-        Task<Void> task3 = db.collection("events").document("to_delete_attachment").set(eventBuilder);
+        Map<String, Object> toDeleteAttachment = new HashMap<>();
+        toDeleteAttachment.put("title", "title");
+        toDeleteAttachment.put("description", "desc");
+        toDeleteAttachment.put("duration", 10);
+        toDeleteAttachment.put("household", db.collection("households").document(TEST_HOUSEHOLD_NAMES[0]));
+        toDeleteAttachment.put("start", LocalDateTime.now().plusHours(3).toEpochSecond(ZoneOffset.UTC));
+        Task<Void> task3 = db.collection("events").document("to_delete_attachment").set(toDeleteAttachment);
 
-        eventBuilder.put("start", LocalDateTime.now().plusHours(4).toEpochSecond(ZoneOffset.UTC));
-        Task<Void> task4 = db.collection("events").document("to_edit").set(eventBuilder);
+        Map<String, Object> toEdit = new HashMap<>();
+        toEdit.put("title", "title");
+        toEdit.put("description", "desc");
+        toEdit.put("duration", 10);
+        toEdit.put("household", db.collection("households").document(TEST_HOUSEHOLD_NAMES[0]));
+        toEdit.put("start", LocalDateTime.now().plusHours(4).toEpochSecond(ZoneOffset.UTC));
+        Task<Void> task4 = db.collection("events").document("to_edit").set(toEdit);
 
         DELETED_EVENT_TIME = LocalDateTime.now().plusHours(5);
-        eventBuilder.put("start", DELETED_EVENT_TIME.toEpochSecond(ZoneOffset.UTC));
-        Task<Void> task5 = db.collection("events").document("to_delete").set(eventBuilder);
+        Map<String, Object> toDelete = new HashMap<>();
+        toDelete.put("title", "title");
+        toDelete.put("description", "desc");
+        toDelete.put("duration", 10);
+        toDelete.put("household", db.collection("households").document(TEST_HOUSEHOLD_NAMES[0]));
+        toDelete.put("start", DELETED_EVENT_TIME.toEpochSecond(ZoneOffset.UTC));
+        Task<Void> task5 = db.collection("events").document("to_delete").set(toDelete);
 
-        eventBuilder.put("start", LocalDateTime.now().minusHours(6).toEpochSecond(ZoneOffset.UTC));
-        Task<Void> task6 = db.collection("events").document("is_already_past").set(eventBuilder);
+        Map<String, Object> isAlreadyPast = new HashMap<>();
+        isAlreadyPast.put("title", "title");
+        isAlreadyPast.put("description", "desc");
+        isAlreadyPast.put("duration", 10);
+        isAlreadyPast.put("household", db.collection("households").document(TEST_HOUSEHOLD_NAMES[0]));
+        isAlreadyPast.put("start", LocalDateTime.of(2020, 10, 10, 10, 10).toEpochSecond(ZoneOffset.UTC));
+        Task<Void> task6 = db.collection("events").document("is_already_past").set(isAlreadyPast);
 
-        eventBuilder.put("household", db.collection("households").document(TEST_HOUSEHOLD_NAMES[1]));
-        eventBuilder.put("start", LocalDateTime.now().plusHours(7).toEpochSecond(ZoneOffset.UTC));
-        Task<Void> task7 = db.collection("events").document("is_in_other_house").set(eventBuilder);
+        Map<String, Object> isInOtherHouse = new HashMap<>();
+        isInOtherHouse.put("title", "title");
+        isInOtherHouse.put("description", "desc");
+        isInOtherHouse.put("duration", 10);
+        isInOtherHouse.put("household", db.collection("households").document(TEST_HOUSEHOLD_NAMES[1]));
+        isInOtherHouse.put("start", LocalDateTime.now().plusHours(7).toEpochSecond(ZoneOffset.UTC));
+        Task<Void> task7 = db.collection("events").document("is_in_other_house").set(isInOtherHouse);
 
-        tasks.add(task1);
-        tasks.add(task2);
-        tasks.add(task3);
-        tasks.add(task4);
-        tasks.add(task5);
-        tasks.add(task6);
-        tasks.add(task7);
-        for(int i = 0; i < EVENTS_TO_DISPLAY + EVENTS_NOT_TO_DISPLAY; i++) {
-            Tasks.await(tasks.get(i));
-        }
+        Tasks.await(task1);
+        Tasks.await(task2);
+        Tasks.await(task3);
+        Tasks.await(task4);
+        Tasks.await(task5);
+        Tasks.await(task6);
+        Tasks.await(task7);
     }
 
     /**
@@ -300,7 +267,7 @@ public class FirebaseTestsHelper {
         // For now a hardcoded bytestream instead of an image
         // it will still create the popup just it wont display anything
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        baos.write(10000000);
+        baos.write(1);
         UploadTask task1 = storage.getReference().child("has_attachment.jpg").putBytes(baos.toByteArray());
         UploadTask task2 = storage.getReference().child("to_delete_attachment.jpg").putBytes(baos.toByteArray());
         Tasks.await(task1);

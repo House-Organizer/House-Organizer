@@ -122,16 +122,6 @@ public class MainScreenActivityTest {
 
     // Calendar view and its buttons
     @Test
-    public void calendarUpcomingIsEnabled() {
-        onView(withId(R.id.calendar)).check(matches(isEnabled()));
-    }
-
-    @Test
-    public void calendarUpcomingIsDisplayed() {
-        onView(withId(R.id.calendar)).check(matches(isDisplayed()));
-    }
-
-    @Test
     public void refreshIsEnabled() {
         onView(withId(R.id.refresh_calendar)).check(matches(isEnabled()));
     }
