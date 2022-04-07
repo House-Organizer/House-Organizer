@@ -192,7 +192,7 @@ public class FirebaseTestsHelper {
         // For now a hardcoded bytestream instead of an image
         // it will still create the popup just it wont display anything
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        baos.write(10000000);
+        baos.write(1);
         UploadTask task1 = storage.getReference().child("has_attachment.jpg").putBytes(baos.toByteArray());
         UploadTask task2 = storage.getReference().child("to_delete_attachment.jpg").putBytes(baos.toByteArray());
         Tasks.await(task1);

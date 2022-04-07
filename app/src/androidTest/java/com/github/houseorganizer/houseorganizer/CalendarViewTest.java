@@ -30,7 +30,6 @@ import androidx.test.runner.lifecycle.Stage;
 
 import com.github.houseorganizer.houseorganizer.panels.MainScreenActivity;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.storage.FirebaseStorage;
 
 import org.junit.AfterClass;
@@ -44,7 +43,6 @@ import java.util.concurrent.ExecutionException;
 @RunWith(AndroidJUnit4.class)
 public class CalendarViewTest {
 
-    private static FirebaseFirestore db;
     private static FirebaseAuth auth;
     private static FirebaseStorage storage;
 
@@ -55,7 +53,6 @@ public class CalendarViewTest {
         FirebaseTestsHelper.startStorageEmulator();
         FirebaseTestsHelper.setUpFirebase();
 
-        db = FirebaseFirestore.getInstance();
         auth = FirebaseAuth.getInstance();
         storage = FirebaseStorage.getInstance();
     }
@@ -67,10 +64,8 @@ public class CalendarViewTest {
 
     Activity getCurrentActivity() {
         getInstrumentation().waitForIdleSync();
-        final Activity[] activity = new Activity[1];
         java.util.Collection<Activity> activities = ActivityLifecycleMonitorRegistry.getInstance().getActivitiesInStage(Stage.RESUMED);
-        activity[0] = Iterables.getOnlyElement(activities);
-        return activity[0];
+        return Iterables.getOnlyElement(activities);
     }
 
     @Rule
@@ -107,6 +102,8 @@ public class CalendarViewTest {
         onView(withId(R.id.calendar))
                 .perform(RecyclerViewActions.actionOnItemAtPosition(1, RecyclerViewHelperActions.clickChildViewWithId(R.id.event_upcoming_attach)));
         onView(withText("Attach")).perform(click());
+
+        // Check that a "GET_CONTENT" intent was fired
         intended(hasAction(Intent.ACTION_GET_CONTENT));
         Intents.release();
     }
@@ -119,15 +116,12 @@ public class CalendarViewTest {
                 .perform(RecyclerViewActions.actionOnItemAtPosition(1, RecyclerViewHelperActions.clickChildViewWithId(R.id.event_upcoming_attach)));
         onView(withText("Show")).perform(click());
 
-        try {
-            onView(withText("Could not find the attachment")).
-                    inRoot(withDecorView(
-                            not(is(getCurrentActivity()
-                                    .getWindow().getDecorView())))).
-                    check(matches(isDisplayed()));
-        } catch (Throwable throwable) {
-            throwable.printStackTrace();
-        }
+        // This checks that the toast with the text "Could not find the attachment" is displayed
+        onView(withText("Could not find the attachment"))
+                .inRoot(withDecorView(
+                        not(is(getCurrentActivity()
+                                .getWindow().getDecorView()))))
+                .check(matches(isDisplayed()));
     }
 }
 
