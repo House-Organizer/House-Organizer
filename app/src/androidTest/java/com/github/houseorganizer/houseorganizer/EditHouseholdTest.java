@@ -1,6 +1,5 @@
 package com.github.houseorganizer.houseorganizer;
 
-import static android.support.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static androidx.test.espresso.Espresso.onView;
 import static androidx.test.espresso.action.ViewActions.click;
 import static androidx.test.espresso.action.ViewActions.closeSoftKeyboard;
@@ -9,13 +8,12 @@ import static androidx.test.espresso.assertion.ViewAssertions.matches;
 import static androidx.test.espresso.intent.Intents.intended;
 import static androidx.test.espresso.intent.matcher.IntentMatchers.hasComponent;
 import static androidx.test.espresso.matcher.ViewMatchers.isClickable;
+import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
 import static com.github.houseorganizer.houseorganizer.FirebaseTestsHelper.TEST_HOUSEHOLD_NAMES;
 import static com.github.houseorganizer.houseorganizer.FirebaseTestsHelper.TEST_USERS_EMAILS;
 import static com.github.houseorganizer.houseorganizer.FirebaseTestsHelper.UNKNOWN_USER;
 import static com.github.houseorganizer.houseorganizer.FirebaseTestsHelper.WRONG_EMAIL;
-import com.github.houseorganizer.houseorganizer.house.HouseSelectionActivity;
-import com.github.houseorganizer.houseorganizer.house.EditHousehold;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
@@ -27,10 +25,11 @@ import androidx.test.espresso.intent.Intents;
 import androidx.test.ext.junit.rules.ActivityScenarioRule;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 
+import com.github.houseorganizer.houseorganizer.house.EditHousehold;
+import com.github.houseorganizer.houseorganizer.house.HouseSelectionActivity;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
 
-import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;

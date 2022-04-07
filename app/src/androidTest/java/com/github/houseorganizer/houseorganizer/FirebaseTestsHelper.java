@@ -17,7 +17,11 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.UploadTask;
 
+import java.io.ByteArrayOutputStream;
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -55,6 +59,9 @@ public class FirebaseTestsHelper {
 
     protected static String UNKNOWN_USER = "unknown@test.com";
     protected static String WRONG_EMAIL = "user_1.com";
+    protected static final int EVENTS_TO_DISPLAY = 5;
+    protected static final int EVENTS_NOT_TO_DISPLAY = 2;
+    protected static LocalDateTime DELETED_EVENT_TIME;
 
     protected static void startAuthEmulator(){
         if(authEmulatorActivated) return;
@@ -195,9 +202,97 @@ public class FirebaseTestsHelper {
         shopList.addItem(TEST_ITEM);
         FirestoreShopItem.storeShopList(shopList, db.collection("shop_lists"), TEST_SHOPLIST_NAME);
     }
+    
+     /**
+     * This method will create events for testing
+     */
+    protected static void createTestEvents() throws ExecutionException, InterruptedException {
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+
+        Map<String, Object> hasAttachment = new HashMap<>();
+        hasAttachment.put("title", "title");
+        hasAttachment.put("description", "desc");
+        hasAttachment.put("duration", 10);
+        hasAttachment.put("household", db.collection("households").document(TEST_HOUSEHOLD_NAMES[0]));
+        hasAttachment.put("start", LocalDateTime.now().plusDays(1).toEpochSecond(ZoneOffset.UTC));
+        Task<Void> task1 = db.collection("events").document("has_attachment").set(hasAttachment);
+
+        Map<String, Object> noAttachment = new HashMap<>();
+        noAttachment.put("title", "title");
+        noAttachment.put("description", "desc");
+        noAttachment.put("duration", 10);
+        noAttachment.put("household", db.collection("households").document(TEST_HOUSEHOLD_NAMES[0]));
+        noAttachment.put("start", LocalDateTime.now().plusDays(2).toEpochSecond(ZoneOffset.UTC));
+        Task<Void> task2 = db.collection("events").document("no_attachment").set(noAttachment);
+
+        Map<String, Object> toDeleteAttachment = new HashMap<>();
+        toDeleteAttachment.put("title", "title");
+        toDeleteAttachment.put("description", "desc");
+        toDeleteAttachment.put("duration", 10);
+        toDeleteAttachment.put("household", db.collection("households").document(TEST_HOUSEHOLD_NAMES[0]));
+        toDeleteAttachment.put("start", LocalDateTime.now().plusDays(3).toEpochSecond(ZoneOffset.UTC));
+        Task<Void> task3 = db.collection("events").document("to_delete_attachment").set(toDeleteAttachment);
+
+        Map<String, Object> toEdit = new HashMap<>();
+        toEdit.put("title", "title");
+        toEdit.put("description", "desc");
+        toEdit.put("duration", 10);
+        toEdit.put("household", db.collection("households").document(TEST_HOUSEHOLD_NAMES[0]));
+        toEdit.put("start", LocalDateTime.now().plusDays(4).toEpochSecond(ZoneOffset.UTC));
+        Task<Void> task4 = db.collection("events").document("to_edit").set(toEdit);
+
+        DELETED_EVENT_TIME = LocalDateTime.now().plusDays(5);
+        Map<String, Object> toDelete = new HashMap<>();
+        toDelete.put("title", "title");
+        toDelete.put("description", "desc");
+        toDelete.put("duration", 10);
+        toDelete.put("household", db.collection("households").document(TEST_HOUSEHOLD_NAMES[0]));
+        toDelete.put("start", DELETED_EVENT_TIME.toEpochSecond(ZoneOffset.UTC));
+        Task<Void> task5 = db.collection("events").document("to_delete").set(toDelete);
+
+        Map<String, Object> isAlreadyPast = new HashMap<>();
+        isAlreadyPast.put("title", "title");
+        isAlreadyPast.put("description", "desc");
+        isAlreadyPast.put("duration", 10);
+        isAlreadyPast.put("household", db.collection("households").document(TEST_HOUSEHOLD_NAMES[0]));
+        isAlreadyPast.put("start", LocalDateTime.of(2020, 10, 10, 10, 10).toEpochSecond(ZoneOffset.UTC));
+        Task<Void> task6 = db.collection("events").document("is_already_past").set(isAlreadyPast);
+
+        Map<String, Object> isInOtherHouse = new HashMap<>();
+        isInOtherHouse.put("title", "title");
+        isInOtherHouse.put("description", "desc");
+        isInOtherHouse.put("duration", 10);
+        isInOtherHouse.put("household", db.collection("households").document(TEST_HOUSEHOLD_NAMES[1]));
+        isInOtherHouse.put("start", LocalDateTime.now().plusDays(7).toEpochSecond(ZoneOffset.UTC));
+        Task<Void> task7 = db.collection("events").document("is_in_other_house").set(isInOtherHouse);
+
+        Tasks.await(task1);
+        Tasks.await(task2);
+        Tasks.await(task3);
+        Tasks.await(task4);
+        Tasks.await(task5);
+        Tasks.await(task6);
+        Tasks.await(task7);
+    }
 
     /**
-     * This method will create 8 users, 3 households and a task list
+     *  This method creates attachments linked to events for testing
+     */
+    protected static void createAttachments() throws ExecutionException, InterruptedException {
+        FirebaseStorage storage = FirebaseStorage.getInstance();
+
+        // For now a hardcoded bytestream instead of an image
+        // it will still create the popup just it wont display anything
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        baos.write(1);
+        UploadTask task1 = storage.getReference().child("has_attachment.jpg").putBytes(baos.toByteArray());
+        UploadTask task2 = storage.getReference().child("to_delete_attachment.jpg").putBytes(baos.toByteArray());
+        Tasks.await(task1);
+        Tasks.await(task2);
+    }
+
+    /**
+     * This method will create 8 users, 3 households, a task list and a list of events
      * After this call user_1 is logged in
      * A flag allows us to just login as user_1 if everything is already done
      */
@@ -205,9 +300,9 @@ public class FirebaseTestsHelper {
 
         //This allows us to run tests without creating everything on firebase each test
         Task<DocumentSnapshot> task = FirebaseFirestore.getInstance()
-                                      .collection("done_flag")
-                                      .document("done_flag")
-                                      .get();
+                .collection("done_flag")
+                .document("done_flag")
+                .get();
         Tasks.await(task);
         Map<String, Object> result = task.getResult().getData();
         if(result != null){
@@ -219,11 +314,23 @@ public class FirebaseTestsHelper {
             createFirebaseTestUserWithCredentials(TEST_USERS_EMAILS[u_index], TEST_USERS_PWD[u_index]);
         }
 
-        createHouseholds();
+        createTestHouseholdOnFirestoreWithName(TEST_HOUSEHOLD_NAMES[0], TEST_USERS_EMAILS[0],
+                Arrays.asList(TEST_USERS_EMAILS[0], TEST_USERS_EMAILS[1]), TEST_HOUSEHOLD_NAMES[0]);
+
+        createTestHouseholdOnFirestoreWithName(TEST_HOUSEHOLD_NAMES[1], TEST_USERS_EMAILS[0],
+                Arrays.asList(TEST_USERS_EMAILS[0], TEST_USERS_EMAILS[2]), TEST_HOUSEHOLD_NAMES[1]);
+
+        createTestHouseholdOnFirestoreWithName(TEST_HOUSEHOLD_NAMES[2], TEST_USERS_EMAILS[1],
+                Arrays.asList(TEST_USERS_EMAILS[1], TEST_USERS_EMAILS[2], TEST_USERS_EMAILS[3],
+                        TEST_USERS_EMAILS[4], TEST_USERS_EMAILS[5], TEST_USERS_EMAILS[6]),
+                TEST_HOUSEHOLD_NAMES[2]);
 
         createTestTaskList();
       
         createTestShopList();
+
+        createTestEvents();
+        createAttachments();
 
         signInTestUserWithCredentials(TEST_USERS_EMAILS[0], TEST_USERS_PWD[0]);
 
