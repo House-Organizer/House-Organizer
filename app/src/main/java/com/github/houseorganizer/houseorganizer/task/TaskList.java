@@ -5,7 +5,7 @@ import com.github.houseorganizer.houseorganizer.user.User;
 import java.util.ArrayList;
 import java.util.List;
 
-public class TaskList {
+public final class TaskList {
     private final User owner;
     private final List<Task> tasks;
     private String title;

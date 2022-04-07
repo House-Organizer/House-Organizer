@@ -11,8 +11,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
+import java.util.stream.Collectors;
 
-public class FirestoreTask extends Task{
+public final class FirestoreTask extends Task{
     private final DocumentReference taskDocRef;
 
     public FirestoreTask(User owner, String title, String description, List<SubTask> subTasks, DocumentReference taskDocRef) {
@@ -113,9 +114,9 @@ public class FirestoreTask extends Task{
         Object tmpSubTaskData = taskData.get("sub tasks");
 
         if (null != tmpSubTaskData) {
-            for (Map<String, String> subTaskData : (List<Map<String, String>>) tmpSubTaskData) {
-                subTasks.add(recoverSubTask(subTaskData));
-            }
+            subTasks = ((List<Map<String, String>>) tmpSubTaskData).stream()
+                    .map(FirestoreTask::recoverSubTask)
+                    .collect(Collectors.toList());
         }
 
         return subTasks;
@@ -126,9 +127,9 @@ public class FirestoreTask extends Task{
         Object assigneeData = taskData.get("assignees");
 
         if (null != assigneeData) {
-            for(String assigneeEmail : (List<String>) assigneeData) {
-                assignees.add(new DummyUser("Dummy", assigneeEmail));
-            }
+            assignees = ((List<String>) assigneeData).stream()
+                    .map(assigneeEmail -> new DummyUser("Dummy", assigneeEmail))
+                    .collect(Collectors.toList());
         }
 
         return assignees;

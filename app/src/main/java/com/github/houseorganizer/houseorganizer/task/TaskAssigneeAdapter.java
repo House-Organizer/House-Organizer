@@ -46,17 +46,14 @@ public class TaskAssigneeAdapter extends RecyclerView.Adapter<BiViewHolder<TextV
 
         imgButton.setBackgroundResource(isAssigned ? R.drawable.remove_person : R.drawable.add_person);
 
-        // Cannot use isAssigned in the listener otherwise changes don't reflect
         imgButton.setOnClickListener(v -> {
-            if(isAmongAssignees(assigneeEmail)) {
+            if(isAssigned) {
                 removeAssignee(assigneeEmail);
             } else {
                 addAssignee(assigneeEmail);
             }
 
             notifyItemChanged(position);
-            System.out.println(parentTask.getAssignees().size());
-            System.out.println(isAmongAssignees(assigneeEmail));
         });
     }
 

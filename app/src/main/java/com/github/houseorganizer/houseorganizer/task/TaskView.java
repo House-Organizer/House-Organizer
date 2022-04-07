@@ -62,28 +62,6 @@ public final class TaskView {
                 newTitle -> parentTask.changeSubTaskTitle(index, newTitle)));
     }
 
-    // Calls provided consumer once a text change is registered
-    private static class TextChangeListener implements TextWatcher {
-        private final Consumer<String> textConsumer;
-        private final EditText editor;
-
-        public TextChangeListener(EditText editor, Consumer<String> textConsumer) {
-            this.editor = editor;
-            this.textConsumer = textConsumer;
-        }
-
-        @Override
-        public void beforeTextChanged(CharSequence s, int start, int count, int after) { }
-
-        @Override
-        public void onTextChanged(CharSequence s, int start, int before, int count) { }
-
-        @Override
-        public void afterTextChanged(Editable s) {
-            textConsumer.accept(editor.getText().toString());
-        }
-    }
-
     /* Used in MainScreenActivity */
     public static void recoverTaskList(AppCompatActivity parent, TaskList taskList, TaskListAdapter taskListAdapter, DocumentReference taskListRoot) {
         taskListRoot.get().addOnCompleteListener(task -> {
@@ -139,5 +117,28 @@ public final class TaskView {
                         taskListAdapter.notifyItemInserted(taskListAdapter.getItemCount()-1);
                     }
                 });
+    }
+
+    /* Helper */
+    // Calls provided consumer once a text change is registered
+    private static class TextChangeListener implements TextWatcher {
+        private final Consumer<String> textConsumer;
+        private final EditText editor;
+
+        public TextChangeListener(EditText editor, Consumer<String> textConsumer) {
+            this.editor = editor;
+            this.textConsumer = textConsumer;
+        }
+
+        @Override
+        public void beforeTextChanged(CharSequence s, int start, int count, int after) { }
+
+        @Override
+        public void onTextChanged(CharSequence s, int start, int before, int count) { }
+
+        @Override
+        public void afterTextChanged(Editable s) {
+            textConsumer.accept(editor.getText().toString());
+        }
     }
 }
