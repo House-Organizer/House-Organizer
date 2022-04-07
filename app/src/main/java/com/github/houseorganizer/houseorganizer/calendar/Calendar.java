@@ -202,7 +202,6 @@ public class Calendar {
 
         @Override
         public boolean equals(Object oEvent) {
-            if (this == oEvent) return true;
             if (!(oEvent instanceof Event)) return false;
             Event event = (Event) oEvent;
             return ((this.title.equals(event.title)) &&
