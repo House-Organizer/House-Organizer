@@ -209,6 +209,11 @@ public class Calendar {
                     (this.start.equals(event.start)) &&
                     (this.duration == event.duration));
         }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(title, description, start, duration);
+        }
     }
 
     public enum CalendarView{
