@@ -4,7 +4,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
-import com.github.houseorganizer.houseorganizer.task.Task;
+import com.github.houseorganizer.houseorganizer.task.HTask;
 import com.github.houseorganizer.houseorganizer.user.User;
 
 import org.junit.Test;
@@ -13,9 +13,9 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 
-public class TaskUnitTest {
+public class HTaskUnitTest {
     public static class DummyUser extends User {
-        private String name, uid;
+        private final String name, uid;
 
         DummyUser(String name, String uid) {
             this.name = name;
@@ -38,7 +38,7 @@ public class TaskUnitTest {
     // Subtask tests
     @Test
     public void subTaskConstructorWorks() {
-        Task.SubTask s = new Task.SubTask("Subtask 1");
+        HTask.SubTask s = new HTask.SubTask("Subtask 1");
 
         assertFalse(s.isFinished());
         assertEquals("Subtask 1", s.getTitle());
@@ -46,7 +46,7 @@ public class TaskUnitTest {
 
     @Test
     public void subTaskCanChangeTitle() {
-        Task.SubTask s = new Task.SubTask("Subtask 1");
+        HTask.SubTask s = new HTask.SubTask("Subtask 1");
 
         s.changeTitle("Subtask 1: better title");
         assertEquals("Subtask 1: better title", s.getTitle());
@@ -54,7 +54,7 @@ public class TaskUnitTest {
 
     @Test
     public void subTaskCanBeMarkedAsFinished() {
-        Task.SubTask s = new Task.SubTask("Subtask 1");
+        HTask.SubTask s = new HTask.SubTask("Subtask 1");
 
         s.markAsFinished();
         assertTrue(s.isFinished());
@@ -63,7 +63,7 @@ public class TaskUnitTest {
     // Task tests
     @Test
     public void taskConstructorWorks() {
-        Task t = new Task(NOBODY, "Task 1", "stub description");
+        HTask t = new HTask(NOBODY, "Task 1", "stub description");
 
         assertEquals(NOBODY.uid(), t.getOwner().uid());
         assertEquals("Task 1", t.getTitle());
@@ -77,7 +77,7 @@ public class TaskUnitTest {
 
     @Test
     public void taskCanBeMarkedAsFinished() {
-        Task t = new Task(NOBODY, "Task 1", "stub description");
+        HTask t = new HTask(NOBODY, "Task 1", "stub description");
 
         t.markAsFinished();
         assertTrue(t.isFinished());
@@ -85,7 +85,7 @@ public class TaskUnitTest {
 
     @Test
     public void taskCanChangeDueDates() {
-        Task t = new Task(NOBODY, "Task 1", "stub description");
+        HTask t = new HTask(NOBODY, "Task 1", "stub description");
 
         LocalDateTime ldt = LocalDateTime.now();
         t.changeDueDate(ldt);
@@ -96,16 +96,16 @@ public class TaskUnitTest {
 
     @Test
     public void taskCanBeAssigned() {
-        Task t = new Task(NOBODY, "Task 1", "stub description");
+        HTask t = new HTask(NOBODY, "Task 1", "stub description");
 
         t.assignTo(NOBODY);
-        assertEquals(NOBODY.uid(), t.getAssigneeAt(0).uid());
+        assertEquals(NOBODY.uid(), t.getAssignees().get(0).uid());
         assertTrue(t.hasAssignees());
     }
 
     @Test
     public void taskCanBeUnassigned() {
-        Task t = new Task(NOBODY, "Task 1", "stub description");
+        HTask t = new HTask(NOBODY, "Task 1", "stub description");
 
         t.assignTo(NOBODY);
         t.removeAssigneeAt(0);
@@ -114,7 +114,7 @@ public class TaskUnitTest {
 
     @Test
     public void taskCanChangeTitle() {
-        Task t = new Task(NOBODY, "Task 1", "stub description");
+        HTask t = new HTask(NOBODY, "Task 1", "stub description");
 
         t.changeTitle("Task 1: better title");
         assertEquals("Task 1: better title", t.getTitle());
@@ -122,7 +122,7 @@ public class TaskUnitTest {
 
     @Test
     public void taskCanChangeDescription() {
-        Task t = new Task(NOBODY, "Task 1", "stub description");
+        HTask t = new HTask(NOBODY, "Task 1", "stub description");
 
         t.changeDescription("This task involves finishing the TaskUnitTest class");
         assertEquals("This task involves finishing the TaskUnitTest class", t.getDescription());
@@ -130,9 +130,9 @@ public class TaskUnitTest {
 
     @Test
     public void taskCanHaveSubTasks() {
-        Task t = new Task(NOBODY, "Task 1", "stub description");
-        Task.SubTask s = new Task.SubTask("Subtask 1");
-        Task.SubTask s2 = new Task.SubTask("Subtask 2");
+        HTask t = new HTask(NOBODY, "Task 1", "stub description");
+        HTask.SubTask s = new HTask.SubTask("Subtask 1");
+        HTask.SubTask s2 = new HTask.SubTask("Subtask 2");
 
         t.addSubTask(s);
         t.addSubTask(s2);
@@ -143,9 +143,9 @@ public class TaskUnitTest {
 
     @Test
     public void taskCanRemoveSubTasks() {
-        Task t = new Task(NOBODY, "Task 1", "stub description");
-        Task.SubTask s = new Task.SubTask("Subtask 1");
-        Task.SubTask s2 = new Task.SubTask("Subtask 2");
+        HTask t = new HTask(NOBODY, "Task 1", "stub description");
+        HTask.SubTask s = new HTask.SubTask("Subtask 1");
+        HTask.SubTask s2 = new HTask.SubTask("Subtask 2");
 
         t.addSubTask(s);
         t.addSubTask(s2);
@@ -160,10 +160,10 @@ public class TaskUnitTest {
 
     @Test
     public void taskCanInsertSubTasksAtGivenIndex() {
-        Task t = new Task(NOBODY, "Task 1", "stub description");
-        Task.SubTask s = new Task.SubTask("Subtask 1");
-        Task.SubTask s2 = new Task.SubTask("Subtask 2");
-        Task.SubTask s3 = new Task.SubTask("Subtask 3");
+        HTask t = new HTask(NOBODY, "Task 1", "stub description");
+        HTask.SubTask s = new HTask.SubTask("Subtask 1");
+        HTask.SubTask s2 = new HTask.SubTask("Subtask 2");
+        HTask.SubTask s3 = new HTask.SubTask("Subtask 3");
 
         t.addSubTask(s);
         t.addSubTask(0, s2);
@@ -177,8 +177,8 @@ public class TaskUnitTest {
 
     @Test
     public void taskCanChangeSubTaskTitles() {
-        Task t = new Task(NOBODY, "Task 1", "stub description");
-        Task.SubTask s = new Task.SubTask("Subtask 1");
+        HTask t = new HTask(NOBODY, "Task 1", "stub description");
+        HTask.SubTask s = new HTask.SubTask("Subtask 1");
 
         t.addSubTask(s);
         t.getSubTaskAt(0).changeTitle("Subtask 1: better title");
@@ -187,8 +187,8 @@ public class TaskUnitTest {
 
     @Test
     public void taskCanMarkSubTasksAsFinished() {
-        Task t = new Task(NOBODY, "Task 1", "stub description");
-        Task.SubTask s = new Task.SubTask("Subtask 1");
+        HTask t = new HTask(NOBODY, "Task 1", "stub description");
+        HTask.SubTask s = new HTask.SubTask("Subtask 1");
 
         t.addSubTask(s);
         t.getSubTaskAt(0).markAsFinished();
@@ -197,10 +197,10 @@ public class TaskUnitTest {
 
     @Test
     public void taskCanDeleteFinishedSubTasks() {
-        Task t = new Task(NOBODY, "Task 1", "stub description");
-        Task.SubTask s = new Task.SubTask("Subtask 1");
-        Task.SubTask s2 = new Task.SubTask("Subtask 2");
-        Task.SubTask s3 = new Task.SubTask("Subtask 3");
+        HTask t = new HTask(NOBODY, "Task 1", "stub description");
+        HTask.SubTask s = new HTask.SubTask("Subtask 1");
+        HTask.SubTask s2 = new HTask.SubTask("Subtask 2");
+        HTask.SubTask s3 = new HTask.SubTask("Subtask 3");
 
         t.addSubTask(s);
         t.addSubTask(s2);
@@ -218,16 +218,16 @@ public class TaskUnitTest {
 
     @Test
     public void taskReturnsCorrectSubTasks() {
-        Task t = new Task(NOBODY, "Task 1", "stub description");
-        Task.SubTask s = new Task.SubTask("Subtask 1");
-        Task.SubTask s2 = new Task.SubTask("Subtask 2");
-        Task.SubTask s3 = new Task.SubTask("Subtask 3");
+        HTask t = new HTask(NOBODY, "Task 1", "stub description");
+        HTask.SubTask s = new HTask.SubTask("Subtask 1");
+        HTask.SubTask s2 = new HTask.SubTask("Subtask 2");
+        HTask.SubTask s3 = new HTask.SubTask("Subtask 3");
 
         t.addSubTask(s);
         t.addSubTask(s2);
         t.addSubTask(s3);
 
-        List<Task.SubTask> subTasks = t.getSubTasks();
+        List<HTask.SubTask> subTasks = t.getSubTasks();
 
         assertEquals(3, subTasks.size());
         assertTrue(subTasks.contains(s));

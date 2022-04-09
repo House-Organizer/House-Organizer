@@ -5,7 +5,6 @@ import static androidx.test.espresso.action.ViewActions.click;
 import static androidx.test.espresso.assertion.ViewAssertions.matches;
 import static androidx.test.espresso.intent.Intents.intended;
 import static androidx.test.espresso.intent.matcher.IntentMatchers.hasComponent;
-import static androidx.test.espresso.matcher.ViewMatchers.hasChildCount;
 import static androidx.test.espresso.matcher.ViewMatchers.isClickable;
 import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static androidx.test.espresso.matcher.ViewMatchers.isEnabled;
@@ -29,8 +28,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.MethodSorters;
 
-import java.time.LocalDate;
-import java.time.YearMonth;
 import java.util.concurrent.ExecutionException;
 
 @RunWith(AndroidJUnit4.class)
@@ -125,16 +122,6 @@ public class MainScreenActivityTest {
 
     // Calendar view and its buttons
     @Test
-    public void calendarUpcomingIsEnabled() {
-        onView(withId(R.id.calendar)).check(matches(isEnabled()));
-    }
-
-    @Test
-    public void calendarUpcomingIsDisplayed() {
-        onView(withId(R.id.calendar)).check(matches(isDisplayed()));
-    }
-
-    @Test
     public void refreshIsEnabled() {
         onView(withId(R.id.refresh_calendar)).check(matches(isEnabled()));
     }
@@ -163,24 +150,6 @@ public class MainScreenActivityTest {
     public void cycleIsDisplayed() {
         onView(withId(R.id.calendar_view_change)).check(matches(isDisplayed()));
     }
-
-    @Test
-    public void calendarViewRotatesCorrectly() {
-        // Test partially commented out because we do not know how many events are on the database on testing
-        // => NEED MOCKING OF THE DATABASE
-        //final int UPCOMING_CHILDREN = 0;
-        final int MONTHLY_CHILDREN = YearMonth.of(LocalDate.now().getYear(), LocalDate.now().getMonth()).lengthOfMonth();
-        final int WEEKLY_CHILDREN = 7;
-        //onView(withId(R.id.calendar)).check(matches(hasChildCount(UPCOMING_CHILDREN)));
-        onView(withId(R.id.calendar_view_change)).perform(click());
-        onView(withId(R.id.calendar)).check(matches(hasChildCount(MONTHLY_CHILDREN)));
-        onView(withId(R.id.calendar_view_change)).perform(click());
-        onView(withId(R.id.calendar)).check(matches(hasChildCount(WEEKLY_CHILDREN)));
-        onView(withId(R.id.calendar_view_change)).perform(click());
-        //onView(withId(R.id.calendar)).check(matches(hasChildCount(UPCOMING_CHILDREN)));
-    }
-
-    // TODO : Add more meaningful tests for each row in the RecyclerViews (no idea how to do it)
 
     /* TODO: Move sign-out button tests in rightful test class; This button is no longer on MainScreen
     @Test

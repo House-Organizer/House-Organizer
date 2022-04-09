@@ -59,17 +59,6 @@ public class Calendar {
         return view;
     }
 
-
-    @NonNull
-    @Override
-    public String toString() {
-        StringBuilder ret = new StringBuilder("Calendar with view : " + view + " and the following events :\n");
-        for(Event event : events) {
-            ret.append(event).append("\n");
-        }
-        return ret.toString();
-    }
-
     public int rotateCalendarView(View v, Context ctx, EventsAdapter calendarAdapter, RecyclerView calendarEvents) {
         rotateView();
         int calendarColumns = getView() == Calendar.CalendarView.UPCOMING ? 1 : 7;
@@ -211,19 +200,19 @@ public class Calendar {
             return false;
         }
 
-        @NonNull
         @Override
-        public String toString() {
-            return this.title + " at " + start.toString() + ", lasts " + duration + " seconds. : " + description;
+        public boolean equals(Object oEvent) {
+            if (!(oEvent instanceof Event)) return false;
+            Event event = (Event) oEvent;
+            return ((this.title.equals(event.title)) &&
+                    (this.description.equals(event.description)) &&
+                    (this.start.equals(event.start)) &&
+                    (this.duration == event.duration));
         }
 
         @Override
-        public boolean equals(Object oEvent) {
-            if (this == oEvent) return true;
-            if (!(oEvent instanceof Event)) return false;
-            Event event = (Event) oEvent;
-            // Shortcut since toString depends of every variable Event has
-            return event.toString().equals(this.toString());
+        public int hashCode() {
+            return Objects.hash(title, description, start, duration);
         }
     }
 

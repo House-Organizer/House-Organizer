@@ -53,6 +53,8 @@
     <string name="task_completion_desc">You just completed a task. Keep it up!</string>
     <string name="subtask_completion_desc">You just completed a task. Keep it up!</string>
     <string name="tap_to_modify">\"Tap to modify\"</string>
+    <string name="add_remove_assignee">Add/remove assignee</string>
+    <string name="assignees_button">Assignees</string>
 
     <!-- Calendar view and its buttons -->
     <string name="add_event">+</string>
@@ -98,6 +100,7 @@
     <string name="password_not_valid">Password is not valid.</string>
     <string name="inputs_empty">Inputs must not be empty.</string>
     <string name="signout_intent">sign_out</string>
+    
     <string name="attach">Attach</string>
     <string name="show">Show</string>
     <string name="remove">Remove</string>
