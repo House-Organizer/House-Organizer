@@ -15,6 +15,7 @@ import static com.github.houseorganizer.houseorganizer.FirebaseTestsHelper.VALID
 import static com.github.houseorganizer.houseorganizer.FirebaseTestsHelper.createFirebaseTestUserWithCredentials;
 import static com.github.houseorganizer.houseorganizer.FirebaseTestsHelper.deleteTestUser;
 import static com.github.houseorganizer.houseorganizer.FirebaseTestsHelper.signInTestUserWithCredentials;
+import static com.github.houseorganizer.houseorganizer.FirebaseTestsHelper.startAuthEmulator;
 
 import static org.hamcrest.CoreMatchers.anyOf;
 
@@ -46,17 +47,12 @@ public class RegisterEmailTest {
             new ActivityScenarioRule<>(RegisterEmail.class);
 
     @BeforeClass
-    public static void start() throws ExecutionException, InterruptedException {
-        FirebaseTestsHelper.startAuthEmulator();
-
-        createFirebaseTestUserWithCredentials(email2, VALID_PASSWORD_FOR_APP);
+    public static void start() {
+        startAuthEmulator();
     }
 
     @AfterClass
-    public static void end() throws ExecutionException, InterruptedException {
-        signInTestUserWithCredentials(email2, VALID_PASSWORD_FOR_APP);
-        deleteTestUser();
-    }
+    public static void end() {}
 
     @Test
     public void signUpWithEmailWorksWithCorrectInputs() throws ExecutionException, InterruptedException {
@@ -90,11 +86,17 @@ public class RegisterEmailTest {
     }
 
     @Test
-    public void signUpWithEmailShowsEmailUsedErrorWithAlreadyUsedEmail() throws InterruptedException {
+    public void signUpWithEmailShowsEmailUsedErrorWithAlreadyUsedEmail() throws InterruptedException, ExecutionException {
+        createFirebaseTestUserWithCredentials(email2, VALID_PASSWORD_FOR_APP);
+
         enterInputsAndClickRegister(email2, VALID_PASSWORD_FOR_APP);
         onView(withId(R.id.reg_email_error_message)).check(matches(anyOf(
                 withText(R.string.email_already_used), withText(R.string.reg_email_auth_failed)
         )));
+
+
+        signInTestUserWithCredentials(email2, VALID_PASSWORD_FOR_APP);
+        deleteTestUser();
     }
 
     private void enterInputsAndClickRegister(String email, String password) throws InterruptedException {

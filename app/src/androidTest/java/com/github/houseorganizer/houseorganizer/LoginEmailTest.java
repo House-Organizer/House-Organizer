@@ -14,6 +14,7 @@ import static com.github.houseorganizer.houseorganizer.FirebaseTestsHelper.TEST_
 import static com.github.houseorganizer.houseorganizer.FirebaseTestsHelper.VALID_PASSWORD_FOR_APP;
 import static com.github.houseorganizer.houseorganizer.FirebaseTestsHelper.createFirebaseTestUserWithCredentials;
 import static com.github.houseorganizer.houseorganizer.FirebaseTestsHelper.deleteTestUser;
+import static com.github.houseorganizer.houseorganizer.FirebaseTestsHelper.startAuthEmulator;
 
 import androidx.test.espresso.intent.Intents;
 import androidx.test.ext.junit.rules.ActivityScenarioRule;
@@ -41,19 +42,17 @@ public class LoginEmailTest {
             new ActivityScenarioRule<>(LoginEmail.class);
 
     @BeforeClass
-    public static void start() throws ExecutionException, InterruptedException {
-        FirebaseTestsHelper.startAuthEmulator();
-
-        createFirebaseTestUserWithCredentials(email1, VALID_PASSWORD_FOR_APP);
+    public static void start() {
+        startAuthEmulator();
     }
 
     @AfterClass
-    public static void end() {
-
-    }
+    public static void end() {}
 
     @Test
     public void signInWithEmailWorksWithCorrectInputs() throws ExecutionException, InterruptedException {
+        createFirebaseTestUserWithCredentials(email1, VALID_PASSWORD_FOR_APP);
+
         Intents.init();
         onView(withId(R.id.log_enter_email)).perform(clearText(), typeText(email1), closeSoftKeyboard());
         onView(withId(R.id.log_enter_password)).perform(clearText(), typeText(VALID_PASSWORD_FOR_APP), closeSoftKeyboard());
