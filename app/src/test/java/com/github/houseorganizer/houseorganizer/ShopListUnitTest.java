@@ -14,18 +14,10 @@ import java.util.List;
 
 public class ShopListUnitTest {
 
-    private DummyUser user = new DummyUser("Jeff", "uid");
     private ShopItem basicItem = new ShopItem("Eggs", 4, "t");
 
     private ShopList createBasicList(){
-        return new ShopList(user, "Basic List");
-    }
-
-    @Test
-    public void shopListConstructorCreatesShopList(){
-        ShopList shopList = new ShopList(user, "My groceries");
-        assertThat(shopList.getListName(), is("My groceries"));
-        assertThat(shopList.getOwner(), is(user));
+        return new ShopList();
     }
 
     @Test
@@ -38,7 +30,7 @@ public class ShopListUnitTest {
     public void constructorWithNonEmptyListIsNotEmpty(){
         List<ShopItem> list = new ArrayList<>();
         list.add(new ShopItem("egg", 4, "kg"));
-        ShopList shopList = new ShopList(user, "My list", list, new ArrayList<>());
+        ShopList shopList = new ShopList(list);
         assertThat(shopList.isEmpty(), is(false));
     }
 
