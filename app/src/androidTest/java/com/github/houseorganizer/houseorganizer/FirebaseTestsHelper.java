@@ -84,38 +84,6 @@ public class FirebaseTestsHelper {
         databaseEmulatorActivated = true;
     }
 
-    protected static void wipeTaskListData() throws ExecutionException, InterruptedException {
-        FirebaseFirestore db = FirebaseFirestore.getInstance();
-
-        // WIPING TL METADATA [found in /task_lists]
-        Task<QuerySnapshot> task = db.collection("task_lists").get();
-        Tasks.await(task);
-
-        if(! task.isSuccessful()) return; // assume collection doesn't exist
-
-        QuerySnapshot rootSnap = task.getResult();
-
-        for (DocumentSnapshot tlDocSnap : rootSnap.getDocuments()) {
-            wipeTasksThenMetadata(tlDocSnap);
-        }
-    }
-
-    private static void wipeTasksThenMetadata(DocumentSnapshot tlDocSnap) throws ExecutionException, InterruptedException {
-        List<DocumentReference> taskPtrs = (List<DocumentReference>)
-                Objects.requireNonNull(tlDocSnap.getData()).getOrDefault("task-ptrs", new ArrayList<>());
-
-        CollectionReference taskDumpRef =
-                FirebaseFirestore.getInstance()
-                        .collection("task_dump");
-
-        assert taskPtrs != null;
-        for (DocumentReference taskPtr : taskPtrs) {
-            Tasks.await(taskPtr.delete());
-        }
-
-        Tasks.await(tlDocSnap.getReference().delete());
-    }
-
     /**
      * This method will create a flag on the firebase which allows to decide if we have
      * to create the data from scratch or if its already there
@@ -354,7 +322,7 @@ public class FirebaseTestsHelper {
         createFirebaseDoneFlag();
     }
 
-    // Task list loading
+    // Task list loading & deleting
     private static Task<DocumentReference> storeTask(HTask task, CollectionReference taskDumpRef) {
         Map<String, Object> data = new HashMap<>();
 
@@ -401,5 +369,33 @@ public class FirebaseTestsHelper {
 
         Task<Void> task = taskListRoot.document(documentName).set(data);
         Tasks.await(task);
+    }
+
+    protected static void wipeTaskListData() throws ExecutionException, InterruptedException {
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+
+        // WIPING TL METADATA [found in /task_lists]
+        Task<QuerySnapshot> task = db.collection("task_lists").get();
+        Tasks.await(task);
+
+        if(! task.isSuccessful()) return; // assume collection doesn't exist
+
+        QuerySnapshot rootSnap = task.getResult();
+
+        for (DocumentSnapshot tlDocSnap : rootSnap.getDocuments()) {
+            wipeTasksThenMetadata(tlDocSnap);
+        }
+    }
+
+    private static void wipeTasksThenMetadata(DocumentSnapshot tlDocSnap) throws ExecutionException, InterruptedException {
+        List<DocumentReference> taskPtrs = (List<DocumentReference>)
+                Objects.requireNonNull(tlDocSnap.getData()).getOrDefault("task-ptrs", new ArrayList<>());
+
+        assert taskPtrs != null;
+        for (DocumentReference taskPtr : taskPtrs) {
+            Tasks.await(taskPtr.delete());
+        }
+
+        Tasks.await(tlDocSnap.getReference().delete());
     }
 }

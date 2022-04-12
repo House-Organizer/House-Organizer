@@ -18,12 +18,15 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.github.houseorganizer.houseorganizer.R;
 import com.github.houseorganizer.houseorganizer.panels.MainScreenActivity;
 import com.github.houseorganizer.houseorganizer.util.BiViewHolder;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.function.Consumer;
@@ -100,23 +103,40 @@ public final class TaskView {
 
     // Adds a task iff. the task list is in view
     public static void addTask(FirebaseFirestore db, TaskList taskList, TaskListAdapter taskListAdapter,
-                               MainScreenActivity.ListFragmentView listView) {
+                               MainScreenActivity.ListFragmentView listView, DocumentReference taskListDocRef) {
         if (listView != MainScreenActivity.ListFragmentView.CHORES_LIST) {
             return;
         }
 
-        db.collection("task_lists")
-                .document("85IW3cYzxOo1YTWnNOQl")
-                .collection("tasks")
-                .add(new HashMap<String, Object>())
+        db.collection("task_dump")
+                .add(new HashMap<>())
                 .addOnCompleteListener(task -> {
                     if (task.isSuccessful()) {
                         DocumentReference taskDocRef = task.getResult();
 
                         taskList.addTask(new FirestoreTask(taskList.getOwner(), "", "", new ArrayList<>(), taskDocRef));
                         taskListAdapter.notifyItemInserted(taskListAdapter.getItemCount()-1);
+
+                        addTaskPtrToMetadata(taskListDocRef, taskDocRef);
                     }
                 });
+    }
+
+    private static void addTaskPtrToMetadata(DocumentReference taskListDocRef, DocumentReference taskDocRef) {
+        taskListDocRef.get().addOnCompleteListener(task -> {
+            if(task.isSuccessful()) {
+                Map<String, Object> metadata = task.getResult().getData();
+
+                List<DocumentReference> taskPtrs = (ArrayList<DocumentReference>)
+                        metadata.getOrDefault("task-ptrs", new ArrayList<>());
+
+                taskPtrs.add(taskDocRef);
+
+                metadata.put("task-ptrs", taskPtrs);
+
+                task.getResult().getReference().set(metadata);
+            }
+        });
     }
 
     /* Helper */

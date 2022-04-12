@@ -47,32 +47,23 @@ public class FirestoreTaskTest {
 
     private static FirebaseFirestore db;
 
-    @BeforeClass
-    public static void createMockFirebase() {
+    //@BeforeClass
+    public static void createMockFirebase() throws ExecutionException, InterruptedException {
         FirebaseTestsHelper.startFirestoreEmulator();
+        FirebaseTestsHelper.startAuthEmulator();
 
-        // FirebaseTestsHelper.setUpFirebase();
-        // ^ NOT needed for now
+        FirebaseTestsHelper.setUpFirebase();
 
         db = FirebaseFirestore.getInstance();
     }
 
-    @AfterClass
+    //@After @AfterClass
     public static void recreateTestData() throws ExecutionException, InterruptedException {
-        FirebaseTestsHelper.createTestTaskList();
+        // TODO
     }
 
-    @Before
-    public void addTaskListData() throws ExecutionException, InterruptedException {
-        FirebaseTestsHelper.createTestTaskList();
-    }
-
-    @After
-    public void wipeTaskListData() throws ExecutionException, InterruptedException {
-        FirebaseTestsHelper.wipeTaskListData();
-    }
-
-    /* Tests of static API */ /*(makeSubTaskData, recoverSubTask, recoverTask) */
+    /* Tests of static API (makeSubTaskData, recoverSubTask, recoverTask)
+     * [!] only `recoverTask` needs emulators */
     @Test
     public void makeSubTaskDataWorksForOngoingSubTask() {
         HTask.SubTask st = new HTask.SubTask(BASIC_SUBTASK_TITLE);
@@ -108,10 +99,10 @@ public class FirestoreTaskTest {
         // todo: test for "status", at this point in the development only ongoing tasks are recovered
     }
 
-    @Test
+    //@Test
     public void recoverTaskWorks() throws ExecutionException, InterruptedException {
         HTask task = new HTask(new DummyUser("Dummy", "0"), BASIC_TASK_TITLE, BASIC_TASK_NAME);
-        CollectionReference taskListRef = db.collection("task_lists");
+        CollectionReference taskListRef = db.collection("task_dump");
 
         Map<String, Object> taskData = makeTaskData(task);
 
@@ -124,24 +115,12 @@ public class FirestoreTaskTest {
         assertEquals(task.getDescription(), recoveredTask.getDescription());
 
         assertEquals(task.getSubTasks(), recoveredTask.getSubTasks());
+        // TODO delete tl1_test
     }
 
-    /* Override tests: most of them check reflection on database */
-    private FirestoreTask recoverFirestoreTask(String docName) throws ExecutionException, InterruptedException {
-        Task<DocumentSnapshot> task =
-                db.collection("task_lists")
-                        .document(docName)
-                        .get();
-
-        Tasks.await(task);
-
-        DocumentSnapshot docSnap = task.getResult();
-        DocumentReference docRef = docSnap.getReference();
-
-        return FirestoreTask.recoverTask(Objects.requireNonNull(docSnap.getData()), docRef);
-    }
-
-    @Test
+    /* Override tests: most of them check reflection on database
+     * [!] these tests DO need emulators */
+    //@Test
     public void changeTitleAndDescriptionWorks() throws ExecutionException, InterruptedException {
         FirestoreTask ft = recoverFirestoreTask(FirebaseTestsHelper.TEST_TASK_LIST_DOCUMENT_NAME);
         ft.changeTitle(NEW_FANCY_TITLE);
@@ -155,7 +134,7 @@ public class FirestoreTaskTest {
         assertEquals(NEW_FANCY_DESCRIPTION, changedFT.getDescription());
     }
 
-    @Test
+    //@Test
     public void subTaskModificationsWork() throws ExecutionException, InterruptedException {
         FirestoreTask ft = recoverFirestoreTask(FirebaseTestsHelper.TEST_TASK_LIST_DOCUMENT_NAME);
 
@@ -197,5 +176,20 @@ public class FirestoreTaskTest {
         data.put("sub tasks", subTaskListData);
 
         return data;
+    }
+
+    // TODO update
+    private FirestoreTask recoverFirestoreTask(String docName) throws ExecutionException, InterruptedException {
+        Task<DocumentSnapshot> task =
+                db.collection("task_dump")
+                        .document(docName)
+                        .get();
+
+        Tasks.await(task);
+
+        DocumentSnapshot docSnap = task.getResult();
+        DocumentReference docRef = docSnap.getReference();
+
+        return FirestoreTask.recoverTask(Objects.requireNonNull(docSnap.getData()), docRef);
     }
 }
