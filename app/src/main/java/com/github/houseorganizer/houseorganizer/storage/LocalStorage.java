@@ -23,8 +23,10 @@ import java.lang.reflect.Type;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 public class LocalStorage {
@@ -50,10 +52,9 @@ public class LocalStorage {
         }
     }
 
-    /* TODO FIX CURRENTLY NOT WORKING
-    public static boolean retrieve_calendar(Context context){
+    public static String retrieveTxtFromFile(Context context, String filename){
         try {
-            FileInputStream fis = context.openFileInput(OFFLINE_STORAGE_CALENDAR + OFFLINE_STORAGE_EXTENSION);
+            FileInputStream fis = context.openFileInput(filename);
             InputStreamReader isr = new InputStreamReader(fis);
             BufferedReader bufferedReader = new BufferedReader(isr);
             StringBuilder buffer = new StringBuilder();
@@ -61,21 +62,59 @@ public class LocalStorage {
             while ((line = bufferedReader.readLine()) != null) {
                 buffer.append(line);
             }
-            String s = buffer.toString();
-
-            System.out.println("retrieved:" + s); //TODO REMOVE DEBUG
-
-            Type type = TypeToken.getParameterized(ArrayList.class, OfflineEvent.class).getType();
-            Gson gson = new Gson();
-            ArrayList<OfflineEvent> events = gson.fromJson(s, type);
-            for(OfflineEvent event : events){
-                System.out.println(event); //TODO REMOVE DEBUG
-            }
-            return true;
+            return buffer.toString();
         } catch (Exception e) {
-            return false;
+            return "";
         }
-    }*/
+    }
+
+    public static HashSet<String> retrieveHouseholdIdsOffline(Context context){
+        String householdsString = retrieveTxtFromFile(context, OFFLINE_STORAGE_HOUSEHOLDS + OFFLINE_STORAGE_EXTENSION);
+        Type type = TypeToken.getParameterized(HashSet.class, String.class).getType();
+        return new Gson().fromJson(householdsString, type);
+    }
+
+    public static Map<String, ArrayList<OfflineEvent>> retrieveEventsOffline(Context context){
+        HashSet<String> households = retrieveHouseholdIdsOffline(context);
+
+        Map<String, ArrayList<OfflineEvent>> mapHouseholdIdToEvents = new HashMap<>();
+        for(String household : households){
+            String householdsEventsString = retrieveTxtFromFile(context,
+                    OFFLINE_STORAGE_CALENDAR + household +  OFFLINE_STORAGE_EXTENSION);
+            Type type = TypeToken.getParameterized(ArrayList.class, LocalStorage.OfflineEvent.class).getType();
+            ArrayList<LocalStorage.OfflineEvent> householdsEvents = new Gson().fromJson(householdsEventsString, type);
+            mapHouseholdIdToEvents.put(household, householdsEvents);
+        }
+        return mapHouseholdIdToEvents;
+    }
+
+    public static Map<String, ArrayList<OfflineShopItem>> retrieveGroceriesOffline(Context context){
+        HashSet<String> households = retrieveHouseholdIdsOffline(context);
+
+        Map<String, ArrayList<OfflineShopItem>> mapHouseholdIdToGroceries = new HashMap<>();
+        for(String household : households){
+            String householdsGroceriesString = retrieveTxtFromFile(context,
+                    OFFLINE_STORAGE_GROCERIES + household +  OFFLINE_STORAGE_EXTENSION);
+            Type type = TypeToken.getParameterized(ArrayList.class, LocalStorage.OfflineShopItem.class).getType();
+            ArrayList<LocalStorage.OfflineShopItem> householdsGroceries = new Gson().fromJson(householdsGroceriesString, type);
+            mapHouseholdIdToGroceries.put(household, householdsGroceries);
+        }
+        return mapHouseholdIdToGroceries;
+    }
+
+    public static Map<String, ArrayList<OfflineTask>> retrieveTaskListOffline(Context context){
+        HashSet<String> households = retrieveHouseholdIdsOffline(context);
+
+        Map<String, ArrayList<OfflineTask>> mapHouseholdIdToTasks = new HashMap<>();
+        for(String household : households){
+            String householdsTasksString = retrieveTxtFromFile(context,
+                    OFFLINE_STORAGE_TASKS + household +  OFFLINE_STORAGE_EXTENSION);
+            Type type = TypeToken.getParameterized(ArrayList.class, LocalStorage.OfflineTask.class).getType();
+            ArrayList<LocalStorage.OfflineTask> householdsTasks = new Gson().fromJson(householdsTasksString, type);
+            mapHouseholdIdToTasks.put(household, householdsTasks);
+        }
+        return mapHouseholdIdToTasks;
+    }
 
     public static boolean pushEventsOffline(Context context, DocumentReference currentHouse, List<Calendar.Event> events){
         ArrayList<LocalStorage.OfflineEvent> offlineEvents = new ArrayList<>();
