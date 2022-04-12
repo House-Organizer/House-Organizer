@@ -24,6 +24,7 @@ import com.github.houseorganizer.houseorganizer.house.HouseSelectionActivity;
 import com.github.houseorganizer.houseorganizer.shop.ShopItem;
 import com.github.houseorganizer.houseorganizer.shop.ShopList;
 import com.github.houseorganizer.houseorganizer.shop.ShopListAdapter;
+import com.github.houseorganizer.houseorganizer.storage.LocalStorage;
 import com.github.houseorganizer.houseorganizer.task.TaskList;
 import com.github.houseorganizer.houseorganizer.task.TaskListAdapter;
 import com.github.houseorganizer.houseorganizer.task.TaskView;
@@ -73,6 +74,7 @@ public class MainScreenActivity extends AppCompatActivity {
         db = FirebaseFirestore.getInstance();
 
         loadData();
+        LocalStorage.pushHouseholdIdsOffline(getApplicationContext(), db, mUser);
 
         calendarEvents = findViewById(R.id.calendar);
         calendar = new Calendar();
@@ -150,7 +152,6 @@ public class MainScreenActivity extends AppCompatActivity {
                                 getApplicationContext(), "Could not get a house.");
                 });
     }
-
 
     private void hideButtons() {
         findViewById(R.id.refresh_calendar).setVisibility(View.INVISIBLE);

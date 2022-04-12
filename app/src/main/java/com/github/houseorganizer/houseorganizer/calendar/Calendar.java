@@ -11,7 +11,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.EditText;
 
-import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -90,7 +89,7 @@ public class Calendar {
                         }
                         calendarAdapter.notifyDataSetChanged();
                         setEvents(newEvents);
-                        LocalStorage.pushEventsOffline(v.getContext(), this.events);
+                        LocalStorage.pushEventsOffline(v.getContext(), currentHouse, this.events);
                     } else {
                         logAndToast(funcAndErrMessage.get(0), funcAndErrMessage.get(1), task.getException(),
                                 v.getContext(), v.getContext().getString(R.string.refresh_calendar_fail));

@@ -5,6 +5,12 @@ import android.content.Context;
 import androidx.annotation.NonNull;
 
 import com.github.houseorganizer.houseorganizer.calendar.Calendar;
+import com.github.houseorganizer.houseorganizer.shop.ShopItem;
+import com.github.houseorganizer.houseorganizer.task.HTask;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
@@ -16,10 +22,21 @@ import java.io.InputStreamReader;
 import java.lang.reflect.Type;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Objects;
 
 public class LocalStorage {
 
-    public static final String OFFLINE_STORAGE_CALENDAR = "offline_calendar.json";
+    public static final HashSet<String> setOfHouseholds = new HashSet<>();
+    public static final String OFFLINE_STORAGE_HOUSEHOLDS = "offline_households";
+
+    public static final String OFFLINE_STORAGE_CALENDAR = "offline_calendar_";
+    public static final String OFFLINE_STORAGE_GROCERIES = "offline_groceries_";
+    public static final String OFFLINE_STORAGE_TASKS = "offline_tasks_";
+
+    public static final String OFFLINE_STORAGE_EXTENSION = "_.json";
 
     public static boolean writeTxtToFile(Context context, String filename, String content){
         File path = context.getFilesDir();
@@ -33,9 +50,10 @@ public class LocalStorage {
         }
     }
 
+    /* TODO FIX CURRENTLY NOT WORKING
     public static boolean retrieve_calendar(Context context){
         try {
-            FileInputStream fis = context.openFileInput(OFFLINE_STORAGE_CALENDAR);
+            FileInputStream fis = context.openFileInput(OFFLINE_STORAGE_CALENDAR + OFFLINE_STORAGE_EXTENSION);
             InputStreamReader isr = new InputStreamReader(fis);
             BufferedReader bufferedReader = new BufferedReader(isr);
             StringBuilder buffer = new StringBuilder();
@@ -57,25 +75,75 @@ public class LocalStorage {
         } catch (Exception e) {
             return false;
         }
-    }
+    }*/
 
-    public static boolean pushEventsOffline(Context context, ArrayList<Calendar.Event> events){
+    public static boolean pushEventsOffline(Context context, DocumentReference currentHouse, List<Calendar.Event> events){
         ArrayList<LocalStorage.OfflineEvent> offlineEvents = new ArrayList<>();
         for(Calendar.Event event : events){
-            long duration = event.getDuration();
             offlineEvents.add(new OfflineEvent(
                     event.getTitle(),
                     event.getDescription(),
                     event.getStart().toString(),
-                    duration,
+                    event.getDuration(),
                     event.getId()
                     ));
         }
-        System.out.println("pushed:" + offlineEvents); //TODO REMOVE DEBUG
-        return writeTxtToFile(context, OFFLINE_STORAGE_CALENDAR, new Gson().toJson(offlineEvents));
+        String house_id = "temp";
+        if(currentHouse != null){
+            house_id = currentHouse.getId();
+        }
+        return writeTxtToFile(context, OFFLINE_STORAGE_CALENDAR + house_id + OFFLINE_STORAGE_EXTENSION,
+                new Gson().toJson(offlineEvents));
     }
 
-    public static class OfflineEvent{
+    public static boolean pushGroceriesOffline(Context context, DocumentReference currentHouse, List<ShopItem> items){
+        ArrayList<LocalStorage.OfflineShopItem> offlineShopItems = new ArrayList<>();
+        for(ShopItem item : items){
+            offlineShopItems.add(new OfflineShopItem(
+                    item.getName(),
+                    item.getQuantity(),
+                    item.getUnit(),
+                    item.isPickedUp()
+            ));
+        }
+        String house_id = "temp";
+        if(currentHouse != null){
+            house_id = currentHouse.getId();
+        }
+        return writeTxtToFile(context, OFFLINE_STORAGE_GROCERIES + house_id + OFFLINE_STORAGE_EXTENSION,
+                new Gson().toJson(offlineShopItems));
+    }
+
+    public static boolean pushTaskListOffline(Context context, DocumentReference currentHouse, List<HTask> tasks){
+        ArrayList<LocalStorage.OfflineTask> offlineTasks = new ArrayList<>();
+        for(HTask task : tasks){
+            offlineTasks.add(new OfflineTask(
+                    "TASKNAME",
+                    "TAKSDESCRIPTION",
+                    Arrays.asList("USER1", "USER2")
+            ));
+            break; //TODO REMOVE ONCE TASK LIST IS FIXED
+        }
+        String house_id = "temp";
+        if(currentHouse != null){
+            house_id = currentHouse.getId();
+        }
+        return writeTxtToFile(context, OFFLINE_STORAGE_TASKS + house_id + OFFLINE_STORAGE_EXTENSION,
+                new Gson().toJson(offlineTasks));
+    }
+
+    public static void pushHouseholdIdsOffline(Context context, FirebaseFirestore db, FirebaseUser mUser){
+        db.collection("households").whereArrayContains("residents",
+                                                       Objects.requireNonNull(mUser.getEmail())).get().addOnSuccessListener(task -> {
+            for (DocumentSnapshot document : task.getDocuments()) {
+                setOfHouseholds.add(document.getId());
+            }
+            writeTxtToFile(context, OFFLINE_STORAGE_HOUSEHOLDS + OFFLINE_STORAGE_EXTENSION,
+                    new Gson().toJson(setOfHouseholds));
+        });
+    }
+
+    private static class OfflineEvent{
         private final String title;
         private final String description;
         private final String start;
@@ -99,6 +167,52 @@ public class LocalStorage {
                     ", start='" + start + '\'' +
                     ", duration='" + duration + '\'' +
                     ", id='" + id + '\'' +
+                    '}';
+        }
+    }
+
+    private static class OfflineShopItem{
+        private final String name;
+        private final int quantity;
+        private final String unit;
+        private final boolean isPickedUp;
+
+        public OfflineShopItem(String name, int quantity, String unit, boolean isPickedUp){
+            this.name = name;
+            this.quantity = quantity;
+            this.unit = unit;
+            this.isPickedUp = false;
+        }
+
+        @NonNull
+        @Override
+        public String toString() {
+            return "OfflineShopItem{" +
+                    "name='" + name + '\'' +
+                    ", quantity=" + quantity +
+                    ", unit='" + unit + '\'' +
+                    ", isPickedUp=" + isPickedUp +
+                    '}';
+        }
+    }
+
+    private static class OfflineTask{
+        private final String name;
+        private final String description;
+        private final List<String> assignees;
+
+        public OfflineTask(String name, String description, List<String> assignees) {
+            this.name = name;
+            this.description = description;
+            this.assignees = assignees;
+        }
+
+        @Override
+        public String toString() {
+            return "OfflineTask{" +
+                    "name='" + name + '\'' +
+                    ", description='" + description + '\'' +
+                    ", assignees=" + assignees +
                     '}';
         }
     }
