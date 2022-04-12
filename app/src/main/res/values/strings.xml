@@ -6,7 +6,6 @@
     <string name="settings_speakable_text">Settings</string>
     <string name="house_speakable_text">Home selection</string>
     <string name="info_speakable_text">Info</string>
-    <string name="button_feedback_text">No button has been pressed</string>
     <string name="house_name">House name</string>>
     <string name="img_house_row_desc">Image for the given house name</string>
     <string name="home_logo">Home Logo</string>
@@ -100,11 +99,19 @@
     <string name="password_not_valid">Password is not valid.</string>
     <string name="inputs_empty">Inputs must not be empty.</string>
     <string name="signout_intent">sign_out</string>
-    
+
+    <!-- Attachment menu -->
     <string name="attach">Attach</string>
     <string name="show">Show</string>
     <string name="remove">Remove</string>
     <string name="three_dots">three dots</string>
     <string name="event_attachment_content_description">attachment of the event</string>
+
+    <!-- Bottom features menu -->
+    <string name="main_screen">Main Screen</string>
+    <string name="groceries">Groceries</string>
+    <string name="tasks">Tasks</string>
+    <string name="calendar">Calendar</string>
+    <string name="add_an_event">Add an event</string>
 
 </resources>

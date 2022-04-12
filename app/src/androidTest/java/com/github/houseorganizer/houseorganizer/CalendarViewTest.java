@@ -177,12 +177,9 @@ public class CalendarViewTest {
     @Test
     public void calendarViewRotatesCorrectly() {
         final int MONTHLY_CHILDREN = YearMonth.of(LocalDate.now().getYear(), LocalDate.now().getMonth()).lengthOfMonth();
-        final int WEEKLY_CHILDREN = 7;
         onView(withId(R.id.calendar)).check(matches(hasChildCount(EVENTS_TO_DISPLAY)));
         onView(withId(R.id.calendar_view_change)).perform(click());
         onView(withId(R.id.calendar)).check(matches(hasChildCount(MONTHLY_CHILDREN)));
-        onView(withId(R.id.calendar_view_change)).perform(click());
-        onView(withId(R.id.calendar)).check(matches(hasChildCount(WEEKLY_CHILDREN)));
         onView(withId(R.id.calendar_view_change)).perform(click());
         onView(withId(R.id.calendar)).check(matches(hasChildCount(EVENTS_TO_DISPLAY)));
     }

@@ -1,10 +1,13 @@
 package com.github.houseorganizer.houseorganizer.calendar;
 
+import static com.github.houseorganizer.houseorganizer.calendar.Calendar.CalendarView.MONTHLY;
 import static com.github.houseorganizer.houseorganizer.calendar.Calendar.Event.putEventStringsInData;
+import static com.github.houseorganizer.houseorganizer.util.Util.logAndToast;
 
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.Context;
+import android.net.Uri;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,7 +25,10 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.github.houseorganizer.houseorganizer.R;
 import com.github.houseorganizer.houseorganizer.calendar.Calendar.Event;
 import com.github.houseorganizer.houseorganizer.image.ImageHelper;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.SetOptions;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
@@ -30,6 +36,7 @@ import com.google.firebase.storage.StorageReference;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.YearMonth;
+import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -39,13 +46,12 @@ import java.util.Map;
 
 public class EventsAdapter extends RecyclerView.Adapter<EventsAdapter.ViewHolder> {
 
-    private static final int DAYS_PER_WEEK = 7;
     private final ActivityResultLauncher<String> getPicture;
 
-    private Calendar calendar;
+    private final Calendar calendar;
     private String eventToAttach;
-    private FirebaseStorage storage = FirebaseStorage.getInstance();
-    private FirebaseFirestore db = FirebaseFirestore.getInstance();
+    private final FirebaseStorage storage = FirebaseStorage.getInstance();
+    private final FirebaseFirestore db = FirebaseFirestore.getInstance();
 
     public EventsAdapter(Calendar calendar, ActivityResultLauncher<String> getPicture) {
         this.calendar = calendar;
@@ -59,17 +65,13 @@ public class EventsAdapter extends RecyclerView.Adapter<EventsAdapter.ViewHolder
         public ViewHolder(View eventView) {
             super(eventView);
 
-            switch (calendar.getView()) {
-                case MONTHLY:
-                    titleView = eventView.findViewById(R.id.event_monthly_title);
-                    break;
-                case WEEKLY:
-                    titleView = eventView.findViewById(R.id.event_weekly_title);
-                    break;
-                case UPCOMING:
-                    titleView = eventView.findViewById(R.id.event_upcoming_title);
-                    dateView = eventView.findViewById(R.id.event_upcoming_date);
-                    attachView = eventView.findViewById(R.id.event_upcoming_attach);
+            if (calendar.getView() == MONTHLY) {
+                titleView = eventView.findViewById(R.id.event_monthly_title);
+            }
+            else {
+                titleView = eventView.findViewById(R.id.event_upcoming_title);
+                dateView = eventView.findViewById(R.id.event_upcoming_date);
+                attachView = eventView.findViewById(R.id.event_upcoming_attach);
             }
         }
     }
@@ -79,34 +81,22 @@ public class EventsAdapter extends RecyclerView.Adapter<EventsAdapter.ViewHolder
     public EventsAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         Context context = parent.getContext();
         LayoutInflater inflater = LayoutInflater.from(context);
-        switch (calendar.getView()) {
-            case MONTHLY:
-                return new ViewHolder(inflater.inflate(R.layout.calendar_monthly_cell, parent, false));
-            case WEEKLY:
-                return new ViewHolder(inflater.inflate(R.layout.calendar_weekly_row, parent, false));
-            default:
-                return new ViewHolder(inflater.inflate(R.layout.calendar_upcoming_row, parent, false));
+        if (calendar.getView() == MONTHLY) {
+            return new ViewHolder(inflater.inflate(R.layout.calendar_monthly_cell, parent, false));
+        }
+        else {
+            return new ViewHolder(inflater.inflate(R.layout.calendar_upcoming_row, parent, false));
         }
     }
 
     @Override
     public void onBindViewHolder(@NonNull EventsAdapter.ViewHolder holder, int position) {
-        switch (calendar.getView()) {
-            case MONTHLY:
-                prepareMonthlyView(holder, position);
-                break;
-            case WEEKLY:
-                prepareWeeklyView(holder, position);
-                break;
-            case UPCOMING:
-                prepareUpcomingView(holder, position);
-
+        if (calendar.getView() == MONTHLY) {
+            prepareMonthlyView(holder, position);
         }
-    }
-
-
-    public String getEventToAttach() {
-        return eventToAttach;
+        else {
+            prepareUpcomingView(holder, position);
+        }
     }
 
     public Calendar getCalendar() {
@@ -117,15 +107,6 @@ public class EventsAdapter extends RecyclerView.Adapter<EventsAdapter.ViewHolder
         holder.titleView.setText(String.format(Locale.ENGLISH, "%d", position + 1));
         holder.titleView.setOnClickListener(v -> new AlertDialog.Builder(v.getContext())
                 .setTitle(Integer.toString(position + 1)).setMessage("List of events for this day somehow")
-                .setMessage("List of events for this day somehow").show());
-    }
-
-    private void prepareWeeklyView(ViewHolder holder, int position) {
-        String[] days = new String[]{"MON", "TUE", "WED", "THU", "FRI", "SAT", "SUN"};
-
-        holder.titleView.setText(days[position]);
-        holder.titleView.setOnClickListener(v -> new AlertDialog.Builder(v.getContext())
-                .setTitle(days[position])
                 .setMessage("List of events for this day somehow").show());
     }
 
@@ -191,6 +172,69 @@ public class EventsAdapter extends RecyclerView.Adapter<EventsAdapter.ViewHolder
                 }).show();
     }
 
+    public void showAddEventDialog(Context ctx, DocumentReference currentHouse, String errMessage) {
+        LayoutInflater inflater = LayoutInflater.from(ctx);
+        final View dialogView = inflater.inflate(R.layout.event_creation, null);
+        new AlertDialog.Builder(ctx)
+                .setTitle(R.string.event_creation_title)
+                .setView(dialogView)
+                .setPositiveButton(R.string.add, (dialog, id) -> {
+                    Task<DocumentReference> pushTask = pushEventFromDialog(dialogView, currentHouse);
+                    if (pushTask != null) {
+                        pushTask.addOnSuccessListener(documentReference -> refreshCalendarView(ctx, currentHouse, errMessage));
+                    }
+                    dialog.dismiss();
+                })
+                .setNegativeButton(R.string.cancel, (dialog, id) -> dialog.dismiss())
+                .show();
+    }
+
+    private Task<DocumentReference> pushEventFromDialog(View dialogView, DocumentReference currentHouse) {
+        Map<String, Object> data = new HashMap<>();
+        final String title = ((EditText) dialogView.findViewById(R.id.new_event_title)).getText().toString();
+        final String desc = ((EditText) dialogView.findViewById(R.id.new_event_desc)).getText().toString();
+        final String date = ((EditText) dialogView.findViewById(R.id.new_event_date)).getText().toString();
+        final String duration = ((EditText) dialogView.findViewById(R.id.new_event_duration)).getText().toString();
+        Map<String, String> event = new HashMap<>();
+        event.put("title", title);
+        event.put("desc", desc);
+        event.put("date", date);
+        event.put("duration", duration);
+        if (Event.putEventStringsInData(event, data)) {
+            return null;
+        }
+        data.put("household", currentHouse);
+        return db.collection("events").add(data);
+    }
+
+    @SuppressLint("NotifyDataSetChanged")
+    public void refreshCalendarView(Context ctx, DocumentReference currentHouse, String errMessage) {
+        db.collection("events")
+                .whereEqualTo("household", currentHouse)
+                .whereGreaterThan("start", LocalDateTime.now().toEpochSecond(ZoneOffset.UTC))
+                .get()
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        ArrayList<Event> newEvents = new ArrayList<>();
+                        for (QueryDocumentSnapshot document : task.getResult()) {
+                            // We assume the stored data is well behaved since it got added in a well behaved manner.
+                            Event event = new Event(
+                                    document.getString("title"),
+                                    document.getString("description"),
+                                    LocalDateTime.ofEpochSecond(document.getLong("start"), 0, ZoneOffset.UTC),
+                                    document.getLong("duration") == null ? 0 : document.getLong("duration"),
+                                    document.getId());
+                            newEvents.add(event);
+                        }
+                        notifyDataSetChanged();
+                        calendar.setEvents(newEvents);
+                    } else {
+                        logAndToast(ctx.toString(), errMessage, task.getException(),
+                                ctx, ctx.getString(R.string.refresh_calendar_fail));
+                    }
+                });
+    }
+
     private void removeEventFirestoreAndCalendar(Event event, Calendar calendar) {
         db.collection("events")
                 .document(event.getId())
@@ -236,15 +280,21 @@ public class EventsAdapter extends RecyclerView.Adapter<EventsAdapter.ViewHolder
         this.notifyItemChanged(position);
     }
 
+    public void pushAttachment(Uri uri) {
+        // Store the image on firebase storage
+        FirebaseStorage storage = FirebaseStorage.getInstance();
+        // this creates the reference to the picture
+        StorageReference imageRef = storage.getReference().child(eventToAttach + ".jpg");
+        imageRef.putFile(uri);
+    }
+
     @Override
     public int getItemCount() {
-        switch (calendar.getView()) {
-            case MONTHLY:
-                return YearMonth.of(LocalDate.now().getYear(), LocalDate.now().getMonth()).lengthOfMonth();
-            case WEEKLY:
-                return DAYS_PER_WEEK;
-            default:
-                return calendar.getEvents().size();
+        if (calendar.getView() == MONTHLY) {
+            return YearMonth.of(LocalDate.now().getYear(), LocalDate.now().getMonth()).lengthOfMonth();
+        }
+        else {
+            return calendar.getEvents().size();
         }
     }
 }

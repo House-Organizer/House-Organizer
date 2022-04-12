@@ -1,24 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
-<menu xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:android="http://schemas.android.com/apk/res/android">
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item
         android:id="@+id/nav_bar_menu"
-        android:title="Main Screen"
+        android:title="@string/main_screen"
         android:icon="@drawable/ic_action_menu"/>
 
     <item
         android:id="@+id/nav_bar_cart"
-        android:title="Groceries"
+        android:title="@string/groceries"
         android:icon="@drawable/ic_action_cart"/>
 
     <item
         android:id="@+id/nav_bar_task"
-        android:title="Tasks"
+        android:title="@string/tasks"
         android:icon="@drawable/ic_action_task"/>
 
     <item
         android:id="@+id/nav_bar_calendar"
-        android:title="Calendar"
+        android:title="@string/calendar"
         android:icon="@drawable/ic_action_calendar"/>
 
 

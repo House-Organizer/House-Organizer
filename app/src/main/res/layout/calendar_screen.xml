@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".panels.CalendarActivity">
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/calendar"
+        android:layout_width="match_parent"
+        android:layout_height="0dip"
+        android:layout_marginHorizontal="5dp"
+        app:layout_constraintBottom_toTopOf="@+id/add_event"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.035"
+        app:layout_constraintHeight_default="percent"
+        app:layout_constraintHeight_percent=".85"/>
+
+    <Button
+        android:id="@+id/add_event"
+        android:layout_width="0dip"
+        android:layout_height="0dip"
+        android:text="@string/add_an_event"
+        android:visibility="visible"
+        app:layout_constraintBottom_toTopOf="@id/nav_bar"
+        app:layout_constraintTop_toBottomOf="@id/calendar"
+        app:layout_constraintEnd_toStartOf="@id/calendar_view_change"
+        app:layout_constraintHeight_default="percent"
+        app:layout_constraintHeight_percent=".075"
+        app:layout_constraintWidth_default="percent"
+        app:layout_constraintWidth_percent=".5"/>
+
+    <Button
+        android:id="@+id/calendar_view_change"
+        android:layout_width="0dip"
+        android:layout_height="0dip"
+        android:text="Cycle view"
+        android:visibility="visible"
+        app:layout_constraintBottom_toTopOf="@id/nav_bar"
+        app:layout_constraintStart_toEndOf="@id/add_event"
+        app:layout_constraintTop_toBottomOf="@id/calendar"
+        app:layout_constraintHeight_default="percent"
+        app:layout_constraintHeight_percent=".075"
+        app:layout_constraintWidth_default="percent"
+        app:layout_constraintWidth_percent=".5"/>
+
+    <com.google.android.material.bottomnavigation.BottomNavigationView
+        android:id="@+id/nav_bar"
+        android:layout_width="match_parent"
+        android:layout_height="0dip"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/add_event"
+        app:menu="@menu/bottom_nav_menu"
+        app:layout_constraintHeight_default="percent"
+        app:layout_constraintHeight_percent=".075"/>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
