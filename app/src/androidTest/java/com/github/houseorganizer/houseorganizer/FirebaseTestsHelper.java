@@ -1,6 +1,5 @@
 package com.github.houseorganizer.houseorganizer;
 
-import com.github.houseorganizer.houseorganizer.shop.FirestoreShopItem;
 import com.github.houseorganizer.houseorganizer.shop.FirestoreShopList;
 import com.github.houseorganizer.houseorganizer.shop.ShopItem;
 import com.github.houseorganizer.houseorganizer.shop.ShopList;
