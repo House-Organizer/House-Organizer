@@ -9,6 +9,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.TextView;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
@@ -29,6 +30,7 @@ import com.github.houseorganizer.houseorganizer.task.TaskListAdapter;
 import com.github.houseorganizer.houseorganizer.task.TaskView;
 import com.github.houseorganizer.houseorganizer.user.DummyUser;
 import com.github.houseorganizer.houseorganizer.user.User;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
@@ -88,6 +90,18 @@ public class MainScreenActivity extends AppCompatActivity {
         initializeTaskList();
         TaskView.recoverTaskList(this, taskList, taskListAdapter,
                 db.collection("task_lists").document("85IW3cYzxOo1YTWnNOQl"));
+
+        BottomNavigationView menu = findViewById(R.id.nav_bar);
+        menu.setOnItemSelectedListener(l -> {
+            TextView status = findViewById(R.id.last_button_activated);
+            status.setText("Clicked " + l.getItemId());
+            /*To get the clicked item :
+            switch(l.getItemId()){
+            case R.id.nav_bar_calendar:
+                // launch calendar
+             */
+            return true;
+        });
     }
 
     private void initializeTaskList() {
