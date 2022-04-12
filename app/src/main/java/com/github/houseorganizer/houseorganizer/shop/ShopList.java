@@ -1,28 +1,21 @@
 package com.github.houseorganizer.houseorganizer.shop;
 
 import com.github.houseorganizer.houseorganizer.user.User;
+import com.google.firebase.firestore.DocumentReference;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class ShopList {
 
-    private final User owner;
     private List<ShopItem> items;
-    private String name;
-    private List<User> authorizedUsers;
 
-    public ShopList(User owner, String listName){
-        this.owner = owner;
-        this.name = listName;
+    public ShopList(){
         items = new ArrayList<>();
     }
 
-    public ShopList(User owner, String listName, List<ShopItem> list, List<User> authorizedUsers){
-        this.owner = owner;
-        this.name = listName;
+    public ShopList(List<ShopItem> list){
         this.items = new ArrayList<>(list);
-        this.authorizedUsers = authorizedUsers;
     }
 
     public void addItem(ShopItem item){
@@ -45,14 +38,11 @@ public class ShopList {
         return items.isEmpty();
     }
 
-    //Getters
-    public String getListName() {
-        return name;
+    public List<ShopItem> getItems(){
+        return new ArrayList<>(items);
     }
 
-    public User getOwner() {
-        return owner;
-    }
+    //Getters
 
     public int size(){
         return items.size();
