@@ -4,6 +4,7 @@ import com.github.houseorganizer.houseorganizer.user.User;
 import com.google.firebase.firestore.DocumentReference;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 public class ShopList {
@@ -40,6 +41,10 @@ public class ShopList {
 
     public List<ShopItem> getItems(){
         return new ArrayList<>(items);
+    }
+
+    public void setItems(List<ShopItem> items) {
+        this.items = new LinkedList<>(items);
     }
 
     //Getters

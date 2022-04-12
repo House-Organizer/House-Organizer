@@ -55,6 +55,16 @@ public class FirestoreShopList extends ShopList{
         return onlineReference.update("items", items);
     }
 
+    public Task<DocumentSnapshot> refreshItems(){
+        if(onlineReference == null){
+            return Tasks.forCanceled();
+        }
+        return onlineReference.get().addOnCompleteListener(t ->{
+           DocumentSnapshot snap = t.getResult();
+           setItems(convertFirebaseListToItems((List<Map<String, Object>>) snap.get("items")));
+        });
+    }
+
     private static List<Map<String, Object>> convertItemsListToFirebase(List<ShopItem> shopItemList){
         List<Map<String, Object>> items = new LinkedList<>();
 

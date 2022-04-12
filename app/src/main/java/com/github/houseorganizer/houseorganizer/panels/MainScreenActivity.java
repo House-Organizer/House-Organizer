@@ -203,7 +203,7 @@ public class MainScreenActivity extends AppCompatActivity {
                 TaskView.setUpTaskListView(this, taskListAdapter);
                 break;
             case GROCERY_LIST:
-                ShopList shopList = new ShopList(new DummyUser("John", "uid"), "TestShopList");
+                ShopList shopList = new ShopList();
                 shopList.addItem(new ShopItem("Eggs", 4, ""));
                 shopList.addItem(new ShopItem("Flour", 2, "kg"));
                 shopList.addItem(new ShopItem("Raclette", 3, "tons"));
