@@ -101,7 +101,7 @@ public class FirebaseTestsHelper {
     }
 
     private static void wipeTasksThenMetadata(DocumentSnapshot tlDocSnap) throws ExecutionException, InterruptedException {
-        List<String> taskPtrs = (List<String>)
+        List<DocumentReference> taskPtrs = (List<DocumentReference>)
                 Objects.requireNonNull(tlDocSnap.getData()).getOrDefault("task-ptrs", new ArrayList<>());
 
         CollectionReference taskDumpRef =
@@ -109,8 +109,8 @@ public class FirebaseTestsHelper {
                         .collection("task_dump");
 
         assert taskPtrs != null;
-        for (String taskPtr : taskPtrs) {
-            Tasks.await(taskDumpRef.document(taskPtr).delete());
+        for (DocumentReference taskPtr : taskPtrs) {
+            Tasks.await(taskPtr.delete());
         }
 
         Tasks.await(tlDocSnap.getReference().delete());
@@ -380,22 +380,26 @@ public class FirebaseTestsHelper {
     }
 
     protected static void storeTaskList(TaskList taskList, CollectionReference taskListRoot, String documentName, String hhID) throws ExecutionException, InterruptedException {
+        CollectionReference taskDumpRef = FirebaseFirestore.getInstance().collection("task_dump");
+        List<DocumentReference> taskPtrs = new ArrayList<>();
+
+        List<Task<DocumentReference>> tasks = taskList.getTasks()
+                .stream()
+                .map(t -> storeTask(t, taskDumpRef))
+                .collect(Collectors.toList());
+
+        for (Task<DocumentReference> docRefTask : tasks) {
+            Tasks.await(docRefTask);
+            if (docRefTask.isSuccessful()) taskPtrs.add(docRefTask.getResult());
+        }
+
         Map<String, Object> data = new HashMap<>();
 
         data.put("title", taskList.getTitle());
         data.put("owner", taskList.getOwner().uid());
         data.put("hh-id", hhID);
-        //TODO data.put("task-ptrs", list.tasks)
 
         Task<Void> task = taskListRoot.document(documentName).set(data);
         Tasks.await(task);
-
-        if(task.isSuccessful()) {
-            CollectionReference taskDumpRef = FirebaseFirestore.getInstance().collection("task_dump");
-
-            for (HTask t : taskList.getTasks()) {
-                Tasks.await(storeTask(t, taskDumpRef));
-            }
-        }
     }
 }
