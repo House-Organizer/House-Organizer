@@ -5,10 +5,7 @@ import com.google.android.gms.tasks.Tasks;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
-import com.google.firebase.firestore.QuerySnapshot;
 
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -46,6 +43,10 @@ public class FirestoreShopList extends ShopList{
         this.household = household;
     }
 
+    public DocumentReference getOnlineReference() {
+        return onlineReference;
+    }
+
     public Task<Void> updateItems(){
         if(household == null || onlineReference == null){
             return Tasks.forCanceled();
@@ -65,6 +66,8 @@ public class FirestoreShopList extends ShopList{
         });
     }
 
+
+
     private static List<Map<String, Object>> convertItemsListToFirebase(List<ShopItem> shopItemList){
         List<Map<String, Object>> items = new LinkedList<>();
 
@@ -74,6 +77,7 @@ public class FirestoreShopList extends ShopList{
             itemMap.put("name", item.getName());
             itemMap.put("quantity", item.getQuantity());
             itemMap.put("unit", item.getUnit());
+            itemMap.put("pickedUp", item.isPickedUp());
             items.add(itemMap);
         }
         return items;
@@ -82,11 +86,21 @@ public class FirestoreShopList extends ShopList{
     private static List<ShopItem> convertFirebaseListToItems(List<Map<String, Object>> list){
         List<ShopItem> items = new LinkedList<>();
         for(Map<String, Object> m : list){
-            items.add(new ShopItem((String)m.get("name"), (int) m.get("quantity"), (String) m.get("unit")));
+            items.add(new ShopItem((String)m.get("name"),
+                    new Long((long) m.get("quantity")).intValue(),
+                    (String) m.get("unit")));
+            items.get(items.size()-1).setPickedUp((boolean) m.get("pickedUp"));
         }
         return items;
     }
 
+    /**
+     * Add a shopList for a new house : DOES NOT CHECK if a house already have a list
+     * @param shopListRoot root folder of shop lists
+     * @param shopList shopList to add
+     * @param household household linked to the grocery list
+     * @return the adding task with as result the new document
+     */
     public static Task<DocumentReference> storeNewShopList(CollectionReference shopListRoot, ShopList shopList, DocumentReference household){
         Map<String, Object> map = new HashMap<>();
         map.put("household", household);
@@ -95,11 +109,17 @@ public class FirestoreShopList extends ShopList{
         return shopListRoot.add(map);
     }
 
-    public static Task<QuerySnapshot> fetchShopList(CollectionReference shopListRoot, DocumentReference household){
-        return shopListRoot.whereArrayContains("household", household).get();
+
+    public static Task<FirestoreShopList> retrieveShopList(CollectionReference shopListRoot, DocumentReference household){
+        return shopListRoot.whereEqualTo("household", household).get().continueWith( t -> {
+            List<DocumentSnapshot> res = t.getResult().getDocuments();
+            //if(res.isEmpty())return null;
+            if(res.size() > 1) throw new IllegalStateException("More than one groceries list for this house");
+            return buildShopList(res.get(0));
+        });
     }
 
-    public static FirestoreShopList buildShopList(DocumentSnapshot documentSnapshot){
+    private static FirestoreShopList buildShopList(DocumentSnapshot documentSnapshot){
         if(documentSnapshot == null) return null;
         DocumentReference household = (DocumentReference) documentSnapshot.get("household");
         List<Map<String, Object>> list = (List<Map<String, Object>>) documentSnapshot.get("items");

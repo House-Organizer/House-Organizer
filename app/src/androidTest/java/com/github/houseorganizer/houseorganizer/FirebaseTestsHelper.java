@@ -206,10 +206,13 @@ public class FirebaseTestsHelper {
      */
     protected static void createTestShopList() throws ExecutionException, InterruptedException {
         FirebaseFirestore db = FirebaseFirestore.getInstance();
-        User owner = new DummyUser("test", TEST_USERS_EMAILS[0]);
-        ShopList shopList = new ShopList();
+
+        DocumentReference household = db.collection("households").document(TEST_HOUSEHOLD_NAMES[0]);
+        FirestoreShopList shopList = new FirestoreShopList(household);
         shopList.addItem(TEST_ITEM);
-        FirestoreShopList.storeNewShopList(db.collection("shop_lists"), shopList, db.collection("households").document(TEST_HOUSEHOLD_NAMES[0]));
+        Task<DocumentReference> t = FirestoreShopList.storeNewShopList(db.collection("shop_lists"), shopList, household);
+        Tasks.await(t);
+        shopList.setOnlineReference(t.getResult());
     }
     
      /**
@@ -314,7 +317,7 @@ public class FirebaseTestsHelper {
                 .get();
         Tasks.await(task);
         Map<String, Object> result = task.getResult().getData();
-        if(result != null){
+        if(result != null && !result.isEmpty()){
             signInTestUserWithCredentials(TEST_USERS_EMAILS[0], TEST_USERS_PWD[0]);
             return;
         }
