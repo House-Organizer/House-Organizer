@@ -224,7 +224,7 @@ public class EventsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
                                 .setTitle(R.string.event_editing_title)
                                 .setView(dialogView)
                                 .setPositiveButton(R.string.confirm, (editForm, editFormId) -> {
-                                    editEvent(event, dialogView, position);
+                                    editEvent(event, dialogView);
                                     editForm.dismiss();
                                 })
                                 .setNegativeButton(R.string.cancel, (editForm, editFormId) -> dialog.dismiss())
@@ -322,7 +322,7 @@ public class EventsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
         return retView;
     }
 
-    private void editEvent(Event eventObj, View dialogView, int position) {
+    private void editEvent(Event eventObj, View dialogView) {
         Map<String, Object> data = new HashMap<>();
         final String title = ((EditText) dialogView.findViewById(R.id.new_event_title)).getText().toString();
         final String desc = ((EditText) dialogView.findViewById(R.id.new_event_desc)).getText().toString();
