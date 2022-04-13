@@ -78,15 +78,6 @@ public class CalendarViewTest {
         db = FirebaseFirestore.getInstance();
         auth = FirebaseAuth.getInstance();
         storage = FirebaseStorage.getInstance();
-
-        // For now a hardcoded bytestream instead of an image
-        // it will still create the popup just it wont display anything
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        baos.write(1);
-        UploadTask task1 = storage.getReference().child("has_attachment.jpg").putBytes(baos.toByteArray());
-        UploadTask task2 = storage.getReference().child("to_delete_attachment.jpg").putBytes(baos.toByteArray());
-        Tasks.await(task1);
-        Tasks.await(task2);
     }
 
     @Before
@@ -119,12 +110,10 @@ public class CalendarViewTest {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         baos.write(1);
         UploadTask task4 = storage.getReference().child("to_delete_attachment.jpg").putBytes(baos.toByteArray());
-        Task<Void> task5 = storage.getReference().child("has_attachment.jpg").delete();
         Tasks.await(task1);
         Tasks.await(task2);
         Tasks.await(task3);
         Tasks.await(task4);
-        Tasks.await(task5);
         auth.signOut();
     }
 
