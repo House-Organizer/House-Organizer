@@ -199,7 +199,7 @@ public class LocalStorage {
         });
     }
 
-    private static class OfflineEvent{
+    public static class OfflineEvent{
         private final String title;
         private final String description;
         private final String start;
@@ -227,7 +227,7 @@ public class LocalStorage {
         }
     }
 
-    private static class OfflineShopItem{
+    public static class OfflineShopItem{
         private final String name;
         private final int quantity;
         private final String unit;
@@ -237,7 +237,7 @@ public class LocalStorage {
             this.name = name;
             this.quantity = quantity;
             this.unit = unit;
-            this.isPickedUp = false;
+            this.isPickedUp = isPickedUp;
         }
 
         @NonNull
@@ -252,7 +252,7 @@ public class LocalStorage {
         }
     }
 
-    private static class OfflineTask{
+    public static class OfflineTask{
         private final String name;
         private final String description;
         private final List<String> assignees;
