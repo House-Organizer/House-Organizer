@@ -150,7 +150,7 @@ public class CalendarViewTest {
     }
 
     @Test
-    public void attachmentCorrectlyShows() throws InterruptedException {
+    public void attachmentCorrectlyShows() {
         onView(withId(R.id.calendar_screen_calendar))
                 .perform(RecyclerViewActions.actionOnItemAtPosition(getRealPosition(0), RecyclerViewHelperActions.clickChildViewWithId(R.id.event_upcoming_attach)));
         onView(withText("Show")).perform(click());
