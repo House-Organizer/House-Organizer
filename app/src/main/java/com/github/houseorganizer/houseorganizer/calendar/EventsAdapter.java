@@ -173,13 +173,13 @@ public class EventsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
     private void prepareUpcomingView(EventViewHolder holder, int position) {
         Event event = (Event) items.get(position);
         holder.titleView.setText(event.getTitle());
-        holder.titleView.setOnClickListener(v -> titleOnClickListener(event, v, position));
+        holder.titleView.setOnClickListener(v -> titleOnClickListener(event, v.getContext(), position));
         holder.descView.setText(event.getDescription());
-        holder.attachView.setOnClickListener(v -> setupPopupMenu(v, holder, event.getId()));
+        holder.attachView.setOnClickListener(v -> setupPopupMenu(v.getContext(), holder, event.getId()));
     }
 
-    private void setupPopupMenu(View v, EventViewHolder holder, String eventId) {
-        PopupMenu attachmentMenu = new PopupMenu(v.getContext(), holder.attachView);
+    private void setupPopupMenu(Context ctx, EventViewHolder holder, String eventId) {
+        PopupMenu attachmentMenu = new PopupMenu(ctx, holder.attachView);
 
         attachmentMenu.getMenuInflater().inflate(R.menu.event_attachment_menu, attachmentMenu.getMenu());
         attachmentMenu.setOnMenuItemClickListener(menuItem -> {
@@ -192,10 +192,10 @@ public class EventsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
                 case "Show":
                     attachment.getDownloadUrl().addOnCompleteListener(task -> {
                         if(task.isSuccessful()) {
-                            ImageHelper.showImagePopup(task.getResult(), v);
+                            ImageHelper.showImagePopup(task.getResult(), ctx);
                         }
                         else {
-                            Toast.makeText(v.getContext(), "Could not find the attachment", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(ctx, "Could not find the attachment", Toast.LENGTH_SHORT).show();
                         }
                     });
                     break;
@@ -207,11 +207,11 @@ public class EventsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
         attachmentMenu.show();
     }
 
-    private void titleOnClickListener(Event event, View v, int position) {
+    private void titleOnClickListener(Event event, Context ctx, int position) {
         if (getItemViewType(position) == EVENT) {
-            new AlertDialog.Builder(v.getContext())
+            new AlertDialog.Builder(ctx)
                     .setTitle(event.getTitle())
-                    .setMessage(event.getDescription() + "\n\n" + v.getContext().getResources().getString(R.string.calendar_upcoming_date,
+                    .setMessage(event.getDescription() + "\n\n" + ctx.getResources().getString(R.string.calendar_upcoming_date,
                             event.getStart().format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm"))))
                     .setPositiveButton(R.string.ok, (dialog, id) -> dialog.dismiss())
                     .setNegativeButton(R.string.delete, (dialog, id) -> {
@@ -219,8 +219,8 @@ public class EventsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
                         dialog.dismiss();
                     })
                     .setNeutralButton(R.string.edit, (dialog, id) -> {
-                        final View dialogView = createEditDialog(v, event);
-                        new AlertDialog.Builder(v.getContext())
+                        final View dialogView = createEditDialog(ctx, event);
+                        new AlertDialog.Builder(ctx)
                                 .setTitle(R.string.event_editing_title)
                                 .setView(dialogView)
                                 .setPositiveButton(R.string.confirm, (editForm, editFormId) -> {
@@ -312,8 +312,8 @@ public class EventsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
         }
     }
 
-    private View createEditDialog(View v, Event event) {
-        LayoutInflater inflater = LayoutInflater.from(v.getContext());
+    private View createEditDialog(Context ctx, Event event) {
+        LayoutInflater inflater = LayoutInflater.from(ctx);
         @SuppressLint("InflateParams") View retView = inflater.inflate(R.layout.event_creation, null);
         ((EditText) retView.findViewById(R.id.new_event_title)).setText(event.getTitle());
         ((EditText) retView.findViewById(R.id.new_event_desc)).setText(event.getDescription());
