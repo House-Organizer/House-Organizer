@@ -52,6 +52,23 @@ public class LocalStorage {
         }
     }
 
+    public static void clearOfflineStorage(Context context){
+        File directory = context.getFilesDir();
+        if (directory.isDirectory()) {
+            for (File child : directory.listFiles()) {
+                clearRecursively(child);
+            }
+        }
+    }
+
+    private static void clearRecursively(File fileOrDirectory){
+        if (fileOrDirectory.isDirectory())
+            for (File child : fileOrDirectory.listFiles()){
+                clearRecursively(child);
+            }
+        fileOrDirectory.delete();
+    }
+
     public static String retrieveTxtFromFile(Context context, String filename){
         try {
             FileInputStream fis = context.openFileInput(filename);
@@ -156,7 +173,7 @@ public class LocalStorage {
     public static boolean pushTaskListOffline(Context context, DocumentReference currentHouse, List<HTask> tasks){
         ArrayList<LocalStorage.OfflineTask> offlineTasks = new ArrayList<>();
         for(HTask task : tasks){
-            offlineTasks.add(new OfflineTask(
+            offlineTasks.add(new OfflineTask( //TODO REMOVE ONCE TASK LIST IS FIXED
                     "TASKNAME",
                     "TAKSDESCRIPTION",
                     Arrays.asList("USER1", "USER2")
