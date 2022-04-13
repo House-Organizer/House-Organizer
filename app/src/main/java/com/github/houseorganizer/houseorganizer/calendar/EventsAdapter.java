@@ -1,7 +1,10 @@
 package com.github.houseorganizer.houseorganizer.calendar;
 
 import static com.github.houseorganizer.houseorganizer.calendar.Calendar.CalendarView.MONTHLY;
+import static com.github.houseorganizer.houseorganizer.calendar.Calendar.CalendarView.UPCOMING;
 import static com.github.houseorganizer.houseorganizer.calendar.Calendar.Event.putEventStringsInData;
+import static com.github.houseorganizer.houseorganizer.calendar.UpcomingRowItem.DELIMITER;
+import static com.github.houseorganizer.houseorganizer.calendar.UpcomingRowItem.EVENT;
 import static com.github.houseorganizer.houseorganizer.util.Util.logAndToast;
 
 import android.annotation.SuppressLint;
@@ -40,11 +43,12 @@ import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
 
-public class EventsAdapter extends RecyclerView.Adapter<EventsAdapter.ViewHolder> {
+public class EventsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     private final ActivityResultLauncher<String> getPicture;
 
@@ -52,17 +56,46 @@ public class EventsAdapter extends RecyclerView.Adapter<EventsAdapter.ViewHolder
     private String eventToAttach;
     private final FirebaseStorage storage = FirebaseStorage.getInstance();
     private final FirebaseFirestore db = FirebaseFirestore.getInstance();
+    private ArrayList<UpcomingRowItem> items;
 
     public EventsAdapter(Calendar calendar, ActivityResultLauncher<String> getPicture) {
         this.calendar = calendar;
         this.getPicture = getPicture;
+        if (calendar.getView() == UPCOMING) {
+            generateItems(calendar.getEvents());
+        }
+        else {
+            items = new ArrayList<>(calendar.getEvents());
+        }
     }
 
-    public class ViewHolder extends RecyclerView.ViewHolder {
+    private void generateItems(List<Event> events) {
+        ArrayList<UpcomingRowItem> ret = new ArrayList<>();
+        if (events.isEmpty()) {
+            items = ret;
+            return;
+        }
+        Event e1 = events.get(0);
+        Event e2;
+        ret.add(new Delimiter(e1.getStart().toLocalDate()));
+
+        for (int i = 0; i < events.size(); i++) {
+            e2 = events.get(i);
+            if (!e1.getStart().toLocalDate().equals(e2.getStart().toLocalDate())) {
+                ret.add(new Delimiter(e2.getStart().toLocalDate()));
+            }
+            ret.add(e2);
+            e1 = e2;
+        }
+
+        items = ret;
+    }
+
+    public class EventViewHolder extends RecyclerView.ViewHolder {
         public Button titleView;
-        public TextView dateView = null;
+        public TextView descView = null;
         public ImageButton attachView = null;
-        public ViewHolder(View eventView) {
+        public EventViewHolder(View eventView) {
             super(eventView);
 
             if (calendar.getView() == MONTHLY) {
@@ -70,32 +103,53 @@ public class EventsAdapter extends RecyclerView.Adapter<EventsAdapter.ViewHolder
             }
             else {
                 titleView = eventView.findViewById(R.id.event_upcoming_title);
-                dateView = eventView.findViewById(R.id.event_upcoming_date);
+                descView = eventView.findViewById(R.id.event_upcoming_date);
                 attachView = eventView.findViewById(R.id.event_upcoming_attach);
             }
         }
     }
 
-    @NonNull
-    @Override
-    public EventsAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        Context context = parent.getContext();
-        LayoutInflater inflater = LayoutInflater.from(context);
-        if (calendar.getView() == MONTHLY) {
-            return new ViewHolder(inflater.inflate(R.layout.calendar_monthly_cell, parent, false));
-        }
-        else {
-            return new ViewHolder(inflater.inflate(R.layout.calendar_upcoming_row, parent, false));
+    public static class DelimiterViewHolder extends RecyclerView.ViewHolder {
+        public TextView dayView;
+        public DelimiterViewHolder(View delimiterView) {
+            super(delimiterView);
+            dayView = delimiterView.findViewById(R.id.calendar_delimiter_text);
         }
     }
 
     @Override
-    public void onBindViewHolder(@NonNull EventsAdapter.ViewHolder holder, int position) {
-        if (calendar.getView() == MONTHLY) {
-            prepareMonthlyView(holder, position);
+    public int getItemViewType(int position) {
+        return items.get(position).getType();
+    }
+
+    @NonNull
+    @Override
+    public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        Context context = parent.getContext();
+        LayoutInflater inflater = LayoutInflater.from(context);
+        if (viewType == EVENT) {
+            if (calendar.getView() == MONTHLY) {
+                return new EventViewHolder(inflater.inflate(R.layout.calendar_monthly_cell, parent, false));
+            } else {
+                return new EventViewHolder(inflater.inflate(R.layout.calendar_upcoming_row, parent, false));
+            }
         }
         else {
-            prepareUpcomingView(holder, position);
+            return new DelimiterViewHolder(inflater.inflate(R.layout.calendar_upcoming_delimiter, parent, false));
+        }
+    }
+
+    @Override
+    public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
+        if (getItemViewType(position) == EVENT) {
+            if (calendar.getView() == MONTHLY) {
+                prepareMonthlyView((EventViewHolder) holder, position);
+            } else {
+                prepareUpcomingView((EventViewHolder) holder, position);
+            }
+        }
+        else {
+            prepareDelimiter((DelimiterViewHolder) holder, position);
         }
     }
 
@@ -103,23 +157,28 @@ public class EventsAdapter extends RecyclerView.Adapter<EventsAdapter.ViewHolder
         return calendar;
     }
 
-    private void prepareMonthlyView(ViewHolder holder, int position) {
+    private void prepareDelimiter(DelimiterViewHolder holder, int position) {
+        Delimiter delimiter = ((Delimiter) items.get(position));
+        holder.dayView.setText(delimiter.getDate().format(DateTimeFormatter.ofPattern("EEEE dd/MM/yyyy")));
+
+    }
+
+    private void prepareMonthlyView(EventViewHolder holder, int position) {
         holder.titleView.setText(String.format(Locale.ENGLISH, "%d", position + 1));
         holder.titleView.setOnClickListener(v -> new AlertDialog.Builder(v.getContext())
                 .setTitle(Integer.toString(position + 1)).setMessage("List of events for this day somehow")
                 .setMessage("List of events for this day somehow").show());
     }
 
-    private void prepareUpcomingView(EventsAdapter.ViewHolder holder, int position) {
-        Event event = calendar.getEvents().get(position);
+    private void prepareUpcomingView(EventViewHolder holder, int position) {
+        Event event = (Event) items.get(position);
         holder.titleView.setText(event.getTitle());
         holder.titleView.setOnClickListener(v -> titleOnClickListener(event, v, position));
-        holder.dateView.setText(holder.dateView.getContext().getResources().getString(R.string.calendar_upcoming_date,
-                event.getStart().format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm"))));
+        holder.descView.setText(event.getDescription());
         holder.attachView.setOnClickListener(v -> setupPopupMenu(v, holder, event.getId()));
     }
 
-    private void setupPopupMenu(View v, ViewHolder holder, String eventId) {
+    private void setupPopupMenu(View v, EventViewHolder holder, String eventId) {
         PopupMenu attachmentMenu = new PopupMenu(v.getContext(), holder.attachView);
 
         attachmentMenu.getMenuInflater().inflate(R.menu.event_attachment_menu, attachmentMenu.getMenu());
@@ -149,27 +208,29 @@ public class EventsAdapter extends RecyclerView.Adapter<EventsAdapter.ViewHolder
     }
 
     private void titleOnClickListener(Event event, View v, int position) {
-        new AlertDialog.Builder(v.getContext())
-                .setTitle(event.getTitle())
-                .setMessage(event.getDescription())
-                .setPositiveButton(R.string.ok, (dialog, id) -> dialog.dismiss())
-                .setNegativeButton(R.string.delete, (dialog, id) -> {
-                    removeEventFirestoreAndCalendar(event, calendar);
-                    this.notifyItemRemoved(position);
-                    dialog.dismiss();
-                })
-                .setNeutralButton(R.string.edit, (dialog, id) ->{
-                    final View dialogView = createEditDialog(v, event);
-                    new AlertDialog.Builder(v.getContext())
-                            .setTitle(R.string.event_editing_title)
-                            .setView(dialogView)
-                            .setPositiveButton(R.string.confirm, (editForm, editFormId) -> {
+        if (getItemViewType(position) == EVENT) {
+            new AlertDialog.Builder(v.getContext())
+                    .setTitle(event.getTitle())
+                    .setMessage(event.getDescription() + "\n\n" + v.getContext().getResources().getString(R.string.calendar_upcoming_date,
+                            event.getStart().format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm"))))
+                    .setPositiveButton(R.string.ok, (dialog, id) -> dialog.dismiss())
+                    .setNegativeButton(R.string.delete, (dialog, id) -> {
+                        removeEventFirestoreAndAdapter(event, position);
+                        dialog.dismiss();
+                    })
+                    .setNeutralButton(R.string.edit, (dialog, id) -> {
+                        final View dialogView = createEditDialog(v, event);
+                        new AlertDialog.Builder(v.getContext())
+                                .setTitle(R.string.event_editing_title)
+                                .setView(dialogView)
+                                .setPositiveButton(R.string.confirm, (editForm, editFormId) -> {
                                     editEvent(event, dialogView, position);
                                     editForm.dismiss();
-                            })
-                            .setNegativeButton(R.string.cancel, (editForm, editFormId) -> dialog.dismiss())
-                            .show();
-                }).show();
+                                })
+                                .setNegativeButton(R.string.cancel, (editForm, editFormId) -> dialog.dismiss())
+                                .show();
+                    }).show();
+        }
     }
 
     public void showAddEventDialog(Context ctx, DocumentReference currentHouse, String errMessage) {
@@ -228,6 +289,7 @@ public class EventsAdapter extends RecyclerView.Adapter<EventsAdapter.ViewHolder
                         }
                         notifyDataSetChanged();
                         calendar.setEvents(newEvents);
+                        generateItems(newEvents);
                     } else {
                         logAndToast(ctx.toString(), errMessage, task.getException(),
                                 ctx, ctx.getString(R.string.refresh_calendar_fail));
@@ -235,13 +297,19 @@ public class EventsAdapter extends RecyclerView.Adapter<EventsAdapter.ViewHolder
                 });
     }
 
-    private void removeEventFirestoreAndCalendar(Event event, Calendar calendar) {
+    private void removeEventFirestoreAndAdapter(Event event, int position) {
         db.collection("events")
                 .document(event.getId())
                 .delete();
         ArrayList<Event> newEvents = new ArrayList<>(calendar.getEvents());
         newEvents.remove(event);
         calendar.setEvents(newEvents);
+        items.remove(position);
+        this.notifyItemRemoved(position);
+        if (items.get(position - 1).getType() == DELIMITER && items.get(position + 1).getType() == DELIMITER) {
+            items.remove(position - 1);
+            this.notifyItemRemoved(position - 1);
+        }
     }
 
     private View createEditDialog(View v, Event event) {
@@ -277,7 +345,10 @@ public class EventsAdapter extends RecyclerView.Adapter<EventsAdapter.ViewHolder
             return;
         }
         db.collection("events").document(eventObj.getId()).set(data, SetOptions.merge());
-        this.notifyItemChanged(position);
+        // Sorts the events again since the date of eventObj might have changed
+        calendar.setEvents(new ArrayList<>(calendar.getEvents()));
+        generateItems(calendar.getEvents());
+        this.notifyDataSetChanged();
     }
 
     public void pushAttachment(Uri uri) {
@@ -294,7 +365,7 @@ public class EventsAdapter extends RecyclerView.Adapter<EventsAdapter.ViewHolder
             return YearMonth.of(LocalDate.now().getYear(), LocalDate.now().getMonth()).lengthOfMonth();
         }
         else {
-            return calendar.getEvents().size();
+            return items.size();
         }
     }
 }

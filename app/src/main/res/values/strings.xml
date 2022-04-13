@@ -60,7 +60,7 @@
     <string name="cycle_calendar_views">↻</string>
     <string name="refresh_calendar">Refresh</string>
     <string name="refresh_calendar_fail">Could not refresh.</string>
-    <string name="calendar_upcoming_date">\t On the %1$s.</string>
+    <string name="calendar_upcoming_date">On the %1$s.</string>
 
     <!-- Event creation and information popups -->
     <string name="event_creation_title">Add an event</string>
@@ -113,5 +113,6 @@
     <string name="tasks">Tasks</string>
     <string name="calendar">Calendar</string>
     <string name="add_an_event">Add an event</string>
+    <string name="cycle_view">Cycle view</string>
 
 </resources>

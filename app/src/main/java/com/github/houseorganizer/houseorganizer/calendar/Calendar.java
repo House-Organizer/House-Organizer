@@ -54,7 +54,7 @@ public class Calendar {
         return calendarColumns;
     }
 
-    public static class Event {
+    public static class Event implements UpcomingRowItem {
 
         private  String title;
         private String description;
@@ -120,7 +120,7 @@ public class Calendar {
             try {
                 TemporalAccessor start = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm").parse(event.get("date"));
                 data.put("start", LocalDateTime.from(start).toEpochSecond(ZoneOffset.UTC));
-                data.put("duration", Integer.valueOf(Objects.requireNonNull(event.get("duration"))));
+                data.put("duration", Integer.parseInt(Objects.requireNonNull(event.get("duration"))));
             } catch(Exception e) {
                 return true;
             }
@@ -140,6 +140,11 @@ public class Calendar {
         @Override
         public int hashCode() {
             return Objects.hash(title, description, start, duration);
+        }
+
+        @Override
+        public int getType() {
+            return EVENT;
         }
     }
 
