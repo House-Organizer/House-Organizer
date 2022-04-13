@@ -18,9 +18,7 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.storage.FirebaseStorage;
-import com.google.firebase.storage.UploadTask;
 
-import java.io.ByteArrayOutputStream;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.util.ArrayList;
@@ -286,22 +284,6 @@ public class FirebaseTestsHelper {
     }
 
     /**
-     *  This method creates attachments linked to events for testing
-     */
-    protected static void createAttachments() throws ExecutionException, InterruptedException {
-        FirebaseStorage storage = FirebaseStorage.getInstance();
-        System.out.println(storage);
-        // For now a hardcoded bytestream instead of an image
-        // it will still create the popup just it wont display anything
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        baos.write(1);
-        UploadTask task1 = storage.getReference().child("has_attachment.jpg").putBytes(baos.toByteArray());
-        UploadTask task2 = storage.getReference().child("to_delete_attachment.jpg").putBytes(baos.toByteArray());
-        Tasks.await(task1);
-        Tasks.await(task2);
-    }
-
-    /**
      * This method will create 8 users, 3 households, a task list and a list of events
      * After this call user_1 is logged in
      * A flag allows us to just login as user_1 if everything is already done
@@ -342,8 +324,6 @@ public class FirebaseTestsHelper {
         createTestEvents();
 
         signInTestUserWithCredentials(TEST_USERS_EMAILS[0], TEST_USERS_PWD[0]);
-
-        createAttachments();
 
         createFirebaseDoneFlag();
     }
