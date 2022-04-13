@@ -141,7 +141,7 @@ public class CalendarViewTest {
     }
 
     @Test
-    public void attachmentCorrectlyShows() {
+    public void attachmentCorrectlyShows() throws InterruptedException {
         onView(withId(R.id.calendar_screen_calendar))
                 .perform(RecyclerViewActions.actionOnItemAtPosition(getRealPosition(0), RecyclerViewHelperActions.clickChildViewWithId(R.id.event_upcoming_attach)));
         onView(withText("Show")).perform(click());
@@ -210,7 +210,7 @@ public class CalendarViewTest {
     }
 
     @Test
-    public void pressingAddEventAddsAnEventToCalendar() {
+    public void pressingAddEventAddsAnEventToCalendar() throws InterruptedException {
         onView(withId(R.id.calendar_screen_add_event)).perform(click());
         onView(withHint(R.string.title)).perform(clearText()).perform(typeText("added")).perform(closeSoftKeyboard());
         onView(withHint(R.string.description)).perform(clearText()).perform(typeText("desc")).perform(closeSoftKeyboard());
@@ -218,6 +218,7 @@ public class CalendarViewTest {
         onView(withHint(R.string.date)).perform(clearText()).perform(typeText(date)).perform(closeSoftKeyboard());
         onView(withHint(R.string.duration)).perform(clearText()).perform(typeText("10")).perform(closeSoftKeyboard());
         onView(withText(R.string.add)).perform(click());
+        Thread.sleep(5000);
         // Count is 2*EVENTS_TO_DISPLAY because we removed one event and added one
         // and because there is one delimiter per event
         onView(withId(R.id.calendar_screen_calendar)).check(matches(hasChildCount(2*EVENTS_TO_DISPLAY)));
