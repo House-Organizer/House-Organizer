@@ -18,11 +18,11 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.github.houseorganizer.houseorganizer.R;
 import com.github.houseorganizer.houseorganizer.panels.MainScreenActivity;
 import com.github.houseorganizer.houseorganizer.util.BiViewHolder;
-import com.google.android.gms.tasks.Task;
+
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.QuerySnapshot;
+
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -126,10 +126,12 @@ public final class TaskView {
         taskListDocRef.get().addOnCompleteListener(task -> {
             if(task.isSuccessful()) {
                 Map<String, Object> metadata = task.getResult().getData();
+                assert metadata != null;
 
                 List<DocumentReference> taskPtrs = (ArrayList<DocumentReference>)
                         metadata.getOrDefault("task-ptrs", new ArrayList<>());
 
+                assert taskPtrs != null;
                 taskPtrs.add(taskDocRef);
 
                 metadata.put("task-ptrs", taskPtrs);

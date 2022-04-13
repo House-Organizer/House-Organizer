@@ -366,11 +366,13 @@ public class FirebaseTestsHelper {
         data.put("title", taskList.getTitle());
         data.put("owner", taskList.getOwner().uid());
         data.put("hh-id", hhID);
+        data.put("task-ptrs", taskPtrs);
 
         Task<Void> task = taskListRoot.document(documentName).set(data);
         Tasks.await(task);
     }
 
+    // Might not be needed anymore
     protected static void wipeTaskListData() throws ExecutionException, InterruptedException {
         FirebaseFirestore db = FirebaseFirestore.getInstance();
 
