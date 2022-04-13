@@ -92,7 +92,12 @@ public final class FirestoreTask extends HTask {
     }
 
     public static HTask.SubTask recoverSubTask(Map<String, String> data) {
-        return new HTask.SubTask(data.get("title"));
+        SubTask st = new HTask.SubTask(data.get("title"));
+
+        if(data.get("status").equals("completed"))
+            st.markAsFinished();
+
+        return st;
     }
 
     public static FirestoreTask recoverTask(Map<String, Object> data, DocumentReference taskDocRef) {

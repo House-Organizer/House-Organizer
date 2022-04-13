@@ -1,23 +1,20 @@
 package com.github.houseorganizer.houseorganizer;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 
 import com.github.houseorganizer.houseorganizer.task.FirestoreTask;
 import com.github.houseorganizer.houseorganizer.task.HTask;
-import com.github.houseorganizer.houseorganizer.user.DummyUser;
 import com.google.android.gms.tasks.Task;
 import com.google.android.gms.tasks.Tasks;
-import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -26,14 +23,12 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.concurrent.ExecutionException;
 
 /**
- * Before this test class, the firestore emulator is enabled.
- * Before each test, a test task list is created, and it is wiped out after each test.
- *
- * At the moment, doesn't use household or user data.
+ * Before this test class, the firestore & auth emulators are enabled.
+ * Tests modifying base data (task lists / tasks)
+ * on the emulator undo their actions (=> no @After/ @AfterClass)
  */
 @RunWith(AndroidJUnit4.class)
 public class FirestoreTaskTest {
@@ -47,7 +42,11 @@ public class FirestoreTaskTest {
 
     private static FirebaseFirestore db;
 
-    //@BeforeClass
+    private static DocumentReference metadataRef() {
+        return db.collection("task_lists").document(FirebaseTestsHelper.FIRST_TL_NAME);
+    }
+
+    @BeforeClass
     public static void createMockFirebase() throws ExecutionException, InterruptedException {
         FirebaseTestsHelper.startFirestoreEmulator();
         FirebaseTestsHelper.startAuthEmulator();
@@ -57,14 +56,9 @@ public class FirestoreTaskTest {
         db = FirebaseFirestore.getInstance();
     }
 
-    //@After @AfterClass
-    public static void recreateTestData() throws ExecutionException, InterruptedException {
-        // TODO
-    }
-
-    /* Tests of static API (makeSubTaskData, recoverSubTask, recoverTask)
+    /* Tests of static API (makeSubTaskData(2), recoverSubTask(2), recoverTask(1))
      * [!] only `recoverTask` needs emulators */
-    @Test
+    @Test /* DB: not used */
     public void makeSubTaskDataWorksForOngoingSubTask() {
         HTask.SubTask st = new HTask.SubTask(BASIC_SUBTASK_TITLE);
 
@@ -75,7 +69,7 @@ public class FirestoreTaskTest {
         assertEquals(STATUS_ONGOING, data.get("status"));
     }
 
-    @Test
+    @Test /* DB: not used */
     public void makeSubTaskDataWorksForCompletedSubTask() {
         HTask.SubTask st = new HTask.SubTask(BASIC_SUBTASK_TITLE);
         st.markAsFinished();
@@ -87,8 +81,20 @@ public class FirestoreTaskTest {
         assertEquals(STATUS_COMPLETED, data.get("status"));
     }
 
-    @Test
-    public void recoverSubTaskWorks() {
+    @Test /* DB: not used */
+    public void recoverSubTaskWorksForOngoingSubTask() {
+        Map<String, String> subTaskData = new HashMap<>();
+        subTaskData.put("title", BASIC_SUBTASK_TITLE);
+        subTaskData.put("status", STATUS_ONGOING);
+
+        HTask.SubTask st = FirestoreTask.recoverSubTask(subTaskData);
+
+        assertEquals(BASIC_SUBTASK_TITLE, st.getTitle());
+        assertFalse(st.isFinished());
+    }
+
+    @Test /* DB: not used */
+    public void recoverSubTaskWorksForCompletedSubTask() {
         Map<String, String> subTaskData = new HashMap<>();
         subTaskData.put("title", BASIC_SUBTASK_TITLE);
         subTaskData.put("status", STATUS_COMPLETED);
@@ -96,47 +102,51 @@ public class FirestoreTaskTest {
         HTask.SubTask st = FirestoreTask.recoverSubTask(subTaskData);
 
         assertEquals(BASIC_SUBTASK_TITLE, st.getTitle());
-        // todo: test for "status", at this point in the development only ongoing tasks are recovered
+        assertTrue(st.isFinished());
     }
 
-    //@Test
+    @Test /* reverts its changes | DB: unchanged */
     public void recoverTaskWorks() throws ExecutionException, InterruptedException {
         HTask task = new HTask("0", BASIC_TASK_TITLE, BASIC_TASK_NAME);
-        CollectionReference taskListRef = db.collection("task_dump");
-
         Map<String, Object> taskData = makeTaskData(task);
+        DocumentReference fakeDocRef = db.document("/task_dump/RT_TEST");
 
-        Tasks.await(taskListRef.document("tl1_test").set(taskData));
-
-        HTask recoveredTask = FirestoreTask.recoverTask(taskData, taskListRef.document("tl1_test"));
+        FirestoreTask recoveredTask = FirestoreTask.recoverTask(taskData, fakeDocRef);
 
         assertEquals(task.getTitle(), recoveredTask.getTitle());
         assertEquals(task.getOwner(), recoveredTask.getOwner());
         assertEquals(task.getDescription(), recoveredTask.getDescription());
+        assertEquals(fakeDocRef, recoveredTask.getTaskDocRef());
 
         assertEquals(task.getSubTasks(), recoveredTask.getSubTasks());
-        // TODO delete tl1_test
+
+        Tasks.await(fakeDocRef.delete());
     }
 
     /* Override tests: most of them check reflection on database
      * [!] these tests DO need emulators */
-    //@Test
+    @Test /* reverts its changes | DB: unchanged */
     public void changeTitleAndDescriptionWorks() throws ExecutionException, InterruptedException {
-        FirestoreTask ft = recoverFirestoreTask(FirebaseTestsHelper.TEST_TASK_LIST_DOCUMENT_NAME);
+        FirestoreTask ft = recoverFirestoreTask();
+        String oldTitle = ft.getTitle(), oldDescription = ft.getDescription();
+
         ft.changeTitle(NEW_FANCY_TITLE);
         ft.changeDescription(NEW_FANCY_DESCRIPTION);
-        FirestoreTask changedFT = recoverFirestoreTask(FirebaseTestsHelper.TEST_TASK_LIST_DOCUMENT_NAME);
+        FirestoreTask changedFT = recoverFirestoreTask();
 
         assertEquals(NEW_FANCY_TITLE, ft.getTitle());
         assertEquals(NEW_FANCY_TITLE, changedFT.getTitle());
 
         assertEquals(NEW_FANCY_DESCRIPTION, ft.getDescription());
         assertEquals(NEW_FANCY_DESCRIPTION, changedFT.getDescription());
+
+        // Revert changes
+        ft.changeTitle(oldTitle); ft.changeDescription(oldDescription);
     }
 
-    //@Test
+    @Test /* adds a subtask, changes its title, then removes it | DB: unchanged */
     public void subTaskModificationsWork() throws ExecutionException, InterruptedException {
-        FirestoreTask ft = recoverFirestoreTask(FirebaseTestsHelper.TEST_TASK_LIST_DOCUMENT_NAME);
+        FirestoreTask ft = recoverFirestoreTask();
 
         HTask.SubTask st = new HTask.SubTask(BASIC_SUBTASK_TITLE);
 
@@ -144,7 +154,7 @@ public class FirestoreTaskTest {
         ft.addSubTask(st);
         ft.changeSubTaskTitle(0, NEW_FANCY_TITLE);
 
-        FirestoreTask changedFT = recoverFirestoreTask(FirebaseTestsHelper.TEST_TASK_LIST_DOCUMENT_NAME);
+        FirestoreTask changedFT = recoverFirestoreTask();
 
         assertEquals(1, changedFT.getSubTasks().size());
         assertEquals(NEW_FANCY_TITLE, changedFT.getSubTaskAt(0).getTitle());
@@ -152,7 +162,7 @@ public class FirestoreTaskTest {
         // Remove subtask
         ft.removeSubTask(0);
 
-        changedFT = recoverFirestoreTask(FirebaseTestsHelper.TEST_TASK_LIST_DOCUMENT_NAME);
+        changedFT = recoverFirestoreTask();
 
         assertEquals(0, changedFT.getSubTasks().size());
     }
@@ -178,18 +188,30 @@ public class FirestoreTaskTest {
         return data;
     }
 
-    // TODO update
-    private FirestoreTask recoverFirestoreTask(String docName) throws ExecutionException, InterruptedException {
-        Task<DocumentSnapshot> task =
-                db.collection("task_dump")
-                        .document(docName)
-                        .get();
-
+    // recovers the first task of the first household's task list :)
+    private FirestoreTask recoverFirestoreTask() throws ExecutionException, InterruptedException {
+        // S1. Get metadata, read list of task ptrs, pick first one
+        Task<DocumentSnapshot> task = metadataRef().get();
         Tasks.await(task);
 
-        DocumentSnapshot docSnap = task.getResult();
-        DocumentReference docRef = docSnap.getReference();
+        assertTrue(task.isSuccessful());
 
-        return FirestoreTask.recoverTask(Objects.requireNonNull(docSnap.getData()), docRef);
+        Map<String, Object> metadata = task.getResult().getData();
+        List<DocumentReference> taskPtrs = (ArrayList<DocumentReference>)
+                metadata.getOrDefault("task-ptrs", new ArrayList<>());
+
+        assertNotNull(taskPtrs);
+
+        // S2. Get task data from chosen task ptr
+        DocumentReference taskDocRef = taskPtrs.get(0);
+        Task<DocumentSnapshot> task2 = taskDocRef.get();
+        Tasks.await(task2);
+
+        assertTrue(task2.isSuccessful());
+
+        Map<String, Object> taskData = task2.getResult().getData();
+
+        // S3. Assemble
+        return FirestoreTask.recoverTask(taskData, taskDocRef);
     }
 }

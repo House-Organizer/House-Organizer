@@ -39,11 +39,6 @@ import java.util.stream.Collectors;
  *
  */
 public class FirebaseTestsHelper {
-
-    // Same as MainScreenActivity for now since RecyclerView tests depend on it
-    // Will be refined as soon as task lists are linked to households
-    public static final String TEST_TASK_LIST_DOCUMENT_NAME = "85IW3cYzxOo1YTWnNOQl";
-
     private static boolean authEmulatorActivated = false;
     private static boolean firestoreEmulatorActivated = false;
     private static boolean databaseEmulatorActivated = false;
@@ -56,6 +51,8 @@ public class FirebaseTestsHelper {
 
     protected static String[] TEST_HOUSEHOLD_NAMES =
             {"home_1", "home_2", "home_3"};
+
+    protected static String FIRST_TL_NAME = String.format("tl_for_%s", TEST_HOUSEHOLD_NAMES[0]);
 
     protected static ShopItem TEST_ITEM = new ShopItem("Egg", 3, "t");
     protected static String TEST_SHOPLIST_NAME = "TestList1";
@@ -142,7 +139,7 @@ public class FirebaseTestsHelper {
         Task<Void> task = db.collection("households").document(docName).set(houseHold);
         Tasks.await(task);
 
-        createTestTaskList(docName); // docName = hhID
+        createTestTaskList(docName); // (docName = hhID)
     }
 
     /**
@@ -160,7 +157,7 @@ public class FirebaseTestsHelper {
 
         // Store instance on the database using a helper function
         // returns only after storing is done
-        storeTaskList(taskList, db.collection("task_lists"), TEST_TASK_LIST_DOCUMENT_NAME, hhID);
+        storeTaskList(taskList, db.collection("task_lists"), String.format("tl_for_%s", hhID), hhID);
     }
 
     /**
@@ -341,7 +338,9 @@ public class FirebaseTestsHelper {
         return taskDumpRef.add(data);
     }
 
-    protected static void storeTaskList(TaskList taskList, CollectionReference taskListRoot, String documentName, String hhID) throws ExecutionException, InterruptedException {
+    protected static void storeTaskList(TaskList taskList, CollectionReference taskListRoot, String metadataDocName,
+                                        String hhID) throws ExecutionException, InterruptedException {
+
         CollectionReference taskDumpRef = FirebaseFirestore.getInstance().collection("task_dump");
         List<DocumentReference> taskPtrs = new ArrayList<>();
 
@@ -355,14 +354,14 @@ public class FirebaseTestsHelper {
             if (docRefTask.isSuccessful()) taskPtrs.add(docRefTask.getResult());
         }
 
-        Map<String, Object> data = new HashMap<>();
+        Map<String, Object> metadata = new HashMap<>();
 
-        data.put("title", taskList.getTitle());
-        data.put("owner", taskList.getOwner());
-        data.put("hh-id", hhID);
-        data.put("task-ptrs", taskPtrs);
+        metadata.put("title", taskList.getTitle());
+        metadata.put("owner", taskList.getOwner());
+        metadata.put("hh-id", hhID);
+        metadata.put("task-ptrs", taskPtrs);
 
-        Task<Void> task = taskListRoot.document(documentName).set(data);
+        Task<Void> task = taskListRoot.document(metadataDocName).set(metadata);
         Tasks.await(task);
     }
 
