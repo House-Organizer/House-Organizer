@@ -21,7 +21,7 @@ public class CalendarActivity extends AppCompatActivity {
 
     private EventsAdapter calendarAdapter;
     private RecyclerView calendarEvents;
-    private Calendar calendar;
+    private final Calendar calendar = new Calendar();
     private int calendarColumns = 1;
 
     @SuppressLint("NotifyDataSetChanged")
@@ -33,7 +33,6 @@ public class CalendarActivity extends AppCompatActivity {
         currentHouse = FirebaseFirestore.getInstance().collection("households").document(getIntent().getStringExtra("house"));
 
         calendarEvents = findViewById(R.id.calendar);
-        calendar = new Calendar();
         calendarAdapter = new EventsAdapter(calendar,
                 registerForActivityResult(new ActivityResultContracts.GetContent(), uri -> calendarAdapter.pushAttachment(uri)));
         calendarEvents.setAdapter(calendarAdapter);
@@ -44,22 +43,24 @@ public class CalendarActivity extends AppCompatActivity {
 
         BottomNavigationView menu = findViewById(R.id.nav_bar);
         menu.setSelectedItemId(R.id.nav_bar_calendar);
-        menu.setOnItemSelectedListener(l -> {
-            // Using the title and non resource strings here
-            // otherwise there is a warning that ids inside a switch are non final
-            switch(l.getTitle().toString()){
-                case "Main Screen":
-                    Intent intent = new Intent(this, MainScreenActivity.class);
-                    startActivity(intent);
-                    break;
-                case "Groceries":
-                    break;
-                case "Tasks":
-                    break;
-                default:
-                    break;
-            }
-            return true;
-        });
+        menu.setOnItemSelectedListener(l -> changeActivity(l.getTitle().toString()));
+    }
+
+    private boolean changeActivity(String buttonText) {
+        // Using the title and non resource strings here
+        // otherwise there is a warning that ids inside a switch are non final
+        switch(buttonText){
+            case "Main Screen":
+                Intent intent = new Intent(this, MainScreenActivity.class);
+                startActivity(intent);
+                break;
+            case "Groceries":
+                break;
+            case "Tasks":
+                break;
+            default:
+                break;
+        }
+        return true;
     }
 }

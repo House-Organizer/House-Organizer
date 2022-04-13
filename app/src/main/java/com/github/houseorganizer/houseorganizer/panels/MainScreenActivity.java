@@ -43,7 +43,7 @@ public class MainScreenActivity extends AppCompatActivity {
 
     public static final String CURRENT_HOUSEHOLD = "com.github.houseorganizer.houseorganizer.CURRENT_HOUSEHOLD";
 
-    private Calendar calendar;
+    private final Calendar calendar = new Calendar();
     private FirebaseFirestore db;
     private FirebaseUser mUser;
     private DocumentReference currentHouse;
@@ -69,7 +69,6 @@ public class MainScreenActivity extends AppCompatActivity {
         loadData();
 
         calendarEvents = findViewById(R.id.calendar);
-        calendar = new Calendar();
         calendarAdapter = new EventsAdapter(calendar,
                 registerForActivityResult(new ActivityResultContracts.GetContent(), uri -> calendarAdapter.pushAttachment(uri)));
         calendarEvents.setAdapter(calendarAdapter);
@@ -80,24 +79,26 @@ public class MainScreenActivity extends AppCompatActivity {
         TaskView.recoverTaskList(this, taskList, taskListAdapter,
                 db.collection("task_lists").document("85IW3cYzxOo1YTWnNOQl"));
         BottomNavigationView menu = findViewById(R.id.nav_bar);
-        menu.setOnItemSelectedListener(l -> {
-            // Using the title and non resource strings here
-            // otherwise there is a warning that ids inside a switch are non final
-            switch(l.getTitle().toString()){
-                case "Calendar":
-                    Intent intent = new Intent(this, CalendarActivity.class);
-                    intent.putExtra("house", currentHouse.getId());
-                    startActivity(intent);
-                    break;
-                case "Groceries":
-                    break;
-                case "Tasks":
-                    break;
-                default:
-                    break;
-            }
-            return true;
-        });
+        menu.setOnItemSelectedListener(l -> changeActivity(l.getTitle().toString()));
+    }
+
+    private boolean changeActivity(String buttonText) {
+        // Using the title and non resource strings here
+        // otherwise there is a warning that ids inside a switch are non final
+        switch(buttonText){
+            case "Calendar":
+                Intent intent = new Intent(this, CalendarActivity.class);
+                intent.putExtra("house", currentHouse.getId());
+                startActivity(intent);
+                break;
+            case "Groceries":
+                break;
+            case "Tasks":
+                break;
+            default:
+                break;
+        }
+        return true;
     }
 
     private void initializeTaskList() {
