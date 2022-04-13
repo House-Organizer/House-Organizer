@@ -13,7 +13,7 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QuerySnapshot;
 
-import org.junit.Before;
+import org.junit.After;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -36,10 +36,6 @@ public class FirestoreShopListTest {
         FirebaseTestsHelper.setUpFirebase();
         db = FirebaseFirestore.getInstance();
         Task<QuerySnapshot> t = db.collection("shop_lists").get();
-
-        /*FirestoreShopList.retrieveShopList(db.collection("shop_lists"),
-                db.collection("households").
-                        document(FirebaseTestsHelper.TEST_HOUSEHOLD_NAMES[0]));*/
         Tasks.await(t);
         assertThat(t.getResult().getDocuments().size(), is(1));
         DocumentSnapshot snap = t.getResult().getDocuments().get(0);
@@ -63,7 +59,7 @@ public class FirestoreShopListTest {
     }
 
     @Test
-    public void retrieveShopListWorks() throws ExecutionException, InterruptedException {
+    public void retrieveShopListWorksFor() throws ExecutionException, InterruptedException {
         Task<FirestoreShopList> t = FirestoreShopList.
                 retrieveShopList(db.collection("shop_lists"),
                         localShopList.getHousehold());
@@ -74,5 +70,54 @@ public class FirestoreShopListTest {
         assertThat(nList.getHousehold(), is(localShopList.getHousehold()));
         assertThat(nList.isEmpty(), is(localShopList.isEmpty()));
         assertThat(localShopList.size(), is(localShopList.size()));
+        // Testing retrieved item
+        ShopItem rItem = localShopList.getItemAt(0);
+        assertThat(rItem.getName(), is(FirebaseTestsHelper.TEST_ITEM.getName()));
+        assertThat(rItem.getUnit(), is(FirebaseTestsHelper.TEST_ITEM.getUnit()));
+        assertThat(rItem.getQuantity(), is(FirebaseTestsHelper.TEST_ITEM.getQuantity()));
     }
+
+
+
+    @Test
+    public void updateItemsWorks() throws ExecutionException, InterruptedException {
+        ShopItem testItem = new ShopItem("Raclette", 2, "g");
+        localShopList.addItem(testItem);
+        localShopList.updateItems();
+        Task<FirestoreShopList> t = FirestoreShopList.
+                retrieveShopList(db.collection("shop_lists"),
+                        localShopList.getHousehold());
+        Tasks.await(t);
+        FirestoreShopList nList = t.getResult();
+        assertThat(nList.size(), is(2));
+        assertThat(nList.getItemAt(1).getName(), is(testItem.getName()));
+        assertThat(nList.getItemAt(1).getQuantity(), is(testItem.getQuantity()));
+        assertThat(nList.getItemAt(1).getUnit(), is(testItem.getUnit()));
+    }
+
+    @Test
+    public void refreshItemWorks() throws ExecutionException, InterruptedException {
+        Task<FirestoreShopList> t = FirestoreShopList.retrieveShopList(
+                db.collection("shop_lists"), localShopList.getHousehold());
+        Tasks.await(t);
+        FirestoreShopList listBis = t.getResult();
+
+        ShopItem item = new ShopItem("Raclette", 2, "g");
+        listBis.addItem(item);
+        Task<DocumentSnapshot> t1 = listBis.updateItems().continueWithTask(r -> localShopList.refreshItems());
+        Tasks.await(t1);
+        assertThat(localShopList.size(), is(listBis.size()));
+        assertThat(localShopList.getItemAt(0).getName(), is(listBis.getItemAt(0).getName()));
+    }
+
+    @After
+    public void removeItems(){
+        if(localShopList.size() > 1){
+            for(int i = localShopList.size()-1; i > 0; --i){
+                localShopList.removeItem(i);
+            }
+            localShopList.updateItems();
+        }
+    }
+
 }

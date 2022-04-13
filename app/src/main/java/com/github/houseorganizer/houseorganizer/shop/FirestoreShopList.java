@@ -60,9 +60,10 @@ public class FirestoreShopList extends ShopList{
         if(onlineReference == null){
             return Tasks.forCanceled();
         }
-        return onlineReference.get().addOnCompleteListener(t ->{
-           DocumentSnapshot snap = t.getResult();
-           setItems(convertFirebaseListToItems((List<Map<String, Object>>) snap.get("items")));
+        return onlineReference.get().continueWith( r -> {
+            DocumentSnapshot snap = r.getResult();
+            setItems(convertFirebaseListToItems((List<Map<String, Object>>) snap.get("items")));
+            return snap;
         });
     }
 
@@ -113,7 +114,7 @@ public class FirestoreShopList extends ShopList{
     public static Task<FirestoreShopList> retrieveShopList(CollectionReference shopListRoot, DocumentReference household){
         return shopListRoot.whereEqualTo("household", household).get().continueWith( t -> {
             List<DocumentSnapshot> res = t.getResult().getDocuments();
-            //if(res.isEmpty())return null;
+            if(res.isEmpty())return null;
             if(res.size() > 1) throw new IllegalStateException("More than one groceries list for this house");
             return buildShopList(res.get(0));
         });
