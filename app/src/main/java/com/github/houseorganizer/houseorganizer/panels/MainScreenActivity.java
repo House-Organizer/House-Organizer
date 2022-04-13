@@ -4,7 +4,6 @@ import static com.github.houseorganizer.houseorganizer.util.Util.getSharedPrefs;
 import static com.github.houseorganizer.houseorganizer.util.Util.getSharedPrefsEditor;
 import static com.github.houseorganizer.houseorganizer.util.Util.logAndToast;
 
-import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -44,7 +43,7 @@ public class MainScreenActivity extends AppCompatActivity {
 
     public static final String CURRENT_HOUSEHOLD = "com.github.houseorganizer.houseorganizer.CURRENT_HOUSEHOLD";
 
-    private final Calendar calendar = new Calendar();
+    private Calendar calendar;
     private FirebaseFirestore db;
     private FirebaseUser mUser;
     private DocumentReference currentHouse;
@@ -63,10 +62,14 @@ public class MainScreenActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main_screen);
+
         mUser = FirebaseAuth.getInstance().getCurrentUser();
         db = FirebaseFirestore.getInstance();
+
         loadData();
+
         calendarEvents = findViewById(R.id.calendar);
+        calendar = new Calendar();
         calendarAdapter = new EventsAdapter(calendar,
                 registerForActivityResult(new ActivityResultContracts.GetContent(), uri -> calendarAdapter.pushAttachment(uri)));
         calendarEvents.setAdapter(calendarAdapter);
@@ -78,34 +81,23 @@ public class MainScreenActivity extends AppCompatActivity {
                 db.collection("task_lists").document("85IW3cYzxOo1YTWnNOQl"));
         BottomNavigationView menu = findViewById(R.id.nav_bar);
         menu.setOnItemSelectedListener(l -> {
-            Intent intent = changeActivityIntent(l.getTitle().toString(), this, currentHouse.getId());
-            if (intent != null) {
-                startActivity(intent);
-                return true;
+            // Using the title and non resource strings here
+            // otherwise there is a warning that ids inside a switch are non final
+            switch(l.getTitle().toString()){
+                case "Calendar":
+                    Intent intent = new Intent(this, CalendarActivity.class);
+                    intent.putExtra("house", currentHouse.getId());
+                    startActivity(intent);
+                    break;
+                case "Groceries":
+                    break;
+                case "Tasks":
+                    break;
+                default:
+                    break;
             }
-            return false;
+            return true;
         });
-    }
-
-    public static Intent changeActivityIntent(String buttonText, Context ctx, String currentHouseId) {
-        // Using the title and non resource strings here
-        // otherwise there is a warning that ids inside a switch are non final
-        Intent intent = null;
-        switch(buttonText){
-            case "Calendar":
-                intent = new Intent(ctx, CalendarActivity.class);
-                break;
-            case "Groceries":
-                break;
-            case "Tasks":
-                break;
-            default:
-                intent = new Intent(ctx, MainScreenActivity.class);
-        }
-        if (intent != null) {
-            intent.putExtra("house", currentHouseId);
-        }
-        return intent;
     }
 
     private void initializeTaskList() {
