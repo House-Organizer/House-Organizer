@@ -225,6 +225,26 @@ public class LocalStorage {
                     ", id='" + id + '\'' +
                     '}';
         }
+
+        public String getTitle() {
+            return title;
+        }
+
+        public String getDescription() {
+            return description;
+        }
+
+        public String getStart() {
+            return start;
+        }
+
+        public long getDuration() {
+            return duration;
+        }
+
+        public String getId() {
+            return id;
+        }
     }
 
     public static class OfflineShopItem{
@@ -250,6 +270,22 @@ public class LocalStorage {
                     ", isPickedUp=" + isPickedUp +
                     '}';
         }
+
+        public String getName() {
+            return name;
+        }
+
+        public int getQuantity() {
+            return quantity;
+        }
+
+        public String getUnit() {
+            return unit;
+        }
+
+        public boolean isPickedUp() {
+            return isPickedUp;
+        }
     }
 
     public static class OfflineTask{
@@ -270,6 +306,18 @@ public class LocalStorage {
                     ", description='" + description + '\'' +
                     ", assignees=" + assignees +
                     '}';
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public String getDescription() {
+            return description;
+        }
+
+        public List<String> getAssignees() {
+            return assignees;
         }
     }
 }
