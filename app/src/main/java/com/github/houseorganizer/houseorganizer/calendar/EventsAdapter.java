@@ -119,7 +119,10 @@ public class EventsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
 
     @Override
     public int getItemViewType(int position) {
-        return items.get(position).getType();
+        if (calendar.getView() == UPCOMING) {
+            return items.get(position).getType();
+        }
+        return 0;
     }
 
     @NonNull
@@ -306,7 +309,7 @@ public class EventsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
         calendar.setEvents(newEvents);
         items.remove(position);
         this.notifyItemRemoved(position);
-        if (items.get(position - 1).getType() == DELIMITER && items.get(position + 1).getType() == DELIMITER) {
+        if (items.get(position - 1).getType() == DELIMITER && (items.size() == position || items.get(position).getType() == DELIMITER)) {
             items.remove(position - 1);
             this.notifyItemRemoved(position - 1);
         }

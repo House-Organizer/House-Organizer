@@ -5,20 +5,20 @@ import static androidx.test.espresso.action.ViewActions.click;
 import static androidx.test.espresso.assertion.ViewAssertions.matches;
 import static androidx.test.espresso.intent.Intents.intended;
 import static androidx.test.espresso.intent.matcher.IntentMatchers.hasComponent;
+import static androidx.test.espresso.matcher.ViewMatchers.hasChildCount;
 import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static androidx.test.espresso.matcher.ViewMatchers.isEnabled;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
+
+import static com.github.houseorganizer.houseorganizer.FirebaseTestsHelper.EVENTS_TO_DISPLAY;
 
 import androidx.test.espresso.contrib.RecyclerViewActions;
 import androidx.test.espresso.intent.Intents;
 import androidx.test.ext.junit.rules.ActivityScenarioRule;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 
-import com.github.houseorganizer.houseorganizer.panels.CalendarActivity;
 import com.github.houseorganizer.houseorganizer.panels.MainScreenActivity;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.storage.FirebaseStorage;
 
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -27,6 +27,8 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+import java.time.LocalDate;
+import java.time.YearMonth;
 import java.util.concurrent.ExecutionException;
 
 @RunWith(AndroidJUnit4.class)
@@ -54,27 +56,29 @@ public class CalendarActivityTest {
 
     @Before
     public void openActivity() {
+        onView(withId(R.id.house_imageButton)).perform(click());
+        onView(withId(R.id.housesView)).perform(RecyclerViewActions.actionOnItemAtPosition(0, click()));
         onView(withId(R.id.nav_bar_calendar)).perform(click());
     }
 
     @Test
     public void cycleIsEnabled() {
-        onView(withId(R.id.calendar_view_change)).check(matches(isEnabled()));
+        onView(withId(R.id.calendar_screen_view_change)).check(matches(isEnabled()));
     }
 
     @Test
     public void cycleIsDisplayed() {
-        onView(withId(R.id.calendar_view_change)).check(matches(isDisplayed()));
+        onView(withId(R.id.calendar_screen_view_change)).check(matches(isDisplayed()));
     }
 
     @Test
     public void addIsEnabled() {
-        onView(withId(R.id.add_event)).check(matches(isEnabled()));
+        onView(withId(R.id.calendar_screen_add_event)).check(matches(isEnabled()));
     }
 
     @Test
     public void addIsDisplayed() {
-        onView(withId(R.id.add_event)).check(matches(isDisplayed()));
+        onView(withId(R.id.calendar_screen_add_event)).check(matches(isDisplayed()));
     }
 
     @Test
@@ -83,5 +87,15 @@ public class CalendarActivityTest {
         onView(withId(R.id.nav_bar_menu)).perform(click());
         intended(hasComponent(MainScreenActivity.class.getName()));
         Intents.release();
+    }
+
+    @Test
+    public void calendarViewRotatesCorrectly() {
+        final int MONTHLY_CHILDREN = YearMonth.of(LocalDate.now().getYear(), LocalDate.now().getMonth()).lengthOfMonth();
+        onView(withId(R.id.calendar_screen_calendar)).check(matches(hasChildCount(2*EVENTS_TO_DISPLAY)));
+        onView(withId(R.id.calendar_screen_view_change)).perform(click());
+        onView(withId(R.id.calendar_screen_calendar)).check(matches(hasChildCount(MONTHLY_CHILDREN)));
+        onView(withId(R.id.calendar_screen_view_change)).perform(click());
+        onView(withId(R.id.calendar_screen_calendar)).check(matches(hasChildCount(2*EVENTS_TO_DISPLAY)));
     }
 }

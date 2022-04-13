@@ -154,7 +154,6 @@ public class MainScreenActivity extends AppCompatActivity {
     private void hideButtons() {
         findViewById(R.id.calendar).setVisibility(View.INVISIBLE);
         findViewById(R.id.add_event).setVisibility(View.INVISIBLE);
-        findViewById(R.id.calendar_view_change).setVisibility(View.INVISIBLE);
         findViewById(R.id.new_task).setVisibility(View.INVISIBLE);
         findViewById(R.id.list_view_change).setVisibility(View.INVISIBLE);
         findViewById(R.id.task_list).setVisibility(View.INVISIBLE);

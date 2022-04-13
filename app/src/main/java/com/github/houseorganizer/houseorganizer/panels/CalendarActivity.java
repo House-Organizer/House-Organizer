@@ -32,14 +32,14 @@ public class CalendarActivity extends AppCompatActivity {
 
         currentHouse = FirebaseFirestore.getInstance().collection("households").document(getIntent().getStringExtra("house"));
 
-        calendarEvents = findViewById(R.id.calendar);
+        calendarEvents = findViewById(R.id.calendar_screen_calendar);
         calendarAdapter = new EventsAdapter(calendar,
                 registerForActivityResult(new ActivityResultContracts.GetContent(), uri -> calendarAdapter.pushAttachment(uri)));
         calendarEvents.setAdapter(calendarAdapter);
         calendarEvents.setLayoutManager(new GridLayoutManager(this, calendarColumns));
         calendarAdapter.refreshCalendarView(this, currentHouse, "refreshCalendar:failureToRefresh");
-        findViewById(R.id.calendar_view_change).setOnClickListener(v -> calendarColumns = calendar.rotateCalendarView(this, calendarAdapter, calendarEvents));
-        findViewById(R.id.add_event).setOnClickListener(v -> calendarAdapter.showAddEventDialog(this, currentHouse, "addEvent:failure"));
+        findViewById(R.id.calendar_screen_view_change).setOnClickListener(v -> calendarColumns = calendar.rotateCalendarView(this, calendarAdapter, calendarEvents));
+        findViewById(R.id.calendar_screen_add_event).setOnClickListener(v -> calendarAdapter.showAddEventDialog(this, currentHouse, "addEvent:failure"));
 
         BottomNavigationView menu = findViewById(R.id.nav_bar);
         menu.setSelectedItemId(R.id.nav_bar_calendar);
