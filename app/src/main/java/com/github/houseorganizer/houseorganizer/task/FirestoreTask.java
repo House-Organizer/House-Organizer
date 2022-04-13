@@ -110,6 +110,7 @@ public final class FirestoreTask extends HTask {
     }
 
     private static List<SubTask> collectSubTasks(Map<String, Object> taskData) {
+        System.out.println("AAAAAAAAA" + taskData);
         List<SubTask> subTasks = new ArrayList<>();
         Object tmpSubTaskData = taskData.get("sub tasks");
 

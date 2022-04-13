@@ -91,11 +91,13 @@ public class MainScreenActivity extends AppCompatActivity {
         List<String> memberEmails = Arrays.asList("aindreias@houseorganizer.com", "sansive@houseorganizer.com",
                 "shau@reds.com", "oxydeas@houseorganizer.com");
 
-        db.collection("task-lists")
+        db.collection("task_lists")
                 .whereEqualTo("hh-id", currentHouse.getId())
                 .get().addOnCompleteListener(task -> {
                     if (task.isSuccessful()) {
-                        this.tlMetadata = task.getResult().getDocuments().get(0).getReference();
+                        System.out.println(currentHouse.getId());
+                        QueryDocumentSnapshot qds = task.getResult().iterator().next();
+                        this.tlMetadata = db.collection("task_lists").document(qds.getId());
                         this.taskList = new TaskList(currentUser, "My weekly todo", new ArrayList<>());
                         this.taskListAdapter = new TaskListAdapter(taskList, memberEmails);
                         TaskView.recoverTaskList(this, taskList, taskListAdapter, tlMetadata);
