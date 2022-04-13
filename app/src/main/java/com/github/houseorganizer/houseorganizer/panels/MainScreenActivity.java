@@ -8,6 +8,7 @@ import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 
 import androidx.activity.result.ActivityResultLauncher;
@@ -21,6 +22,7 @@ import com.github.houseorganizer.houseorganizer.R;
 import com.github.houseorganizer.houseorganizer.calendar.Calendar;
 import com.github.houseorganizer.houseorganizer.calendar.EventsAdapter;
 import com.github.houseorganizer.houseorganizer.house.HouseSelectionActivity;
+import com.github.houseorganizer.houseorganizer.shop.FirestoreShopList;
 import com.github.houseorganizer.houseorganizer.shop.ShopItem;
 import com.github.houseorganizer.houseorganizer.shop.ShopList;
 import com.github.houseorganizer.houseorganizer.shop.ShopListAdapter;
@@ -29,8 +31,11 @@ import com.github.houseorganizer.houseorganizer.task.TaskListAdapter;
 import com.github.houseorganizer.houseorganizer.task.TaskView;
 import com.github.houseorganizer.houseorganizer.user.DummyUser;
 import com.github.houseorganizer.houseorganizer.user.User;
+import com.google.android.gms.tasks.Task;
+import com.google.android.gms.tasks.Tasks;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
@@ -57,6 +62,8 @@ public class MainScreenActivity extends AppCompatActivity {
 
     private TaskList taskList;
     private TaskListAdapter taskListAdapter;
+    private FirestoreShopList shopList;
+    private ShopListAdapter shopListAdapter;
     private ListFragmentView listView = ListFragmentView.CHORES_LIST;
     public enum ListFragmentView { CHORES_LIST, GROCERY_LIST }
 
@@ -88,6 +95,22 @@ public class MainScreenActivity extends AppCompatActivity {
         initializeTaskList();
         TaskView.recoverTaskList(this, taskList, taskListAdapter,
                 db.collection("task_lists").document("85IW3cYzxOo1YTWnNOQl"));
+        initializeGroceriesList();
+    }
+
+    private void initializeGroceriesList(){
+        if(currentHouse == null)return;
+        CollectionReference root = db.collection("shop_lists");
+        root.whereEqualTo("household", currentHouse).get()
+        .addOnCompleteListener(r -> {
+            if(r.getResult().getDocuments().size() == 0){
+                shopList = new FirestoreShopList(currentHouse);
+                FirestoreShopList.storeNewShopList(root, new ShopList(), currentHouse)
+                        .addOnCompleteListener(t -> shopList.setOnlineReference(t.getResult()));
+            }else{
+                FirestoreShopList.retrieveShopList(root, currentHouse).continueWith(t -> shopList = t.getResult());
+            }
+        });
     }
 
     private void initializeTaskList() {
@@ -203,11 +226,11 @@ public class MainScreenActivity extends AppCompatActivity {
                 TaskView.setUpTaskListView(this, taskListAdapter);
                 break;
             case GROCERY_LIST:
-                ShopList shopList = new ShopList();
-                shopList.addItem(new ShopItem("Eggs", 4, ""));
-                shopList.addItem(new ShopItem("Flour", 2, "kg"));
-                shopList.addItem(new ShopItem("Raclette", 3, "tons"));
-
+                if(shopList == null) {
+                    initializeGroceriesList();
+                    listView = ListFragmentView.CHORES_LIST;
+                    return;
+                }
                 ShopListAdapter itemAdapter = new ShopListAdapter(shopList);
                 RecyclerView rView = findViewById(R.id.task_list);
                 rView.setAdapter(itemAdapter);
