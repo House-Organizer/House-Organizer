@@ -25,7 +25,10 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.InputStreamReader;
 import java.util.concurrent.ExecutionException;
 
 @RunWith(AndroidJUnit4.class)
@@ -77,4 +80,15 @@ public class LocalStorageTest {
         assertTrue(directory.isDirectory());
         assertEquals(0, directory.listFiles().length);
     }
+
+    @Test
+    public void retrieveTextFromFileRetrievesCorrectly() {
+        Context cx = InstrumentationRegistry.getInstrumentation().getTargetContext();
+
+        LocalStorage.writeTxtToFile(cx, TEST_TXT_FILENAME, "Sample text");
+        String retrieved = LocalStorage.retrieveTxtFromFile(cx, TEST_TXT_FILENAME);
+        assertEquals("Sample text", retrieved);
+    }
+
+
 }
