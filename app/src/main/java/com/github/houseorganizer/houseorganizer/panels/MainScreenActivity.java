@@ -98,7 +98,7 @@ public class MainScreenActivity extends AppCompatActivity {
                         System.out.println(currentHouse.getId());
                         QueryDocumentSnapshot qds = task.getResult().iterator().next();
                         this.tlMetadata = db.collection("task_lists").document(qds.getId());
-                        this.taskList = new TaskList(currentUser, "My weekly todo", new ArrayList<>());
+                        this.taskList = new TaskList(currentUser.uid(), "My weekly todo", new ArrayList<>());
                         this.taskListAdapter = new TaskListAdapter(taskList, memberEmails);
                         TaskView.recoverTaskList(this, taskList, taskListAdapter, tlMetadata);
                     }

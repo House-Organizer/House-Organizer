@@ -146,18 +146,17 @@ public class FirebaseTestsHelper {
     }
 
     /**
-     * This method will create a task list
+     * This method will create a task list | TODO UPDATE
      */
     protected static void createTestTaskList(String hhID) throws ExecutionException, InterruptedException {
         // Get DB ref
         FirebaseFirestore db = FirebaseFirestore.getInstance();
 
         // Create task list instance
-        User owner = new DummyUser("Test User", "0");
-        HTask taskToAdd =
-                new HTask(owner, "TestTask", "Testing");
+        HTask taskToAdd = new HTask(TEST_USERS_EMAILS[0], "TestTask", "Testing");
 
-        TaskList taskList = new TaskList(owner, "MyList", new ArrayList<>(Collections.singletonList(taskToAdd)));
+        TaskList taskList = new TaskList(TEST_USERS_EMAILS[0], "MyList",
+                new ArrayList<>(Collections.singletonList(taskToAdd)));
 
         // Store instance on the database using a helper function
         // returns only after storing is done
@@ -330,13 +329,8 @@ public class FirebaseTestsHelper {
         data.put("title", task.getTitle());
         data.put("description", task.getDescription());
         data.put("status", task.isFinished() ? "completed" : "ongoing");
-        data.put("owner", task.getOwner().uid());
-
-        data.put("assignees",
-                task.getAssignees()
-                        .stream()
-                        .map(User::uid)
-                        .collect(Collectors.toList()));
+        data.put("owner", task.getOwner());
+        data.put("assignees", task.getAssignees());
 
         data.put("sub tasks",
                 task.getSubTasks()
@@ -364,7 +358,7 @@ public class FirebaseTestsHelper {
         Map<String, Object> data = new HashMap<>();
 
         data.put("title", taskList.getTitle());
-        data.put("owner", taskList.getOwner().uid());
+        data.put("owner", taskList.getOwner());
         data.put("hh-id", hhID);
         data.put("task-ptrs", taskPtrs);
 

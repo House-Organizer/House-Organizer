@@ -20,7 +20,6 @@ import com.github.houseorganizer.houseorganizer.panels.MainScreenActivity;
 import com.github.houseorganizer.houseorganizer.util.BiViewHolder;
 
 import com.google.firebase.firestore.DocumentReference;
-import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 
@@ -28,7 +27,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.function.Consumer;
 
 public final class TaskView {
@@ -78,16 +76,16 @@ public final class TaskView {
                 List<DocumentReference> taskPtrs = (ArrayList<DocumentReference>)
                         metadata.getOrDefault("task-ptrs", new ArrayList<>());
 
+                assert taskPtrs != null;
+
                 // We're adding `FirestoreTask`s now, and the in-app changes to
                 // their title and/or description will be reflected in the database
-                taskPtrs.forEach(ptr -> {
-                    ptr.get().addOnCompleteListener( task2 -> {
-                        if (task2.isSuccessful()) {
-                            Map<String, Object> taskData = task2.getResult().getData();
-                            taskList.addTask(FirestoreTask.recoverTask(taskData, ptr));
-                        }
-                    });
-                });
+                taskPtrs.forEach(ptr -> ptr.get().addOnCompleteListener(task2 -> {
+                    if (task2.isSuccessful()) {
+                        Map<String, Object> taskData = task2.getResult().getData();
+                        taskList.addTask(FirestoreTask.recoverTask(taskData, ptr));
+                    }
+                }));
 
                 setUpTaskListView(parent, taskListAdapter);
             }
