@@ -5,7 +5,6 @@ import static androidx.test.espresso.Espresso.onView;
 import static androidx.test.espresso.action.ViewActions.clearText;
 import static androidx.test.espresso.action.ViewActions.click;
 import static androidx.test.espresso.action.ViewActions.closeSoftKeyboard;
-import static androidx.test.espresso.action.ViewActions.pressBack;
 import static androidx.test.espresso.action.ViewActions.typeText;
 import static androidx.test.espresso.assertion.ViewAssertions.matches;
 import static androidx.test.espresso.intent.Intents.intended;
@@ -78,6 +77,16 @@ public class CalendarViewTest {
 
         db = FirebaseFirestore.getInstance();
         auth = FirebaseAuth.getInstance();
+        storage = FirebaseStorage.getInstance();
+
+        // For now a hardcoded bytestream instead of an image
+        // it will still create the popup just it wont display anything
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        baos.write(1);
+        UploadTask task1 = storage.getReference().child("has_attachment.jpg").putBytes(baos.toByteArray());
+        UploadTask task2 = storage.getReference().child("to_delete_attachment.jpg").putBytes(baos.toByteArray());
+        Tasks.await(task1);
+        Tasks.await(task2);
     }
 
     @Before
@@ -85,8 +94,6 @@ public class CalendarViewTest {
         onView(withId(R.id.house_imageButton)).perform(click());
         onView(withId(R.id.housesView)).perform(RecyclerViewActions.actionOnItemAtPosition(0, click()));
         onView(withId(R.id.nav_bar_calendar)).perform(click());
-        auth = FirebaseAuth.getInstance();
-        storage = FirebaseStorage.getInstance();
     }
 
     @AfterClass
@@ -112,10 +119,12 @@ public class CalendarViewTest {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         baos.write(1);
         UploadTask task4 = storage.getReference().child("to_delete_attachment.jpg").putBytes(baos.toByteArray());
+        Task<Void> task5 = storage.getReference().child("has_attachment.jpg").delete();
         Tasks.await(task1);
         Tasks.await(task2);
         Tasks.await(task3);
         Tasks.await(task4);
+        Tasks.await(task5);
         auth.signOut();
     }
 
