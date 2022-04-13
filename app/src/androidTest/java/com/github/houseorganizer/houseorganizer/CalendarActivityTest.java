@@ -92,6 +92,7 @@ public class CalendarActivityTest {
     @Test
     public void calendarViewRotatesCorrectly() {
         final int MONTHLY_CHILDREN = YearMonth.of(LocalDate.now().getYear(), LocalDate.now().getMonth()).lengthOfMonth();
+
         onView(withId(R.id.calendar_screen_calendar)).check(matches(hasChildCount(2*EVENTS_TO_DISPLAY)));
         onView(withId(R.id.calendar_screen_view_change)).perform(click());
         onView(withId(R.id.calendar_screen_calendar)).check(matches(hasChildCount(MONTHLY_CHILDREN)));
