@@ -66,6 +66,7 @@ public class HouseSelectionActivityTest {
         Intents.release();
     }
 
+    /*
     @Test
     public void editHousehold() {
         Intents.init();
@@ -75,5 +76,5 @@ public class HouseSelectionActivityTest {
         intended(hasComponent(EditHousehold.class.getName()));
 
         Intents.release();
-    }
+    }*/
 }
