@@ -284,7 +284,7 @@ public class FirebaseTestsHelper {
     }
 
     /**
-     * This method will create 8 users, 3 households, a task list and a list of events
+     * This method will create 8 users, 3 households (each with a task list) and a list of events
      * After this call user_1 is logged in
      * A flag allows us to just login as user_1 if everything is already done
      */
@@ -307,9 +307,6 @@ public class FirebaseTestsHelper {
         }
 
         createHouseholds();
-
-        //createTestTaskList(); [MOVED TO `CREATE TEST HH` SINCE TLs NOW LINKED TO HHs]
-      
         createTestShopList();
 
         createTestEvents();
