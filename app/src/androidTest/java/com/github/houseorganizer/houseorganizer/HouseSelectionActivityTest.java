@@ -9,10 +9,14 @@ import static androidx.test.espresso.matcher.ViewMatchers.hasDescendant;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
 import static androidx.test.espresso.matcher.ViewMatchers.withText;
 
+import static org.hamcrest.core.IsNot.not;
+
+import androidx.test.espresso.contrib.RecyclerViewActions;
 import androidx.test.espresso.intent.Intents;
 import androidx.test.ext.junit.rules.ActivityScenarioRule;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 
+import com.github.houseorganizer.houseorganizer.house.EditHousehold;
 import com.github.houseorganizer.houseorganizer.house.HouseSelectionActivity;
 import com.github.houseorganizer.houseorganizer.panels.MainScreenActivity;
 import com.google.firebase.auth.FirebaseAuth;
@@ -59,6 +63,17 @@ public class HouseSelectionActivityTest {
         Intents.init();
         onView(withText(FirebaseTestsHelper.TEST_HOUSEHOLD_NAMES[0])).perform(click());
         intended(hasComponent(MainScreenActivity.class.getName()));
+        Intents.release();
+    }
+
+    @Test
+    public void editHousehold() {
+        Intents.init();
+
+        onView(withId(R.id.housesView)).perform(
+                RecyclerViewActions.actionOnItemAtPosition(0, RecyclerViewHelperActions.clickChildViewWithId(R.id.editButton)));
+        intended(hasComponent(EditHousehold.class.getName()));
+
         Intents.release();
     }
 }
