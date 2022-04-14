@@ -90,7 +90,7 @@ public class MainScreenActivity extends AppCompatActivity {
         findViewById(R.id.calendar_view_change).setOnClickListener(v -> calendar.rotateCalendarView(v, this, calendarAdapter, calendarEvents));
         findViewById(R.id.add_event).setOnClickListener(this::addEvent);
         findViewById(R.id.refresh_calendar).setOnClickListener(this::refreshCalendar);
-        findViewById(R.id.new_task).setOnClickListener(v -> TaskView.addTask(db, taskList, taskListAdapter, listView));
+        //findViewById(R.id.new_task).setOnClickListener(v -> TaskView.addTask(db, taskList, taskListAdapter, listView));
 
         initializeTaskList();
         TaskView.recoverTaskList(this, taskList, taskListAdapter,
@@ -108,7 +108,7 @@ public class MainScreenActivity extends AppCompatActivity {
                 FirestoreShopList.storeNewShopList(root, new ShopList(), currentHouse)
                         .addOnCompleteListener(t -> shopList.setOnlineReference(t.getResult()));
             }else{
-                FirestoreShopList.retrieveShopList(root, currentHouse).continueWith(t -> shopList = t.getResult());
+                FirestoreShopList.retrieveShopList(root, currentHouse).addOnCompleteListener(t -> shopList = t.getResult());
             }
         });
     }
@@ -218,6 +218,19 @@ public class MainScreenActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
+    public void bottomAddButtonPressed(View view){
+        if(listView == ListFragmentView.CHORES_LIST){
+            TaskView.addTask(db, taskList, taskListAdapter, listView);
+        }
+        else{
+            if(shopList != null){
+                shopList.addItem(new ShopItem("Lemon", 2, "t"));
+                shopList.updateItems();
+                shopListAdapter.notifyItemInserted(shopList.size()-1);
+            }
+        }
+    }
+
     public void rotateLists(View view) {
         listView = ListFragmentView.values()[1 - listView.ordinal()];
 
@@ -231,9 +244,8 @@ public class MainScreenActivity extends AppCompatActivity {
                     listView = ListFragmentView.CHORES_LIST;
                     return;
                 }
-                ShopListAdapter itemAdapter = new ShopListAdapter(shopList);
                 RecyclerView rView = findViewById(R.id.task_list);
-                rView.setAdapter(itemAdapter);
+                rView.setAdapter(shopListAdapter);
                 rView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
                 break;
         }
