@@ -11,10 +11,12 @@ import com.github.houseorganizer.houseorganizer.task.FirestoreTask;
 import com.github.houseorganizer.houseorganizer.task.HTask;
 import com.google.android.gms.tasks.Task;
 import com.google.android.gms.tasks.Tasks;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
+import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -28,7 +30,7 @@ import java.util.concurrent.ExecutionException;
 /**
  * Before this test class, the firestore & auth emulators are enabled.
  * Tests modifying base data (task lists / tasks)
- * on the emulator undo their actions (=> no @After/ @AfterClass)
+ * on the emulator undo their actions (=> no @After)
  */
 @RunWith(AndroidJUnit4.class)
 public class FirestoreTaskTest {
@@ -41,6 +43,7 @@ public class FirestoreTaskTest {
     public static final String NEW_FANCY_DESCRIPTION = "New fancy description";
 
     private static FirebaseFirestore db;
+    private static FirebaseAuth auth;
 
     private static DocumentReference metadataRef() {
         return db.collection("task_lists").document(FirebaseTestsHelper.FIRST_TL_NAME);
@@ -54,6 +57,12 @@ public class FirestoreTaskTest {
         FirebaseTestsHelper.setUpFirebase();
 
         db = FirebaseFirestore.getInstance();
+        auth = FirebaseAuth.getInstance();
+    }
+
+    @AfterClass
+    public static void signOut() {
+        auth.signOut();
     }
 
     /* Tests of static API (makeSubTaskData(2), recoverSubTask(2), recoverTask(1))
@@ -189,7 +198,7 @@ public class FirestoreTaskTest {
     }
 
     // recovers the first task of the first household's task list :)
-    private FirestoreTask recoverFirestoreTask() throws ExecutionException, InterruptedException {
+    protected static FirestoreTask recoverFirestoreTask() throws ExecutionException, InterruptedException {
         // S1. Get metadata, read list of task ptrs, pick first one
         Task<DocumentSnapshot> task = metadataRef().get();
         Tasks.await(task);
@@ -197,9 +206,10 @@ public class FirestoreTaskTest {
         assertTrue(task.isSuccessful());
 
         Map<String, Object> metadata = task.getResult().getData();
+        assertNotNull(metadata);
+
         List<DocumentReference> taskPtrs = (ArrayList<DocumentReference>)
                 metadata.getOrDefault("task-ptrs", new ArrayList<>());
-
         assertNotNull(taskPtrs);
 
         // S2. Get task data from chosen task ptr

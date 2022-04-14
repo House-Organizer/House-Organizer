@@ -39,6 +39,8 @@ import java.util.stream.Collectors;
  *
  */
 public class FirebaseTestsHelper {
+    public static final String TEST_TASK_TITLE = "TestTask";
+    public static final String TEST_TASK_DESC = "Testing";
     private static boolean authEmulatorActivated = false;
     private static boolean firestoreEmulatorActivated = false;
     private static boolean databaseEmulatorActivated = false;
@@ -143,16 +145,16 @@ public class FirebaseTestsHelper {
     }
 
     /**
-     * This method will create a task list | TODO UPDATE
+     * This method will create a task list
      */
     protected static void createTestTaskList(String hhID) throws ExecutionException, InterruptedException {
         // Get DB ref
         FirebaseFirestore db = FirebaseFirestore.getInstance();
 
         // Create task list instance
-        HTask taskToAdd = new HTask(TEST_USERS_EMAILS[0], "TestTask", "Testing");
+        HTask taskToAdd = new HTask(TEST_USERS_EMAILS[0], TEST_TASK_TITLE, TEST_TASK_DESC);
 
-        TaskList taskList = new TaskList(TEST_USERS_EMAILS[0], "MyList",
+        TaskList taskList = new TaskList(TEST_USERS_EMAILS[0], FIRST_TL_NAME,
                 new ArrayList<>(Collections.singletonList(taskToAdd)));
 
         // Store instance on the database using a helper function

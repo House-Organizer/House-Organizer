@@ -111,7 +111,7 @@ public final class TaskView {
                     if (task.isSuccessful()) {
                         DocumentReference taskDocRef = task.getResult();
 
-                        taskList.addTask(new FirestoreTask(taskList.getOwner(), "", "", new ArrayList<>(), taskDocRef));
+                        taskList.addTask(new FirestoreTask(taskList.getOwner(), "Untitled task", "", new ArrayList<>(), taskDocRef));
                         taskListAdapter.notifyItemInserted(taskListAdapter.getItemCount()-1);
 
                         addTaskPtrToMetadata(taskListDocRef, taskDocRef);
