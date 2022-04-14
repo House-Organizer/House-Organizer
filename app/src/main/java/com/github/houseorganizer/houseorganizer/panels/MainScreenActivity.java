@@ -152,7 +152,6 @@ public class MainScreenActivity extends AppCompatActivity {
                             }
                         }
                         refreshCalendar(findViewById(R.id.refresh_calendar));
-
                         initializeTaskList();
                     } else
                         logAndToast("MainScreenActivity", "loadHousehold:failure", task.getException(),
