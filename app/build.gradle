@@ -44,12 +44,6 @@ android {
 
 dependencies {
 
-    // FirebaseUI for Cloud Firestore
-    implementation 'com.firebaseui:firebase-ui-firestore'
-
-    // FirebaseUI for Cloud storage
-    implementation 'com.firebaseui:firebase-ui-storage'
-
 
     // Import the BoM for the Firebase platform
     implementation platform('com.google.firebase:firebase-bom:29.3.0')
@@ -61,13 +55,19 @@ dependencies {
     // Firebase authentication services
     implementation 'com.google.firebase:firebase-auth'
 
+    // FirebaseUI for Cloud Firestore
+    implementation 'com.firebaseui:firebase-ui-firestore:'
+
+    // FirebaseUI for Cloud storage
+    implementation 'com.firebaseui:firebase-ui-storage:'
+
     // Google Play services
     implementation 'com.google.android.gms:play-services-auth:20.1.0'
     implementation 'com.google.android.gms:play-services-base:18.0.1'
 
-    implementation 'com.google.firebase:firebase-database'
-    implementation 'com.google.firebase:firebase-firestore'
-    implementation 'com.google.firebase:firebase-storage'
+    implementation 'com.google.firebase:firebase-database:'
+    implementation 'com.google.firebase:firebase-firestore:'
+    implementation 'com.google.firebase:firebase-storage:'
     implementation 'androidx.preference:preference:1.2.0'
 
     testImplementation 'junit:junit:4.13.2'
