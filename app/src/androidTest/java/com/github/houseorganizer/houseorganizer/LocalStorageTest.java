@@ -1,9 +1,7 @@
 package com.github.houseorganizer.houseorganizer;
 
-import static androidx.test.espresso.intent.matcher.BundleMatchers.isEmpty;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
 import android.content.Context;
@@ -12,23 +10,25 @@ import androidx.test.ext.junit.rules.ActivityScenarioRule;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 import androidx.test.platform.app.InstrumentationRegistry;
 
+import com.github.houseorganizer.houseorganizer.calendar.Calendar;
 import com.github.houseorganizer.houseorganizer.panels.InfoActivity;
+import com.github.houseorganizer.houseorganizer.shop.ShopItem;
 import com.github.houseorganizer.houseorganizer.storage.LocalStorage;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
 
-import org.junit.After;
 import org.junit.AfterClass;
-import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.InputStreamReader;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.ExecutionException;
 
 @RunWith(AndroidJUnit4.class)
@@ -37,7 +37,6 @@ public class LocalStorageTest {
     private static FirebaseFirestore db;
     private static FirebaseAuth auth;
     private static final String TEST_TXT_FILENAME = "test.txt";
-    private static final String TEST_JSON_FILENAME = "test.json";
 
     @BeforeClass
     public static void createMockFirebase() throws ExecutionException, InterruptedException {
@@ -50,7 +49,9 @@ public class LocalStorageTest {
     }
 
     @AfterClass
-    public static void signOut(){ //TODO CLEANUP LOCAL STORAGE IN BEFORE/AFTER
+    public static void signOut() {
+        Context cx = InstrumentationRegistry.getInstrumentation().getTargetContext();
+        LocalStorage.clearOfflineStorage(cx);
         auth.signOut();
     }
 
@@ -89,4 +90,55 @@ public class LocalStorageTest {
         String retrieved = LocalStorage.retrieveTxtFromFile(cx, TEST_TXT_FILENAME);
         assertEquals("Sample text", retrieved);
     }
+
+    @Test
+    public void householdsOfflineWork() throws ExecutionException, InterruptedException {
+        Context cx = InstrumentationRegistry.getInstrumentation().getTargetContext();
+
+        LocalStorage.pushHouseholdsOffline(cx, db, auth.getCurrentUser());
+        HashMap<String, String> households = LocalStorage.retrieveHouseholdsOffline(cx);
+        assertTrue(households.containsKey("home_2"));
+        assertTrue(households.containsKey("home_1"));
+        assertEquals("home_1", households.get("home_1"));
+        assertEquals("home_1", households.get("home_1"));
+    }
+
+    //------------------- EVENTS ------------------->
+    @Test
+    public void eventsOfflineWork() throws ExecutionException, InterruptedException {
+        Context cx = InstrumentationRegistry.getInstrumentation().getTargetContext();
+
+        LocalDateTime time = LocalDateTime.now();
+        Calendar.Event event = new Calendar.Event("title","description", time, 1, "id");
+        LocalStorage.OfflineEvent offlineEvent = new LocalStorage.OfflineEvent("title","description", time.toString(), 1, "id");
+
+        LocalStorage.pushHouseholdsOffline(cx, db, auth.getCurrentUser());
+        assertTrue(LocalStorage.pushEventsOffline(cx, db
+                .collection("households")
+                .document("home_1"), Arrays.asList(event)));
+
+        Map<String, ArrayList<LocalStorage.OfflineEvent>> offlineEvents = LocalStorage.retrieveEventsOffline(cx);
+        assertEquals(offlineEvents.get("home_1"),Arrays.asList(offlineEvent));
+    }
+
+    //------------------- GROCERIES ------------------->
+    @Test
+    public void groceriesOfflineWork() throws ExecutionException, InterruptedException {
+        Context cx = InstrumentationRegistry.getInstrumentation().getTargetContext();
+
+        LocalDateTime time = LocalDateTime.now();
+        ShopItem shopItem = new ShopItem("name", 1, "unit");
+        LocalStorage.OfflineShopItem offlineShopItem = new LocalStorage.OfflineShopItem("name", 1, "unit", false);
+
+        LocalStorage.pushHouseholdsOffline(cx, db, auth.getCurrentUser());
+        assertTrue(LocalStorage.pushGroceriesOffline(cx, db
+                .collection("households")
+                .document("home_1"), Arrays.asList(shopItem)));
+
+        Map<String, ArrayList<LocalStorage.OfflineShopItem>> offlineShopItems = LocalStorage.retrieveGroceriesOffline(cx);
+        assertEquals(offlineShopItems.get("home_1"),Arrays.asList(offlineShopItem));
+    }
+
+    //------------------- GROCERIES ------------------->
+    //TODO AS HTASKS DO NOT HAVE THE RIGHT STRUCTURE YET
 }

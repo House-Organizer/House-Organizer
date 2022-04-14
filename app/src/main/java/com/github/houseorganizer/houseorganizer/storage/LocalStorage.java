@@ -1,5 +1,7 @@
 package com.github.houseorganizer.houseorganizer.storage;
 
+import static com.google.android.gms.tasks.Tasks.await;
+
 import android.content.Context;
 
 import androidx.annotation.NonNull;
@@ -7,10 +9,12 @@ import androidx.annotation.NonNull;
 import com.github.houseorganizer.houseorganizer.calendar.Calendar;
 import com.github.houseorganizer.houseorganizer.shop.ShopItem;
 import com.github.houseorganizer.houseorganizer.task.HTask;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QuerySnapshot;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
@@ -24,10 +28,10 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.concurrent.ExecutionException;
 
 public class LocalStorage {
 
@@ -85,25 +89,26 @@ public class LocalStorage {
         }
     }
 
-    public static HashMap<String, String> retrieveHouseholdIdsOffline(Context context){
+    public static HashMap<String, String> retrieveHouseholdsOffline(Context context){
         String householdsString = retrieveTxtFromFile(context, OFFLINE_STORAGE_HOUSEHOLDS + OFFLINE_STORAGE_EXTENSION);
         Type type = TypeToken.getParameterized(HashMap.class, String.class, String.class).getType();
         return new Gson().fromJson(householdsString, type);
     }
 
-    public static void pushHouseholdIdsOffline(Context context, FirebaseFirestore db, FirebaseUser mUser){
-        db.collection("households").whereArrayContains("residents",
-                Objects.requireNonNull(mUser.getEmail())).get().addOnSuccessListener(task -> {
-            for (DocumentSnapshot document : task.getDocuments()) {
-                setOfHouseholds.put(document.getId(), (String) document.getData().get("name"));
-            }
-            writeTxtToFile(context, OFFLINE_STORAGE_HOUSEHOLDS + OFFLINE_STORAGE_EXTENSION,
-                    new Gson().toJson(setOfHouseholds));
-        });
+    public static void pushHouseholdsOffline(Context context, FirebaseFirestore db, FirebaseUser mUser) throws ExecutionException, InterruptedException {
+        Task<QuerySnapshot> householdsTasks = db.collection("households").whereArrayContains("residents",
+                Objects.requireNonNull(mUser.getEmail())).get();
+
+        QuerySnapshot query = await(householdsTasks);
+        for (DocumentSnapshot document : query.getDocuments()) {
+            setOfHouseholds.put(document.getId(), (String) document.getData().get("name"));
+        }
+        writeTxtToFile(context, OFFLINE_STORAGE_HOUSEHOLDS + OFFLINE_STORAGE_EXTENSION,
+                new Gson().toJson(setOfHouseholds));
     }
 
     public static Map<String, ArrayList<OfflineEvent>> retrieveEventsOffline(Context context){
-        HashMap<String, String> households = retrieveHouseholdIdsOffline(context);
+        HashMap<String, String> households = retrieveHouseholdsOffline(context);
 
         Map<String, ArrayList<OfflineEvent>> mapHouseholdIdToEvents = new HashMap<>();
         for(String household : households.keySet()){
@@ -117,7 +122,7 @@ public class LocalStorage {
     }
 
     public static Map<String, ArrayList<OfflineShopItem>> retrieveGroceriesOffline(Context context){
-        HashMap<String, String> households = retrieveHouseholdIdsOffline(context);
+        HashMap<String, String> households = retrieveHouseholdsOffline(context);
 
         Map<String, ArrayList<OfflineShopItem>> mapHouseholdIdToGroceries = new HashMap<>();
         for(String household : households.keySet()){
@@ -131,7 +136,7 @@ public class LocalStorage {
     }
 
     public static Map<String, ArrayList<OfflineTask>> retrieveTaskListOffline(Context context){
-        HashMap<String, String> households = retrieveHouseholdIdsOffline(context);
+        HashMap<String, String> households = retrieveHouseholdsOffline(context);
 
         Map<String, ArrayList<OfflineTask>> mapHouseholdIdToTasks = new HashMap<>();
         for(String household : households.keySet()){
@@ -184,12 +189,12 @@ public class LocalStorage {
     public static boolean pushTaskListOffline(Context context, DocumentReference currentHouse, List<HTask> tasks){
         ArrayList<LocalStorage.OfflineTask> offlineTasks = new ArrayList<>();
         for(HTask task : tasks){
-            offlineTasks.add(new OfflineTask( //TODO REMOVE ONCE TASK LIST IS FIXED
+            offlineTasks.add(new OfflineTask( //TODO FIX ONCE TASK LIST IS FIXED
                     "TASKNAME",
                     "TAKSDESCRIPTION",
                     Arrays.asList("USER1", "USER2")
             ));
-            break; //TODO REMOVE ONCE TASK LIST IS FIXED
+            break; //TODO FIX ONCE TASK LIST IS FIXED
         }
         String house_id = "temp";
         if(currentHouse != null){
@@ -245,6 +250,19 @@ public class LocalStorage {
         public String getId() {
             return id;
         }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+            OfflineEvent that = (OfflineEvent) o;
+            return duration == that.duration && Objects.equals(title, that.title) && Objects.equals(description, that.description) && Objects.equals(start, that.start) && Objects.equals(id, that.id);
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(title, description, start, duration, id);
+        }
     }
 
     public static class OfflineShopItem{
@@ -286,6 +304,19 @@ public class LocalStorage {
         public boolean isPickedUp() {
             return isPickedUp;
         }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+            OfflineShopItem that = (OfflineShopItem) o;
+            return quantity == that.quantity && isPickedUp == that.isPickedUp && Objects.equals(name, that.name) && Objects.equals(unit, that.unit);
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(name, quantity, unit, isPickedUp);
+        }
     }
 
     public static class OfflineTask{
@@ -318,6 +349,19 @@ public class LocalStorage {
 
         public List<String> getAssignees() {
             return assignees;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+            OfflineTask that = (OfflineTask) o;
+            return Objects.equals(name, that.name) && Objects.equals(description, that.description) && Objects.equals(assignees, that.assignees);
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(name, description, assignees);
         }
     }
 }
