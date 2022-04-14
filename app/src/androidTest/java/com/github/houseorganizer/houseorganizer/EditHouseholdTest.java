@@ -103,14 +103,6 @@ public class EditHouseholdTest {
     }
 
     @Test
-    public void confirmChangesSendsIntent() {
-        Intents.init();
-        onView(withId(R.id.confirmEditHouseholdButton)).perform(click());
-        intended(hasComponent(HouseSelectionActivity.class.getName()));
-        Intents.release();
-    }
-
-    @Test
     public void addUserWorksWithCorrectEmail() throws ExecutionException, InterruptedException {
         // Get state of house
         Map<String, Object> houseData_before = FirebaseTestsHelper.fetchHouseholdData(TEST_HOUSEHOLD_NAMES[0], db);
