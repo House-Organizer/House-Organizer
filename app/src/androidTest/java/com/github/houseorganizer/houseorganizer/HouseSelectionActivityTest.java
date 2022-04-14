@@ -6,6 +6,7 @@ import static androidx.test.espresso.assertion.ViewAssertions.matches;
 import static androidx.test.espresso.intent.Intents.intended;
 import static androidx.test.espresso.intent.matcher.IntentMatchers.hasComponent;
 import static androidx.test.espresso.matcher.ViewMatchers.hasDescendant;
+import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
 import static androidx.test.espresso.matcher.ViewMatchers.withText;
 
@@ -65,16 +66,4 @@ public class HouseSelectionActivityTest {
         intended(hasComponent(MainScreenActivity.class.getName()));
         Intents.release();
     }
-
-    /*
-    @Test
-    public void editHousehold() {
-        Intents.init();
-
-        onView(withId(R.id.housesView)).perform(
-                RecyclerViewActions.actionOnItemAtPosition(0, RecyclerViewHelperActions.clickChildViewWithId(R.id.editButton)));
-        intended(hasComponent(EditHousehold.class.getName()));
-
-        Intents.release();
-    }*/
 }
