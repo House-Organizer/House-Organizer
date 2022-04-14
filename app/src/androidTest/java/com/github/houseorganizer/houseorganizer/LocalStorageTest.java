@@ -89,6 +89,4 @@ public class LocalStorageTest {
         String retrieved = LocalStorage.retrieveTxtFromFile(cx, TEST_TXT_FILENAME);
         assertEquals("Sample text", retrieved);
     }
-
-
 }

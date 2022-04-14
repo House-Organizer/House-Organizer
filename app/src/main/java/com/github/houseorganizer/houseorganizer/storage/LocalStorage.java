@@ -31,7 +31,7 @@ import java.util.Objects;
 
 public class LocalStorage {
 
-    public static final HashSet<String> setOfHouseholds = new HashSet<>();
+    public static final HashMap<String, String> setOfHouseholds = new HashMap<>();
     public static final String OFFLINE_STORAGE_HOUSEHOLDS = "offline_households";
 
     public static final String OFFLINE_STORAGE_CALENDAR = "offline_calendar_";
@@ -85,17 +85,28 @@ public class LocalStorage {
         }
     }
 
-    public static HashSet<String> retrieveHouseholdIdsOffline(Context context){
+    public static HashMap<String, String> retrieveHouseholdIdsOffline(Context context){
         String householdsString = retrieveTxtFromFile(context, OFFLINE_STORAGE_HOUSEHOLDS + OFFLINE_STORAGE_EXTENSION);
-        Type type = TypeToken.getParameterized(HashSet.class, String.class).getType();
+        Type type = TypeToken.getParameterized(HashMap.class, String.class, String.class).getType();
         return new Gson().fromJson(householdsString, type);
     }
 
+    public static void pushHouseholdIdsOffline(Context context, FirebaseFirestore db, FirebaseUser mUser){
+        db.collection("households").whereArrayContains("residents",
+                Objects.requireNonNull(mUser.getEmail())).get().addOnSuccessListener(task -> {
+            for (DocumentSnapshot document : task.getDocuments()) {
+                setOfHouseholds.put(document.getId(), (String) document.getData().get("name"));
+            }
+            writeTxtToFile(context, OFFLINE_STORAGE_HOUSEHOLDS + OFFLINE_STORAGE_EXTENSION,
+                    new Gson().toJson(setOfHouseholds));
+        });
+    }
+
     public static Map<String, ArrayList<OfflineEvent>> retrieveEventsOffline(Context context){
-        HashSet<String> households = retrieveHouseholdIdsOffline(context);
+        HashMap<String, String> households = retrieveHouseholdIdsOffline(context);
 
         Map<String, ArrayList<OfflineEvent>> mapHouseholdIdToEvents = new HashMap<>();
-        for(String household : households){
+        for(String household : households.keySet()){
             String householdsEventsString = retrieveTxtFromFile(context,
                     OFFLINE_STORAGE_CALENDAR + household +  OFFLINE_STORAGE_EXTENSION);
             Type type = TypeToken.getParameterized(ArrayList.class, LocalStorage.OfflineEvent.class).getType();
@@ -106,10 +117,10 @@ public class LocalStorage {
     }
 
     public static Map<String, ArrayList<OfflineShopItem>> retrieveGroceriesOffline(Context context){
-        HashSet<String> households = retrieveHouseholdIdsOffline(context);
+        HashMap<String, String> households = retrieveHouseholdIdsOffline(context);
 
         Map<String, ArrayList<OfflineShopItem>> mapHouseholdIdToGroceries = new HashMap<>();
-        for(String household : households){
+        for(String household : households.keySet()){
             String householdsGroceriesString = retrieveTxtFromFile(context,
                     OFFLINE_STORAGE_GROCERIES + household +  OFFLINE_STORAGE_EXTENSION);
             Type type = TypeToken.getParameterized(ArrayList.class, LocalStorage.OfflineShopItem.class).getType();
@@ -120,10 +131,10 @@ public class LocalStorage {
     }
 
     public static Map<String, ArrayList<OfflineTask>> retrieveTaskListOffline(Context context){
-        HashSet<String> households = retrieveHouseholdIdsOffline(context);
+        HashMap<String, String> households = retrieveHouseholdIdsOffline(context);
 
         Map<String, ArrayList<OfflineTask>> mapHouseholdIdToTasks = new HashMap<>();
-        for(String household : households){
+        for(String household : households.keySet()){
             String householdsTasksString = retrieveTxtFromFile(context,
                     OFFLINE_STORAGE_TASKS + household +  OFFLINE_STORAGE_EXTENSION);
             Type type = TypeToken.getParameterized(ArrayList.class, LocalStorage.OfflineTask.class).getType();
@@ -186,17 +197,6 @@ public class LocalStorage {
         }
         return writeTxtToFile(context, OFFLINE_STORAGE_TASKS + house_id + OFFLINE_STORAGE_EXTENSION,
                 new Gson().toJson(offlineTasks));
-    }
-
-    public static void pushHouseholdIdsOffline(Context context, FirebaseFirestore db, FirebaseUser mUser){
-        db.collection("households").whereArrayContains("residents",
-                                                       Objects.requireNonNull(mUser.getEmail())).get().addOnSuccessListener(task -> {
-            for (DocumentSnapshot document : task.getDocuments()) {
-                setOfHouseholds.add(document.getId());
-            }
-            writeTxtToFile(context, OFFLINE_STORAGE_HOUSEHOLDS + OFFLINE_STORAGE_EXTENSION,
-                    new Gson().toJson(setOfHouseholds));
-        });
     }
 
     public static class OfflineEvent{
