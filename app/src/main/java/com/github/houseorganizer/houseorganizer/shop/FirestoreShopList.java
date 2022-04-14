@@ -35,6 +35,30 @@ public class FirestoreShopList extends ShopList{
         return household;
     }
 
+    @Override
+    public void removeItem(ShopItem shopItem){
+        super.removeItem(shopItem);
+        updateItems();
+    }
+
+    @Override
+    public void removeItem(int index){
+        super.removeItem(index);
+        updateItems();
+    }
+
+    @Override
+    public void addItem(ShopItem item){
+        super.addItem(item);
+        updateItems();
+    }
+
+    @Override
+    public void removePickedUpItems(){
+        super.removePickedUpItems();
+        updateItems();
+    }
+
     public void setOnlineReference(DocumentReference docRef){
         onlineReference = docRef;
     }

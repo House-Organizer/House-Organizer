@@ -112,5 +112,6 @@
     <string name="quantity">Quantity</string>
     <string name="unit">Unit</string>
     <string name="add_item_title">Adding an item to the list</string>
+    <string name="item_delete_button_description">Delete the corresponding shop list item</string>
 
 </resources>

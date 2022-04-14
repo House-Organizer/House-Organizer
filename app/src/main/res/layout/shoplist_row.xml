@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/shopDeleteItem"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:paddingTop="0dp"
@@ -7,8 +9,18 @@
 
     <CheckBox
         android:id="@+id/item_checkbox"
-        android:layout_width="0dp"
+        android:layout_width="308dp"
         android:layout_height="30dp"
         android:layout_weight="1" />
+
+    <ImageButton
+        android:id="@+id/delete_item_button"
+        android:layout_width="25dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:adjustViewBounds="true"
+        android:background="@color/common_google_signin_btn_text_dark"
+        android:contentDescription="@string/item_delete_button_description"
+        app:srcCompat="@android:drawable/ic_menu_close_clear_cancel" />
 
 </LinearLayout>

@@ -1,6 +1,5 @@
 package com.github.houseorganizer.houseorganizer.shop;
 
-import android.app.Dialog;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.EditText;
@@ -11,7 +10,6 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.github.houseorganizer.houseorganizer.R;
-import com.github.houseorganizer.houseorganizer.task.TaskListAdapter;
 
 public class ShopListView {
 

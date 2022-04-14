@@ -4,6 +4,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
+import android.widget.ImageButton;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -14,9 +15,11 @@ public class ShopListAdapter extends RecyclerView.Adapter<ShopListAdapter.ItemsH
 
     public class ItemsHolder extends RecyclerView.ViewHolder{
         public CheckBox checkBox;
+        public ImageButton cancelButton;
         public ItemsHolder(@NonNull View itemView) {
             super(itemView);
             checkBox = itemView.findViewById(R.id.item_checkbox);
+            cancelButton = itemView.findViewById(R.id.delete_item_button);
         }
     }
 
@@ -48,6 +51,10 @@ public class ShopListAdapter extends RecyclerView.Adapter<ShopListAdapter.ItemsH
                     item.setPickedUp(pickedUp);
                     box.setChecked(pickedUp);
                 });
+        holder.cancelButton.setOnClickListener(v -> {
+            shopList.removeItem(item);
+            this.notifyItemRemoved(position);
+        });
     }
 
 

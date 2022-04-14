@@ -31,7 +31,7 @@ public class ShopList {
         items.remove(index);
     }
 
-    public void removedPickedUpItems(){
+    public void removePickedUpItems(){
         items.removeIf(ShopItem::isPickedUp);
     }
 

@@ -5,7 +5,6 @@ import static org.hamcrest.MatcherAssert.assertThat;
 
 import com.github.houseorganizer.houseorganizer.shop.ShopItem;
 import com.github.houseorganizer.houseorganizer.shop.ShopList;
-import com.github.houseorganizer.houseorganizer.user.DummyUser;
 
 import org.junit.Test;
 
@@ -63,7 +62,7 @@ public class ShopListUnitTest {
         shopList.addItem(basicItem);
         shopList.addItem(new ShopItem("Basic", 3, "ua"));
         shopList.getItemAt(0).setPickedUp(true);
-        shopList.removedPickedUpItems();
+        shopList.removePickedUpItems();
         assertThat(shopList.size(), is(1));
     }
 
