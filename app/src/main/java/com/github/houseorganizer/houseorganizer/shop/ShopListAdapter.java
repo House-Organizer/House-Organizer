@@ -1,5 +1,6 @@
 package com.github.houseorganizer.houseorganizer.shop;
 
+import android.annotation.SuppressLint;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -24,10 +25,16 @@ public class ShopListAdapter extends RecyclerView.Adapter<ShopListAdapter.ItemsH
     }
 
 
-    private final ShopList shopList;
+    private ShopList shopList;
 
     public ShopListAdapter(ShopList shopList){
         this.shopList = shopList;
+    }
+
+    @SuppressLint("NotifyDataSetChanged")
+    public void setShopList(ShopList shopList){
+        this.shopList = shopList;
+        this.notifyDataSetChanged();
     }
 
     @NonNull
@@ -56,8 +63,6 @@ public class ShopListAdapter extends RecyclerView.Adapter<ShopListAdapter.ItemsH
             this.notifyItemRemoved(position);
         });
     }
-
-
 
     @Override
     public int getItemCount() {

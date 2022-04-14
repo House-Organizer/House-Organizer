@@ -144,7 +144,7 @@ public class FirestoreShopList extends ShopList{
         });
     }
 
-    private static FirestoreShopList buildShopList(DocumentSnapshot documentSnapshot){
+    public static FirestoreShopList buildShopList(DocumentSnapshot documentSnapshot){
         if(documentSnapshot == null) return null;
         DocumentReference household = (DocumentReference) documentSnapshot.get("household");
         List<Map<String, Object>> list = (List<Map<String, Object>>) documentSnapshot.get("items");

@@ -122,7 +122,13 @@ public class MainScreenActivity extends AppCompatActivity {
                     return shopListAdapter;
                 });
             }
-        });
+            // Setting up real time actualisation
+        }).addOnCompleteListener(c -> {
+            shopList.getOnlineReference().addSnapshotListener((doc, e) -> {
+                shopList = FirestoreShopList.buildShopList(doc);
+                shopListAdapter.setShopList(shopList);
+            });
+                });
     }
 
     private void initializeTaskList() {
@@ -255,6 +261,13 @@ public class MainScreenActivity extends AppCompatActivity {
                     return;
                 }
                 ShopListView.setUpShopListView(this, shopListAdapter);
+                shopList.getOnlineReference().addSnapshotListener((snap, c) -> {
+                    if(snap != null){
+                        shopList = FirestoreShopList.buildShopList(snap);
+                        shopListAdapter = new ShopListAdapter(shopList);
+
+                    }
+                });
                 break;
         }
     }

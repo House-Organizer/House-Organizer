@@ -42,7 +42,7 @@ public class ShopListView {
             // Only possible bad input is empty field
         }
         shopList.addItem(new ShopItem(name, quantity, unit));
-        shopList.updateItems();
         adapter.notifyItemInserted(shopList.size()-1);
+        shopList.updateItems();
     }
 }
