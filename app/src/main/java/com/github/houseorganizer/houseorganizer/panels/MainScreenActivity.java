@@ -151,8 +151,7 @@ public class MainScreenActivity extends AppCompatActivity {
                                 hideButtons();
                             }
                         }
-                        refreshCalendar(findViewById(R.id.refresh_calendar));
-                        initializeTaskList();
+                        refreshCalendar(findViewById(R.id.refresh_calendar)); initializeTaskList();
                     } else
                         logAndToast("MainScreenActivity", "loadHousehold:failure", task.getException(),
                                 getApplicationContext(), "Could not get a house.");
