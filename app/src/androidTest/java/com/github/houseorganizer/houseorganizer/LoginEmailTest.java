@@ -50,7 +50,7 @@ public class LoginEmailTest {
     public static void end() {}
 
     @Test
-    public void signInWithEmailWorksWithCorrectInputs() throws ExecutionException, InterruptedException {
+    public void signInWithEmailWorksWithCorrectInputs() {
         createFirebaseTestUserWithCredentials(email1, VALID_PASSWORD_FOR_APP);
 
         Intents.init();

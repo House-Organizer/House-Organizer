@@ -55,7 +55,7 @@ public class RegisterEmailTest {
     public static void end() {}
 
     @Test
-    public void signUpWithEmailWorksWithCorrectInputs() throws ExecutionException, InterruptedException {
+    public void signUpWithEmailWorksWithCorrectInputs() {
         Intents.init();
         onView(withId(R.id.reg_enter_email)).perform(clearText(), typeText(email1), closeSoftKeyboard());
         onView(withId(R.id.reg_enter_password)).perform(clearText(), typeText(VALID_PASSWORD_FOR_APP), closeSoftKeyboard());
@@ -86,7 +86,7 @@ public class RegisterEmailTest {
     }
 
     @Test
-    public void signUpWithEmailShowsEmailUsedErrorWithAlreadyUsedEmail() throws InterruptedException, ExecutionException {
+    public void signUpWithEmailShowsEmailUsedErrorWithAlreadyUsedEmail() throws InterruptedException {
         createFirebaseTestUserWithCredentials(email2, VALID_PASSWORD_FOR_APP);
 
         enterInputsAndClickRegister(email2, VALID_PASSWORD_FOR_APP);

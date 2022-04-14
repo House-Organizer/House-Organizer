@@ -125,30 +125,40 @@ public class FirebaseTestsHelper {
      * It is assumed no user is logged in
      * Upon return the user has been added but is not logged in
      */
-    protected static void createFirebaseTestUserWithCredentials(String email, String pwd)
-            throws ExecutionException, InterruptedException {
+    protected static void createFirebaseTestUserWithCredentials(String email, String pwd) {
+
         Task<AuthResult> t = FirebaseAuth.getInstance().createUserWithEmailAndPassword(email, pwd);
-        Tasks.await(t);
+        try {
+            Tasks.await(t);
+        } catch (ExecutionException | InterruptedException e) {
+            System.err.println("Error creating firebase test user.");
+        }
         FirebaseAuth.getInstance().signOut();
     }
 
     /**
      * This method deletes a user, it is assumed the user is logged in.
      */
-    protected static void deleteTestUser()
-            throws ExecutionException, InterruptedException {
-        Task<Void> t2 = Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser()).delete();
-        Tasks.await(t2);
+    protected static void deleteTestUser() {
+        Task<Void> t = Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser()).delete();
+        try {
+            Tasks.await(t);
+        } catch (ExecutionException | InterruptedException e) {
+            System.err.println("Error deleting firebase test user.");
+        }
     }
 
     /**
      * This method will log in a user given an email and a password
      * It is assumed the user exists within the authentication database
      */
-    protected static void signInTestUserWithCredentials(String email, String pwd)
-            throws ExecutionException, InterruptedException {
+    protected static void signInTestUserWithCredentials(String email, String pwd) {
         Task<AuthResult> t = FirebaseAuth.getInstance().signInWithEmailAndPassword(email, pwd);
-        Tasks.await(t);
+        try {
+            Tasks.await(t);
+        } catch (ExecutionException | InterruptedException e) {
+            System.err.println("Error signing in firebase test user.");
+        }
     }
 
     /**
