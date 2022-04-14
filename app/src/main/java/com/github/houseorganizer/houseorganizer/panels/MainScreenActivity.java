@@ -26,6 +26,7 @@ import com.github.houseorganizer.houseorganizer.shop.FirestoreShopList;
 import com.github.houseorganizer.houseorganizer.shop.ShopItem;
 import com.github.houseorganizer.houseorganizer.shop.ShopList;
 import com.github.houseorganizer.houseorganizer.shop.ShopListAdapter;
+import com.github.houseorganizer.houseorganizer.shop.ShopListView;
 import com.github.houseorganizer.houseorganizer.task.TaskList;
 import com.github.houseorganizer.houseorganizer.task.TaskListAdapter;
 import com.github.houseorganizer.houseorganizer.task.TaskView;
@@ -39,6 +40,7 @@ import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
@@ -98,17 +100,27 @@ public class MainScreenActivity extends AppCompatActivity {
         initializeGroceriesList();
     }
 
-    private void initializeGroceriesList(){
-        if(currentHouse == null)return;
+    private Task<ShopListAdapter> initializeGroceriesList(){
+        if(currentHouse == null)return Tasks.forCanceled();
         CollectionReference root = db.collection("shop_lists");
-        root.whereEqualTo("household", currentHouse).get()
-        .addOnCompleteListener(r -> {
+        return root.whereEqualTo("household", currentHouse).get()
+        .continueWithTask(r -> {
+            // If empty -> create new house
             if(r.getResult().getDocuments().size() == 0){
                 shopList = new FirestoreShopList(currentHouse);
-                FirestoreShopList.storeNewShopList(root, new ShopList(), currentHouse)
-                        .addOnCompleteListener(t -> shopList.setOnlineReference(t.getResult()));
+                return FirestoreShopList.storeNewShopList(root, new ShopList(), currentHouse)
+                        .continueWith(t -> {
+                            shopList.setOnlineReference(t.getResult());
+                            shopListAdapter = new ShopListAdapter(shopList);
+                            return shopListAdapter;
+                        });
+            // If not empty then retrieve the existing shopList
             }else{
-                FirestoreShopList.retrieveShopList(root, currentHouse).addOnCompleteListener(t -> shopList = t.getResult());
+                return FirestoreShopList.retrieveShopList(root, currentHouse).continueWith(t -> {
+                    shopList = t.getResult();
+                    shopListAdapter = new ShopListAdapter(shopList);
+                    return shopListAdapter;
+                });
             }
         });
     }
@@ -224,9 +236,7 @@ public class MainScreenActivity extends AppCompatActivity {
         }
         else{
             if(shopList != null){
-                shopList.addItem(new ShopItem("Lemon", 2, "t"));
-                shopList.updateItems();
-                shopListAdapter.notifyItemInserted(shopList.size()-1);
+                ShopListView.addItem(this, shopList, shopListAdapter);
             }
         }
     }
@@ -240,13 +250,11 @@ public class MainScreenActivity extends AppCompatActivity {
                 break;
             case GROCERY_LIST:
                 if(shopList == null) {
-                    initializeGroceriesList();
-                    listView = ListFragmentView.CHORES_LIST;
+                    initializeGroceriesList()
+                            .addOnCompleteListener(t -> ShopListView.setUpShopListView(this, shopListAdapter));
                     return;
                 }
-                RecyclerView rView = findViewById(R.id.task_list);
-                rView.setAdapter(shopListAdapter);
-                rView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
+                ShopListView.setUpShopListView(this, shopListAdapter);
                 break;
         }
     }
