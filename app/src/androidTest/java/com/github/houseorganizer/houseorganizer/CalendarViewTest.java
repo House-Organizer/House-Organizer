@@ -115,16 +115,11 @@ public class CalendarViewTest {
                         db.collection("events").document(document.getId()).delete();
                     }
                 });
-        // Reset the attachment that was removed
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        baos.write(1);
-        UploadTask task4 = storage.getReference().child("to_delete_attachment.jpg").putBytes(baos.toByteArray());
-        Task<Void> task5 = storage.getReference().child("has_attachment.jpg").delete();
+        Task<Void> task4 = storage.getReference().child("has_attachment.jpg").delete();
         Tasks.await(task1);
         Tasks.await(task2);
         Tasks.await(task3);
         Tasks.await(task4);
-        Tasks.await(task5);
         auth.signOut();
     }
 
