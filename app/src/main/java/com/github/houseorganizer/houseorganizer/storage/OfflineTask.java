@@ -39,9 +39,10 @@ public class OfflineTask{
     public boolean equals(Object o) {
         if (o == null || getClass() != o.getClass()){
             return false;
+        } else {
+            OfflineTask that = (OfflineTask) o;
+            return Objects.equals(name, that.name) && Objects.equals(description, that.description) && Objects.equals(assignees, that.assignees);
         }
-        OfflineTask that = (OfflineTask) o;
-        return Objects.equals(name, that.name) && Objects.equals(description, that.description) && Objects.equals(assignees, that.assignees);
     }
 
     @Override
