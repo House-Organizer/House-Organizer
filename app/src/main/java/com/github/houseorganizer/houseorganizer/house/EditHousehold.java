@@ -57,13 +57,8 @@ public class EditHousehold extends AppCompatActivity {
                 });
     }
 
-    private boolean verifyEmailHasCorrectFormat(String s) {
-        String emailFormat = "[a-zA-Z0-9._-]+@[a-z]+\\.+[a-z]+";
-        return s.matches(emailFormat);
-    }
-
     private boolean verifyEmail(String email, View view) {
-        if (!verifyEmailHasCorrectFormat(email)) {
+        if (!Verifications.verifyEmailHasCorrectFormat(email)) {
             Toast.makeText(getApplicationContext(), view.getContext().getString(R.string.invalid_email), Toast.LENGTH_SHORT).show();
             return false;
         }
