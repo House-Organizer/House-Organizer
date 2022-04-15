@@ -136,10 +136,8 @@ public class LocalStorage {
     }
 
     public static Map<String, ArrayList<OfflineTask>> retrieveTaskListOffline(Context context) {
-        HashMap<String, String> households_retrieved = retrieveHouseholdsOffline(context);
-
         Map<String, ArrayList<OfflineTask>> mapHouseholdIdToTasks = new HashMap<>();
-        for (String household : households_retrieved.keySet()) {
+        for (String household : retrieveHouseholdsOffline(context).keySet()) {
             String householdsTasksString = retrieveTxtFromFile(context,
                     OFFLINE_STORAGE_TASKS + household + OFFLINE_STORAGE_EXTENSION);
             Type type = TypeToken.getParameterized(ArrayList.class, OfflineTask.class).getType();
