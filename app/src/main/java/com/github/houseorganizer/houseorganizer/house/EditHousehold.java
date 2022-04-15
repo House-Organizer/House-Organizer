@@ -32,7 +32,6 @@ public class EditHousehold extends AppCompatActivity {
     private FirebaseAuth mAuth;
     private String householdId;
     private DocumentReference currentHousehold;
-    private RecyclerView usersView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,25 +39,20 @@ public class EditHousehold extends AppCompatActivity {
         setContentView(R.layout.activity_edit_household);
 
         mAuth = FirebaseAuth.getInstance();
-
-        Intent intent = getIntent();
-
         firestore = FirebaseFirestore.getInstance();
 
+        Intent intent = getIntent();
         this.householdId = intent.getStringExtra(HouseSelectionActivity.HOUSEHOLD_TO_EDIT);
         this.currentHousehold = firestore.collection("households").document(householdId);
 
-        firestore.collection("households")
-                .document(householdId)
-                .get()
+        firestore.collection("households").document(householdId).get()
                 .addOnCompleteListener(task -> {
                     DocumentSnapshot document = task.getResult();
                     Map<String, Object> householdData = document.getData();
                     if (householdData != null) {
                         TextView tv = findViewById(R.id.edit_household_name);
-                        tv.setText(householdData
-                                .getOrDefault("name", "No house name")
-                                .toString()); //Ignore IDE null warning as check is done above
+                        // Ignore IDE null warning as check is done above
+                        tv.setText(householdData.getOrDefault("name", "No house name").toString());
                     }
                 });
     }
@@ -70,9 +64,7 @@ public class EditHousehold extends AppCompatActivity {
 
     private boolean verifyEmail(String email, View view) {
         if (!verifyEmailHasCorrectFormat(email)) {
-            Toast.makeText(getApplicationContext(),
-                    view.getContext().getString(R.string.invalid_email),
-                    Toast.LENGTH_SHORT).show();
+            Toast.makeText(getApplicationContext(), view.getContext().getString(R.string.invalid_email), Toast.LENGTH_SHORT).show();
             return false;
         }
         return true;
@@ -95,9 +87,8 @@ public class EditHousehold extends AppCompatActivity {
                 .addOnCompleteListener(task -> {
                     List<String> signInMethods = task.getResult().getSignInMethods();
 
-                    if (signInMethods != null && signInMethods.size() > 0) {
+                    if (signInMethods != null && signInMethods.size() > 0)
                         addUserIfNotPresent(email, view);
-                    }
                 });
     }
 
@@ -245,29 +236,23 @@ public class EditHousehold extends AppCompatActivity {
                 .get().addOnCompleteListener(task -> {
             if (task.isSuccessful()) {
                 for (QueryDocumentSnapshot document : task.getResult()) {
-                    firestore.collection("events").document(document.getId())
-                            .delete()
+                    firestore.collection("events").document(document.getId()).delete()
                             .addOnFailureListener(new OnFailureListener() {
                                 @Override
                                 public void onFailure(@NonNull Exception e) {
-                                    Toast.makeText(getApplicationContext(),
-                                            view.getContext().getString(R.string.remove_calendar_failure),
-                                            Toast.LENGTH_SHORT).show();
+                                    Toast.makeText(getApplicationContext(), view.getContext().getString(R.string.remove_calendar_failure), Toast.LENGTH_SHORT).show();
                                 }
                             });
                 }
 
             } else {
-                Toast.makeText(getApplicationContext(),
-                        view.getContext().getString(R.string.remove_calendar_failure),
-                        Toast.LENGTH_SHORT).show();
+                Toast.makeText(getApplicationContext(), view.getContext().getString(R.string.remove_calendar_failure), Toast.LENGTH_SHORT).show();
             }
         });
     }
 
     public void deleteHousehold(View view) {
-        firestore.collection("households").document(householdId)
-                .delete()
+        firestore.collection("households").document(householdId).delete()
                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
                     public void onSuccess(Void aVoid) {
@@ -282,9 +267,7 @@ public class EditHousehold extends AppCompatActivity {
                 .addOnFailureListener(new OnFailureListener() {
                     @Override
                     public void onFailure(@NonNull Exception e) {
-                        Toast.makeText(getApplicationContext(),
-                                view.getContext().getString(R.string.remove_household_failure),
-                                Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getApplicationContext(), view.getContext().getString(R.string.remove_household_failure), Toast.LENGTH_SHORT).show();
                     }
                 });
     }
