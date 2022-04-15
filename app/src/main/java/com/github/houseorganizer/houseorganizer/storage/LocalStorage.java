@@ -108,8 +108,9 @@ public class LocalStorage {
     }
 
     public static Map<String, ArrayList<OfflineEvent>> retrieveEventsOffline(Context context) {
-        Map<String, ArrayList<OfflineEvent>> mapHouseholdIdToEvents = new HashMap<>();
         HashMap<String, String> households = retrieveHouseholdsOffline(context);
+
+        Map<String, ArrayList<OfflineEvent>> mapHouseholdIdToEvents = new HashMap<>();
         for (String household : households.keySet()) {
             String householdsEventsString = retrieveTxtFromFile(context,
                     OFFLINE_STORAGE_CALENDAR + household + OFFLINE_STORAGE_EXTENSION);
@@ -121,8 +122,9 @@ public class LocalStorage {
     }
 
     public static Map<String, ArrayList<OfflineShopItem>> retrieveGroceriesOffline(Context context) {
-        HashMap<String, String> households = retrieveHouseholdsOffline(context);
         Map<String, ArrayList<OfflineShopItem>> mapHouseholdIdToGroceries = new HashMap<>();
+
+        HashMap<String, String> households = retrieveHouseholdsOffline(context);
         for (String household : households.keySet()) {
             String householdsGroceriesString = retrieveTxtFromFile(context,
                     OFFLINE_STORAGE_GROCERIES + household + OFFLINE_STORAGE_EXTENSION);
@@ -134,9 +136,10 @@ public class LocalStorage {
     }
 
     public static Map<String, ArrayList<OfflineTask>> retrieveTaskListOffline(Context context) {
+        HashMap<String, String> households_retrieved = retrieveHouseholdsOffline(context);
+
         Map<String, ArrayList<OfflineTask>> mapHouseholdIdToTasks = new HashMap<>();
-        HashMap<String, String> households = retrieveHouseholdsOffline(context);
-        for (String household : households.keySet()) {
+        for (String household : households_retrieved.keySet()) {
             String householdsTasksString = retrieveTxtFromFile(context,
                     OFFLINE_STORAGE_TASKS + household + OFFLINE_STORAGE_EXTENSION);
             Type type = TypeToken.getParameterized(ArrayList.class, OfflineTask.class).getType();
