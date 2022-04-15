@@ -53,8 +53,13 @@ public class OfflineEvent{
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o){
+            return true;
+        } else {
+            if (o == null || getClass() != o.getClass()){
+                return false;
+            }
+        }
         OfflineEvent that = (OfflineEvent) o;
         return duration == that.duration && Objects.equals(title, that.title) && Objects.equals(description, that.description) && Objects.equals(start, that.start) && Objects.equals(id, that.id);
     }
