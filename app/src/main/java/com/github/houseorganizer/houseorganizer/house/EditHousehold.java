@@ -10,7 +10,6 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.recyclerview.widget.RecyclerView;
 
 import com.github.houseorganizer.houseorganizer.R;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -228,13 +227,12 @@ public class EditHousehold extends AppCompatActivity {
     public void deleteCalendar(View view) {
         firestore.collection("events")
                 .whereEqualTo("household", currentHousehold)
-                .get().addOnCompleteListener(task -> {
-            if (task.isSuccessful()) {
-                for (QueryDocumentSnapshot document : task.getResult()) {
+                .get().addOnCompleteListener(task1 -> {
+            if (task1.isSuccessful()) {
+                for (QueryDocumentSnapshot document : task1.getResult()) {
                     firestore.collection("events").document(document.getId()).delete()
-                            .addOnFailureListener(new OnFailureListener() {
-                                @Override
-                                public void onFailure(@NonNull Exception e) {
+                            .addOnCompleteListener(task2 -> {
+                                if(!task2.isSuccessful()) {
                                     Toast.makeText(getApplicationContext(), view.getContext().getString(R.string.remove_calendar_failure), Toast.LENGTH_SHORT).show();
                                 }
                             });
@@ -248,20 +246,16 @@ public class EditHousehold extends AppCompatActivity {
 
     public void deleteHousehold(View view) {
         firestore.collection("households").document(householdId).delete()
-                .addOnSuccessListener(new OnSuccessListener<Void>() {
-                    @Override
-                    public void onSuccess(Void aVoid) {
+                .addOnCompleteListener(task -> {
+                    if(task.isSuccessful()) {
                         Toast.makeText(getApplicationContext(),
                                 view.getContext().getString(R.string.remove_household_success),
                                 Toast.LENGTH_SHORT).show();
 
                         Intent intent = new Intent(getApplicationContext(), HouseSelectionActivity.class);
                         startActivity(intent);
-                    }
-                })
-                .addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
+
+                    } else {
                         Toast.makeText(getApplicationContext(), view.getContext().getString(R.string.remove_household_failure), Toast.LENGTH_SHORT).show();
                     }
                 });
