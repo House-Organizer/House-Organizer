@@ -46,12 +46,8 @@ public class OfflineShopItem{
 
     @Override
     public boolean equals(Object o) {
-        if (this == o){
-            return true;
-        } else {
-            if (o == null || getClass() != o.getClass()){
-                return false;
-            }
+        if (o == null || getClass() != o.getClass()){
+            return false;
         }
         OfflineShopItem that = (OfflineShopItem) o;
         return quantity == that.quantity && isPickedUp == that.isPickedUp && Objects.equals(name, that.name) && Objects.equals(unit, that.unit);
