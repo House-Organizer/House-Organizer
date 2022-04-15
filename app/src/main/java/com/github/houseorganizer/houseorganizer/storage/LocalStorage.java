@@ -44,7 +44,7 @@ public class LocalStorage {
 
     public static final String OFFLINE_STORAGE_EXTENSION = "_.json";
 
-    public static boolean writeTxtToFile(Context context, String filename, String content){
+    public static boolean writeTxtToFile(Context context, String filename, String content) {
         File path = context.getFilesDir();
         try {
             FileOutputStream writer = new FileOutputStream(new File(path, filename));
@@ -56,7 +56,7 @@ public class LocalStorage {
         }
     }
 
-    public static void clearOfflineStorage(Context context){
+    public static void clearOfflineStorage(Context context) {
         File directory = context.getFilesDir();
         if (directory.isDirectory()) {
             for (File child : directory.listFiles()) {
@@ -65,15 +65,15 @@ public class LocalStorage {
         }
     }
 
-    private static void clearRecursively(File fileOrDirectory){
+    private static void clearRecursively(File fileOrDirectory) {
         if (fileOrDirectory.isDirectory())
-            for (File child : fileOrDirectory.listFiles()){
+            for (File child : fileOrDirectory.listFiles()) {
                 clearRecursively(child);
             }
         fileOrDirectory.delete();
     }
 
-    public static String retrieveTxtFromFile(Context context, String filename){
+    public static String retrieveTxtFromFile(Context context, String filename) {
         try {
             FileInputStream fis = context.openFileInput(filename);
             InputStreamReader isr = new InputStreamReader(fis);
@@ -89,7 +89,7 @@ public class LocalStorage {
         }
     }
 
-    public static HashMap<String, String> retrieveHouseholdsOffline(Context context){
+    public static HashMap<String, String> retrieveHouseholdsOffline(Context context) {
         String householdsString = retrieveTxtFromFile(context, OFFLINE_STORAGE_HOUSEHOLDS + OFFLINE_STORAGE_EXTENSION);
         Type type = TypeToken.getParameterized(HashMap.class, String.class, String.class).getType();
         return new Gson().fromJson(householdsString, type);
@@ -107,70 +107,70 @@ public class LocalStorage {
                 new Gson().toJson(setOfHouseholds));
     }
 
-    public static Map<String, ArrayList<OfflineEvent>> retrieveEventsOffline(Context context){
+    public static Map<String, ArrayList<OfflineEvent>> retrieveEventsOffline(Context context) {
         HashMap<String, String> households = retrieveHouseholdsOffline(context);
 
         Map<String, ArrayList<OfflineEvent>> mapHouseholdIdToEvents = new HashMap<>();
-        for(String household : households.keySet()){
+        for (String household : households.keySet()) {
             String householdsEventsString = retrieveTxtFromFile(context,
-                    OFFLINE_STORAGE_CALENDAR + household +  OFFLINE_STORAGE_EXTENSION);
-            Type type = TypeToken.getParameterized(ArrayList.class, LocalStorage.OfflineEvent.class).getType();
-            ArrayList<LocalStorage.OfflineEvent> householdsEvents = new Gson().fromJson(householdsEventsString, type);
+                    OFFLINE_STORAGE_CALENDAR + household + OFFLINE_STORAGE_EXTENSION);
+            Type type = TypeToken.getParameterized(ArrayList.class, OfflineEvent.class).getType();
+            ArrayList<OfflineEvent> householdsEvents = new Gson().fromJson(householdsEventsString, type);
             mapHouseholdIdToEvents.put(household, householdsEvents);
         }
         return mapHouseholdIdToEvents;
     }
 
-    public static Map<String, ArrayList<OfflineShopItem>> retrieveGroceriesOffline(Context context){
+    public static Map<String, ArrayList<OfflineShopItem>> retrieveGroceriesOffline(Context context) {
         HashMap<String, String> households = retrieveHouseholdsOffline(context);
 
         Map<String, ArrayList<OfflineShopItem>> mapHouseholdIdToGroceries = new HashMap<>();
-        for(String household : households.keySet()){
+        for (String household : households.keySet()) {
             String householdsGroceriesString = retrieveTxtFromFile(context,
-                    OFFLINE_STORAGE_GROCERIES + household +  OFFLINE_STORAGE_EXTENSION);
-            Type type = TypeToken.getParameterized(ArrayList.class, LocalStorage.OfflineShopItem.class).getType();
-            ArrayList<LocalStorage.OfflineShopItem> householdsGroceries = new Gson().fromJson(householdsGroceriesString, type);
+                    OFFLINE_STORAGE_GROCERIES + household + OFFLINE_STORAGE_EXTENSION);
+            Type type = TypeToken.getParameterized(ArrayList.class, OfflineShopItem.class).getType();
+            ArrayList<OfflineShopItem> householdsGroceries = new Gson().fromJson(householdsGroceriesString, type);
             mapHouseholdIdToGroceries.put(household, householdsGroceries);
         }
         return mapHouseholdIdToGroceries;
     }
 
-    public static Map<String, ArrayList<OfflineTask>> retrieveTaskListOffline(Context context){
+    public static Map<String, ArrayList<OfflineTask>> retrieveTaskListOffline(Context context) {
         HashMap<String, String> households = retrieveHouseholdsOffline(context);
 
         Map<String, ArrayList<OfflineTask>> mapHouseholdIdToTasks = new HashMap<>();
-        for(String household : households.keySet()){
+        for (String household : households.keySet()) {
             String householdsTasksString = retrieveTxtFromFile(context,
-                    OFFLINE_STORAGE_TASKS + household +  OFFLINE_STORAGE_EXTENSION);
-            Type type = TypeToken.getParameterized(ArrayList.class, LocalStorage.OfflineTask.class).getType();
-            ArrayList<LocalStorage.OfflineTask> householdsTasks = new Gson().fromJson(householdsTasksString, type);
+                    OFFLINE_STORAGE_TASKS + household + OFFLINE_STORAGE_EXTENSION);
+            Type type = TypeToken.getParameterized(ArrayList.class, OfflineTask.class).getType();
+            ArrayList<OfflineTask> householdsTasks = new Gson().fromJson(householdsTasksString, type);
             mapHouseholdIdToTasks.put(household, householdsTasks);
         }
         return mapHouseholdIdToTasks;
     }
 
-    public static boolean pushEventsOffline(Context context, DocumentReference currentHouse, List<Calendar.Event> events){
-        ArrayList<LocalStorage.OfflineEvent> offlineEvents = new ArrayList<>();
-        for(Calendar.Event event : events){
+    public static boolean pushEventsOffline(Context context, DocumentReference currentHouse, List<Calendar.Event> events) {
+        ArrayList<OfflineEvent> offlineEvents = new ArrayList<>();
+        for (Calendar.Event event : events) {
             offlineEvents.add(new OfflineEvent(
                     event.getTitle(),
                     event.getDescription(),
                     event.getStart().toString(),
                     event.getDuration(),
                     event.getId()
-                    ));
+            ));
         }
         String house_id = "temp";
-        if(currentHouse != null){
+        if (currentHouse != null) {
             house_id = currentHouse.getId();
         }
         return writeTxtToFile(context, OFFLINE_STORAGE_CALENDAR + house_id + OFFLINE_STORAGE_EXTENSION,
                 new Gson().toJson(offlineEvents));
     }
 
-    public static boolean pushGroceriesOffline(Context context, DocumentReference currentHouse, List<ShopItem> items){
-        ArrayList<LocalStorage.OfflineShopItem> offlineShopItems = new ArrayList<>();
-        for(ShopItem item : items){
+    public static boolean pushGroceriesOffline(Context context, DocumentReference currentHouse, List<ShopItem> items) {
+        ArrayList<OfflineShopItem> offlineShopItems = new ArrayList<>();
+        for (ShopItem item : items) {
             offlineShopItems.add(new OfflineShopItem(
                     item.getName(),
                     item.getQuantity(),
@@ -179,16 +179,16 @@ public class LocalStorage {
             ));
         }
         String house_id = "temp";
-        if(currentHouse != null){
+        if (currentHouse != null) {
             house_id = currentHouse.getId();
         }
         return writeTxtToFile(context, OFFLINE_STORAGE_GROCERIES + house_id + OFFLINE_STORAGE_EXTENSION,
                 new Gson().toJson(offlineShopItems));
     }
 
-    public static boolean pushTaskListOffline(Context context, DocumentReference currentHouse, List<HTask> tasks){
-        ArrayList<LocalStorage.OfflineTask> offlineTasks = new ArrayList<>();
-        for(HTask task : tasks){
+    public static boolean pushTaskListOffline(Context context, DocumentReference currentHouse, List<HTask> tasks) {
+        ArrayList<OfflineTask> offlineTasks = new ArrayList<>();
+        for (HTask task : tasks) {
             offlineTasks.add(new OfflineTask( //TODO FIX ONCE TASK LIST IS FIXED
                     "TASKNAME",
                     "TAKSDESCRIPTION",
@@ -197,171 +197,10 @@ public class LocalStorage {
             break; //TODO FIX ONCE TASK LIST IS FIXED
         }
         String house_id = "temp";
-        if(currentHouse != null){
+        if (currentHouse != null) {
             house_id = currentHouse.getId();
         }
         return writeTxtToFile(context, OFFLINE_STORAGE_TASKS + house_id + OFFLINE_STORAGE_EXTENSION,
                 new Gson().toJson(offlineTasks));
-    }
-
-    public static class OfflineEvent{
-        private final String title;
-        private final String description;
-        private final String start;
-        private final long duration;
-        private final String id;
-
-        public OfflineEvent(String title, String description, String start, long duration, String id) {
-            this.title = title;
-            this.description = description;
-            this.start = start;
-            this.duration = duration;
-            this.id = id;
-        }
-
-        @NonNull
-        @Override
-        public String toString() {
-            return "OfflineEvent{" +
-                    "title='" + title + '\'' +
-                    ", description='" + description + '\'' +
-                    ", start='" + start + '\'' +
-                    ", duration='" + duration + '\'' +
-                    ", id='" + id + '\'' +
-                    '}';
-        }
-
-        public String getTitle() {
-            return title;
-        }
-
-        public String getDescription() {
-            return description;
-        }
-
-        public String getStart() {
-            return start;
-        }
-
-        public long getDuration() {
-            return duration;
-        }
-
-        public String getId() {
-            return id;
-        }
-
-        @Override
-        public boolean equals(Object o) {
-            if (this == o) return true;
-            if (o == null || getClass() != o.getClass()) return false;
-            OfflineEvent that = (OfflineEvent) o;
-            return duration == that.duration && Objects.equals(title, that.title) && Objects.equals(description, that.description) && Objects.equals(start, that.start) && Objects.equals(id, that.id);
-        }
-
-        @Override
-        public int hashCode() {
-            return Objects.hash(title, description, start, duration, id);
-        }
-    }
-
-    public static class OfflineShopItem{
-        private final String name;
-        private final int quantity;
-        private final String unit;
-        private final boolean isPickedUp;
-
-        public OfflineShopItem(String name, int quantity, String unit, boolean isPickedUp){
-            this.name = name;
-            this.quantity = quantity;
-            this.unit = unit;
-            this.isPickedUp = isPickedUp;
-        }
-
-        @NonNull
-        @Override
-        public String toString() {
-            return "OfflineShopItem{" +
-                    "name='" + name + '\'' +
-                    ", quantity=" + quantity +
-                    ", unit='" + unit + '\'' +
-                    ", isPickedUp=" + isPickedUp +
-                    '}';
-        }
-
-        public String getName() {
-            return name;
-        }
-
-        public int getQuantity() {
-            return quantity;
-        }
-
-        public String getUnit() {
-            return unit;
-        }
-
-        public boolean isPickedUp() {
-            return isPickedUp;
-        }
-
-        @Override
-        public boolean equals(Object o) {
-            if (this == o) return true;
-            if (o == null || getClass() != o.getClass()) return false;
-            OfflineShopItem that = (OfflineShopItem) o;
-            return quantity == that.quantity && isPickedUp == that.isPickedUp && Objects.equals(name, that.name) && Objects.equals(unit, that.unit);
-        }
-
-        @Override
-        public int hashCode() {
-            return Objects.hash(name, quantity, unit, isPickedUp);
-        }
-    }
-
-    public static class OfflineTask{
-        private final String name;
-        private final String description;
-        private final List<String> assignees;
-
-        public OfflineTask(String name, String description, List<String> assignees) {
-            this.name = name;
-            this.description = description;
-            this.assignees = assignees;
-        }
-
-        @Override
-        public String toString() {
-            return "OfflineTask{" +
-                    "name='" + name + '\'' +
-                    ", description='" + description + '\'' +
-                    ", assignees=" + assignees +
-                    '}';
-        }
-
-        public String getName() {
-            return name;
-        }
-
-        public String getDescription() {
-            return description;
-        }
-
-        public List<String> getAssignees() {
-            return assignees;
-        }
-
-        @Override
-        public boolean equals(Object o) {
-            if (this == o) return true;
-            if (o == null || getClass() != o.getClass()) return false;
-            OfflineTask that = (OfflineTask) o;
-            return Objects.equals(name, that.name) && Objects.equals(description, that.description) && Objects.equals(assignees, that.assignees);
-        }
-
-        @Override
-        public int hashCode() {
-            return Objects.hash(name, description, assignees);
-        }
     }
 }

@@ -14,6 +14,8 @@ import com.github.houseorganizer.houseorganizer.calendar.Calendar;
 import com.github.houseorganizer.houseorganizer.panels.InfoActivity;
 import com.github.houseorganizer.houseorganizer.shop.ShopItem;
 import com.github.houseorganizer.houseorganizer.storage.LocalStorage;
+import com.github.houseorganizer.houseorganizer.storage.OfflineEvent;
+import com.github.houseorganizer.houseorganizer.storage.OfflineShopItem;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
 
@@ -110,14 +112,14 @@ public class LocalStorageTest {
 
         LocalDateTime time = LocalDateTime.now();
         Calendar.Event event = new Calendar.Event("title","description", time, 1, "id");
-        LocalStorage.OfflineEvent offlineEvent = new LocalStorage.OfflineEvent("title","description", time.toString(), 1, "id");
+        OfflineEvent offlineEvent = new OfflineEvent("title","description", time.toString(), 1, "id");
 
         LocalStorage.pushHouseholdsOffline(cx, db, auth.getCurrentUser());
         assertTrue(LocalStorage.pushEventsOffline(cx, db
                 .collection("households")
                 .document("home_1"), Arrays.asList(event)));
 
-        Map<String, ArrayList<LocalStorage.OfflineEvent>> offlineEvents = LocalStorage.retrieveEventsOffline(cx);
+        Map<String, ArrayList<OfflineEvent>> offlineEvents = LocalStorage.retrieveEventsOffline(cx);
         assertEquals(offlineEvents.get("home_1"),Arrays.asList(offlineEvent));
     }
 
@@ -128,14 +130,14 @@ public class LocalStorageTest {
 
         LocalDateTime time = LocalDateTime.now();
         ShopItem shopItem = new ShopItem("name", 1, "unit");
-        LocalStorage.OfflineShopItem offlineShopItem = new LocalStorage.OfflineShopItem("name", 1, "unit", false);
+        OfflineShopItem offlineShopItem = new OfflineShopItem("name", 1, "unit", false);
 
         LocalStorage.pushHouseholdsOffline(cx, db, auth.getCurrentUser());
         assertTrue(LocalStorage.pushGroceriesOffline(cx, db
                 .collection("households")
                 .document("home_1"), Arrays.asList(shopItem)));
 
-        Map<String, ArrayList<LocalStorage.OfflineShopItem>> offlineShopItems = LocalStorage.retrieveGroceriesOffline(cx);
+        Map<String, ArrayList<OfflineShopItem>> offlineShopItems = LocalStorage.retrieveGroceriesOffline(cx);
         assertEquals(offlineShopItems.get("home_1"),Arrays.asList(offlineShopItem));
     }
 

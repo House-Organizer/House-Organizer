@@ -6,23 +6,24 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
-import com.github.houseorganizer.houseorganizer.storage.LocalStorage;
+import com.github.houseorganizer.houseorganizer.storage.OfflineEvent;
+import com.github.houseorganizer.houseorganizer.storage.OfflineShopItem;
+import com.github.houseorganizer.houseorganizer.storage.OfflineTask;
 
 import org.junit.Test;
 
 import java.util.Arrays;
-import java.util.List;
 
 public class LocalStorageUnitTest {
     @Test
     public void offlineEventBuilds(){
-        LocalStorage.OfflineEvent event = new LocalStorage.OfflineEvent("title", "description", "start", 1, "id");
+        OfflineEvent event = new OfflineEvent("title", "description", "start", 1, "id");
         assertThat(event, is(notNullValue()));
     }
 
     @Test
     public void offlineEventStringIsCorrect(){
-        LocalStorage.OfflineEvent event = new LocalStorage.OfflineEvent("title", "description", "start", 1, "id");
+        OfflineEvent event = new OfflineEvent("title", "description", "start", 1, "id");
         assertEquals(
                 "OfflineEvent{" +
                 "title='" + "title" + '\'' +
@@ -35,7 +36,7 @@ public class LocalStorageUnitTest {
 
     @Test
     public void offlineEventGettersGet(){
-        LocalStorage.OfflineEvent event = new LocalStorage.OfflineEvent("title", "description", "start", 1, "id");
+        OfflineEvent event = new OfflineEvent("title", "description", "start", 1, "id");
         assertEquals("title", event.getTitle());
         assertEquals("description", event.getDescription());
         assertEquals("start", event.getStart());
@@ -45,13 +46,13 @@ public class LocalStorageUnitTest {
 
     @Test
     public void offlineShopItemBuilds(){
-        LocalStorage.OfflineShopItem shopItem = new LocalStorage.OfflineShopItem("name",1, "unit", true);
+        OfflineShopItem shopItem = new OfflineShopItem("name",1, "unit", true);
                 assertThat(shopItem, is(notNullValue()));
     }
 
     @Test
     public void offlineShopItemStringIsCorrect(){
-        LocalStorage.OfflineShopItem shopItem = new LocalStorage.OfflineShopItem("name",1, "unit", true);
+        OfflineShopItem shopItem = new OfflineShopItem("name",1, "unit", true);
         assertEquals(
                 "OfflineShopItem{" +
                         "name='" + "name" + '\'' +
@@ -63,7 +64,7 @@ public class LocalStorageUnitTest {
 
     @Test
     public void offlineShopItemGettersGet(){
-        LocalStorage.OfflineShopItem shopItem = new LocalStorage.OfflineShopItem("name",1, "unit", true);
+        OfflineShopItem shopItem = new OfflineShopItem("name",1, "unit", true);
         assertEquals("name", shopItem.getName());
         assertEquals(1, shopItem.getQuantity());
         assertEquals("unit", shopItem.getUnit());
@@ -72,13 +73,13 @@ public class LocalStorageUnitTest {
 
     @Test
     public void offlineTaskBuilds(){
-        LocalStorage.OfflineTask task = new LocalStorage.OfflineTask("name", "description", Arrays.asList("user1", "user2"));
+        OfflineTask task = new OfflineTask("name", "description", Arrays.asList("user1", "user2"));
         assertThat(task, is(notNullValue()));
     }
 
     @Test
     public void offlineTaskStringIsCorrect(){
-        LocalStorage.OfflineTask task = new LocalStorage.OfflineTask("name", "description", Arrays.asList("user1", "user2"));
+        OfflineTask task = new OfflineTask("name", "description", Arrays.asList("user1", "user2"));
         assertEquals(
                 "OfflineTask{" +
                         "name='" + "name" + '\'' +
@@ -89,7 +90,7 @@ public class LocalStorageUnitTest {
 
     @Test
     public void offlineTaskGettersGet(){
-        LocalStorage.OfflineTask task = new LocalStorage.OfflineTask("name", "description", Arrays.asList("user1", "user2"));
+        OfflineTask task = new OfflineTask("name", "description", Arrays.asList("user1", "user2"));
         assertEquals("name", task.getName());
         assertEquals("description", task.getDescription());
         assertEquals(Arrays.asList("user1", "user2"), task.getAssignees());
