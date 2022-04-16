@@ -158,7 +158,6 @@ public class MainScreenActivity extends AppCompatActivity {
                 });
     }
 
-
     private void hideButtons() {
         findViewById(R.id.refresh_calendar).setVisibility(View.INVISIBLE);
         findViewById(R.id.calendar).setVisibility(View.INVISIBLE);
