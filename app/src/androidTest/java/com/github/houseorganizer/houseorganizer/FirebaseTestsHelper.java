@@ -202,6 +202,24 @@ public class FirebaseTestsHelper {
         return task.getResult().getData();
     }
 
+    protected static List<DocumentSnapshot> fetchHouseholdEvents(String houseName, FirebaseFirestore db) throws ExecutionException, InterruptedException {
+        Task<QuerySnapshot> task = db.collection("events").whereEqualTo("household", houseName).get();
+        Tasks.await(task);
+        return task.getResult().getDocuments();
+    }
+
+    protected static boolean householdExists(String houseName, FirebaseFirestore db) throws ExecutionException, InterruptedException {
+        Task<DocumentSnapshot> task = db.collection("households").document(houseName).get();
+        Tasks.await(task);
+        return task.getResult().exists();
+    }
+
+    protected static boolean eventExists(String event, FirebaseFirestore db) throws ExecutionException, InterruptedException {
+        Task<DocumentSnapshot> task = db.collection("events").document(event).get();
+        Tasks.await(task);
+        return task.getResult().exists();
+    }
+
     /**
      * This method will create a shopList on Firestore
      */
