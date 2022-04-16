@@ -214,7 +214,7 @@ public class FirebaseTestsHelper {
         return task.getResult().exists();
     }
 
-    protected static boolean EventExists(String event, FirebaseFirestore db) throws ExecutionException, InterruptedException {
+    protected static boolean eventExists(String event, FirebaseFirestore db) throws ExecutionException, InterruptedException {
         Task<DocumentSnapshot> task = db.collection("events").document(event).get();
         Tasks.await(task);
         return task.getResult().exists();
