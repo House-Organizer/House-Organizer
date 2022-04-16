@@ -3,6 +3,10 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="..\:/Users/flori/OneDrive/Documents/AAA_EPFL/BA6/Software DP/House-Organizer/app/src/main/res/layout/activity_main_screen.xml" value="0.25416666666666665" />
+        <entry key="..\:/Users/flori/OneDrive/Documents/AAA_EPFL/BA6/Software DP/House-Organizer/app/src/main/res/layout/event_creation.xml" value="0.25416666666666665" />
+        <entry key="..\:/Users/flori/OneDrive/Documents/AAA_EPFL/BA6/Software DP/House-Organizer/app/src/main/res/layout/shop_item_dialog.xml" value="0.264" />
+        <entry key="..\:/Users/flori/OneDrive/Documents/AAA_EPFL/BA6/Software DP/House-Organizer/app/src/main/res/layout/shoplist_row.xml" value="0.4" />
         <entry key="app/src/main/res/drawable-v24/ic_launcher_foreground.xml" value="0.2255" />
         <entry key="app/src/main/res/drawable/ic_launcher_background.xml" value="0.2255" />
         <entry key="app/src/main/res/layout/activity_greeting.xml" value="0.25416666666666665" />
