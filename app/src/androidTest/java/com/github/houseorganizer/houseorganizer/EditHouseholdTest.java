@@ -415,7 +415,7 @@ public class EditHouseholdTest {
         onView(withText("Yes")).perform(click());
 
         for (DocumentSnapshot snap: snaps) {
-            assertFalse(FirebaseTestsHelper.EventExists(snap.getId(), db));
+            assertFalse(FirebaseTestsHelper.eventExists(snap.getId(), db));
         }
     }
 }

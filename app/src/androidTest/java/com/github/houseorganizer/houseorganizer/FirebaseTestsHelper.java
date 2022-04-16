@@ -214,7 +214,7 @@ public class FirebaseTestsHelper {
         return task.getResult().exists();
     }
 
-    protected static boolean EventExists(String event, FirebaseFirestore db) throws ExecutionException, InterruptedException {
+    protected static boolean eventExists(String event, FirebaseFirestore db) throws ExecutionException, InterruptedException {
         Task<DocumentSnapshot> task = db.collection("events").document(event).get();
         Tasks.await(task);
         return task.getResult().exists();
@@ -361,6 +361,25 @@ public class FirebaseTestsHelper {
         createAttachments();
 
         signInTestUserWithCredentials(TEST_USERS_EMAILS[0], TEST_USERS_PWD[0]);
+
+        createFirebaseDoneFlag();
+    }
+
+    protected static void setUpFirebase_noHouseholds() throws ExecutionException, InterruptedException {
+        //This allows us to run tests without creating everything on firebase each test
+        Task<DocumentSnapshot> task = FirebaseFirestore.getInstance()
+                .collection("done_flag")
+                .document("done_flag")
+                .get();
+        Tasks.await(task);
+        Map<String, Object> result = task.getResult().getData();
+        if(result != null){
+            signInTestUserWithCredentials(TEST_USERS_EMAILS[7], TEST_USERS_PWD[7]);
+            return;
+        }
+
+        createFirebaseTestUserWithCredentials(TEST_USERS_EMAILS[7], TEST_USERS_PWD[7]);
+        signInTestUserWithCredentials(TEST_USERS_EMAILS[7], TEST_USERS_PWD[7]);
 
         createFirebaseDoneFlag();
     }

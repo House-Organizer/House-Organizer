@@ -9,16 +9,11 @@ import static androidx.test.espresso.matcher.ViewMatchers.isClickable;
 import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static androidx.test.espresso.matcher.ViewMatchers.isEnabled;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
-import static androidx.test.espresso.matcher.ViewMatchers.withText;
 
-import android.content.Intent;
-
-import androidx.test.core.app.ActivityScenario;
 import androidx.test.espresso.intent.Intents;
 import androidx.test.ext.junit.rules.ActivityScenarioRule;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 
-import com.github.houseorganizer.houseorganizer.house.CreateHouseholdActivity;
 import com.github.houseorganizer.houseorganizer.house.HouseSelectionActivity;
 import com.github.houseorganizer.houseorganizer.panels.MainScreenActivity;
 import com.github.houseorganizer.houseorganizer.panels.SettingsActivity;
@@ -50,9 +45,6 @@ public class MainScreenActivityTest {
 
         db = FirebaseFirestore.getInstance();
         auth = FirebaseAuth.getInstance();
-
-        auth.signOut();
-        FirebaseTestsHelper.signInTestUserWithCredentials(FirebaseTestsHelper.TEST_USERS_EMAILS[7], FirebaseTestsHelper.TEST_USERS_PWD[7]);
     }
 
     @AfterClass
@@ -157,17 +149,6 @@ public class MainScreenActivityTest {
     @Test
     public void cycleIsDisplayed() {
         onView(withId(R.id.calendar_view_change)).check(matches(isDisplayed()));
-    }
-
-    @Test
-    public void addDialog() throws ExecutionException, InterruptedException {
-        Intents.init();
-        onView(withText("Add household")).perform(click());
-        intended(hasComponent(CreateHouseholdActivity.class.getName()));
-        Intents.release();
-
-        auth.signOut();
-        FirebaseTestsHelper.signInTestUserWithCredentials(FirebaseTestsHelper.TEST_USERS_EMAILS[0], FirebaseTestsHelper.TEST_USERS_PWD[0]);
     }
 
     /* TODO: Move sign-out button tests in rightful test class; This button is no longer on MainScreen
