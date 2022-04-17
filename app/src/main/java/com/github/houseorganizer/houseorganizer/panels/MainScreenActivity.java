@@ -76,7 +76,6 @@ public class MainScreenActivity extends AppCompatActivity {
         calendarEvents.setLayoutManager(new GridLayoutManager(this, 1));
         findViewById(R.id.add_event).setOnClickListener(v -> calendarAdapter.showAddEventDialog( this, currentHouse, "addEvent:failureToAdd"));
         findViewById(R.id.new_task).setOnClickListener(v -> TaskView.addTask(db, taskList, taskListAdapter, listView, tlMetadata));
-        initializeTaskList();
         TaskView.recoverTaskList(this, taskList, taskListAdapter,
                 db.collection("task_lists").document("85IW3cYzxOo1YTWnNOQl"));
         BottomNavigationView menu = findViewById(R.id.nav_bar);
@@ -155,6 +154,7 @@ public class MainScreenActivity extends AppCompatActivity {
                             }
                         }
                         calendarAdapter.refreshCalendarView(this, currentHouse, "refreshCalendar:failureToRefresh");
+                        initializeTaskList();
                     } else
                         logAndToast(this.toString(), "loadHousehold:failure", task.getException(),
                                 getApplicationContext(), "Could not get a house.");
