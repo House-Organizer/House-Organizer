@@ -43,6 +43,8 @@ android {
 }
 
 dependencies {
+    // JSon library for local storage
+    implementation 'com.google.code.gson:gson:2.9.0'
 
     // FirebaseUI for Cloud Firestore
     implementation 'com.firebaseui:firebase-ui-firestore:8.0.0'

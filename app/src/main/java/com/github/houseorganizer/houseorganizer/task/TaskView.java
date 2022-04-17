@@ -18,14 +18,15 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.github.houseorganizer.houseorganizer.R;
 import com.github.houseorganizer.houseorganizer.panels.MainScreenActivity;
 import com.github.houseorganizer.houseorganizer.util.BiViewHolder;
+
 import com.google.firebase.firestore.DocumentReference;
-import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.function.Consumer;
 
 public final class TaskView {
@@ -63,29 +64,28 @@ public final class TaskView {
     }
 
     /* Used in MainScreenActivity */
-    public static void recoverTaskList(AppCompatActivity parent, TaskList taskList, TaskListAdapter taskListAdapter, DocumentReference taskListRoot) {
-        taskListRoot.get().addOnCompleteListener(task -> {
+    public static void recoverTaskList(AppCompatActivity parent, TaskList taskList, TaskListAdapter taskListAdapter, DocumentReference tlMetadata) {
+        tlMetadata.get().addOnCompleteListener(task -> {
             if (task.isSuccessful()) {
-                DocumentSnapshot document = task.getResult();
-                Map<String, Object> data = document.getData();
+                Map<String, Object> metadata = task.getResult().getData();
 
-                if(data != null)
-                    taskList.changeTitle((String)data.get("title"));
-                // todo: ownership: inferred, or read from DB?
+                if(metadata == null) return;
 
-                document.getReference()
-                        .collection("tasks")
-                        .get()
-                        .addOnCompleteListener(task2 -> {
-                            for (DocumentSnapshot docSnapshot : task2.getResult().getDocuments()) {
-                                Map<String, Object> taskData = Objects.requireNonNull(docSnapshot.getData());
-                                DocumentReference taskDocRef = docSnapshot.getReference();
+                taskList.changeTitle((String)metadata.get("title"));
 
-                                // We're adding a `FirestoreTask` now, and the in-app changes to
-                                // its title and description will be reflected in the database
-                                taskList.addTask(FirestoreTask.recoverTask(taskData, taskDocRef));
-                            }
-                        });
+                List<DocumentReference> taskPtrs = (ArrayList<DocumentReference>)
+                        metadata.getOrDefault("task-ptrs", new ArrayList<>());
+
+                assert taskPtrs != null;
+
+                // We're adding `FirestoreTask`s now, and the in-app changes to
+                // their title and/or description will be reflected in the database
+                taskPtrs.forEach(ptr -> ptr.get().addOnCompleteListener(task2 -> {
+                    if (task2.isSuccessful()) {
+                        Map<String, Object> taskData = task2.getResult().getData();
+                        taskList.addTask(FirestoreTask.recoverTask(taskData, ptr));
+                    }
+                }));
 
                 setUpTaskListView(parent, taskListAdapter);
             }
@@ -100,23 +100,42 @@ public final class TaskView {
 
     // Adds a task iff. the task list is in view
     public static void addTask(FirebaseFirestore db, TaskList taskList, TaskListAdapter taskListAdapter,
-                               MainScreenActivity.ListFragmentView listView) {
+                               MainScreenActivity.ListFragmentView listView, DocumentReference taskListDocRef) {
         if (listView != MainScreenActivity.ListFragmentView.CHORES_LIST) {
             return;
         }
 
-        db.collection("task_lists")
-                .document("85IW3cYzxOo1YTWnNOQl")
-                .collection("tasks")
-                .add(new HashMap<String, Object>())
+        db.collection("task_dump")
+                .add(new HashMap<>())
                 .addOnCompleteListener(task -> {
                     if (task.isSuccessful()) {
                         DocumentReference taskDocRef = task.getResult();
 
-                        taskList.addTask(new FirestoreTask(taskList.getOwner(), "", "", new ArrayList<>(), taskDocRef));
+                        taskList.addTask(new FirestoreTask(taskList.getOwner(), "Untitled task", "", new ArrayList<>(), taskDocRef));
                         taskListAdapter.notifyItemInserted(taskListAdapter.getItemCount()-1);
+
+                        addTaskPtrToMetadata(taskListDocRef, taskDocRef);
                     }
                 });
+    }
+
+    private static void addTaskPtrToMetadata(DocumentReference taskListDocRef, DocumentReference taskDocRef) {
+        taskListDocRef.get().addOnCompleteListener(task -> {
+            if(task.isSuccessful()) {
+                Map<String, Object> metadata = task.getResult().getData();
+                assert metadata != null;
+
+                List<DocumentReference> taskPtrs = (ArrayList<DocumentReference>)
+                        metadata.getOrDefault("task-ptrs", new ArrayList<>());
+
+                assert taskPtrs != null;
+                taskPtrs.add(taskDocRef);
+
+                metadata.put("task-ptrs", taskPtrs);
+
+                task.getResult().getReference().set(metadata);
+            }
+        });
     }
 
     /* Helper */

@@ -1,7 +1,5 @@
 package com.github.houseorganizer.houseorganizer.task;
 
-import com.github.houseorganizer.houseorganizer.user.User;
-
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -11,12 +9,13 @@ public class HTask {
     private String title, description;
     private final List<SubTask> subtasks;
 
-    private final List<User> assignees;
-    private final User owner;
+    /* UIDs */
+    private final List<String> assignees;
+    private final String owner;
 
     private LocalDateTime dueDate;
 
-    public HTask(User owner, String title, String description) {
+    public HTask(String owner, String title, String description) {
         this.title       = title;
         this.description = description;
         this.subtasks    = new ArrayList<>();
@@ -41,7 +40,7 @@ public class HTask {
         this.description = newDescription;
     }
 
-    public void assignTo(User assignee) {
+    public void assignTo(String assignee) {
         this.assignees.add(assignee);
     }
 
@@ -86,7 +85,7 @@ public class HTask {
         return description;
     }
 
-    public User getOwner() {
+    public String getOwner() {
         return owner;
     }
 
@@ -95,7 +94,7 @@ public class HTask {
     }
 
     /* [!] returns assignee list as-is s.t. adapters can modify it */
-    public List<User> getAssignees() {
+    public List<String> getAssignees() {
         return assignees;
     }
 

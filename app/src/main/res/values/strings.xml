@@ -16,7 +16,7 @@
     <!-- Edit Household -->
     <string name="user_name">User name</string>
     <string name="edit_button_description">Press to edit the household</string>
-    <string name="confirm_button">Confirm</string>
+    <string name="delete_button">Delete household</string>
     <string name="edit_title">Household</string>
     <string name="add_user">Add user</string>
     <string name="change_owner">Change owner</string>
@@ -29,6 +29,9 @@
     <string name="remove_user_success">Successfully removed user</string>
     <string name="remove_user">Remove user</string>
     <string name="cant_remove_yourself">You cannot remove yourself</string>
+    <string name="remove_calendar_failure">Cannot remove calendar</string>
+    <string name="remove_household_success">Successfully removed household</string>
+    <string name="remove_household_failure">Cannot remove household</string>
 
     <!-- Preference Titles -->
     <string name="general_header">General</string>

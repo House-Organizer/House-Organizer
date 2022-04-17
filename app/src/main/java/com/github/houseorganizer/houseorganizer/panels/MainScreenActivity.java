@@ -51,6 +51,7 @@ public class MainScreenActivity extends AppCompatActivity {
     private RecyclerView calendarEvents;
 
     private TaskList taskList;
+    private DocumentReference tlMetadata;
     private TaskListAdapter taskListAdapter;
     private ListFragmentView listView = ListFragmentView.CHORES_LIST;
     public enum ListFragmentView { CHORES_LIST, GROCERY_LIST }
@@ -105,8 +106,18 @@ public class MainScreenActivity extends AppCompatActivity {
         List<String> memberEmails = Arrays.asList("aindreias@houseorganizer.com", "sansive@houseorganizer.com",
                 "shau@reds.com", "oxydeas@houseorganizer.com");
 
-        this.taskList = new TaskList(currentUser, "My weekly todo", new ArrayList<>());
-        this.taskListAdapter = new TaskListAdapter(taskList, memberEmails);
+        db.collection("task_lists")
+                .whereEqualTo("hh-id", currentHouse.getId())
+                .get().addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        System.out.println(currentHouse.getId());
+                        QueryDocumentSnapshot qds = task.getResult().iterator().next();
+                        this.tlMetadata = db.collection("task_lists").document(qds.getId());
+                        this.taskList = new TaskList(currentUser.uid(), "My weekly todo", new ArrayList<>());
+                        this.taskListAdapter = new TaskListAdapter(taskList, memberEmails);
+                        TaskView.recoverTaskList(this, taskList, taskListAdapter, tlMetadata);
+                    }
+        });
     }
 
     @Override
@@ -119,10 +130,10 @@ public class MainScreenActivity extends AppCompatActivity {
         SharedPreferences sharedPreferences = getSharedPrefs(this);
         String householdId = sharedPreferences.getString(CURRENT_HOUSEHOLD, "");
 
-        loadHousehold(householdId);
+        loadHouseholdAndTaskList(householdId);
     }
 
-    private void loadHousehold(String householdId) {
+    private void loadHouseholdAndTaskList(String householdId) {
         db.collection("households").whereArrayContains("residents", Objects.requireNonNull(mUser.getEmail())).get().addOnCompleteListener(task -> {
                     if (task.isSuccessful()) {
                         ArrayList<String> households = new ArrayList<>();
@@ -149,7 +160,6 @@ public class MainScreenActivity extends AppCompatActivity {
                                 getApplicationContext(), "Could not get a house.");
                 });
     }
-
 
     private void hideButtons() {
         findViewById(R.id.calendar).setVisibility(View.INVISIBLE);

@@ -36,7 +36,7 @@ public class Calendar {
         return ret;
     }
 
-  
+
     public void setEvents(ArrayList<Event> events) {
         this.events = (ArrayList<Event>) events.clone();
     }

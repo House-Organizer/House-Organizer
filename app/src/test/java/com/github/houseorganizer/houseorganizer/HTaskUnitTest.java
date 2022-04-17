@@ -5,7 +5,6 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import com.github.houseorganizer.houseorganizer.task.HTask;
-import com.github.houseorganizer.houseorganizer.user.User;
 
 import org.junit.Test;
 
@@ -14,26 +13,8 @@ import java.util.List;
 
 
 public class HTaskUnitTest {
-    public static class DummyUser extends User {
-        private final String name, uid;
 
-        DummyUser(String name, String uid) {
-            this.name = name;
-            this.uid = uid;
-        }
-
-        @Override
-        public String name() {
-            return name;
-        }
-
-        @Override
-        public String uid() {
-            return uid;
-        }
-    }
-
-    public static final User NOBODY = new DummyUser("Nobody", "NOBODY");
+    public static final String NOBODY = "NOBODY";
 
     // Subtask tests
     @Test
@@ -65,7 +46,7 @@ public class HTaskUnitTest {
     public void taskConstructorWorks() {
         HTask t = new HTask(NOBODY, "Task 1", "stub description");
 
-        assertEquals(NOBODY.uid(), t.getOwner().uid());
+        assertEquals(NOBODY, t.getOwner());
         assertEquals("Task 1", t.getTitle());
         assertEquals("stub description", t.getDescription());
 
@@ -99,7 +80,7 @@ public class HTaskUnitTest {
         HTask t = new HTask(NOBODY, "Task 1", "stub description");
 
         t.assignTo(NOBODY);
-        assertEquals(NOBODY.uid(), t.getAssignees().get(0).uid());
+        assertEquals(NOBODY, t.getAssignees().get(0));
         assertTrue(t.hasAssignees());
     }
 
