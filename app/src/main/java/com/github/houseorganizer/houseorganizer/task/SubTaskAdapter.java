@@ -39,8 +39,8 @@ public final class SubTaskAdapter extends RecyclerView.Adapter<BiViewHolder<Butt
                     //parentTask.getSubTaskAt(position).markAsFinished();
                     parentTask.removeSubTask(position);
                     new AlertDialog.Builder(v.getContext())
-                            .setTitle("Congratulations!")
-                            .setMessage("You just completed a subtask. Keep it up!")
+                            .setTitle(R.string.task_completion_title)
+                            .setMessage(R.string.subtask_completion_desc)
                             .show();
 
                     notifyItemRemoved(position);
