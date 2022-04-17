@@ -152,18 +152,20 @@ public class MainScreenActivity extends AppCompatActivity {
                             if (!households.isEmpty()) {
                                 currentHouse = db.collection("households").document(households.get(0));
                                 saveData(households.get(0));
-                            } else {
-                                saveData("");
-                                hideButtons();
-                                addDialog();
-                            }
+                            } else
+                                noHousehold();
                         }
                         calendarAdapter.refreshCalendarView(this, currentHouse, "refreshCalendar:failureToRefresh");
                         initializeTaskList();
                     } else
-                        logAndToast(this.toString(), "loadHousehold:failure", task.getException(),
-                                getApplicationContext(), "Could not get a house.");
+                        logAndToast(this.toString(), "loadHousehold:failure", task.getException(), getApplicationContext(), "Could not get a house.");
                 });
+    }
+
+    private void noHousehold() {
+        saveData("");
+        hideButtons();
+        addDialog();
     }
 
     private void addDialog() {
