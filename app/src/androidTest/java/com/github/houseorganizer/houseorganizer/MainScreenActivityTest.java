@@ -15,6 +15,7 @@ import androidx.test.ext.junit.rules.ActivityScenarioRule;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 
 import com.github.houseorganizer.houseorganizer.house.HouseSelectionActivity;
+import com.github.houseorganizer.houseorganizer.panels.CalendarActivity;
 import com.github.houseorganizer.houseorganizer.panels.MainScreenActivity;
 import com.github.houseorganizer.houseorganizer.panels.SettingsActivity;
 import com.google.firebase.auth.FirebaseAuth;
@@ -122,16 +123,6 @@ public class MainScreenActivityTest {
 
     // Calendar view and its buttons
     @Test
-    public void refreshIsEnabled() {
-        onView(withId(R.id.refresh_calendar)).check(matches(isEnabled()));
-    }
-
-    @Test
-    public void refreshIsDisplayed() {
-        onView(withId(R.id.refresh_calendar)).check(matches(isDisplayed()));
-    }
-
-    @Test
     public void addEventIsEnabled() {
         onView(withId(R.id.add_event)).check(matches(isEnabled()));
     }
@@ -142,15 +133,12 @@ public class MainScreenActivityTest {
     }
 
     @Test
-    public void cycleIsEnabled() {
-        onView(withId(R.id.calendar_view_change)).check(matches(isEnabled()));
+    public void calendarMenuFiresIntent() {
+        Intents.init();
+        onView(withId(R.id.nav_bar_calendar)).perform(click());
+        intended(hasComponent(CalendarActivity.class.getName()));
+        Intents.release();
     }
-
-    @Test
-    public void cycleIsDisplayed() {
-        onView(withId(R.id.calendar_view_change)).check(matches(isDisplayed()));
-    }
-
     /* TODO: Move sign-out button tests in rightful test class; This button is no longer on MainScreen
     @Test
     public void signOutButtonIsDisplayedAndEnabled(){

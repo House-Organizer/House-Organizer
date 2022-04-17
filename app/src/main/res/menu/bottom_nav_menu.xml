@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/nav_bar_menu"
+        android:title="@string/main_screen"
+        android:icon="@drawable/ic_action_menu"/>
+
+    <item
+        android:id="@+id/nav_bar_cart"
+        android:title="@string/groceries"
+        android:icon="@drawable/ic_action_cart"/>
+
+    <item
+        android:id="@+id/nav_bar_task"
+        android:title="@string/tasks"
+        android:icon="@drawable/ic_action_task"/>
+
+    <item
+        android:id="@+id/nav_bar_calendar"
+        android:title="@string/calendar"
+        android:icon="@drawable/ic_action_calendar"/>
+
+
+</menu>
