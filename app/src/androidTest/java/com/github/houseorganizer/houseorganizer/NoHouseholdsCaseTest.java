@@ -43,10 +43,14 @@ public class NoHouseholdsCaseTest {
     public static void createMockFirebase() throws ExecutionException, InterruptedException {
         FirebaseTestsHelper.startAuthEmulator();
         FirebaseTestsHelper.startFirestoreEmulator();
-        FirebaseTestsHelper.setUpFirebase_noHouseholds();
+        FirebaseTestsHelper.setUpFirebase();
 
         db = FirebaseFirestore.getInstance();
         auth = FirebaseAuth.getInstance();
+
+        auth.signOut();
+        FirebaseTestsHelper.signInTestUserWithCredentials(
+                FirebaseTestsHelper.TEST_USERS_EMAILS[7], FirebaseTestsHelper.TEST_USERS_PWD[7]);
     }
 
     @AfterClass

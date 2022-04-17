@@ -316,25 +316,6 @@ public class FirebaseTestsHelper {
         createFirebaseDoneFlag();
     }
 
-    protected static void setUpFirebase_noHouseholds() throws ExecutionException, InterruptedException {
-        //This allows us to run tests without creating everything on firebase each test
-        Task<DocumentSnapshot> task = FirebaseFirestore.getInstance()
-                .collection("done_flag")
-                .document("done_flag")
-                .get();
-        Tasks.await(task);
-        Map<String, Object> result = task.getResult().getData();
-        if(result != null){
-            signInTestUserWithCredentials(TEST_USERS_EMAILS[7], TEST_USERS_PWD[7]);
-            return;
-        }
-
-        createFirebaseTestUserWithCredentials(TEST_USERS_EMAILS[7], TEST_USERS_PWD[7]);
-        signInTestUserWithCredentials(TEST_USERS_EMAILS[7], TEST_USERS_PWD[7]);
-
-        createFirebaseDoneFlag();
-    }
-
     // Task list loading & deleting
     private static Task<DocumentReference> storeTask(HTask task, CollectionReference taskDumpRef) {
         Map<String, Object> data = new HashMap<>();
