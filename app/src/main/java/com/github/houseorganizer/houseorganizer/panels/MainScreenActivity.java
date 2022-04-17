@@ -4,12 +4,15 @@ import static com.github.houseorganizer.houseorganizer.util.Util.getSharedPrefs;
 import static com.github.houseorganizer.houseorganizer.util.Util.getSharedPrefsEditor;
 import static com.github.houseorganizer.houseorganizer.util.Util.logAndToast;
 
+import android.annotation.SuppressLint;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.View;
 
 import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -18,6 +21,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.github.houseorganizer.houseorganizer.R;
 import com.github.houseorganizer.houseorganizer.calendar.Calendar;
 import com.github.houseorganizer.houseorganizer.calendar.EventsAdapter;
+import com.github.houseorganizer.houseorganizer.house.CreateHouseholdActivity;
 import com.github.houseorganizer.houseorganizer.house.HouseSelectionActivity;
 import com.github.houseorganizer.houseorganizer.shop.ShopItem;
 import com.github.houseorganizer.houseorganizer.shop.ShopList;
@@ -149,15 +153,38 @@ public class MainScreenActivity extends AppCompatActivity {
                                 currentHouse = db.collection("households").document(households.get(0));
                                 saveData(households.get(0));
                             } else {
-                                saveData(""); hideButtons();
+                                noHousehold();
+                                return;
                             }
                         }
                         calendarAdapter.refreshCalendarView(this, currentHouse, "refreshCalendar:failureToRefresh");
                         initializeTaskList();
                     } else
-                        logAndToast(this.toString(), "loadHousehold:failure", task.getException(),
-                                getApplicationContext(), "Could not get a house.");
+                        logAndToast(this.toString(), "loadHousehold:failure", task.getException(), getApplicationContext(), "Could not get a house.");
                 });
+    }
+
+    private void noHousehold() {
+        saveData("");
+        hideButtons();
+        addDialog();
+    }
+
+    private void addDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setMessage("You don't seem to have any house. " +
+                "Any administrator can add you to theirs or " +
+                "you can create your own house from the house selection menu.");
+        builder.setCancelable(true);
+        builder.setPositiveButton("Add household", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) {
+                Intent intent = new Intent(getApplicationContext(), CreateHouseholdActivity.class);
+                startActivity(intent);
+            }
+        });
+
+        AlertDialog alert = builder.create();
+        alert.show();
     }
 
     private void hideButtons() {
