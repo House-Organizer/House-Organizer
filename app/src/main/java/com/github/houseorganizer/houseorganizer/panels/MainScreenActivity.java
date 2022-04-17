@@ -149,8 +149,7 @@ public class MainScreenActivity extends AppCompatActivity {
                                 currentHouse = db.collection("households").document(households.get(0));
                                 saveData(households.get(0));
                             } else {
-                                saveData("");
-                                hideButtons();
+                                saveData(""); hideButtons();
                             }
                         }
                         calendarAdapter.refreshCalendarView(this, currentHouse, "refreshCalendar:failureToRefresh");
