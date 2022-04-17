@@ -37,7 +37,7 @@ public class FirestoreShopListTest {
         db = FirebaseFirestore.getInstance();
         Task<QuerySnapshot> t = db.collection("shop_lists").get();
         Tasks.await(t);
-        assertThat(t.getResult().getDocuments().size(), is(1));
+        assertThat(t.getResult().getDocuments().size() > 0, is(true));
         DocumentSnapshot snap = t.getResult().getDocuments().get(0);
         List<Map<String, Object>> map = (List<Map<String, Object>>) snap.get("items");
         assertThat(map.isEmpty(), is(false));
