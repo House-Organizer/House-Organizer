@@ -15,12 +15,12 @@ import com.github.houseorganizer.houseorganizer.R;
 public class ShopListAdapter extends RecyclerView.Adapter<ShopListAdapter.ItemsHolder> {
 
     public class ItemsHolder extends RecyclerView.ViewHolder{
+        public ImageButton cancel;
         public CheckBox checkBox;
-        public ImageButton cancelButton;
         public ItemsHolder(@NonNull View itemView) {
             super(itemView);
             checkBox = itemView.findViewById(R.id.item_checkbox);
-            cancelButton = itemView.findViewById(R.id.delete_item_button);
+            cancel = itemView.findViewById(R.id.delete_item_button);
         }
     }
 
@@ -58,7 +58,7 @@ public class ShopListAdapter extends RecyclerView.Adapter<ShopListAdapter.ItemsH
                     item.setPickedUp(pickedUp);
                     box.setChecked(pickedUp);
                 });
-        holder.cancelButton.setOnClickListener(v -> {
+        holder.cancel.setOnClickListener(v -> {
             shopList.removeItem(item);
             this.notifyItemRemoved(position);
         });
