@@ -28,8 +28,6 @@ public class CalendarUnitTest {
         calendar.rotateView();
         assertEquals(Calendar.CalendarView.MONTHLY, calendar.getView());
         calendar.rotateView();
-        assertEquals(Calendar.CalendarView.WEEKLY, calendar.getView());
-        calendar.rotateView();
         assertEquals(Calendar.CalendarView.UPCOMING, calendar.getView());
     }
 
