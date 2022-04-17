@@ -11,7 +11,6 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.View;
 
-import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
@@ -32,26 +31,23 @@ import com.github.houseorganizer.houseorganizer.task.TaskListAdapter;
 import com.github.houseorganizer.houseorganizer.task.TaskView;
 import com.github.houseorganizer.houseorganizer.user.DummyUser;
 import com.github.houseorganizer.houseorganizer.user.User;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
-import com.google.firebase.storage.FirebaseStorage;
-import com.google.firebase.storage.StorageReference;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
-@SuppressWarnings("unused")
 public class MainScreenActivity extends AppCompatActivity {
 
     public static final String CURRENT_HOUSEHOLD = "com.github.houseorganizer.houseorganizer.CURRENT_HOUSEHOLD";
 
-    private Calendar calendar;
-    private int calendarColumns = 1;
+    private final Calendar calendar = new Calendar();
     private FirebaseFirestore db;
     private FirebaseUser mUser;
     private DocumentReference currentHouse;
@@ -59,6 +55,7 @@ public class MainScreenActivity extends AppCompatActivity {
     private RecyclerView calendarEvents;
 
     private TaskList taskList;
+    private DocumentReference tlMetadata;
     private TaskListAdapter taskListAdapter;
     private ListFragmentView listView = ListFragmentView.CHORES_LIST;
     public enum ListFragmentView { CHORES_LIST, GROCERY_LIST }
@@ -66,7 +63,6 @@ public class MainScreenActivity extends AppCompatActivity {
     /* for setting up the task owner. Not related to firebase */
     private final User currentUser = new DummyUser("Test User", "0");
 
-    @SuppressLint("NotifyDataSetChanged")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -78,55 +74,69 @@ public class MainScreenActivity extends AppCompatActivity {
         loadData();
 
         calendarEvents = findViewById(R.id.calendar);
-        calendar = new Calendar();
-        calendarAdapter = new EventsAdapter(calendar, registerForEventImage());
+        calendarAdapter = new EventsAdapter(calendar,
+                registerForActivityResult(new ActivityResultContracts.GetContent(), uri -> calendarAdapter.pushAttachment(uri)));
         calendarEvents.setAdapter(calendarAdapter);
-        calendarEvents.setLayoutManager(new GridLayoutManager(this, calendarColumns));
-
-        findViewById(R.id.calendar_view_change).setOnClickListener(v -> calendar.rotateCalendarView(v, this, calendarAdapter, calendarEvents));
-        findViewById(R.id.add_event).setOnClickListener(this::addEvent);
-        findViewById(R.id.refresh_calendar).setOnClickListener(this::refreshCalendar);
-        findViewById(R.id.new_task).setOnClickListener(v -> TaskView.addTask(db, taskList, taskListAdapter, listView));
-
-        initializeTaskList();
+        calendarEvents.setLayoutManager(new GridLayoutManager(this, 1));
+        findViewById(R.id.add_event).setOnClickListener(v -> calendarAdapter.showAddEventDialog( this, currentHouse, "addEvent:failureToAdd"));
+        findViewById(R.id.new_task).setOnClickListener(v -> TaskView.addTask(db, taskList, taskListAdapter, listView, tlMetadata));
         TaskView.recoverTaskList(this, taskList, taskListAdapter,
                 db.collection("task_lists").document("85IW3cYzxOo1YTWnNOQl"));
+        BottomNavigationView menu = findViewById(R.id.nav_bar);
+        menu.setOnItemSelectedListener(l -> changeActivity(l.getTitle().toString()));
+    }
+
+    private boolean changeActivity(String buttonText) {
+        // Using the title and non resource strings here
+        // otherwise there is a warning that ids inside a switch are non final
+        switch(buttonText){
+            case "Calendar":
+                Intent intent = new Intent(this, CalendarActivity.class);
+                intent.putExtra("house", currentHouse.getId());
+                startActivity(intent);
+                break;
+            case "Groceries":
+                break;
+            case "Tasks":
+                break;
+            default:
+                break;
+        }
+        return true;
     }
 
     private void initializeTaskList() {
         List<String> memberEmails = Arrays.asList("aindreias@houseorganizer.com", "sansive@houseorganizer.com",
                 "shau@reds.com", "oxydeas@houseorganizer.com");
 
-        this.taskList = new TaskList(currentUser, "My weekly todo", new ArrayList<>());
-        this.taskListAdapter = new TaskListAdapter(taskList, memberEmails);
+        db.collection("task_lists")
+                .whereEqualTo("hh-id", currentHouse.getId())
+                .get().addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        System.out.println(currentHouse.getId());
+                        QueryDocumentSnapshot qds = task.getResult().iterator().next();
+                        this.tlMetadata = db.collection("task_lists").document(qds.getId());
+                        this.taskList = new TaskList(currentUser.uid(), "My weekly todo", new ArrayList<>());
+                        this.taskListAdapter = new TaskListAdapter(taskList, memberEmails);
+                        TaskView.recoverTaskList(this, taskList, taskListAdapter, tlMetadata);
+                    }
+        });
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        refreshCalendar(findViewById(R.id.refresh_calendar));
-    }
-
-    private ActivityResultLauncher<String> registerForEventImage() {
-        // Prepare the activity to retrieve an image from the gallery
-        return registerForActivityResult(new ActivityResultContracts.GetContent(),
-                uri -> {
-                    // Store the image on firebase storage
-                    FirebaseStorage storage = FirebaseStorage.getInstance();
-                    // this creates the reference to the picture
-                    StorageReference imageRef = storage.getReference().child(calendarAdapter.getEventToAttach() + ".jpg");
-                    imageRef.putFile(uri);
-                });
+        calendarAdapter.refreshCalendarView(this, currentHouse, "refreshCalendar:failureToRefresh");
     }
 
     private void loadData() {
         SharedPreferences sharedPreferences = getSharedPrefs(this);
         String householdId = sharedPreferences.getString(CURRENT_HOUSEHOLD, "");
 
-        loadHousehold(householdId);
+        loadHouseholdAndTaskList(householdId);
     }
 
-    private void loadHousehold(String householdId) {
+    private void loadHouseholdAndTaskList(String householdId) {
         db.collection("households").whereArrayContains("residents", Objects.requireNonNull(mUser.getEmail())).get().addOnCompleteListener(task -> {
                     if (task.isSuccessful()) {
                         ArrayList<String> households = new ArrayList<>();
@@ -148,9 +158,11 @@ public class MainScreenActivity extends AppCompatActivity {
                                 addDialog();
                             }
                         }
-                        refreshCalendar(findViewById(R.id.refresh_calendar));
+                        calendarAdapter.refreshCalendarView(this, currentHouse, "refreshCalendar:failureToRefresh");
+                        initializeTaskList();
                     } else
-                        logAndToast("MainScreenActivity", "loadHousehold:failure", task.getException(), getApplicationContext(), "Could not get a house.");
+                        logAndToast(this.toString(), "loadHousehold:failure", task.getException(),
+                                getApplicationContext(), "Could not get a house.");
                 });
     }
 
@@ -172,13 +184,12 @@ public class MainScreenActivity extends AppCompatActivity {
     }
 
     private void hideButtons() {
-        findViewById(R.id.refresh_calendar).setVisibility(View.INVISIBLE);
         findViewById(R.id.calendar).setVisibility(View.INVISIBLE);
         findViewById(R.id.add_event).setVisibility(View.INVISIBLE);
-        findViewById(R.id.calendar_view_change).setVisibility(View.INVISIBLE);
         findViewById(R.id.new_task).setVisibility(View.INVISIBLE);
         findViewById(R.id.list_view_change).setVisibility(View.INVISIBLE);
         findViewById(R.id.task_list).setVisibility(View.INVISIBLE);
+        findViewById(R.id.nav_bar).setVisibility(View.INVISIBLE);
     }
 
     private void saveData(String currentHouseId) {
@@ -188,17 +199,6 @@ public class MainScreenActivity extends AppCompatActivity {
         editor.apply();
     }
 
-    private void refreshCalendar(View v) {
-        calendar.refreshCalendar(findViewById(R.id.refresh_calendar), db, currentHouse, calendarAdapter, Arrays.asList("MainScreenActivity",
-                "refreshCalendar:failureToRefresh"));
-    }
-
-    private void addEvent(View v) {
-        calendar.addEvent(v, MainScreenActivity.this, db, currentHouse, calendarAdapter, Arrays.asList("MainScreenActivity",
-                "addEvent:failure"));
-    }
-
-    @SuppressWarnings("unused")
     public void houseButtonPressed(View view) {
         Intent intent = new Intent(this, HouseSelectionActivity.class);
         startActivity(intent);

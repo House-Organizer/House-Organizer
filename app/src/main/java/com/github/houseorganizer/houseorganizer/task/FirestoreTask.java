@@ -1,7 +1,5 @@
 package com.github.houseorganizer.houseorganizer.task;
 
-import com.github.houseorganizer.houseorganizer.user.DummyUser;
-import com.github.houseorganizer.houseorganizer.user.User;
 import com.google.android.gms.tasks.Tasks;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FieldValue;
@@ -16,7 +14,7 @@ import java.util.stream.Collectors;
 public final class FirestoreTask extends HTask {
     private final DocumentReference taskDocRef;
 
-    public FirestoreTask(User owner, String title, String description, List<SubTask> subTasks, DocumentReference taskDocRef) {
+    public FirestoreTask(String owner, String title, String description, List<SubTask> subTasks, DocumentReference taskDocRef) {
         super(owner, title, description);
 
         subTasks.forEach(super::addSubTask);
@@ -94,15 +92,20 @@ public final class FirestoreTask extends HTask {
     }
 
     public static HTask.SubTask recoverSubTask(Map<String, String> data) {
-        return new HTask.SubTask(data.get("title"));
+        SubTask st = new HTask.SubTask(data.get("title"));
+
+        if(data.get("status").equals("completed"))
+            st.markAsFinished();
+
+        return st;
     }
 
     public static FirestoreTask recoverTask(Map<String, Object> data, DocumentReference taskDocRef) {
         List<SubTask> subTasks = collectSubTasks(data);
-        List<User> assignees = collectAssignees(data);
+        List<String> assignees = collectAssignees(data);
 
-        FirestoreTask ft = new FirestoreTask(new DummyUser("Recovering-user", (String)data.get("owner")),
-                (String)data.get("title"), (String)data.get("description"), subTasks, taskDocRef);
+        FirestoreTask ft = new FirestoreTask((String)data.get("owner"), (String)data.get("title"),
+                (String)data.get("description"), subTasks, taskDocRef);
 
         ft.getAssignees().addAll(assignees);
 
@@ -122,14 +125,12 @@ public final class FirestoreTask extends HTask {
         return subTasks;
     }
 
-    private static List<User> collectAssignees(Map<String, Object> taskData) {
-        List<User> assignees = new ArrayList<>();
+    private static List<String> collectAssignees(Map<String, Object> taskData) {
+        List<String> assignees = new ArrayList<>();
         Object assigneeData = taskData.get("assignees");
 
         if (null != assigneeData) {
-            assignees = ((List<String>) assigneeData).stream()
-                    .map(assigneeEmail -> new DummyUser("Dummy", assigneeEmail))
-                    .collect(Collectors.toList());
+            assignees = (List<String>) assigneeData;
         }
 
         return assignees;

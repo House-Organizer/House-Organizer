@@ -8,7 +8,6 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.github.houseorganizer.houseorganizer.R;
-import com.github.houseorganizer.houseorganizer.user.DummyUser;
 import com.github.houseorganizer.houseorganizer.util.BiViewHolder;
 
 import java.util.List;
@@ -25,7 +24,7 @@ public class TaskAssigneeAdapter extends RecyclerView.Adapter<BiViewHolder<TextV
     private boolean isAmongAssignees(String userEmail) {
         return parentTask.getAssignees()
                 .stream()
-                .anyMatch(u -> u.uid().equals(userEmail));
+                .anyMatch(uid -> uid.equals(userEmail));
     }
 
     @NonNull
@@ -44,7 +43,9 @@ public class TaskAssigneeAdapter extends RecyclerView.Adapter<BiViewHolder<TextV
         boolean isAssigned = isAmongAssignees(assigneeEmail);
         assigneeEmailTextView.setText(assigneeEmail);
 
-        imgButton.setBackgroundResource(isAssigned ? R.drawable.remove_person : R.drawable.add_person);
+        int rscId = isAssigned ? R.drawable.remove_person : R.drawable.add_person;
+        imgButton.setBackgroundResource(rscId);
+        imgButton.setTag(rscId);
 
         imgButton.setOnClickListener(v -> {
             if(isAssigned) {
@@ -63,10 +64,10 @@ public class TaskAssigneeAdapter extends RecyclerView.Adapter<BiViewHolder<TextV
     }
 
     private void removeAssignee(String userEmail) {
-        parentTask.getAssignees().removeIf(u -> u.uid().equals(userEmail));
+        parentTask.getAssignees().removeIf(uid -> uid.equals(userEmail));
     }
 
     private void addAssignee(String userEmail) {
-        parentTask.assignTo(new DummyUser("User", userEmail));
+        parentTask.assignTo(userEmail);
     }
 }
