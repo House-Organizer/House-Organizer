@@ -2,6 +2,7 @@ package com.github.houseorganizer.houseorganizer.panels;
 
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -43,6 +44,10 @@ public class InfoActivity extends AppCompatActivity {
                     usersView.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
                 }
             });
+
+        } else {
+            TextView text = findViewById(R.id.infoHeader);
+            text.setText(R.string.no_household_info);
         }
     }
 
