@@ -152,8 +152,10 @@ public class MainScreenActivity extends AppCompatActivity {
                             if (!households.isEmpty()) {
                                 currentHouse = db.collection("households").document(households.get(0));
                                 saveData(households.get(0));
-                            } else
+                            } else {
                                 noHousehold();
+                                return;
+                            }
                         }
                         calendarAdapter.refreshCalendarView(this, currentHouse, "refreshCalendar:failureToRefresh");
                         initializeTaskList();
