@@ -20,7 +20,7 @@ public class TaskListUnitTest {
         TaskList tl = new TaskList(HTaskUnitTest.NOBODY, "TaskList 1", new ArrayList<>());
 
         assertFalse(tl.hasTasks());
-        assertEquals(HTaskUnitTest.NOBODY.uid(), tl.getOwner().uid());
+        assertEquals(HTaskUnitTest.NOBODY, tl.getOwner());
         assertEquals("TaskList 1", tl.getTitle());
     }
 
@@ -36,7 +36,7 @@ public class TaskListUnitTest {
         TaskList tl = new TaskList(HTaskUnitTest.NOBODY, "TaskList 1", tasks);
 
         assertTrue(tl.hasTasks());
-        assertEquals(HTaskUnitTest.NOBODY.uid(), tl.getOwner().uid());
+        assertEquals(HTaskUnitTest.NOBODY, tl.getOwner());
         assertEquals("TaskList 1", tl.getTitle());
 
         assertEquals(t, tl.getTaskAt(0));

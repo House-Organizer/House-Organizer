@@ -1,16 +1,14 @@
 package com.github.houseorganizer.houseorganizer.task;
 
-import com.github.houseorganizer.houseorganizer.user.User;
-
 import java.util.ArrayList;
 import java.util.List;
 
 public final class TaskList {
-    private final User owner;
+    private final String owner; /* UID */
     private final List<HTask> tasks;
     private String title;
 
-    public TaskList(User owner, String title, List<HTask> initialTasks) {
+    public TaskList(String owner, String title, List<HTask> initialTasks) {
         this.owner = owner;
         this.title = title;
         this.tasks = new ArrayList<>(initialTasks);
@@ -45,7 +43,7 @@ public final class TaskList {
     }
 
     // Getters
-    public User getOwner() {
+    public String getOwner() {
         return owner;
     }
 
