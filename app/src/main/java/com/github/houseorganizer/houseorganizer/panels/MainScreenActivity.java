@@ -4,19 +4,16 @@ import static com.github.houseorganizer.houseorganizer.util.Util.getSharedPrefs;
 import static com.github.houseorganizer.houseorganizer.util.Util.getSharedPrefsEditor;
 import static com.github.houseorganizer.houseorganizer.util.Util.logAndToast;
 
-import android.annotation.SuppressLint;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.GridLayoutManager;
-import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.github.houseorganizer.houseorganizer.R;
@@ -25,7 +22,6 @@ import com.github.houseorganizer.houseorganizer.calendar.EventsAdapter;
 import com.github.houseorganizer.houseorganizer.house.CreateHouseholdActivity;
 import com.github.houseorganizer.houseorganizer.house.HouseSelectionActivity;
 import com.github.houseorganizer.houseorganizer.shop.FirestoreShopList;
-import com.github.houseorganizer.houseorganizer.shop.ShopItem;
 import com.github.houseorganizer.houseorganizer.shop.ShopList;
 import com.github.houseorganizer.houseorganizer.shop.ShopListAdapter;
 import com.github.houseorganizer.houseorganizer.shop.ShopListView;
@@ -43,9 +39,6 @@ import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
-import com.google.firebase.firestore.QuerySnapshot;
-import com.google.firebase.storage.FirebaseStorage;
-import com.google.firebase.storage.StorageReference;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -97,36 +90,36 @@ public class MainScreenActivity extends AppCompatActivity {
         menu.setOnItemSelectedListener(l -> changeActivity(l.getTitle().toString()));
     }
 
-    private Task<ShopListAdapter> initializeGroceriesList(){
-        if(currentHouse == null)return Tasks.forCanceled();
+    private Task<ShopListAdapter> initializeGroceriesList() {
+        if (currentHouse == null) return Tasks.forCanceled();
         CollectionReference root = db.collection("shop_lists");
         return root.whereEqualTo("household", currentHouse).get()
-        .continueWithTask(r -> {
-            // If empty -> create new house
-            if(r.getResult().getDocuments().size() == 0){
-                shopList = new FirestoreShopList(currentHouse);
-                return FirestoreShopList.storeNewShopList(root, new ShopList(), currentHouse)
-                        .continueWith(t -> {
-                            shopList.setOnlineReference(t.getResult());
+                .continueWithTask(r -> {
+                    // If empty -> create new house
+                    if (r.getResult().getDocuments().size() == 0) {
+                        shopList = new FirestoreShopList(currentHouse);
+                        return FirestoreShopList.storeNewShopList(root, new ShopList(), currentHouse)
+                                .continueWith(t -> {
+                                    shopList.setOnlineReference(t.getResult());
+                                    shopListAdapter = new ShopListAdapter(shopList);
+                                    return shopListAdapter;
+                                });
+                        // If not empty then retrieve the existing shopList
+                    } else {
+                        return FirestoreShopList.retrieveShopList(root, currentHouse).continueWith(t -> {
+                            shopList = t.getResult();
                             shopListAdapter = new ShopListAdapter(shopList);
                             return shopListAdapter;
                         });
-            // If not empty then retrieve the existing shopList
-            }else{
-                return FirestoreShopList.retrieveShopList(root, currentHouse).continueWith(t -> {
-                    shopList = t.getResult();
-                    shopListAdapter = new ShopListAdapter(shopList);
-                    return shopListAdapter;
+                    }
+                    // Setting up real time actualisation
+                }).addOnCompleteListener(c -> {
+                    shopList.getOnlineReference().addSnapshotListener((doc, e) -> {
+                        shopList = FirestoreShopList.buildShopList(doc);
+                        shopListAdapter.setShopList(shopList);
+                    });
                 });
-            }
-            // Setting up real time actualisation
-        }).addOnCompleteListener(c -> {
-            shopList.getOnlineReference().addSnapshotListener((doc, e) -> {
-                shopList = FirestoreShopList.buildShopList(doc);
-                shopListAdapter.setShopList(shopList);
-            });
-                });
-
+    }
     private boolean changeActivity(String buttonText) {
         // Using the title and non resource strings here
         // otherwise there is a warning that ids inside a switch are non final
