@@ -9,7 +9,9 @@ import static androidx.test.espresso.intent.Intents.intended;
 import static androidx.test.espresso.intent.matcher.IntentMatchers.hasComponent;
 import static androidx.test.espresso.matcher.ViewMatchers.isClickable;
 import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
+import static androidx.test.espresso.matcher.ViewMatchers.isEnabled;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
+import static androidx.test.espresso.matcher.ViewMatchers.withText;
 import static com.github.houseorganizer.houseorganizer.FirebaseTestsHelper.TEST_HOUSEHOLD_NAMES;
 import static com.github.houseorganizer.houseorganizer.FirebaseTestsHelper.TEST_USERS_EMAILS;
 import static com.github.houseorganizer.houseorganizer.FirebaseTestsHelper.UNKNOWN_USER;
@@ -27,7 +29,9 @@ import androidx.test.ext.junit.runners.AndroidJUnit4;
 
 import com.github.houseorganizer.houseorganizer.house.EditHousehold;
 import com.github.houseorganizer.houseorganizer.house.HouseSelectionActivity;
+import com.github.houseorganizer.houseorganizer.panels.MainScreenActivity;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import org.junit.AfterClass;
@@ -100,14 +104,6 @@ public class EditHouseholdTest {
     @Test
     public void changeOwnerIsClickable() {
         onView(withId(R.id.editTextAddUser)).check(matches(isClickable()));
-    }
-
-    @Test
-    public void confirmChangesSendsIntent() {
-        Intents.init();
-        onView(withId(R.id.confirmEditHouseholdButton)).perform(click());
-        intended(hasComponent(HouseSelectionActivity.class.getName()));
-        Intents.release();
     }
 
     @Test
@@ -380,5 +376,46 @@ public class EditHouseholdTest {
 
         // Compare states
         assertEquals(owner_after, owner_before);
+    }
+
+    @Test
+    public void deleteButtonIsEnabled() {
+        onView(withId(R.id.deleteButton)).check(matches(isEnabled()));
+    }
+
+    @Test
+    public void deleteButtonIsDisplayed() {
+        onView(withId(R.id.deleteButton)).check(matches(isDisplayed()));
+    }
+
+    @Test
+    public void deleteButtonIsClickable() {
+        onView(withId(R.id.deleteButton)).check(matches(isClickable()));
+    }
+
+    @Test
+    public void deleteHouseholdWorks() throws ExecutionException, InterruptedException {
+        boolean exist;
+
+        exist = FirebaseTestsHelper.householdExists(TEST_HOUSEHOLD_NAMES[0], db);
+        assertTrue(exist);
+
+        onView(withId(R.id.deleteButton)).perform(click());
+        onView(withText("Yes")).perform(click());
+
+        exist = FirebaseTestsHelper.householdExists(TEST_HOUSEHOLD_NAMES[0], db);
+        assertFalse(exist);
+    }
+
+    @Test
+    public void deleteHousehold_deletesEvents() throws ExecutionException, InterruptedException {
+        List<DocumentSnapshot> snaps = FirebaseTestsHelper.fetchHouseholdEvents(TEST_HOUSEHOLD_NAMES[0], db);
+
+        onView(withId(R.id.deleteButton)).perform(click());
+        onView(withText("Yes")).perform(click());
+
+        for (DocumentSnapshot snap: snaps) {
+            assertFalse(FirebaseTestsHelper.eventExists(snap.getId(), db));
+        }
     }
 }

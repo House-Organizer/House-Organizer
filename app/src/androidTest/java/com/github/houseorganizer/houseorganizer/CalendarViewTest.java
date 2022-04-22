@@ -53,9 +53,7 @@ import org.junit.runner.RunWith;
 import org.junit.runners.MethodSorters;
 
 import java.io.ByteArrayOutputStream;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.YearMonth;
 import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
@@ -79,14 +77,23 @@ public class CalendarViewTest {
 
         db = FirebaseFirestore.getInstance();
         auth = FirebaseAuth.getInstance();
+        storage = FirebaseStorage.getInstance();
+
+        // For now a hardcoded bytestream instead of an image
+        // it will still create the popup just it wont display anything
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        baos.write(1);
+        UploadTask task1 = storage.getReference().child("has_attachment.jpg").putBytes(baos.toByteArray());
+        UploadTask task2 = storage.getReference().child("to_delete_attachment.jpg").putBytes(baos.toByteArray());
+        Tasks.await(task1);
+        Tasks.await(task2);
     }
 
     @Before
     public void prepareCalendar() {
         onView(withId(R.id.house_imageButton)).perform(click());
         onView(withId(R.id.housesView)).perform(RecyclerViewActions.actionOnItemAtPosition(0, click()));
-        auth = FirebaseAuth.getInstance();
-        storage = FirebaseStorage.getInstance();
+        onView(withId(R.id.nav_bar_calendar)).perform(click());
     }
 
     @AfterClass
@@ -108,10 +115,7 @@ public class CalendarViewTest {
                         db.collection("events").document(document.getId()).delete();
                     }
                 });
-        // Reset the attachment that was removed
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        baos.write(1);
-        UploadTask task4 = storage.getReference().child("to_delete_attachment.jpg").putBytes(baos.toByteArray());
+        Task<Void> task4 = storage.getReference().child("has_attachment.jpg").delete();
         Tasks.await(task1);
         Tasks.await(task2);
         Tasks.await(task3);
@@ -123,35 +127,16 @@ public class CalendarViewTest {
     public ActivityScenarioRule<MainScreenActivity> mainScreenActivityActivityScenarioRule =
             new ActivityScenarioRule<>(MainScreenActivity.class);
 
-    @Test
-    public void attachmentCorrectlyShows() {
-        onView(withId(R.id.house_imageButton)).perform(click());
-        onView(withId(R.id.housesView)).perform(RecyclerViewActions.actionOnItemAtPosition(0, click()));
-        onView(withId(R.id.calendar))
-                .perform(RecyclerViewActions.actionOnItemAtPosition(0, RecyclerViewHelperActions.clickChildViewWithId(R.id.event_upcoming_attach)));
-        onView(withText("Show")).perform(click());
-        onView(withId(R.id.image_dialog)).check(matches(withEffectiveVisibility(ViewMatchers.Visibility.VISIBLE)));
-    }
-
-    @Test
-    public void attachmentRemovalCorrectlyWorks() {
-        onView(withId(R.id.house_imageButton)).perform(click());
-        onView(withId(R.id.housesView)).perform(RecyclerViewActions.actionOnItemAtPosition(0, click()));
-        onView(withId(R.id.calendar))
-                .perform(RecyclerViewActions.actionOnItemAtPosition(2, RecyclerViewHelperActions.clickChildViewWithId(R.id.event_upcoming_attach)));
-        onView(withText("Remove")).perform(click());
-        storage.getReference().child("to_delete_attachment.jpg").getDownloadUrl().addOnCompleteListener(
-                task -> assertThat(task.isSuccessful(), is(false))
-        );
+    public int getRealPosition(int position) {
+        // There is one delimiter for each event since none of them are on the same day
+        return 2*position + 1;
     }
 
     @Test
     public void attachCorrectlyFiresIntent() {
         Intents.init();
-        onView(withId(R.id.house_imageButton)).perform(click());
-        onView(withId(R.id.housesView)).perform(RecyclerViewActions.actionOnItemAtPosition(0, click()));
-        onView(withId(R.id.calendar))
-                .perform(RecyclerViewActions.actionOnItemAtPosition(1, RecyclerViewHelperActions.clickChildViewWithId(R.id.event_upcoming_attach)));
+        onView(withId(R.id.calendar_screen_calendar))
+                .perform(RecyclerViewActions.actionOnItemAtPosition(getRealPosition(1), RecyclerViewHelperActions.clickChildViewWithId(R.id.event_upcoming_attach)));
         onView(withText("Attach")).perform(click());
 
         // Check that a "GET_CONTENT" intent was fired
@@ -160,89 +145,100 @@ public class CalendarViewTest {
     }
 
     @Test
+    public void attachmentCorrectlyShows() {
+        onView(withId(R.id.calendar_screen_calendar))
+                .perform(RecyclerViewActions.actionOnItemAtPosition(getRealPosition(0), RecyclerViewHelperActions.clickChildViewWithId(R.id.event_upcoming_attach)));
+        onView(withText("Show")).perform(click());
+        onView(withId(R.id.image_dialog)).check(matches(withEffectiveVisibility(ViewMatchers.Visibility.VISIBLE)));
+    }
+
+    @Test
+    public void attachmentRemovalCorrectlyWorks() {
+        onView(withId(R.id.calendar_screen_calendar))
+                .perform(RecyclerViewActions.actionOnItemAtPosition(getRealPosition(2), RecyclerViewHelperActions.clickChildViewWithId(R.id.event_upcoming_attach)));
+        onView(withText("Remove")).perform(click());
+        storage.getReference().child("to_delete_attachment.jpg").getDownloadUrl().addOnCompleteListener(
+                task -> assertThat(task.isSuccessful(), is(false))
+        );
+    }
+
+    @Test
     public void calendarDisplaysAllUpcomingEventsFromHouse() {
-        onView(withId(R.id.calendar)).check(matches(hasChildCount(EVENTS_TO_DISPLAY)));
+        onView(withId(R.id.calendar_screen_calendar)).check(matches(hasChildCount(2*EVENTS_TO_DISPLAY)));
     }
 
     @Test
     public void calendarIsEnabled() {
-        onView(withId(R.id.calendar)).check(matches(isEnabled()));
+        onView(withId(R.id.calendar_screen_calendar)).check(matches(isEnabled()));
     }
 
     @Test
     public void calendarIsDisplayed() {
-        onView(withId(R.id.calendar)).check(matches(isDisplayed()));
+        onView(withId(R.id.calendar_screen_calendar)).check(matches(isDisplayed()));
     }
 
     @Test
-    public void calendarViewRotatesCorrectly() {
-        final int MONTHLY_CHILDREN = YearMonth.of(LocalDate.now().getYear(), LocalDate.now().getMonth()).lengthOfMonth();
-        final int WEEKLY_CHILDREN = 7;
-        onView(withId(R.id.calendar)).check(matches(hasChildCount(EVENTS_TO_DISPLAY)));
-        onView(withId(R.id.calendar_view_change)).perform(click());
-        onView(withId(R.id.calendar)).check(matches(hasChildCount(MONTHLY_CHILDREN)));
-        onView(withId(R.id.calendar_view_change)).perform(click());
-        onView(withId(R.id.calendar)).check(matches(hasChildCount(WEEKLY_CHILDREN)));
-        onView(withId(R.id.calendar_view_change)).perform(click());
-        onView(withId(R.id.calendar)).check(matches(hasChildCount(EVENTS_TO_DISPLAY)));
+    public void clickOnDelimiterDoesNotDoAnything() {
+        onView(withId(R.id.calendar_screen_calendar))
+                .perform(RecyclerViewActions.actionOnItemAtPosition(getRealPosition(0) - 1, click()));
+        onView(withId(R.id.calendar_screen_calendar)).check(matches(isCompletelyDisplayed()));
     }
 
     @Test
     public void clickOnEventCorrectlyDisplaysPopup() {
-        onView(withId(R.id.calendar))
-                .perform(RecyclerViewActions.actionOnItemAtPosition(0, RecyclerViewHelperActions.clickChildViewWithId(R.id.event_upcoming_title)));
-        onView(withText("desc")).inRoot(isDialog()).check(matches(isDisplayed()));
+        onView(withId(R.id.calendar_screen_calendar))
+                .perform(RecyclerViewActions.actionOnItemAtPosition(getRealPosition(0), RecyclerViewHelperActions.clickChildViewWithId(R.id.event_upcoming_title)));
+        onView(withText("title")).inRoot(isDialog()).check(matches(isDisplayed()));
+        onView(withText(R.string.ok)).inRoot(isDialog()).perform(click());
     }
 
     @Test
     public void deleteEventCorrectlyDeletes() {
-        onView(withId(R.id.calendar))
-                .perform(RecyclerViewActions.actionOnItemAtPosition(4, RecyclerViewHelperActions.clickChildViewWithId(R.id.event_upcoming_title)));
+        onView(withId(R.id.calendar_screen_calendar))
+                .perform(RecyclerViewActions.actionOnItemAtPosition(getRealPosition(4), RecyclerViewHelperActions.clickChildViewWithId(R.id.event_upcoming_title)));
         onView(withText(R.string.delete)).inRoot(isDialog()).perform(click());
-        onView(withId(R.id.calendar)).check(matches(hasChildCount(EVENTS_TO_DISPLAY - 1)));
+        onView(withId(R.id.calendar_screen_calendar)).check(matches(hasChildCount(2*(EVENTS_TO_DISPLAY - 1))));
     }
 
     @Test
     public void editEventCorrectlyChangesTheEvent() {
         // Edit the event
-        onView(withId(R.id.calendar))
-                .perform(RecyclerViewActions.actionOnItemAtPosition(3, RecyclerViewHelperActions.clickChildViewWithId(R.id.event_upcoming_title)));
+        onView(withId(R.id.calendar_screen_calendar))
+                .perform(RecyclerViewActions.actionOnItemAtPosition(getRealPosition(3), RecyclerViewHelperActions.clickChildViewWithId(R.id.event_upcoming_title)));
         onView(withText(R.string.edit)).inRoot(isDialog()).perform(click());
         onView(withText("desc")).inRoot(isDialog()).perform(typeText(" edited"));
-        onView(withText("desc edited")).inRoot(isDialog()).perform(closeSoftKeyboard());
         onView(withText(R.string.confirm)).perform(click());
 
         // Check that it changed
-        onView(withId(R.id.calendar))
-                .perform(RecyclerViewActions.actionOnItemAtPosition(3, RecyclerViewHelperActions.clickChildViewWithId(R.id.event_upcoming_title)));
-        onView(withText("desc edited")).inRoot(isDialog()).check(matches(isDisplayed()));
+        onView(withText("desc edited")).check(matches(isDisplayed()));
     }
 
     @Test
     public void pressingAddEventAddsAnEventToCalendar() throws InterruptedException {
-        onView(withId(R.id.add_event)).perform(click());
+        onView(withId(R.id.calendar_screen_add_event)).perform(click());
         onView(withHint(R.string.title)).perform(clearText()).perform(typeText("added")).perform(closeSoftKeyboard());
         onView(withHint(R.string.description)).perform(clearText()).perform(typeText("desc")).perform(closeSoftKeyboard());
         String date = LocalDateTime.of(2050, 10, 10, 10, 10).format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm"));
         onView(withHint(R.string.date)).perform(clearText()).perform(typeText(date)).perform(closeSoftKeyboard());
         onView(withHint(R.string.duration)).perform(clearText()).perform(typeText("10")).perform(closeSoftKeyboard());
         onView(withText(R.string.add)).perform(click());
-        Thread.sleep(10000);
-        // Count is EVENTS_TO_DISPLAY because we removed one event and added one
-        onView(withId(R.id.calendar)).check(matches(hasChildCount(EVENTS_TO_DISPLAY)));
+        Thread.sleep(5000);
+        // Count is 2*EVENTS_TO_DISPLAY because we removed one event and added one
+        // and because there is one delimiter per event
+        onView(withId(R.id.calendar_screen_calendar)).check(matches(hasChildCount(2*EVENTS_TO_DISPLAY)));
     }
 
     @Test
     public void pressingOKOrEditThenCancelDismissesDialog() {
-        onView(withId(R.id.calendar))
-                .perform(RecyclerViewActions.actionOnItemAtPosition(0, RecyclerViewHelperActions.clickChildViewWithId(R.id.event_upcoming_title)));
+        onView(withId(R.id.calendar_screen_calendar))
+                .perform(RecyclerViewActions.actionOnItemAtPosition(getRealPosition(0), RecyclerViewHelperActions.clickChildViewWithId(R.id.event_upcoming_title)));
         onView(withText(R.string.edit)).inRoot(isDialog()).perform(click());
         onView(withText(R.string.cancel)).perform(click());
-        onView(withId(R.id.calendar)).check(matches(isCompletelyDisplayed()));
+        onView(withId(R.id.calendar_screen_calendar)).check(matches(isCompletelyDisplayed()));
 
-        onView(withId(R.id.calendar))
-                .perform(RecyclerViewActions.actionOnItemAtPosition(0, RecyclerViewHelperActions.clickChildViewWithId(R.id.event_upcoming_title)));
+        onView(withId(R.id.calendar_screen_calendar))
+                .perform(RecyclerViewActions.actionOnItemAtPosition(getRealPosition(0), RecyclerViewHelperActions.clickChildViewWithId(R.id.event_upcoming_title)));
         onView(withText(R.string.ok)).inRoot(isDialog()).perform(click());
-        onView(withId(R.id.calendar)).check(matches(isCompletelyDisplayed()));
+        onView(withId(R.id.calendar_screen_calendar)).check(matches(isCompletelyDisplayed()));
     }
 }

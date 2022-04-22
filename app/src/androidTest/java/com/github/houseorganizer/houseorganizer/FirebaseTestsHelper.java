@@ -18,9 +18,7 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.storage.FirebaseStorage;
-import com.google.firebase.storage.UploadTask;
 
-import java.io.ByteArrayOutputStream;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.util.ArrayList;
@@ -29,6 +27,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
 
@@ -38,11 +37,8 @@ import java.util.stream.Collectors;
  *
  */
 public class FirebaseTestsHelper {
-
-    // Same as MainScreenActivity for now since RecyclerView tests depend on it
-    // Will be refined as soon as task lists are linked to households
-    public static final String TEST_TASK_LIST_DOCUMENT_NAME = "85IW3cYzxOo1YTWnNOQl";
-
+    public static final String TEST_TASK_TITLE = "TestTask";
+    public static final String TEST_TASK_DESC = "Testing";
     private static boolean authEmulatorActivated = false;
     private static boolean firestoreEmulatorActivated = false;
     private static boolean databaseEmulatorActivated = false;
@@ -55,6 +51,8 @@ public class FirebaseTestsHelper {
 
     protected static String[] TEST_HOUSEHOLD_NAMES =
             {"home_1", "home_2", "home_3"};
+
+    protected static String FIRST_TL_NAME = String.format("tl_for_%s", TEST_HOUSEHOLD_NAMES[0]);
 
     protected static ShopItem TEST_ITEM = new ShopItem("Egg", 3, "t");
 
@@ -80,26 +78,6 @@ public class FirebaseTestsHelper {
         if(databaseEmulatorActivated) return;
         FirebaseStorage.getInstance().useEmulator("10.0.2.2", 9199);
         databaseEmulatorActivated = true;
-    }
-
-    protected static void wipeTaskListData() throws ExecutionException, InterruptedException {
-        FirebaseFirestore db = FirebaseFirestore.getInstance();
-
-        Task<QuerySnapshot> task = db.collection("task_lists").get();
-        Tasks.await(task);
-
-        if(! task.isSuccessful()) return; // assume collection doesn't exist
-
-        QuerySnapshot rootSnap = task.getResult();
-
-        List<Task<Void>> tasks = rootSnap.getDocuments()
-                .stream()
-                .map(docSnap -> docSnap.getReference().delete())
-                .collect(Collectors.toList());
-
-        for  (Task<Void> task2 : tasks) {
-            Tasks.await(task2);
-        }
     }
 
     /**
@@ -140,7 +118,8 @@ public class FirebaseTestsHelper {
     }
 
     /**
-     * This method will create a household with a given name
+     * This method will create a household with a given name.
+     * This also sets up a task list for the given HH.
      * It is assumed the owner is logged in
      */
     protected static void createTestHouseholdOnFirestoreWithName(String householdName, String owner,
@@ -158,25 +137,26 @@ public class FirebaseTestsHelper {
 
         Task<Void> task = db.collection("households").document(docName).set(houseHold);
         Tasks.await(task);
+
+        createTestTaskList(docName); // (docName = hhID)
     }
 
     /**
      * This method will create a task list
      */
-    protected static void createTestTaskList() throws ExecutionException, InterruptedException {
+    protected static void createTestTaskList(String hhID) throws ExecutionException, InterruptedException {
         // Get DB ref
         FirebaseFirestore db = FirebaseFirestore.getInstance();
 
         // Create task list instance
-        User owner = new DummyUser("Test User", "0");
-        HTask taskToAdd =
-                new HTask(owner, "TestTask", "Testing");
+        HTask taskToAdd = new HTask(TEST_USERS_EMAILS[0], TEST_TASK_TITLE, TEST_TASK_DESC);
 
-        TaskList taskList = new TaskList(owner, "MyList", new ArrayList<>(Collections.singletonList(taskToAdd)));
+        TaskList taskList = new TaskList(TEST_USERS_EMAILS[0], FIRST_TL_NAME,
+                new ArrayList<>(Collections.singletonList(taskToAdd)));
 
         // Store instance on the database using a helper function
         // returns only after storing is done
-        storeTaskList(taskList, db.collection("task_lists"), TEST_TASK_LIST_DOCUMENT_NAME);
+        storeTaskList(taskList, db.collection("task_lists"), String.format("tl_for_%s", hhID), hhID);
     }
 
     /**
@@ -201,6 +181,24 @@ public class FirebaseTestsHelper {
         return task.getResult().getData();
     }
 
+    protected static List<DocumentSnapshot> fetchHouseholdEvents(String houseName, FirebaseFirestore db) throws ExecutionException, InterruptedException {
+        Task<QuerySnapshot> task = db.collection("events").whereEqualTo("household", houseName).get();
+        Tasks.await(task);
+        return task.getResult().getDocuments();
+    }
+
+    protected static boolean householdExists(String houseName, FirebaseFirestore db) throws ExecutionException, InterruptedException {
+        Task<DocumentSnapshot> task = db.collection("households").document(houseName).get();
+        Tasks.await(task);
+        return task.getResult().exists();
+    }
+
+    protected static boolean eventExists(String event, FirebaseFirestore db) throws ExecutionException, InterruptedException {
+        Task<DocumentSnapshot> task = db.collection("events").document(event).get();
+        Tasks.await(task);
+        return task.getResult().exists();
+    }
+
     /**
      * This method will create a shopList on Firestore
      */
@@ -214,7 +212,7 @@ public class FirebaseTestsHelper {
         Tasks.await(t);
         shopList.setOnlineReference(t.getResult());
     }
-    
+
      /**
      * This method will create events for testing
      */
@@ -288,23 +286,7 @@ public class FirebaseTestsHelper {
     }
 
     /**
-     *  This method creates attachments linked to events for testing
-     */
-    protected static void createAttachments() throws ExecutionException, InterruptedException {
-        FirebaseStorage storage = FirebaseStorage.getInstance();
-
-        // For now a hardcoded bytestream instead of an image
-        // it will still create the popup just it wont display anything
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        baos.write(1);
-        UploadTask task1 = storage.getReference().child("has_attachment.jpg").putBytes(baos.toByteArray());
-        UploadTask task2 = storage.getReference().child("to_delete_attachment.jpg").putBytes(baos.toByteArray());
-        Tasks.await(task1);
-        Tasks.await(task2);
-    }
-
-    /**
-     * This method will create 8 users, 3 households, a task list and a list of events
+     * This method will create 8 users, 3 households (each with a task list), a task list and a list of events
      * After this call user_1 is logged in
      * A flag allows us to just login as user_1 if everything is already done
      */
@@ -326,43 +308,26 @@ public class FirebaseTestsHelper {
             createFirebaseTestUserWithCredentials(TEST_USERS_EMAILS[u_index], TEST_USERS_PWD[u_index]);
         }
 
-        createTestHouseholdOnFirestoreWithName(TEST_HOUSEHOLD_NAMES[0], TEST_USERS_EMAILS[0],
-                Arrays.asList(TEST_USERS_EMAILS[0], TEST_USERS_EMAILS[1]), TEST_HOUSEHOLD_NAMES[0]);
-
-        createTestHouseholdOnFirestoreWithName(TEST_HOUSEHOLD_NAMES[1], TEST_USERS_EMAILS[0],
-                Arrays.asList(TEST_USERS_EMAILS[0], TEST_USERS_EMAILS[2]), TEST_HOUSEHOLD_NAMES[1]);
-
-        createTestHouseholdOnFirestoreWithName(TEST_HOUSEHOLD_NAMES[2], TEST_USERS_EMAILS[1],
-                Arrays.asList(TEST_USERS_EMAILS[1], TEST_USERS_EMAILS[2], TEST_USERS_EMAILS[3],
-                        TEST_USERS_EMAILS[4], TEST_USERS_EMAILS[5], TEST_USERS_EMAILS[6]),
-                TEST_HOUSEHOLD_NAMES[2]);
-
-        createTestTaskList();
-      
+        createHouseholds();
         createTestShopList();
 
         createTestEvents();
-        createAttachments();
 
         signInTestUserWithCredentials(TEST_USERS_EMAILS[0], TEST_USERS_PWD[0]);
 
         createFirebaseDoneFlag();
     }
 
-    // Task list loading
-    private static Task<DocumentReference> storeTask(HTask task, CollectionReference taskListRef) {
+    // Task list loading & deleting
+    private static Task<DocumentReference> storeTask(HTask task, CollectionReference taskDumpRef) {
         Map<String, Object> data = new HashMap<>();
 
         // Loading information
         data.put("title", task.getTitle());
         data.put("description", task.getDescription());
         data.put("status", task.isFinished() ? "completed" : "ongoing");
-        data.put("owner", task.getOwner().uid());
-        data.put("assignees",
-                task.getAssignees()
-                        .stream()
-                        .map(User::uid)
-                        .collect(Collectors.toList()));
+        data.put("owner", task.getOwner());
+        data.put("assignees", task.getAssignees());
 
         data.put("sub tasks",
                 task.getSubTasks()
@@ -370,25 +335,62 @@ public class FirebaseTestsHelper {
                         .map(FirestoreTask::makeSubTaskData)
                         .collect(Collectors.toList()));
 
-        return taskListRef.add(data);
+        return taskDumpRef.add(data);
     }
 
-    protected static void storeTaskList(TaskList taskList, CollectionReference taskListRoot, String documentName) throws ExecutionException, InterruptedException {
-        Map<String, Object> data = new HashMap<>();
+    protected static void storeTaskList(TaskList taskList, CollectionReference taskListRoot, String metadataDocName,
+                                        String hhID) throws ExecutionException, InterruptedException {
 
-        data.put("title", taskList.getTitle());
-        data.put("owner", taskList.getOwner().uid());
+        CollectionReference taskDumpRef = FirebaseFirestore.getInstance().collection("task_dump");
+        List<DocumentReference> taskPtrs = new ArrayList<>();
 
-        Task<Void> task = taskListRoot.document(documentName).set(data);
+        List<Task<DocumentReference>> tasks = taskList.getTasks()
+                .stream()
+                .map(t -> storeTask(t, taskDumpRef))
+                .collect(Collectors.toList());
+
+        for (Task<DocumentReference> docRefTask : tasks) {
+            Tasks.await(docRefTask);
+            if (docRefTask.isSuccessful()) taskPtrs.add(docRefTask.getResult());
+        }
+
+        Map<String, Object> metadata = new HashMap<>();
+
+        metadata.put("title", taskList.getTitle());
+        metadata.put("owner", taskList.getOwner());
+        metadata.put("hh-id", hhID);
+        metadata.put("task-ptrs", taskPtrs);
+
+        Task<Void> task = taskListRoot.document(metadataDocName).set(metadata);
+        Tasks.await(task);
+    }
+
+    // Might not be needed anymore
+    protected static void wipeTaskListData() throws ExecutionException, InterruptedException {
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+
+        // WIPING TL METADATA [found in /task_lists]
+        Task<QuerySnapshot> task = db.collection("task_lists").get();
         Tasks.await(task);
 
-        if(task.isSuccessful()) {
-            DocumentReference documentReference = taskListRoot.document(documentName);
-            CollectionReference taskListRef = documentReference.collection("tasks");
+        if(! task.isSuccessful()) return; // assume collection doesn't exist
 
-            for (HTask t : taskList.getTasks()) {
-                Tasks.await(storeTask(t, taskListRef));
-            }
+        QuerySnapshot rootSnap = task.getResult();
+
+        for (DocumentSnapshot tlDocSnap : rootSnap.getDocuments()) {
+            wipeTasksThenMetadata(tlDocSnap);
         }
+    }
+
+    private static void wipeTasksThenMetadata(DocumentSnapshot tlDocSnap) throws ExecutionException, InterruptedException {
+        List<DocumentReference> taskPtrs = (List<DocumentReference>)
+                Objects.requireNonNull(tlDocSnap.getData()).getOrDefault("task-ptrs", new ArrayList<>());
+
+        assert taskPtrs != null;
+        for (DocumentReference taskPtr : taskPtrs) {
+            Tasks.await(taskPtr.delete());
+        }
+
+        Tasks.await(tlDocSnap.getReference().delete());
     }
 }
