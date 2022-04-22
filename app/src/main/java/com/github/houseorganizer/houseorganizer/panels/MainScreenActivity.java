@@ -24,7 +24,6 @@ import com.github.houseorganizer.houseorganizer.house.HouseSelectionActivity;
 import com.github.houseorganizer.houseorganizer.shop.FirestoreShopList;
 import com.github.houseorganizer.houseorganizer.shop.ShopList;
 import com.github.houseorganizer.houseorganizer.shop.ShopListAdapter;
-import com.github.houseorganizer.houseorganizer.shop.ShopListView;
 import com.github.houseorganizer.houseorganizer.task.TaskList;
 import com.github.houseorganizer.houseorganizer.task.TaskListAdapter;
 import com.github.houseorganizer.houseorganizer.task.TaskView;
@@ -258,7 +257,7 @@ public class MainScreenActivity extends AppCompatActivity {
         }
         else{
             if(shopList != null){
-                ShopListView.addItem(this, shopList, shopListAdapter);
+                shopListAdapter.addItem(this, shopList);
             }
         }
     }
@@ -273,14 +272,14 @@ public class MainScreenActivity extends AppCompatActivity {
             case GROCERY_LIST:
                 if(shopList == null) {
                     initializeGroceriesList()
-                            .addOnCompleteListener(t -> ShopListView.setUpShopListView(this, shopListAdapter));
+                            .addOnCompleteListener(t -> shopListAdapter.setUpShopListView(this));
                     return;
                 }
-                ShopListView.setUpShopListView(this, shopListAdapter);
+                shopListAdapter.setUpShopListView(this);
                 shopList.getOnlineReference().addSnapshotListener((snap, c) -> {
                     if(snap != null){
                         shopList = FirestoreShopList.buildShopList(snap);
-                        shopListAdapter = new ShopListAdapter(shopList);
+                        shopListAdapter.setShopList(shopList);
 
                     }
                 });
