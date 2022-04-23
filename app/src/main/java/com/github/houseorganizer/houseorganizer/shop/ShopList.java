@@ -39,6 +39,10 @@ public class ShopList {
         return items.isEmpty();
     }
 
+    public void toggleItemPickedUp(int index){
+        getItemAt(index).togglePickedUp();
+    }
+
     public List<ShopItem> getItems(){
         return new ArrayList<>(items);
     }

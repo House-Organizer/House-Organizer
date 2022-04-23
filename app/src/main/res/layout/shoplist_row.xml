@@ -9,15 +9,15 @@
 
     <CheckBox
         android:id="@+id/item_checkbox"
-        android:layout_width="730dp"
+        android:layout_width="wrap_content"
         android:layout_height="30dp"
         android:layout_weight="1" />
 
     <ImageButton
         android:id="@+id/delete_item_button"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="match_parent"
-        android:layout_weight="1"
+        android:layout_weight="0.1"
         android:adjustViewBounds="true"
         android:background="@color/common_google_signin_btn_text_dark"
         android:contentDescription="@string/item_delete_button_description"

@@ -57,10 +57,8 @@ public class ShopListAdapter extends RecyclerView.Adapter<ShopListAdapter.ItemsH
         box.setText(text);
         box.setChecked(item.isPickedUp());
         box.setOnClickListener( v -> {
-                    boolean pickedUp = item.isPickedUp();
-                    pickedUp = !pickedUp;
-                    item.setPickedUp(pickedUp);
-                    box.setChecked(pickedUp);
+                    shopList.toggleItemPickedUp(position);
+                    box.setChecked(item.isPickedUp());
                 });
         holder.cancel.setOnClickListener(v -> {
             shopList.removeItem(item);

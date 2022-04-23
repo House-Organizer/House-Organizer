@@ -59,6 +59,12 @@ public class FirestoreShopList extends ShopList{
         updateItems();
     }
 
+    @Override
+    public void toggleItemPickedUp(int index){
+        super.toggleItemPickedUp(index);
+        updateItems();
+    }
+
     public void setOnlineReference(DocumentReference docRef){
         onlineReference = docRef;
     }
