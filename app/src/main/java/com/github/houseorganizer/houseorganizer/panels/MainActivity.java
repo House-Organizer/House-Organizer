@@ -26,7 +26,6 @@ public class MainActivity extends AppCompatActivity {
          * Else send him to MainScreenActivity */
         (new Handler()).postDelayed(() -> {
             if (user != null) {
-                // TODO: I can't test with this can we remove it for now while keeping the TODO ?
                 if (user.isEmailVerified() || user.isAnonymous()) {
                     startActivity(new Intent(MainActivity.this, MainScreenActivity.class));
                 } else {
