@@ -62,22 +62,22 @@ public class CalendarActivityTest {
 
     @Test
     public void cycleIsEnabled() {
-        onView(withId(R.id.groceries_picked_up_button)).check(matches(isEnabled()));
+        onView(withId(R.id.calendar_screen_view_change)).check(matches(isEnabled()));
     }
 
     @Test
     public void cycleIsDisplayed() {
-        onView(withId(R.id.groceries_picked_up_button)).check(matches(isDisplayed()));
+        onView(withId(R.id.calendar_screen_view_change)).check(matches(isDisplayed()));
     }
 
     @Test
     public void addIsEnabled() {
-        onView(withId(R.id.groceries_add)).check(matches(isEnabled()));
+        onView(withId(R.id.calendar_screen_add_event)).check(matches(isEnabled()));
     }
 
     @Test
     public void addIsDisplayed() {
-        onView(withId(R.id.groceries_add)).check(matches(isDisplayed()));
+        onView(withId(R.id.calendar_screen_add_event)).check(matches(isDisplayed()));
     }
 
     @Test
@@ -92,10 +92,10 @@ public class CalendarActivityTest {
     public void calendarViewRotatesCorrectly() {
         final int MONTHLY_CHILDREN = YearMonth.of(LocalDate.now().getYear(), LocalDate.now().getMonth()).lengthOfMonth();
 
-        onView(withId(R.id.groceries_recycler)).check(matches(hasChildCount(2*EVENTS_TO_DISPLAY)));
-        onView(withId(R.id.groceries_picked_up_button)).perform(click());
-        onView(withId(R.id.groceries_recycler)).check(matches(hasChildCount(MONTHLY_CHILDREN)));
-        onView(withId(R.id.groceries_picked_up_button)).perform(click());
-        onView(withId(R.id.groceries_recycler)).check(matches(hasChildCount(2*EVENTS_TO_DISPLAY)));
+        onView(withId(R.id.calendar_screen_calendar)).check(matches(hasChildCount(2*EVENTS_TO_DISPLAY)));
+        onView(withId(R.id.calendar_screen_view_change)).perform(click());
+        onView(withId(R.id.calendar_screen_calendar)).check(matches(hasChildCount(MONTHLY_CHILDREN)));
+        onView(withId(R.id.calendar_screen_view_change)).perform(click());
+        onView(withId(R.id.calendar_screen_calendar)).check(matches(hasChildCount(2*EVENTS_TO_DISPLAY)));
     }
 }
