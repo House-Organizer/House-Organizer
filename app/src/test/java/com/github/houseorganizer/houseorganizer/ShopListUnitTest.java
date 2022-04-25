@@ -5,7 +5,6 @@ import static org.hamcrest.MatcherAssert.assertThat;
 
 import com.github.houseorganizer.houseorganizer.shop.ShopItem;
 import com.github.houseorganizer.houseorganizer.shop.ShopList;
-import com.github.houseorganizer.houseorganizer.user.DummyUser;
 
 import org.junit.Test;
 
@@ -14,18 +13,10 @@ import java.util.List;
 
 public class ShopListUnitTest {
 
-    private DummyUser user = new DummyUser("Jeff", "uid");
     private ShopItem basicItem = new ShopItem("Eggs", 4, "t");
 
     private ShopList createBasicList(){
-        return new ShopList(user, "Basic List");
-    }
-
-    @Test
-    public void shopListConstructorCreatesShopList(){
-        ShopList shopList = new ShopList(user, "My groceries");
-        assertThat(shopList.getListName(), is("My groceries"));
-        assertThat(shopList.getOwner(), is(user));
+        return new ShopList();
     }
 
     @Test
@@ -38,7 +29,7 @@ public class ShopListUnitTest {
     public void constructorWithNonEmptyListIsNotEmpty(){
         List<ShopItem> list = new ArrayList<>();
         list.add(new ShopItem("egg", 4, "kg"));
-        ShopList shopList = new ShopList(user, "My list", list, new ArrayList<>());
+        ShopList shopList = new ShopList(list);
         assertThat(shopList.isEmpty(), is(false));
     }
 
@@ -71,7 +62,7 @@ public class ShopListUnitTest {
         shopList.addItem(basicItem);
         shopList.addItem(new ShopItem("Basic", 3, "ua"));
         shopList.getItemAt(0).setPickedUp(true);
-        shopList.removedPickedUpItems();
+        shopList.removePickedUpItems();
         assertThat(shopList.size(), is(1));
     }
 
