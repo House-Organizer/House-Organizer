@@ -135,7 +135,7 @@ public class CalendarViewTest {
     @Test
     public void attachCorrectlyFiresIntent() {
         Intents.init();
-        onView(withId(R.id.calendar_screen_calendar))
+        onView(withId(R.id.groceries_recycler))
                 .perform(RecyclerViewActions.actionOnItemAtPosition(getRealPosition(1), RecyclerViewHelperActions.clickChildViewWithId(R.id.event_upcoming_attach)));
         onView(withText("Attach")).perform(click());
 
@@ -146,7 +146,7 @@ public class CalendarViewTest {
 
     @Test
     public void attachmentCorrectlyShows() {
-        onView(withId(R.id.calendar_screen_calendar))
+        onView(withId(R.id.groceries_recycler))
                 .perform(RecyclerViewActions.actionOnItemAtPosition(getRealPosition(0), RecyclerViewHelperActions.clickChildViewWithId(R.id.event_upcoming_attach)));
         onView(withText("Show")).perform(click());
         onView(withId(R.id.image_dialog)).check(matches(withEffectiveVisibility(ViewMatchers.Visibility.VISIBLE)));
@@ -154,7 +154,7 @@ public class CalendarViewTest {
 
     @Test
     public void attachmentRemovalCorrectlyWorks() {
-        onView(withId(R.id.calendar_screen_calendar))
+        onView(withId(R.id.groceries_recycler))
                 .perform(RecyclerViewActions.actionOnItemAtPosition(getRealPosition(2), RecyclerViewHelperActions.clickChildViewWithId(R.id.event_upcoming_attach)));
         onView(withText("Remove")).perform(click());
         storage.getReference().child("to_delete_attachment.jpg").getDownloadUrl().addOnCompleteListener(
@@ -164,29 +164,29 @@ public class CalendarViewTest {
 
     @Test
     public void calendarDisplaysAllUpcomingEventsFromHouse() {
-        onView(withId(R.id.calendar_screen_calendar)).check(matches(hasChildCount(2*EVENTS_TO_DISPLAY)));
+        onView(withId(R.id.groceries_recycler)).check(matches(hasChildCount(2*EVENTS_TO_DISPLAY)));
     }
 
     @Test
     public void calendarIsEnabled() {
-        onView(withId(R.id.calendar_screen_calendar)).check(matches(isEnabled()));
+        onView(withId(R.id.groceries_recycler)).check(matches(isEnabled()));
     }
 
     @Test
     public void calendarIsDisplayed() {
-        onView(withId(R.id.calendar_screen_calendar)).check(matches(isDisplayed()));
+        onView(withId(R.id.groceries_recycler)).check(matches(isDisplayed()));
     }
 
     @Test
     public void clickOnDelimiterDoesNotDoAnything() {
-        onView(withId(R.id.calendar_screen_calendar))
+        onView(withId(R.id.groceries_recycler))
                 .perform(RecyclerViewActions.actionOnItemAtPosition(getRealPosition(0) - 1, click()));
-        onView(withId(R.id.calendar_screen_calendar)).check(matches(isCompletelyDisplayed()));
+        onView(withId(R.id.groceries_recycler)).check(matches(isCompletelyDisplayed()));
     }
 
     @Test
     public void clickOnEventCorrectlyDisplaysPopup() {
-        onView(withId(R.id.calendar_screen_calendar))
+        onView(withId(R.id.groceries_recycler))
                 .perform(RecyclerViewActions.actionOnItemAtPosition(getRealPosition(0), RecyclerViewHelperActions.clickChildViewWithId(R.id.event_upcoming_title)));
         onView(withText("title")).inRoot(isDialog()).check(matches(isDisplayed()));
         onView(withText(R.string.ok)).inRoot(isDialog()).perform(click());
@@ -194,16 +194,16 @@ public class CalendarViewTest {
 
     @Test
     public void deleteEventCorrectlyDeletes() {
-        onView(withId(R.id.calendar_screen_calendar))
+        onView(withId(R.id.groceries_recycler))
                 .perform(RecyclerViewActions.actionOnItemAtPosition(getRealPosition(4), RecyclerViewHelperActions.clickChildViewWithId(R.id.event_upcoming_title)));
         onView(withText(R.string.delete)).inRoot(isDialog()).perform(click());
-        onView(withId(R.id.calendar_screen_calendar)).check(matches(hasChildCount(2*(EVENTS_TO_DISPLAY - 1))));
+        onView(withId(R.id.groceries_recycler)).check(matches(hasChildCount(2*(EVENTS_TO_DISPLAY - 1))));
     }
 
     @Test
     public void editEventCorrectlyChangesTheEvent() {
         // Edit the event
-        onView(withId(R.id.calendar_screen_calendar))
+        onView(withId(R.id.groceries_recycler))
                 .perform(RecyclerViewActions.actionOnItemAtPosition(getRealPosition(3), RecyclerViewHelperActions.clickChildViewWithId(R.id.event_upcoming_title)));
         onView(withText(R.string.edit)).inRoot(isDialog()).perform(click());
         onView(withText("desc")).inRoot(isDialog()).perform(typeText(" edited"));
@@ -215,7 +215,7 @@ public class CalendarViewTest {
 
     @Test
     public void pressingAddEventAddsAnEventToCalendar() throws InterruptedException {
-        onView(withId(R.id.calendar_screen_add_event)).perform(click());
+        onView(withId(R.id.groceries_add)).perform(click());
         onView(withHint(R.string.title)).perform(clearText()).perform(typeText("added")).perform(closeSoftKeyboard());
         onView(withHint(R.string.description)).perform(clearText()).perform(typeText("desc")).perform(closeSoftKeyboard());
         String date = LocalDateTime.of(2050, 10, 10, 10, 10).format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm"));
@@ -225,20 +225,20 @@ public class CalendarViewTest {
         Thread.sleep(5000);
         // Count is 2*EVENTS_TO_DISPLAY because we removed one event and added one
         // and because there is one delimiter per event
-        onView(withId(R.id.calendar_screen_calendar)).check(matches(hasChildCount(2*EVENTS_TO_DISPLAY)));
+        onView(withId(R.id.groceries_recycler)).check(matches(hasChildCount(2*EVENTS_TO_DISPLAY)));
     }
 
     @Test
     public void pressingOKOrEditThenCancelDismissesDialog() {
-        onView(withId(R.id.calendar_screen_calendar))
+        onView(withId(R.id.groceries_recycler))
                 .perform(RecyclerViewActions.actionOnItemAtPosition(getRealPosition(0), RecyclerViewHelperActions.clickChildViewWithId(R.id.event_upcoming_title)));
         onView(withText(R.string.edit)).inRoot(isDialog()).perform(click());
         onView(withText(R.string.cancel)).perform(click());
-        onView(withId(R.id.calendar_screen_calendar)).check(matches(isCompletelyDisplayed()));
+        onView(withId(R.id.groceries_recycler)).check(matches(isCompletelyDisplayed()));
 
-        onView(withId(R.id.calendar_screen_calendar))
+        onView(withId(R.id.groceries_recycler))
                 .perform(RecyclerViewActions.actionOnItemAtPosition(getRealPosition(0), RecyclerViewHelperActions.clickChildViewWithId(R.id.event_upcoming_title)));
         onView(withText(R.string.ok)).inRoot(isDialog()).perform(click());
-        onView(withId(R.id.calendar_screen_calendar)).check(matches(isCompletelyDisplayed()));
+        onView(withId(R.id.groceries_recycler)).check(matches(isCompletelyDisplayed()));
     }
 }

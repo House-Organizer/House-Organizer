@@ -15,6 +15,11 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.github.houseorganizer.houseorganizer.R;
+import com.google.android.gms.tasks.Task;
+import com.google.android.gms.tasks.Tasks;
+import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.FirebaseFirestore;
 
 public class ShopListAdapter extends RecyclerView.Adapter<ShopListAdapter.ItemsHolder> {
 
@@ -39,6 +44,35 @@ public class ShopListAdapter extends RecyclerView.Adapter<ShopListAdapter.ItemsH
     public void setShopList(ShopList shopList){
         this.shopList = shopList;
         this.notifyDataSetChanged();
+    }
+
+    public FirestoreShopList getFirestoreShopList(){
+        if(shopList instanceof FirestoreShopList) return (FirestoreShopList) shopList;
+        return null;
+    }
+
+    public static Task<ShopListAdapter> initializeFirestoreShopList(DocumentReference currentHouse,
+                                                                     FirebaseFirestore db) {
+        if (currentHouse == null) return Tasks.forCanceled();
+        CollectionReference root = db.collection("shop_lists");
+        return root.whereEqualTo("household", currentHouse).get()
+                .continueWithTask(r -> {
+                    // If empty -> create new house
+                    if (r.getResult().getDocuments().size() == 0) {
+                        FirestoreShopList shopList = new FirestoreShopList(currentHouse);
+                        return FirestoreShopList.storeNewShopList(root, new ShopList(), currentHouse)
+                                .continueWith(t -> {
+                                    shopList.setOnlineReference(t.getResult());
+                                    return new ShopListAdapter(shopList);
+                                });
+                        // If not empty then retrieve the existing shopList
+                    } else {
+                        return FirestoreShopList.retrieveShopList(root, currentHouse).continueWith(t -> {
+                            FirestoreShopList shopList = t.getResult();
+                            return new ShopListAdapter(shopList);
+                        });
+                    }
+                });
     }
 
     @NonNull

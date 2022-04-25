@@ -12,6 +12,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.github.houseorganizer.houseorganizer.R;
 import com.github.houseorganizer.houseorganizer.calendar.Calendar;
 import com.github.houseorganizer.houseorganizer.calendar.EventsAdapter;
+import com.github.houseorganizer.houseorganizer.shop.GroceriesActivity;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -55,6 +56,9 @@ public class CalendarActivity extends AppCompatActivity {
                 startActivity(intent);
                 break;
             case "Groceries":
+                Intent intentG = new Intent(this, GroceriesActivity.class);
+                intentG.putExtra("house", currentHouse.getId());
+                startActivity(intentG);
                 break;
             case "Tasks":
                 break;

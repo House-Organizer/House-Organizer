@@ -22,6 +22,7 @@ import com.github.houseorganizer.houseorganizer.calendar.EventsAdapter;
 import com.github.houseorganizer.houseorganizer.house.CreateHouseholdActivity;
 import com.github.houseorganizer.houseorganizer.house.HouseSelectionActivity;
 import com.github.houseorganizer.houseorganizer.shop.FirestoreShopList;
+import com.github.houseorganizer.houseorganizer.shop.GroceriesActivity;
 import com.github.houseorganizer.houseorganizer.shop.ShopList;
 import com.github.houseorganizer.houseorganizer.shop.ShopListAdapter;
 import com.github.houseorganizer.houseorganizer.task.TaskList;
@@ -88,33 +89,16 @@ public class MainScreenActivity extends AppCompatActivity {
     }
 
     private Task<ShopListAdapter> initializeGroceriesList() {
-        if (currentHouse == null) return Tasks.forCanceled();
-        CollectionReference root = db.collection("shop_lists");
-        return root.whereEqualTo("household", currentHouse).get()
-                .continueWithTask(r -> {
-                    // If empty -> create new house
-                    if (r.getResult().getDocuments().size() == 0) {
-                        shopList = new FirestoreShopList(currentHouse);
-                        return FirestoreShopList.storeNewShopList(root, new ShopList(), currentHouse)
-                                .continueWith(t -> {
-                                    shopList.setOnlineReference(t.getResult());
-                                    shopListAdapter = new ShopListAdapter(shopList);
-                                    return shopListAdapter;
-                                });
-                        // If not empty then retrieve the existing shopList
-                    } else {
-                        return FirestoreShopList.retrieveShopList(root, currentHouse).continueWith(t -> {
-                            shopList = t.getResult();
-                            shopListAdapter = new ShopListAdapter(shopList);
-                            return shopListAdapter;
-                        });
+        return ShopListAdapter.initializeFirestoreShopList(currentHouse, db).continueWith(c -> {
+                    if(c.isSuccessful()){
+                        shopList = c.getResult().getFirestoreShopList();
+                        shopListAdapter = c.getResult();
                     }
-                    // Setting up real time actualisation
-                }).addOnCompleteListener(c -> {
                     shopList.getOnlineReference().addSnapshotListener((doc, e) -> {
                         shopList = FirestoreShopList.buildShopList(doc);
                         shopListAdapter.setShopList(shopList);
                     });
+                    return shopListAdapter;
                 });
     }
     private boolean changeActivity(String buttonText) {
@@ -127,6 +111,9 @@ public class MainScreenActivity extends AppCompatActivity {
                 startActivity(intent);
                 break;
             case "Groceries":
+                Intent intentG = new Intent(this, GroceriesActivity.class);
+                intentG.putExtra("house", currentHouse.getId());
+                startActivity(intentG);
                 break;
             case "Tasks":
                 break;
