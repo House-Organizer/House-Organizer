@@ -42,6 +42,12 @@ public class InfoActivity extends AppCompatActivity {
                     UserAdapter adapter = new UserAdapter(getApplicationContext(),residents);
                     usersView.setAdapter(adapter);
                     usersView.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
+
+                    String notes = (String) document.get("notes");
+                    TextView notesText = findViewById(R.id.notesTextView);
+                    if(notes != null){
+                        notesText.setText(notes);
+                    }
                 }
             });
 

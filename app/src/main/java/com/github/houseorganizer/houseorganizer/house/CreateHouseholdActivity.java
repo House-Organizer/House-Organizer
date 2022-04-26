@@ -47,6 +47,7 @@ public class CreateHouseholdActivity extends AppCompatActivity {
         houseHold.put("owner", mUserEmail);
         houseHold.put("num_members", 1);
         houseHold.put("residents", residents);
+        houseHold.put("notes", "");
 
         db.collection("households").add(houseHold)
                 .addOnCompleteListener(this, task -> {
