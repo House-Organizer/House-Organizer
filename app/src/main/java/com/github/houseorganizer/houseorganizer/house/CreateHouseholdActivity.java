@@ -37,7 +37,12 @@ public class CreateHouseholdActivity extends AppCompatActivity {
 
     public void submitHouseholdToFirestore(View view){
         TextView houseHoldNameView = findViewById(R.id.editTextHouseholdName);
+        TextView latitudeView = findViewById(R.id.editTextLatitude);
+        TextView longitudeView = findViewById(R.id.editTextLongitude);
+
         CharSequence houseHoldName = houseHoldNameView.getText();
+        int lat = Integer.parseInt(latitudeView.getText().toString());
+        int lon = Integer.parseInt(longitudeView.getText().toString());
 
         Map<String, Object> houseHold = new HashMap<>();
         List<String> residents = new ArrayList<>();
@@ -47,6 +52,8 @@ public class CreateHouseholdActivity extends AppCompatActivity {
         houseHold.put("owner", mUserEmail);
         houseHold.put("num_members", 1);
         houseHold.put("residents", residents);
+        houseHold.put("latitude", lat);
+        houseHold.put("longitude", lon);
 
         db.collection("households").add(houseHold)
                 .addOnCompleteListener(this, task -> {
@@ -69,6 +76,8 @@ public class CreateHouseholdActivity extends AppCompatActivity {
                     }
                 });
     }
+
+
 
     private void saveData(String addedHouse) {
         SharedPreferences.Editor editor = getSharedPrefsEditor(this);
