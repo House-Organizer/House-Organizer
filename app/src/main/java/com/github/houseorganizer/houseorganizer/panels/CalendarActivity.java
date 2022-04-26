@@ -45,11 +45,9 @@ public class CalendarActivity extends AppCompatActivity {
         BottomNavigationView menu = findViewById(R.id.nav_bar);
         menu.setSelectedItemId(R.id.nav_bar_calendar);
         menu.setOnItemSelectedListener(l -> {
-            Intent intent = NavBarHelpers.changeActivityIntent(l.getTitle().toString(),
-                    currentHouse, "Calendar", this);
-            if(intent==null){
-                return false;
-            }
+            Intent intent = NavBarHelpers.changeActivityIntent(l.getTitle().toString(), currentHouse,
+                    "Calendar", this);
+            if(intent==null)return false;
             startActivity(intent);
             return true;
         });

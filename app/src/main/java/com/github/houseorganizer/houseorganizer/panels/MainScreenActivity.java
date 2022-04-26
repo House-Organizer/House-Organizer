@@ -85,9 +85,7 @@ public class MainScreenActivity extends AppCompatActivity {
         menu.setOnItemSelectedListener(l -> {
             Intent intent = NavBarHelpers.changeActivityIntent(l.getTitle().toString(),
                     currentHouse, "Main Screen", this);
-            if(intent==null){
-                return false;
-            }
+            if(intent==null) return false;
             startActivity(intent);
             return true;
         });
