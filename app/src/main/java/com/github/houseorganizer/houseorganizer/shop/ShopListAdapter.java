@@ -23,7 +23,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 
 public class ShopListAdapter extends RecyclerView.Adapter<ShopListAdapter.ItemsHolder> {
 
-    public class ItemsHolder extends RecyclerView.ViewHolder{
+    public static class ItemsHolder extends RecyclerView.ViewHolder{
         public ImageButton cancel;
         public CheckBox checkBox;
         public ItemsHolder(@NonNull View itemView) {
@@ -90,10 +90,7 @@ public class ShopListAdapter extends RecyclerView.Adapter<ShopListAdapter.ItemsH
         String text = item.toString();
         box.setText(text);
         box.setChecked(item.isPickedUp());
-        box.setOnClickListener( v -> {
-                    shopList.toggleItemPickedUp(position);
-                    box.setChecked(item.isPickedUp());
-                });
+        box.setOnClickListener( v -> shopList.toggleItemPickedUp(position));
         holder.cancel.setOnClickListener(v -> {
             shopList.removeItem(item);
             this.notifyItemRemoved(position);
