@@ -13,6 +13,14 @@
     <string name="no_household_info">No info yet!</string>
     <string name="info_header">Residents</string>
 
+    <!-- Create household -->
+    <string name="add_household">Add household</string>
+    <string name="add_household_success">Added household!</string>
+    <string name="add_household_failure">Failed to add household!</string>
+    <string name="household_creation_hint">Household name</string>
+    <string name="latitude_hint">Latitude</string>
+    <string name="longitude_hint">Longitude</string>
+
     <!-- Edit Household -->
     <string name="user_name">User name</string>
     <string name="edit_button_description">Press to edit the household</string>
@@ -78,10 +86,6 @@
     <string name="edit">Edit</string>
     <string name="event_editing_title">Edit event</string>
     <string name="confirm">Confirm</string>
-    <string name="add_household">Add household</string>
-    <string name="add_household_success">Added household!</string>
-    <string name="add_household_failure">Failed to add household!</string>
-    <string name="household_creation_hint">Household name</string>
 
     <!-- Login -->
     <string name="tag_login_activity">LoginActivity</string>
