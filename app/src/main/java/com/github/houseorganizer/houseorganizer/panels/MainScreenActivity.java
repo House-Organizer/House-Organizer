@@ -12,7 +12,6 @@ import android.view.View;
 
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -42,14 +41,13 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
-public class MainScreenActivity extends AppCompatActivity {
+public class MainScreenActivity extends NavBarActivity {
 
     public static final String CURRENT_HOUSEHOLD = "com.github.houseorganizer.houseorganizer.CURRENT_HOUSEHOLD";
 
     private final Calendar calendar = new Calendar();
     private FirebaseFirestore db;
     private FirebaseUser mUser;
-    private DocumentReference currentHouse;
     private EventsAdapter calendarAdapter;
     private RecyclerView calendarEvents;
 
@@ -115,23 +113,10 @@ public class MainScreenActivity extends AppCompatActivity {
                     });
                 });
     }
-    private boolean changeActivity(String buttonText) {
-        // Using the title and non resource strings here
-        // otherwise there is a warning that ids inside a switch are non final
-        switch(buttonText){
-            case "Calendar":
-                Intent intent = new Intent(this, CalendarActivity.class);
-                intent.putExtra("house", currentHouse.getId());
-                startActivity(intent);
-                break;
-            case "Groceries":
-                break;
-            case "Tasks":
-                break;
-            default:
-                break;
-        }
-        return true;
+
+    @Override
+    protected CurrentActivity currentActivity() {
+        return CurrentActivity.MAIN;
     }
 
     private void initializeTaskList() {
@@ -142,12 +127,11 @@ public class MainScreenActivity extends AppCompatActivity {
                 .whereEqualTo("hh-id", currentHouse.getId())
                 .get().addOnCompleteListener(task -> {
                     if (task.isSuccessful()) {
-                        System.out.println(currentHouse.getId());
                         QueryDocumentSnapshot qds = task.getResult().iterator().next();
                         this.tlMetadata = db.collection("task_lists").document(qds.getId());
                         this.taskList = new TaskList(currentUID, "My weekly todo", new ArrayList<>());
                         this.taskListAdapter = new TaskListAdapter(taskList, memberEmails);
-                        TaskView.recoverTaskList(this, taskList, taskListAdapter, tlMetadata);
+                        TaskView.recoverTaskList(this, taskList, taskListAdapter, tlMetadata, R.id.task_list);
                     }
         });
     }
@@ -263,7 +247,7 @@ public class MainScreenActivity extends AppCompatActivity {
 
         switch(listView) {
             case CHORES_LIST:
-                TaskView.setUpTaskListView(this, taskListAdapter);
+                TaskView.setUpTaskListView(this, taskListAdapter, R.id.task_list);
                 break;
             case GROCERY_LIST:
                 if(shopList == null) {

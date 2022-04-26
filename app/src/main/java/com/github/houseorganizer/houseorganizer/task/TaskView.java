@@ -1,5 +1,6 @@
 package com.github.houseorganizer.houseorganizer.task;
 
+import android.annotation.SuppressLint;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
@@ -21,16 +22,18 @@ import com.github.houseorganizer.houseorganizer.util.BiViewHolder;
 
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
 
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
 
 public final class TaskView {
-    public TaskView() {}
+    private TaskView() {} // s.t. it's non-instantiable
 
     public static <S extends View, T extends View> BiViewHolder<S, T>
     makeViewHolder(@NonNull ViewGroup parent, @LayoutRes int viewResId,
@@ -64,7 +67,9 @@ public final class TaskView {
     }
 
     /* Used in MainScreenActivity */
-    public static void recoverTaskList(AppCompatActivity parent, TaskList taskList, TaskListAdapter taskListAdapter, DocumentReference tlMetadata) {
+    @SuppressLint("NotifyDataSetChanged")
+    public static void recoverTaskList(AppCompatActivity parent, TaskList taskList, TaskListAdapter taskListAdapter,
+                                       DocumentReference tlMetadata, @IdRes int recyclerViewResId) {
         tlMetadata.get().addOnCompleteListener(task -> {
             if (task.isSuccessful()) {
                 Map<String, Object> metadata = task.getResult().getData();
@@ -84,16 +89,17 @@ public final class TaskView {
                     if (task2.isSuccessful()) {
                         Map<String, Object> taskData = task2.getResult().getData();
                         taskList.addTask(FirestoreTask.recoverTask(taskData, ptr));
+                        taskListAdapter.notifyDataSetChanged(); // patch s.t. they show up faster
                     }
                 }));
 
-                setUpTaskListView(parent, taskListAdapter);
+                setUpTaskListView(parent, taskListAdapter, recyclerViewResId);
             }
         });
     }
 
-    public static void setUpTaskListView(AppCompatActivity parent, TaskListAdapter taskListAdapter) {
-        RecyclerView taskListView = parent.findViewById(R.id.task_list);
+    public static void setUpTaskListView(AppCompatActivity parent, TaskListAdapter taskListAdapter, @IdRes int resId) {
+        RecyclerView taskListView = parent.findViewById(resId);
         taskListView.setAdapter(taskListAdapter);
         taskListView.setLayoutManager(new LinearLayoutManager(parent));
     }

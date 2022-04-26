@@ -23,6 +23,9 @@
             android:name=".panels.CalendarActivity"
             android:exported="false" />
         <activity
+            android:name=".panels.TaskListActivity"
+            android:exported="false" />
+        <activity
             android:name=".login.LoginActivity"
             android:exported="false" />
         <activity

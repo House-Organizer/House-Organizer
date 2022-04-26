@@ -5,7 +5,6 @@ import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.activity.result.contract.ActivityResultContracts;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -13,12 +12,9 @@ import com.github.houseorganizer.houseorganizer.R;
 import com.github.houseorganizer.houseorganizer.calendar.Calendar;
 import com.github.houseorganizer.houseorganizer.calendar.EventsAdapter;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
-import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 
-public class CalendarActivity extends AppCompatActivity {
-    private DocumentReference currentHouse;
-
+public final class CalendarActivity extends NavBarActivity {
     private EventsAdapter calendarAdapter;
     private RecyclerView calendarEvents;
     private final Calendar calendar = new Calendar();
@@ -46,21 +42,8 @@ public class CalendarActivity extends AppCompatActivity {
         menu.setOnItemSelectedListener(l -> changeActivity(l.getTitle().toString()));
     }
 
-    private boolean changeActivity(String buttonText) {
-        // Using the title and non resource strings here
-        // otherwise there is a warning that ids inside a switch are non final
-        switch(buttonText){
-            case "Main Screen":
-                Intent intent = new Intent(this, MainScreenActivity.class);
-                startActivity(intent);
-                break;
-            case "Groceries":
-                break;
-            case "Tasks":
-                break;
-            default:
-                break;
-        }
-        return true;
+    @Override
+    protected CurrentActivity currentActivity() {
+        return CurrentActivity.CALENDAR;
     }
 }
