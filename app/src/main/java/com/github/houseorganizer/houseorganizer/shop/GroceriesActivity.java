@@ -37,13 +37,13 @@ public class GroceriesActivity extends AppCompatActivity {
                     if(t.isSuccessful()){
                         shopList = t.getResult().getFirestoreShopList();
                         shopListAdapter = t.getResult();
+                        shopList.getOnlineReference().addSnapshotListener((d, e) -> {
+                            shopList = FirestoreShopList.buildShopList(d);
+                            shopListAdapter.setShopList(shopList);
+                        });
+                        view.setLayoutManager(new LinearLayoutManager(this));
+                        view.setAdapter(shopListAdapter);
                     }
-                    shopList.getOnlineReference().addSnapshotListener((d, e) -> {
-                        shopList = FirestoreShopList.buildShopList(d);
-                        shopListAdapter.setShopList(shopList);
-                    });
-                    view.setLayoutManager(new LinearLayoutManager(this));
-                    view.setAdapter(shopListAdapter);
                 });
 
         findViewById(R.id.groceries_add).setOnClickListener(c -> shopListAdapter.addItem(this, shopList));
