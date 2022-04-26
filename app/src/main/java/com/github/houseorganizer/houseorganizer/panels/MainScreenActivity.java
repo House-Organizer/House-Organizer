@@ -9,6 +9,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.Toast;
 
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AlertDialog;
@@ -93,12 +94,13 @@ public class MainScreenActivity extends AppCompatActivity {
                     if(c.isSuccessful()){
                         shopList = c.getResult().getFirestoreShopList();
                         shopListAdapter = c.getResult();
+                        shopList.getOnlineReference().addSnapshotListener((doc, e) -> {
+                            shopList = FirestoreShopList.buildShopList(doc);
+                            shopListAdapter.setShopList(shopList);
+                        });
+                        return shopListAdapter;
                     }
-                    shopList.getOnlineReference().addSnapshotListener((doc, e) -> {
-                        shopList = FirestoreShopList.buildShopList(doc);
-                        shopListAdapter.setShopList(shopList);
-                    });
-                    return shopListAdapter;
+                    return null;
                 });
     }
     private boolean changeActivity(String buttonText) {
@@ -255,9 +257,12 @@ public class MainScreenActivity extends AppCompatActivity {
                 TaskView.setUpTaskListView(this, taskListAdapter);
                 break;
             case GROCERY_LIST:
-                if(shopList == null) {
+                if(shopList == null || shopListAdapter == null) {
                     initializeGroceriesList()
-                            .addOnCompleteListener(t -> shopListAdapter.setUpShopListView(this));
+                            .addOnCompleteListener(t -> {
+                                if(t.isSuccessful() && shopListAdapter != null) shopListAdapter.setUpShopListView(this);
+                                else Toast.makeText(this, "Could not build groceries", Toast.LENGTH_SHORT);
+                            });
                     return;
                 }
                 shopListAdapter.setUpShopListView(this);

@@ -56,6 +56,7 @@ public class TaskListOnMainScreenTest {
         FirebaseTestsHelper.setUpFirebase();
 
         auth = FirebaseAuth.getInstance();
+        FirestoreTaskTest.createMockFirebase();
     }
 
     @AfterClass
@@ -64,8 +65,11 @@ public class TaskListOnMainScreenTest {
     }
 
     @Before
-    public void forceTaskView() {
-        onView(withId(R.id.list_view_change)).perform(click(), click());
+    public void forceTaskView() throws InterruptedException {
+        onView(withId(R.id.list_view_change)).perform(click());
+        Thread.sleep(300);
+        onView(withId(R.id.list_view_change)).perform(click());
+
     }
 
     @Rule
