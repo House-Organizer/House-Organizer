@@ -84,7 +84,6 @@ public class MainScreenActivity extends AppCompatActivity {
         calendarEvents.setAdapter(calendarAdapter);
         calendarEvents.setLayoutManager(new GridLayoutManager(this, 1));
         findViewById(R.id.add_event).setOnClickListener(v -> calendarAdapter.showAddEventDialog( this, currentHouse, "addEvent:failureToAdd"));
-        initializeGroceriesList();
         BottomNavigationView menu = findViewById(R.id.nav_bar);
         menu.setOnItemSelectedListener(l -> changeActivity(l.getTitle().toString()));
     }

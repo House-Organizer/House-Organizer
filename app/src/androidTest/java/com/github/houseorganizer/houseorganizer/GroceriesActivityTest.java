@@ -64,9 +64,6 @@ public class GroceriesActivityTest {
         onView(withId(R.id.house_imageButton)).perform(click());
         onView(withId(R.id.housesView))
                 .perform(RecyclerViewActions.actionOnItemAtPosition(0, click()));
-        Thread.sleep(100);
-        onView(withId(R.id.list_view_change)).perform(click());
-        Thread.sleep(1000);
         onView(withId(R.id.nav_bar_cart)).perform(click());
         Thread.sleep(300);
     }
@@ -93,7 +90,6 @@ public class GroceriesActivityTest {
     @Test
     public void addingItemShowsNewItem() throws InterruptedException {
         onView(withId(R.id.groceries_add)).perform(click());
-        Thread.sleep(1000);
         onView(withId(R.id.edit_text_name)).perform(typeText("item"));
         onView(withId(R.id.edit_text_quantity)).perform(typeText("2" ));
         onView(withId(R.id.edit_text_unit)).perform(typeText("kg"));
@@ -102,10 +98,7 @@ public class GroceriesActivityTest {
         onView(withId(R.id.groceries_recycler)).check(matches(hasChildCount(2)));
         onView(withId(R.id.groceries_recycler)).check(matches(hasDescendant(withText(containsString("item")))));
 
-        ViewInteraction viewInteraction = onView(allOf(withId(R.id.groceries_recycler),
-                hasDescendant(withText(containsString("item")))));
-
-        onView(withText(R.id.groceries_recycler))
+        onView(withId(R.id.groceries_recycler))
                 .perform(RecyclerViewActions.actionOnItemAtPosition(
                         1,
                         RecyclerViewHelperActions.clickChildViewWithId(R.id.delete_item_button)));

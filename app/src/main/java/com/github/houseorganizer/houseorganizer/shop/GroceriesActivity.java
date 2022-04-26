@@ -7,6 +7,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.Toast;
 
 import com.github.houseorganizer.houseorganizer.R;
@@ -53,6 +54,7 @@ public class GroceriesActivity extends AppCompatActivity {
         RecyclerView view = findViewById(R.id.groceries_recycler);
         ShopListAdapter.initializeFirestoreShopList(currentHouse, FirebaseFirestore.getInstance())
                 .addOnCompleteListener(t -> {
+
                     if(t.isSuccessful()){
                         shopList = t.getResult().getFirestoreShopList();
                         shopListAdapter = t.getResult();
@@ -62,7 +64,7 @@ public class GroceriesActivity extends AppCompatActivity {
                         });
                         view.setLayoutManager(new LinearLayoutManager(this));
                         view.setAdapter(shopListAdapter);
-                    }else Toast.makeText(this, "Could not retrieve list", Toast.LENGTH_LONG);
+                    }else Log.e("Groceries", "Could not initialize list");
                 });
     }
 
