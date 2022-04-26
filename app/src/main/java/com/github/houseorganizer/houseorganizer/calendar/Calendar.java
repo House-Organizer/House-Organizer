@@ -45,13 +45,13 @@ public class Calendar {
         return view;
     }
 
-    public int rotateCalendarView(Context ctx, EventsAdapter calendarAdapter, RecyclerView calendarEvents) {
+    public CalendarAdapter rotateCalendarView(Context ctx, CalendarAdapter calendarAdapter, RecyclerView calendarEvents) {
         rotateView();
         int calendarColumns = getView() == Calendar.CalendarView.UPCOMING ? 1 : 7;
+        calendarAdapter = calendarAdapter.switchView();
         calendarEvents.setAdapter(calendarAdapter);
         calendarEvents.setLayoutManager(new GridLayoutManager(ctx, calendarColumns));
-
-        return calendarColumns;
+        return calendarAdapter;
     }
 
     public static class Event implements UpcomingRowItem {

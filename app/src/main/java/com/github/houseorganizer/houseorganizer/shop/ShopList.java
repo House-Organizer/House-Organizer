@@ -1,8 +1,5 @@
 package com.github.houseorganizer.houseorganizer.shop;
 
-import com.github.houseorganizer.houseorganizer.user.User;
-import com.google.firebase.firestore.DocumentReference;
-
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
