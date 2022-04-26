@@ -39,9 +39,20 @@ public class InfoActivity extends AppCompatActivity {
                     DocumentSnapshot document = task.getResult();
                     List<String> residents = (List<String>) document.get("residents");
 
-                    UserAdapter adapter = new UserAdapter(getApplicationContext(),residents);
-                    usersView.setAdapter(adapter);
-                    usersView.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
+                    firestore.collection("email-to-nickname")
+                             .document("email-to-nickname-translations")
+                             .get()
+                             .addOnCompleteListener(trans -> {
+                                 if(residents != null && trans.isSuccessful()){
+                                     residents.replaceAll(e -> {
+                                         String nickname = (String) trans.getResult().get(e);
+                                         return nickname == null ? e : nickname;
+                                     });
+                                 }
+                                 UserAdapter adapter = new UserAdapter(getApplicationContext(),residents);
+                                 usersView.setAdapter(adapter);
+                                 usersView.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
+                             });
                 }
             });
 
