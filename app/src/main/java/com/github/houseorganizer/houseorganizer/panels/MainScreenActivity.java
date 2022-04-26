@@ -27,8 +27,6 @@ import com.github.houseorganizer.houseorganizer.shop.ShopListAdapter;
 import com.github.houseorganizer.houseorganizer.task.TaskList;
 import com.github.houseorganizer.houseorganizer.task.TaskListAdapter;
 import com.github.houseorganizer.houseorganizer.task.TaskView;
-import com.github.houseorganizer.houseorganizer.user.DummyUser;
-import com.github.houseorganizer.houseorganizer.user.User;
 import com.google.android.gms.tasks.Task;
 import com.google.android.gms.tasks.Tasks;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
@@ -64,7 +62,7 @@ public class MainScreenActivity extends AppCompatActivity {
     public enum ListFragmentView { CHORES_LIST, GROCERY_LIST }
 
     /* for setting up the task owner. Not related to firebase */
-    private final User currentUser = new DummyUser("Test User", "0");
+    private final String currentUID = "0";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -147,7 +145,7 @@ public class MainScreenActivity extends AppCompatActivity {
                         System.out.println(currentHouse.getId());
                         QueryDocumentSnapshot qds = task.getResult().iterator().next();
                         this.tlMetadata = db.collection("task_lists").document(qds.getId());
-                        this.taskList = new TaskList(currentUser.uid(), "My weekly todo", new ArrayList<>());
+                        this.taskList = new TaskList(currentUID, "My weekly todo", new ArrayList<>());
                         this.taskListAdapter = new TaskListAdapter(taskList, memberEmails);
                         TaskView.recoverTaskList(this, taskList, taskListAdapter, tlMetadata);
                     }
