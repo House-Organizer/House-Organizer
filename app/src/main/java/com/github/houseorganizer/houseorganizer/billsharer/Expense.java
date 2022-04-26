@@ -1,23 +1,23 @@
 package com.github.houseorganizer.houseorganizer.billsharer;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Objects;
 
 public class Expense {
 
     private String title;
-    private String currency;
     private int cost;
     private LocalDateTime date;
-    private ArrayList<String> users;
+    private String payee;
+    private HashMap<String, Integer> shares;
 
-    public Expense(String title, String currency, int cost, LocalDateTime date, ArrayList<String> users) {
+    public Expense(String title, int cost, LocalDateTime date, String payee, HashMap<String, Integer> shares) {
         this.title = title;
-        this.currency = currency;
         this.cost = cost;
         this.date = date;
-        this.users = users;
+        this.payee = payee;
+        this.shares = shares;
     }
 
     public String getTitle() {
@@ -26,14 +26,6 @@ public class Expense {
 
     public void setTitle(String title) {
         this.title = title;
-    }
-
-    public String getCurrency() {
-        return currency;
-    }
-
-    public void setCurrency(String currency) {
-        this.currency = currency;
     }
 
     public int getCost() {
@@ -52,12 +44,20 @@ public class Expense {
         this.date = date;
     }
 
-    public ArrayList<String> getUsers() {
-        return users;
+    public String getPayee() {
+        return payee;
     }
 
-    public void setUsers(ArrayList<String> users) {
-        this.users = users;
+    public void setPayee(String payee) {
+        this.payee = payee;
+    }
+
+    public HashMap<String, Integer> getShares() {
+        return shares;
+    }
+
+    public void setShares(HashMap<String, Integer> shares) {
+        this.shares = shares;
     }
 
     @Override
@@ -65,11 +65,13 @@ public class Expense {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Expense expense = (Expense) o;
-        return cost == expense.cost && title.equals(expense.title) && currency.equals(expense.currency) && date.equals(expense.date) && users.equals(expense.users);
+        return cost == expense.cost && title.equals(expense.title) && date.equals(expense.date) && shares.equals(expense.shares);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(title, currency, cost, date, users);
+        return Objects.hash(title, cost, date, shares);
     }
+
+
 }
