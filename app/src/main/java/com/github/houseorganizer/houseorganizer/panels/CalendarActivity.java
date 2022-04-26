@@ -9,10 +9,10 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.github.houseorganizer.houseorganizer.NavBar.NavBarHelpers;
 import com.github.houseorganizer.houseorganizer.R;
 import com.github.houseorganizer.houseorganizer.calendar.Calendar;
 import com.github.houseorganizer.houseorganizer.calendar.EventsAdapter;
-import com.github.houseorganizer.houseorganizer.shop.GroceriesActivity;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -44,27 +44,15 @@ public class CalendarActivity extends AppCompatActivity {
 
         BottomNavigationView menu = findViewById(R.id.nav_bar);
         menu.setSelectedItemId(R.id.nav_bar_calendar);
-        menu.setOnItemSelectedListener(l -> changeActivity(l.getTitle().toString()));
-    }
+        menu.setOnItemSelectedListener(l -> {
+            Intent intent = NavBarHelpers.changeActivityIntent(l.getTitle().toString(),
+                    currentHouse, "Calendar", this);
+            if(intent==null){
+                return false;
+            }
+            startActivity(intent);
+            return true;
+        });
 
-    private boolean changeActivity(String buttonText) {
-        // Using the title and non resource strings here
-        // otherwise there is a warning that ids inside a switch are non final
-        switch(buttonText){
-            case "Main Screen":
-                Intent intent = new Intent(this, MainScreenActivity.class);
-                startActivity(intent);
-                break;
-            case "Groceries":
-                Intent intentG = new Intent(this, GroceriesActivity.class);
-                intentG.putExtra("house", currentHouse.getId());
-                startActivity(intentG);
-                break;
-            case "Tasks":
-                break;
-            default:
-                break;
-        }
-        return true;
     }
 }

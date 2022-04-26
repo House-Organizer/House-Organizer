@@ -9,9 +9,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.github.houseorganizer.houseorganizer.NavBar.NavBarHelpers;
 import com.github.houseorganizer.houseorganizer.R;
-import com.github.houseorganizer.houseorganizer.panels.CalendarActivity;
-import com.github.houseorganizer.houseorganizer.panels.MainScreenActivity;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -46,7 +45,15 @@ public class GroceriesActivity extends AppCompatActivity {
 
         BottomNavigationView menu = findViewById(R.id.nav_bar);
         menu.setSelectedItemId(R.id.nav_bar_cart);
-        menu.setOnItemSelectedListener(l -> changeActivity(l.getTitle().toString()));
+        menu.setOnItemSelectedListener(l -> {
+            Intent intent = NavBarHelpers.changeActivityIntent(l.getTitle().toString(),
+                    currentHouse, "Groceries", this);
+            if(intent==null){
+                return false;
+            }
+            startActivity(intent);
+            return true;
+        });
     }
 
     private void initializeData(){
@@ -67,24 +74,4 @@ public class GroceriesActivity extends AppCompatActivity {
                 });
     }
 
-    private boolean changeActivity(String buttonText) {
-        // Using the title and non resource strings here
-        // otherwise there is a warning that ids inside a switch are non final
-        switch(buttonText){
-            case "Main Screen":
-                Intent intent = new Intent(this, MainScreenActivity.class);
-                startActivity(intent);
-                break;
-            case "Calendar":
-                Intent intentC = new Intent(this, CalendarActivity.class);
-                intentC.putExtra("house", currentHouse.getId());
-                startActivity(intentC);
-                break;
-            case "Tasks":
-                break;
-            default:
-                break;
-        }
-        return true;
-    }
 }

@@ -10,7 +10,6 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-import android.widget.Toast;
 
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AlertDialog;
@@ -18,13 +17,13 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.github.houseorganizer.houseorganizer.NavBar.NavBarHelpers;
 import com.github.houseorganizer.houseorganizer.R;
 import com.github.houseorganizer.houseorganizer.calendar.Calendar;
 import com.github.houseorganizer.houseorganizer.calendar.EventsAdapter;
 import com.github.houseorganizer.houseorganizer.house.CreateHouseholdActivity;
 import com.github.houseorganizer.houseorganizer.house.HouseSelectionActivity;
 import com.github.houseorganizer.houseorganizer.shop.FirestoreShopList;
-import com.github.houseorganizer.houseorganizer.shop.GroceriesActivity;
 import com.github.houseorganizer.houseorganizer.shop.ShopListAdapter;
 import com.github.houseorganizer.houseorganizer.task.TaskList;
 import com.github.houseorganizer.houseorganizer.task.TaskListAdapter;
@@ -83,7 +82,16 @@ public class MainScreenActivity extends AppCompatActivity {
         calendarEvents.setLayoutManager(new GridLayoutManager(this, 1));
         findViewById(R.id.add_event).setOnClickListener(v -> calendarAdapter.showAddEventDialog( this, currentHouse, "addEvent:failureToAdd"));
         BottomNavigationView menu = findViewById(R.id.nav_bar);
-        menu.setOnItemSelectedListener(l -> changeActivity(l.getTitle().toString()));
+        menu.setOnItemSelectedListener(l -> {
+            Intent intent = NavBarHelpers.changeActivityIntent(l.getTitle().toString(),
+                    currentHouse, "Main Screen", this);
+            if(intent==null){
+                return false;
+            }
+            startActivity(intent);
+            return true;
+        });
+
     }
 
     private Task<ShopListAdapter> initializeGroceriesList() {
@@ -99,27 +107,6 @@ public class MainScreenActivity extends AppCompatActivity {
                     }
                     return null;
                 });
-    }
-    private boolean changeActivity(String buttonText) {
-        // Using the title and non resource strings here
-        // otherwise there is a warning that ids inside a switch are non final
-        switch(buttonText){
-            case "Calendar":
-                Intent intent = new Intent(this, CalendarActivity.class);
-                intent.putExtra("house", currentHouse.getId());
-                startActivity(intent);
-                break;
-            case "Groceries":
-                Intent intentG = new Intent(this, GroceriesActivity.class);
-                intentG.putExtra("house", currentHouse.getId());
-                startActivity(intentG);
-                break;
-            case "Tasks":
-                break;
-            default:
-                break;
-        }
-        return true;
     }
 
     private void initializeTaskList() {
