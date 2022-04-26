@@ -123,11 +123,11 @@ public class ShopListAdapter extends RecyclerView.Adapter<ShopListAdapter.ItemsH
     }
 
     private void retrieveItemFromDialog(FirestoreShopList shopList, View dialogView){
-        final String name = ((EditText) dialogView.findViewById(R.id.editTextName)).getText().toString();
-        final String unit = ((EditText) dialogView.findViewById(R.id.editTextUnit)).getText().toString();
+        final String name = ((EditText) dialogView.findViewById(R.id.edit_text_name)).getText().toString();
+        final String unit = ((EditText) dialogView.findViewById(R.id.edit_text_unit)).getText().toString();
         int quantity = 0;
         try {
-            quantity = Integer.parseInt(((EditText) dialogView.findViewById(R.id.editTextQuantity)).getText().toString());
+            quantity = Integer.parseInt(((EditText) dialogView.findViewById(R.id.edit_text_quantity)).getText().toString());
         }catch (Exception e){
             // Only possible bad input is empty field
         }

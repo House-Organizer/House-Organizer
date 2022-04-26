@@ -7,29 +7,29 @@
 
 
     <EditText
-        android:id="@+id/editTextName"
+        android:id="@+id/edit_text_name"
         android:layout_width="200dp"
         android:layout_height="wrap_content"
         android:layout_weight="1"
         android:ems="10"
-        android:inputType="textPersonName"
-        android:text="@string/name" />
+        android:hint="@string/name"
+        android:inputType="textPersonName" />
 
     <EditText
-        android:id="@+id/editTextQuantity"
+        android:id="@+id/edit_text_quantity"
         android:layout_width="92dp"
         android:layout_height="wrap_content"
         android:layout_weight="1"
         android:ems="10"
-        android:inputType="number"
-        android:text="0" />
+        android:hint="@string/number_empty"
+        android:inputType="number" />
 
     <EditText
-        android:id="@+id/editTextUnit"
+        android:id="@+id/edit_text_unit"
         android:layout_width="106dp"
         android:layout_height="wrap_content"
         android:layout_weight="1"
         android:ems="10"
-        android:inputType="textPersonName"
-        android:text="@string/unit" />
+        android:hint="@string/unit"
+        android:inputType="textPersonName" />
 </LinearLayout>

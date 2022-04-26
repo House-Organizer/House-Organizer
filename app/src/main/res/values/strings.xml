@@ -118,6 +118,7 @@
     <string name="item_delete_button_description">Delete the corresponding shop list item</string>
     <string name="add_item_button">Add item</string>
     <string name="remove_picked_up">Remove checked items</string>
+    <string name="number_empty">0</string>
 
     <!-- Bottom features menu -->
     <string name="main_screen">Main Screen</string>

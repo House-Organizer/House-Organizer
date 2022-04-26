@@ -7,6 +7,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
+import android.widget.Toast;
 
 import com.github.houseorganizer.houseorganizer.R;
 import com.github.houseorganizer.houseorganizer.panels.CalendarActivity;
@@ -31,6 +32,24 @@ public class GroceriesActivity extends AppCompatActivity {
         currentHouse = FirebaseFirestore.getInstance().collection("households")
                 .document(getIntent().getStringExtra("house"));
 
+        initializeData();
+
+        findViewById(R.id.groceries_add).setOnClickListener(c -> {
+            if(shopListAdapter != null) shopListAdapter.addItem(this, shopList);
+            else initializeData();
+        });
+        findViewById(R.id.groceries_picked_up_button).setOnClickListener(c -> {
+            shopList.removePickedUpItems();
+            shopListAdapter.notifyDataSetChanged();
+        });
+
+
+        BottomNavigationView menu = findViewById(R.id.nav_bar);
+        menu.setSelectedItemId(R.id.nav_bar_cart);
+        menu.setOnItemSelectedListener(l -> changeActivity(l.getTitle().toString()));
+    }
+
+    private void initializeData(){
         RecyclerView view = findViewById(R.id.groceries_recycler);
         ShopListAdapter.initializeFirestoreShopList(currentHouse, FirebaseFirestore.getInstance())
                 .addOnCompleteListener(t -> {
@@ -43,19 +62,8 @@ public class GroceriesActivity extends AppCompatActivity {
                         });
                         view.setLayoutManager(new LinearLayoutManager(this));
                         view.setAdapter(shopListAdapter);
-                    }
+                    }else Toast.makeText(this, "Could not retrieve list", Toast.LENGTH_LONG);
                 });
-
-        findViewById(R.id.groceries_add).setOnClickListener(c -> shopListAdapter.addItem(this, shopList));
-        findViewById(R.id.groceries_picked_up_button).setOnClickListener(c -> {
-            shopList.removePickedUpItems();
-            shopListAdapter.notifyDataSetChanged();
-        });
-
-
-        BottomNavigationView menu = findViewById(R.id.nav_bar);
-        menu.setSelectedItemId(R.id.nav_bar_cart);
-        menu.setOnItemSelectedListener(l -> changeActivity(l.getTitle().toString()));
     }
 
     private boolean changeActivity(String buttonText) {
