@@ -7,7 +7,6 @@ import com.github.houseorganizer.houseorganizer.R;
 import com.github.houseorganizer.houseorganizer.task.TaskList;
 import com.github.houseorganizer.houseorganizer.task.TaskListAdapter;
 import com.github.houseorganizer.houseorganizer.task.TaskView;
-import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
@@ -15,6 +14,7 @@ import com.google.firebase.firestore.QueryDocumentSnapshot;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.OptionalInt;
 
 public final class TaskListActivity extends NavBarActivity {
     private TaskList taskList;
@@ -32,12 +32,10 @@ public final class TaskListActivity extends NavBarActivity {
 
         initializeTaskList();
 
-        BottomNavigationView menu = findViewById(R.id.nav_bar);
-        menu.setSelectedItemId(R.id.nav_bar_task);
-        menu.setOnItemSelectedListener(l -> changeActivity(l.getTitle().toString()));
-
         Button newTask = findViewById(R.id.tl_screen_new_task);
         newTask.setOnClickListener(e -> addTask());
+
+        super.setUpNavBar(R.id.nav_bar, OptionalInt.of(R.id.nav_bar_task));
     }
 
     public void addTask() {

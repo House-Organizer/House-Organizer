@@ -65,9 +65,7 @@ public class TaskListOnMainScreenTest {
 
     @Before
     public void forceTaskView() throws InterruptedException {
-        onView(withId(R.id.list_view_change)).perform(click());
-        Thread.sleep(5000);
-        onView(withId(R.id.list_view_change)).perform(click());
+        Thread.sleep(300); // no longer necessary to perform clicks
     }
 
     @Rule

@@ -28,7 +28,6 @@ import com.github.houseorganizer.houseorganizer.task.TaskListAdapter;
 import com.github.houseorganizer.houseorganizer.task.TaskView;
 import com.google.android.gms.tasks.Task;
 import com.google.android.gms.tasks.Tasks;
-import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.CollectionReference;
@@ -40,6 +39,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
+import java.util.OptionalInt;
 
 public class MainScreenActivity extends NavBarActivity {
 
@@ -79,8 +79,10 @@ public class MainScreenActivity extends NavBarActivity {
         calendarEvents.setLayoutManager(new GridLayoutManager(this, 1));
         findViewById(R.id.add_event).setOnClickListener(v -> calendarAdapter.showAddEventDialog( this, currentHouse, "addEvent:failureToAdd"));
         initializeGroceriesList();
-        BottomNavigationView menu = findViewById(R.id.nav_bar);
-        menu.setOnItemSelectedListener(l -> changeActivity(l.getTitle().toString()));
+
+        // If you want to select the main button on the navBar,
+        // use `OptionalInt.of(R.id. ...)`
+        super.setUpNavBar(R.id.nav_bar, OptionalInt.empty());
     }
 
     private Task<ShopListAdapter> initializeGroceriesList() {

@@ -2,9 +2,13 @@ package com.github.houseorganizer.houseorganizer.panels;
 
 import android.content.Intent;
 
+import androidx.annotation.IdRes;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.firestore.DocumentReference;
+
+import java.util.OptionalInt;
 
 public abstract class NavBarActivity extends AppCompatActivity {
     protected enum CurrentActivity{
@@ -44,5 +48,14 @@ public abstract class NavBarActivity extends AppCompatActivity {
             startActivity(intent);
         }
         return true;
+    }
+
+    @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
+    protected void setUpNavBar(@IdRes int navBarId, OptionalInt navBarButtonId) {
+        BottomNavigationView menu = findViewById(navBarId);
+        if(navBarButtonId.isPresent()) {
+            menu.setSelectedItemId(navBarButtonId.getAsInt());
+        }
+        menu.setOnItemSelectedListener(l -> changeActivity(l.getTitle().toString()));
     }
 }
