@@ -38,11 +38,6 @@ public class MonthlyAdapter extends CalendarAdapter {
         for (int i = 0; i < YearMonth.now().lengthOfMonth(); i++) {
             ret.add(new ArrayList<>());
         }
-        // Optimize for the empty case
-        if (events.isEmpty()) {
-            items = ret;
-            return;
-        }
         for (int i = 0; i < events.size(); i++) {
             if (!(events.get(i).getStart().toLocalDate().getMonthValue() == YearMonth.now().getMonthValue()
                 && events.get(i).getStart().toLocalDate().getYear() == YearMonth.now().getYear())) {
