@@ -80,7 +80,7 @@ public class ShopItemUnitTest {
     @Test
     public void toStringPrintsCorrectly(){
         ShopItem item = new ShopItem("name", 4, "kg");
-        assertThat(item.toString(), is("name : 4kg"));
+        assertThat(item.toString(), is("name : 4 kg"));
     }
 
 }

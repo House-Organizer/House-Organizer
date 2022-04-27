@@ -109,7 +109,14 @@
     <string name="remove">Remove</string>
     <string name="three_dots">three dots</string>
     <string name="event_attachment_content_description">attachment of the event</string>
-
+  
+    <!-- ShopItem -->
+    <string name="name">Name</string>
+    <string name="quantity">Quantity</string>
+    <string name="unit">Unit</string>
+    <string name="add_item_title">Adding an item to the list</string>
+    <string name="item_delete_button_description">Delete the corresponding shop list item</string>
+  
     <!-- Bottom features menu -->
     <string name="main_screen">Main Screen</string>
     <string name="groceries">Groceries</string>
