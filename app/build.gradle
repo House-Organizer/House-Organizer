@@ -65,6 +65,7 @@ dependencies {
     // Google Play services
     implementation 'com.google.android.gms:play-services-auth:20.1.0'
     implementation 'com.google.android.gms:play-services-base:18.0.1'
+    implementation 'com.google.android.gms:play-services-location:19.0.1'
 
     implementation 'com.google.firebase:firebase-database:'
     implementation 'com.google.firebase:firebase-firestore:'

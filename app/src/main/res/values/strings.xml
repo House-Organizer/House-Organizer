@@ -6,7 +6,6 @@
     <string name="settings_speakable_text">Settings</string>
     <string name="house_speakable_text">Home selection</string>
     <string name="info_speakable_text">Info</string>
-    <string name="house_name">House name</string>>
     <string name="img_house_row_desc">Image for the given house name</string>
     <string name="home_logo">Home Logo</string>
     <string name="title_activity_settings">Settings</string>
@@ -20,6 +19,10 @@
     <string name="household_creation_hint">Household name</string>
     <string name="latitude_hint">Latitude</string>
     <string name="longitude_hint">Longitude</string>
+
+    <!-- Household selection -->
+    <string name="house_name">House name</string>>
+    <string name="permission_denied">This app requires permission to be granted in order to work properly</string>
 
     <!-- Edit Household -->
     <string name="user_name">User name</string>
