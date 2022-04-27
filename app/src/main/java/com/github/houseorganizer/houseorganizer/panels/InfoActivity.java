@@ -34,12 +34,10 @@ public class InfoActivity extends AppCompatActivity {
         if (currentHouse != null) {
             currentHouse.get().addOnCompleteListener(task -> {
                 if(task.isSuccessful()){
-                    DocumentSnapshot document = task.getResult();
-                    List<String> residents = (List<String>) document.get("residents");
+                    List<String> residents = (List<String>) task.getResult().get("residents");
 
                     firestore.collection("email-to-nickname")
-                             .document("email-to-nickname-translations")
-                             .get()
+                             .document("email-to-nickname-translations").get()
                              .addOnCompleteListener(trans -> {
                                  if(residents != null && trans.isSuccessful()){
                                      residents.replaceAll(e -> {
