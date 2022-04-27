@@ -40,14 +40,13 @@ public class InfoActivity extends AppCompatActivity {
         if (currentHouse != null) {
             currentHouse.get().addOnCompleteListener(task -> {
                 if(task.isSuccessful()){
-                    DocumentSnapshot document = task.getResult();
-                    List<String> residents = (List<String>) document.get("residents");
+                    List<String> residents = (List<String>) task.getResult().get("residents");
 
                     UserAdapter adapter = new UserAdapter(getApplicationContext(),residents);
                     usersView.setAdapter(adapter);
                     usersView.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
 
-                    String notes = (String) document.get("notes");
+                    String notes = (String) task.getResult().get("notes");
                     TextView notesText = findViewById(R.id.notesTextView);
                     if(notes != null){
                         notesText.setText(notes);
@@ -56,7 +55,6 @@ public class InfoActivity extends AppCompatActivity {
                     }
                 }
             });
-
         } else {
             TextView text = findViewById(R.id.infoHeader);
             text.setText(R.string.no_household_info);
