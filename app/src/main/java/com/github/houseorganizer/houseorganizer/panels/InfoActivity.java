@@ -51,6 +51,8 @@ public class InfoActivity extends AppCompatActivity {
                     TextView notesText = findViewById(R.id.notesTextView);
                     if(notes != null){
                         notesText.setText(notes);
+                        EditText editNotes = findViewById(R.id.editTextHouseholdNotes);
+                        editNotes.setText(notes);
                     }
                 }
             });
