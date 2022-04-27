@@ -49,8 +49,9 @@ public class FirebaseTestsHelper {
     protected static String[] TEST_USERS_PWD =
             {"abc123", "abc123", "abc123", "abc123","abc123", "abc123", "abc123", "abc123"};
 
-    protected static String[] TEST_HOUSEHOLD_NAMES =
-            {"home_1", "home_2", "home_3"};
+    protected static String[] TEST_HOUSEHOLD_NAMES = {"home_1", "home_2", "home_3"};
+    protected static int[] TEST_HOUSEHOLD_LATS = {20, 30, 40};
+    protected static int[] TEST_HOUSEHOLD_LONS = {20, 30, 40};
 
     protected static String FIRST_TL_NAME = String.format("tl_for_%s", TEST_HOUSEHOLD_NAMES[0]);
 
@@ -123,7 +124,8 @@ public class FirebaseTestsHelper {
      * It is assumed the owner is logged in
      */
     protected static void createTestHouseholdOnFirestoreWithName(String householdName, String owner,
-                                                                 List<String> residents, String docName)
+                                                                 List<String> residents, String docName,
+                                                                 int latitude, int longitude)
             throws ExecutionException, InterruptedException {
 
         FirebaseFirestore db = FirebaseFirestore.getInstance();
@@ -134,6 +136,8 @@ public class FirebaseTestsHelper {
         houseHold.put("owner", owner);
         houseHold.put("num_members", residents.size());
         houseHold.put("residents", residents);
+        houseHold.put("latitude", latitude);
+        houseHold.put("longitude", longitude);
 
         Task<Void> task = db.collection("households").document(docName).set(houseHold);
         Tasks.await(task);
@@ -164,15 +168,17 @@ public class FirebaseTestsHelper {
      */
     protected static void createHouseholds() throws ExecutionException, InterruptedException {
         createTestHouseholdOnFirestoreWithName(TEST_HOUSEHOLD_NAMES[0], TEST_USERS_EMAILS[0],
-                Arrays.asList(TEST_USERS_EMAILS[0], TEST_USERS_EMAILS[1]), TEST_HOUSEHOLD_NAMES[0]);
+                Arrays.asList(TEST_USERS_EMAILS[0], TEST_USERS_EMAILS[1]), TEST_HOUSEHOLD_NAMES[0],
+                TEST_HOUSEHOLD_LATS[0], TEST_HOUSEHOLD_LONS[0]);
 
         createTestHouseholdOnFirestoreWithName(TEST_HOUSEHOLD_NAMES[1], TEST_USERS_EMAILS[0],
-                Arrays.asList(TEST_USERS_EMAILS[0], TEST_USERS_EMAILS[2]), TEST_HOUSEHOLD_NAMES[1]);
+                Arrays.asList(TEST_USERS_EMAILS[0], TEST_USERS_EMAILS[2]), TEST_HOUSEHOLD_NAMES[1],
+                TEST_HOUSEHOLD_LATS[1], TEST_HOUSEHOLD_LONS[1]);
 
         createTestHouseholdOnFirestoreWithName(TEST_HOUSEHOLD_NAMES[2], TEST_USERS_EMAILS[1],
                 Arrays.asList(TEST_USERS_EMAILS[1], TEST_USERS_EMAILS[2], TEST_USERS_EMAILS[3],
                         TEST_USERS_EMAILS[4], TEST_USERS_EMAILS[5], TEST_USERS_EMAILS[6]),
-                TEST_HOUSEHOLD_NAMES[2]);
+                TEST_HOUSEHOLD_NAMES[2], TEST_HOUSEHOLD_LATS[2], TEST_HOUSEHOLD_LONS[2]);
     }
 
     protected static Map<String, Object> fetchHouseholdData(String houseName, FirebaseFirestore db) throws ExecutionException, InterruptedException {
