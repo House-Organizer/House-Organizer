@@ -35,7 +35,6 @@ public class InfoActivity extends AppCompatActivity {
             currentHouse.get().addOnCompleteListener(task -> {
                 if(task.isSuccessful()){
                     List<String> residents = (List<String>) task.getResult().get("residents");
-
                     firestore.collection("email-to-nickname")
                              .document("email-to-nickname-translations").get()
                              .addOnCompleteListener(trans -> {
