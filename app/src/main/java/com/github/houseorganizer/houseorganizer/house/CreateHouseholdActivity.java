@@ -38,9 +38,11 @@ public class CreateHouseholdActivity extends AppCompatActivity {
     public void submitHouseholdToFirestore(View view){
         TextView houseHoldNameView = findViewById(R.id.editTextHouseholdName);
         CharSequence houseHoldName = houseHoldNameView.getText();
+
         Map<String, Object> houseHold = new HashMap<>();
         List<String> residents = new ArrayList<>();
         residents.add(mUserEmail);
+
         houseHold.put("name", houseHoldName.toString());
         houseHold.put("owner", mUserEmail);
         houseHold.put("num_members", 1);
@@ -52,9 +54,7 @@ public class CreateHouseholdActivity extends AppCompatActivity {
                     if (task.isSuccessful()) {
                         saveData(task.getResult().getId());
 
-                        Toast.makeText(view.getContext(),
-                                view.getContext().getString(R.string.add_household_success),
-                                Toast.LENGTH_SHORT).show();
+                        Toast.makeText(view.getContext(), view.getContext().getString(R.string.add_household_success), Toast.LENGTH_SHORT).show();
 
                         Intent intent = new Intent(this, MainScreenActivity.class);
                         startActivity(intent);
