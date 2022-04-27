@@ -3,9 +3,6 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
-        <entry key="..\:/Users/thiba/Documents/GitHub/House-Organizer/app/src/main/res/layout/calendar_screen.xml" value="0.16927083333333334" />
-        <entry key="..\:/Users/thiba/Documents/GitHub/House-Organizer/app/src/main/res/layout/calendar_upcoming_delimiter.xml" value="0.16927083333333334" />
-        <entry key="..\:/Users/thiba/Documents/GitHub/House-Organizer/app/src/main/res/layout/calendar_upcoming_row.xml" value="0.16927083333333334" />
         <entry key="app/src/main/res/drawable-v24/ic_launcher_foreground.xml" value="0.2255" />
         <entry key="app/src/main/res/drawable/ic_launcher_background.xml" value="0.2255" />
         <entry key="app/src/main/res/layout/activity_greeting.xml" value="0.25416666666666665" />
