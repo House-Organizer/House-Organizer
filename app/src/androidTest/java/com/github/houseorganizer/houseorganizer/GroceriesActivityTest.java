@@ -112,6 +112,14 @@ public class GroceriesActivityTest {
     }
 
     @Test
+    public void navBarTakesToCalendarScreen(){
+        Intents.init();
+        onView(withId(R.id.nav_bar_calendar)).perform(click());
+        intended(hasComponent(MainScreenActivity.class.getName()));
+        Intents.release();
+    }
+
+    @Test
     public void deletingItemRemovesIt() throws InterruptedException {
         addNewItem("item", 4, "g");
         onView(withId(R.id.groceries_recycler))

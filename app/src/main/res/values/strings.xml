@@ -119,6 +119,7 @@
     <string name="add_item_button">Add item</string>
     <string name="remove_picked_up">Remove checked items</string>
     <string name="number_empty">0</string>
+    <string name="shop_loading_error">Could not load the shop list</string>
 
     <!-- Bottom features menu -->
     <string name="main_screen">Main Screen</string>

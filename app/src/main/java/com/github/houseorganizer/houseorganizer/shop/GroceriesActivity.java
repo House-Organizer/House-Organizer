@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -68,7 +69,10 @@ public class GroceriesActivity extends AppCompatActivity {
                         });
                         view.setLayoutManager(new LinearLayoutManager(this));
                         view.setAdapter(shopListAdapter);
-                    }else Log.e("Groceries", "Could not initialize list");
+                    }else {
+                        Log.e("Groceries", "Could not initialize shop list");
+                        Toast.makeText(this, R.string.shop_loading_error, Toast.LENGTH_LONG).show();
+                    }
                 });
     }
 

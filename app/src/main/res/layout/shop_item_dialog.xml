@@ -11,15 +11,18 @@
         android:layout_width="200dp"
         android:layout_height="wrap_content"
         android:layout_weight="1"
+        android:autofillHints="@string/name"
         android:ems="10"
         android:hint="@string/name"
-        android:inputType="textPersonName" />
+        android:inputType="textPersonName"
+        android:textColorHint="#757575" />
 
     <EditText
         android:id="@+id/edit_text_quantity"
         android:layout_width="92dp"
         android:layout_height="wrap_content"
         android:layout_weight="1"
+        android:autofillHints="@string/number_empty"
         android:ems="10"
         android:hint="@string/number_empty"
         android:inputType="number" />
@@ -29,7 +32,9 @@
         android:layout_width="106dp"
         android:layout_height="wrap_content"
         android:layout_weight="1"
+        android:autofillHints="@string/unit"
         android:ems="10"
         android:hint="@string/unit"
-        android:inputType="textPersonName" />
+        android:inputType="textPersonName"
+        android:textColorHint="#757575" />
 </LinearLayout>
