@@ -1,43 +1,27 @@
 package com.github.houseorganizer.houseorganizer;
 
 import static androidx.test.espresso.Espresso.onView;
+import static androidx.test.espresso.action.ViewActions.clearText;
 import static androidx.test.espresso.action.ViewActions.click;
 import static androidx.test.espresso.action.ViewActions.typeText;
 import static androidx.test.espresso.assertion.ViewAssertions.matches;
-import static androidx.test.espresso.contrib.RecyclerViewActions.actionOnItemAtPosition;
-import static androidx.test.espresso.contrib.RecyclerViewActions.scrollTo;
-import static androidx.test.espresso.core.internal.deps.guava.base.Preconditions.checkNotNull;
-import static androidx.test.espresso.matcher.ViewMatchers.assertThat;
 import static androidx.test.espresso.matcher.ViewMatchers.hasChildCount;
 import static androidx.test.espresso.matcher.ViewMatchers.hasDescendant;
-import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
 import static androidx.test.espresso.matcher.ViewMatchers.withText;
-import static com.github.houseorganizer.houseorganizer.FirebaseTestsHelper.EVENTS_TO_DISPLAY;
 import static com.github.houseorganizer.houseorganizer.FirebaseTestsHelper.TEST_HOUSEHOLD_NAMES;
-import static com.github.houseorganizer.houseorganizer.FirebaseTestsHelper.TEST_USERS_EMAILS;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotEquals;
-import static org.junit.Assert.assertTrue;
 
-import android.content.Context;
 import android.view.View;
 
-import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
-import androidx.test.espresso.ViewAssertion;
-import androidx.test.espresso.contrib.RecyclerViewActions;
-import androidx.test.espresso.intent.Intents;
+
 import androidx.test.espresso.matcher.BoundedMatcher;
 import androidx.test.ext.junit.rules.ActivityScenarioRule;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
-import androidx.test.platform.app.InstrumentationRegistry;
 
-import com.github.houseorganizer.houseorganizer.panels.InfoActivity;
 import com.github.houseorganizer.houseorganizer.panels.MainScreenActivity;
-import com.github.houseorganizer.houseorganizer.storage.LocalStorage;
-import com.github.houseorganizer.houseorganizer.util.Util;
+
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
 
@@ -57,7 +41,6 @@ public class InfoActivityTest {
 
     private static FirebaseFirestore db;
     private static FirebaseAuth auth;
-    private static final String TEST_TXT_FILENAME = "test.txt";
 
     @BeforeClass
     public static void createMockFirebase() throws ExecutionException, InterruptedException {
@@ -87,7 +70,7 @@ public class InfoActivityTest {
     public void notesCanBeChanged() throws ExecutionException, InterruptedException {
         onView(withId(R.id.info_imageButton)).perform(click());
 
-        onView(withId(R.id.editTextHouseholdNotes)).perform(click(), typeText("ah, yes, testing"));
+        onView(withId(R.id.editTextHouseholdNotes)).perform(click(), clearText(), typeText("ah, yes, testing"));
         onView(withId(R.id.buttonEditNotes)).perform(click());
 
         Map<String, Object> houseData_after = FirebaseTestsHelper.fetchHouseholdData(TEST_HOUSEHOLD_NAMES[0], db);
@@ -104,9 +87,9 @@ public class InfoActivityTest {
     }
 
     @Test
-    public void usersEmailsAreDisplayed(){
+    public void usersEmailsOrNicknamesAreDisplayed(){
         onView(withId(R.id.info_imageButton)).perform(click());
-        onView(withId(R.id.info_recycler_view)).check(matches(atPosition(0, hasDescendant(withText("user_1@test.com")))));
+        onView(withId(R.id.info_recycler_view)).check(matches(atPosition(0, hasDescendant(withText("user_1")))));
         onView(withId(R.id.info_recycler_view)).check(matches(atPosition(1, hasDescendant(withText("user_2@test.com")))));
     }
 

@@ -289,6 +289,18 @@ public class FirebaseTestsHelper {
         Tasks.await(task7);
     }
 
+    protected static void setupNicknames() throws ExecutionException, InterruptedException {
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+
+        Map<String, String> nicknames = new HashMap<>();
+        nicknames.put("user_1@test.com", "user_1");
+
+        Task<Void> task = db.collection("email-to-nickname")
+                .document("email-to-nickname-translations")
+                .set(nicknames);
+        Tasks.await(task);
+    }
+
     /**
      * This method will create 8 users, 3 households (each with a task list), a task list and a list of events
      * After this call user_1 is logged in
@@ -313,6 +325,9 @@ public class FirebaseTestsHelper {
         }
 
         createHouseholds();
+
+        setupNicknames();
+
         createTestShopList();
 
         createTestEvents();

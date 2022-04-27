@@ -13,6 +13,8 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.github.houseorganizer.houseorganizer.R;
 import com.github.houseorganizer.houseorganizer.user.UserAdapter;
 import com.github.houseorganizer.houseorganizer.util.Util;
+import com.google.android.gms.tasks.Task;
+import com.google.android.gms.tasks.Tasks;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -20,6 +22,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ExecutionException;
 
 public class InfoActivity extends AppCompatActivity {
 
@@ -41,18 +44,15 @@ public class InfoActivity extends AppCompatActivity {
                     List<String> residents = (List<String>) task.getResult().get("residents");
 
                     String notes = (String) task.getResult().get("notes");
-                    TextView notesText = findViewById(R.id.notesTextView);
                     if(notes != null){
-                        notesText.setText(notes);
-                        EditText editNotes = findViewById(R.id.editTextHouseholdNotes);
-                        editNotes.setText(notes);
+                        ((TextView)findViewById(R.id.notesTextView)).setText(notes);
+                        ((EditText)findViewById(R.id.editTextHouseholdNotes)).setText(notes);
                     }
-                    firestore.collection("email-to-nickname")
-                             .document("email-to-nickname-translations").get()
-                             .addOnCompleteListener(trans -> {
+                    firestore.collection("email-to-nickname").document("email-to-nickname-translations").get().addOnCompleteListener(trans -> {
                                  if(residents != null && trans.isSuccessful()){
+                                     Map<String, Object> translations = trans.getResult().getData();
                                      residents.replaceAll(e -> {
-                                         String nickname = (String) trans.getResult().get(e);
+                                         String nickname = (String) translations.get(e);
                                          return nickname == null ? e : nickname;
                                      });
                                  }
@@ -61,8 +61,7 @@ public class InfoActivity extends AppCompatActivity {
                 }
             });
         } else {
-            TextView text = findViewById(R.id.infoHeader);
-            text.setText(R.string.no_household_info);
+            ((TextView)findViewById(R.id.infoHeader)).setText(R.string.no_household_info);
         }
     }
 
