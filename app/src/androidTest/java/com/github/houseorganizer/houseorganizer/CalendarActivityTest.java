@@ -12,8 +12,6 @@ import static androidx.test.espresso.matcher.ViewMatchers.isEnabled;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
 import static androidx.test.espresso.matcher.ViewMatchers.withText;
 import static com.github.houseorganizer.houseorganizer.FirebaseTestsHelper.EVENTS_TO_DISPLAY;
-
-import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.containsString;
 
 import androidx.test.espresso.contrib.RecyclerViewActions;
