@@ -65,7 +65,7 @@ public class TaskListOnMainScreenTest {
 
     @Before
     public void forceTaskView() throws InterruptedException {
-        Thread.sleep(300); // no longer necessary to perform clicks
+        Thread.sleep(1000); // no longer necessary to perform clicks
     }
 
     @Rule
