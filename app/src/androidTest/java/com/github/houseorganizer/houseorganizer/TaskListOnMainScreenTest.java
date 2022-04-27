@@ -39,8 +39,8 @@ import org.junit.runner.RunWith;
 import java.util.concurrent.ExecutionException;
 
 /*
-* To add tests for: adding/removing tasks, changing task title [for now need bug fixes]
-*/
+ * To add tests for: adding/removing tasks, changing task title [for now need bug fixes]
+ */
 
 @RunWith(AndroidJUnit4.class)
 public class TaskListOnMainScreenTest {
@@ -56,6 +56,7 @@ public class TaskListOnMainScreenTest {
         FirebaseTestsHelper.setUpFirebase();
 
         auth = FirebaseAuth.getInstance();
+        FirestoreTaskTest.createMockFirebase();
     }
 
     @AfterClass
@@ -64,8 +65,11 @@ public class TaskListOnMainScreenTest {
     }
 
     @Before
-    public void forceTaskView() {
-        onView(withId(R.id.list_view_change)).perform(click(), click());
+    public void forceTaskView() throws InterruptedException {
+        onView(withId(R.id.list_view_change)).perform(click());
+        Thread.sleep(300);
+        onView(withId(R.id.list_view_change)).perform(click());
+
     }
 
     @Rule

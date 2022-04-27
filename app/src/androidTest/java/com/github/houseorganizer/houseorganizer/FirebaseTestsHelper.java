@@ -45,7 +45,7 @@ public class FirebaseTestsHelper {
 
     protected static String[] TEST_USERS_EMAILS =
             {"user_1@test.com", "user_2@test.com", "user_3@test.com", "user_4@test.com",
-             "user_5@test.com", "user_6@test.com", "user_7@test.com", "user_8@test.com"};
+                    "user_5@test.com", "user_6@test.com", "user_7@test.com", "user_8@test.com"};
     protected static String[] TEST_USERS_PWD =
             {"abc123", "abc123", "abc123", "abc123","abc123", "abc123", "abc123", "abc123"};
 
@@ -211,9 +211,16 @@ public class FirebaseTestsHelper {
         Task<DocumentReference> t = FirestoreShopList.storeNewShopList(db.collection("shop_lists"), shopList, household);
         Tasks.await(t);
         shopList.setOnlineReference(t.getResult());
+
+        household = db.collection("households").document(TEST_HOUSEHOLD_NAMES[1]);
+        shopList = new FirestoreShopList(household);
+        shopList.addItem(TEST_ITEM);
+        t = FirestoreShopList.storeNewShopList(db.collection("shop_lists"), shopList, household);
+        Tasks.await(t);
+        shopList.setOnlineReference(t.getResult());
     }
 
-     /**
+    /**
      * This method will create events for testing
      */
     protected static void createTestEvents() throws ExecutionException, InterruptedException {
