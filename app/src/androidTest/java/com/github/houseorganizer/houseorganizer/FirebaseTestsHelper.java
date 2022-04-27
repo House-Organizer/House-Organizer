@@ -262,7 +262,7 @@ public class FirebaseTestsHelper {
         isAlreadyPast.put("description", "desc");
         isAlreadyPast.put("duration", 10);
         isAlreadyPast.put("household", db.collection("households").document(TEST_HOUSEHOLD_NAMES[0]));
-        isAlreadyPast.put("start", LocalDateTime.of(2020, 10, 10, 10, 10).toEpochSecond(ZoneOffset.UTC));
+        isAlreadyPast.put("start", LocalDateTime.now().minusDays(1).toEpochSecond(ZoneOffset.UTC));
         Task<Void> task6 = db.collection("events").document("is_already_past").set(isAlreadyPast);
 
         Map<String, Object> isInOtherHouse = new HashMap<>();

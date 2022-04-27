@@ -10,7 +10,6 @@
         android:id="@+id/calendar_screen_calendar"
         android:layout_width="match_parent"
         android:layout_height="0dip"
-        android:layout_marginHorizontal="5dp"
         android:layout_marginTop="10dp"
         app:layout_constraintBottom_toTopOf="@+id/calendar_screen_add_event"
         app:layout_constraintEnd_toEndOf="parent"

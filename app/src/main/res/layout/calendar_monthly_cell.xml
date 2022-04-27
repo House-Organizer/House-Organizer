@@ -13,6 +13,6 @@
         android:layout_width="50dp"
         android:layout_height="110dp"
         android:textSize="13sp"
-        android:gravity="start" />
+        android:gravity="center_horizontal"/>
 
 </GridLayout>

@@ -37,10 +37,12 @@ public class CalendarActivity extends AppCompatActivity {
                 registerForActivityResult(new ActivityResultContracts.GetContent(), uri -> calendarAdapter.pushAttachment(uri)));
         calendarEvents.setAdapter(calendarAdapter);
         calendarEvents.setLayoutManager(new GridLayoutManager(this, 1));
-        calendarAdapter.refreshCalendarView(this, currentHouse, "refreshCalendar:failureToRefresh");
-        findViewById(R.id.calendar_screen_view_change).setOnClickListener(v -> calendarAdapter = calendar.rotateCalendarView(this, calendarAdapter, calendarEvents));
+        calendarAdapter.refreshCalendarView(this, currentHouse, "refreshCalendar:failureToRefresh", false);
+        findViewById(R.id.calendar_screen_view_change).setOnClickListener(v -> {
+            calendarAdapter = calendar.rotateCalendarView(this, calendarAdapter, calendarEvents);
+            calendarAdapter.refreshCalendarView(this, currentHouse, "refreshCalendar:failureToRefresh", calendar.getView() == Calendar.CalendarView.MONTHLY);
+        });
         findViewById(R.id.calendar_screen_add_event).setOnClickListener(v -> calendarAdapter.showAddEventDialog(this, currentHouse, "addEvent:failure"));
-
         BottomNavigationView menu = findViewById(R.id.nav_bar);
         menu.setSelectedItemId(R.id.nav_bar_calendar);
         menu.setOnItemSelectedListener(l -> changeActivity(l.getTitle().toString()));

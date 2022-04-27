@@ -21,6 +21,7 @@ import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.util.ArrayList;
@@ -59,7 +60,7 @@ public abstract class CalendarAdapter extends RecyclerView.Adapter<RecyclerView.
                 .setPositiveButton(R.string.add, (dialog, id) -> {
                     Task<DocumentReference> pushTask = pushEventFromDialog(dialogView, currentHouse);
                     if (pushTask != null) {
-                        pushTask.addOnSuccessListener(documentReference -> refreshCalendarView(ctx, currentHouse, errMessage));
+                            pushTask.addOnSuccessListener(documentReference -> refreshCalendarView(ctx, currentHouse, errMessage, calendar.getView() == Calendar.CalendarView.MONTHLY));
                     }
                     dialog.dismiss();
                 })
@@ -86,10 +87,11 @@ public abstract class CalendarAdapter extends RecyclerView.Adapter<RecyclerView.
     }
 
     @SuppressLint("NotifyDataSetChanged")
-    public void refreshCalendarView(Context ctx, DocumentReference currentHouse, String errMessage) {
+    public void refreshCalendarView(Context ctx, DocumentReference currentHouse, String errMessage, boolean withPast) {
+        long timeThreshold = withPast ? LocalDateTime.MIN.toEpochSecond(ZoneOffset.UTC) : LocalDateTime.now().toEpochSecond(ZoneOffset.UTC);
         db.collection("events")
                 .whereEqualTo("household", currentHouse)
-                .whereGreaterThan("start", LocalDateTime.now().toEpochSecond(ZoneOffset.UTC))
+                .whereGreaterThan("start", timeThreshold)
                 .get()
                 .addOnCompleteListener(task -> {
                     if (task.isSuccessful()) {

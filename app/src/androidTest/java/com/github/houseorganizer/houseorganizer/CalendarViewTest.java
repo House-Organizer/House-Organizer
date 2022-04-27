@@ -90,8 +90,9 @@ public class CalendarViewTest {
     }
 
     @Before
-    public void prepareCalendar() {
+    public void prepareCalendar() throws InterruptedException {
         onView(withId(R.id.house_imageButton)).perform(click());
+        Thread.sleep(1000);
         onView(withId(R.id.housesView)).perform(RecyclerViewActions.actionOnItemAtPosition(0, click()));
         onView(withId(R.id.nav_bar_calendar)).perform(click());
     }
@@ -222,7 +223,7 @@ public class CalendarViewTest {
         onView(withHint(R.string.date)).perform(clearText()).perform(typeText(date)).perform(closeSoftKeyboard());
         onView(withHint(R.string.duration)).perform(clearText()).perform(typeText("10")).perform(closeSoftKeyboard());
         onView(withText(R.string.add)).perform(click());
-        Thread.sleep(5000);
+        Thread.sleep(1000);
         // Count is 2*EVENTS_TO_DISPLAY because we removed one event and added one
         // and because there is one delimiter per event
         onView(withId(R.id.calendar_screen_calendar)).check(matches(hasChildCount(2*EVENTS_TO_DISPLAY)));

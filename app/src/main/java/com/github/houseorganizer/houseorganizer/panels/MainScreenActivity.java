@@ -157,7 +157,7 @@ public class MainScreenActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        calendarAdapter.refreshCalendarView(this, currentHouse, "refreshCalendar:failureToRefresh");
+        calendarAdapter.refreshCalendarView(this, currentHouse, "refreshCalendar:failureToRefresh", false);
     }
 
     private void loadData() {
@@ -188,7 +188,7 @@ public class MainScreenActivity extends AppCompatActivity {
                                 return;
                             }
                         }
-                        calendarAdapter.refreshCalendarView(this, currentHouse, "refreshCalendar:failureToRefresh");
+                        calendarAdapter.refreshCalendarView(this, currentHouse, "refreshCalendar:failureToRefresh", false);
                         initializeTaskList();
                     } else
                         logAndToast(this.toString(), "loadHousehold:failure", task.getException(), getApplicationContext(), "Could not get a house.");

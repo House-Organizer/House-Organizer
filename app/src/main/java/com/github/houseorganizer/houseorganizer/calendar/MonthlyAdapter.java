@@ -9,6 +9,7 @@ import android.widget.Button;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.github.houseorganizer.houseorganizer.R;
@@ -43,6 +44,10 @@ public class MonthlyAdapter extends CalendarAdapter {
             return;
         }
         for (int i = 0; i < events.size(); i++) {
+            if (!(events.get(i).getStart().toLocalDate().getMonthValue() == YearMonth.now().getMonthValue()
+                && events.get(i).getStart().toLocalDate().getYear() == YearMonth.now().getYear())) {
+                continue;
+            }
             ret.get(events.get(i).getStart().getDayOfMonth()-1).add(events.get(i));
         }
         items = ret;
@@ -70,10 +75,27 @@ public class MonthlyAdapter extends CalendarAdapter {
     }
 
     private void prepareMonthlyView(MonthlyDayViewHolder holder, int position) {
-        holder.titleView.setText(String.format(Locale.ENGLISH, "%d", position + 1));
-        holder.titleView.setOnClickListener(v -> new AlertDialog.Builder(v.getContext())
-                .setTitle(Integer.toString(position + 1)).setMessage("List of events for this day somehow")
-                .setMessage("List of events for this day somehow").show());
+        if (items.get(position).isEmpty()) {
+            holder.titleView.setText(String.format(Locale.ENGLISH, "%d", position + 1));
+            holder.titleView.setOnClickListener(v -> new AlertDialog.Builder(v.getContext())
+                    .setMessage(R.string.no_events)
+                    .show());
+        }
+        else {
+            holder.titleView.setText(String.format(Locale.ENGLISH, "%d\n\n!", position + 1));
+
+            holder.titleView.setOnClickListener(v -> {
+                RecyclerView calendarView = new RecyclerView(v.getContext());
+                Calendar dayCalendar = new Calendar();
+                dayCalendar.setEvents(items.get(position));
+                UpcomingAdapter adapter = new UpcomingAdapter(dayCalendar, getPicture);
+                calendarView.setAdapter(adapter);
+                calendarView.setLayoutManager(new GridLayoutManager(v.getContext(), 1));
+                new AlertDialog.Builder(v.getContext())
+                        .setView(calendarView)
+                        .show();
+            });
+        }
     }
 
     @Override
