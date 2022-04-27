@@ -38,11 +38,9 @@ public class CreateHouseholdActivity extends AppCompatActivity {
     public void submitHouseholdToFirestore(View view){
         TextView houseHoldNameView = findViewById(R.id.editTextHouseholdName);
         CharSequence houseHoldName = houseHoldNameView.getText();
-
         Map<String, Object> houseHold = new HashMap<>();
         List<String> residents = new ArrayList<>();
         residents.add(mUserEmail);
-
         houseHold.put("name", houseHoldName.toString());
         houseHold.put("owner", mUserEmail);
         houseHold.put("num_members", 1);
