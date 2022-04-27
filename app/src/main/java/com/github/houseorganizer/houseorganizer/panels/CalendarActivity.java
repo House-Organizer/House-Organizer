@@ -3,6 +3,8 @@ package com.github.houseorganizer.houseorganizer.panels;
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.View;
+import android.widget.TextView;
 
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
@@ -16,6 +18,9 @@ import com.github.houseorganizer.houseorganizer.calendar.UpcomingAdapter;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
+
+import java.time.YearMonth;
+import java.time.format.DateTimeFormatter;
 
 public class CalendarActivity extends AppCompatActivity {
     private DocumentReference currentHouse;
@@ -32,6 +37,10 @@ public class CalendarActivity extends AppCompatActivity {
 
         currentHouse = FirebaseFirestore.getInstance().collection("households").document(getIntent().getStringExtra("house"));
 
+        TextView yearMonth = (TextView) findViewById(R.id.calendar_screen_year_month);
+        yearMonth.setText(YearMonth.now().format(DateTimeFormatter.ofPattern("LLLL uuuu")));
+        yearMonth.setVisibility(View.GONE);
+
         calendarEvents = findViewById(R.id.calendar_screen_calendar);
         calendarAdapter = new UpcomingAdapter(calendar,
                 registerForActivityResult(new ActivityResultContracts.GetContent(), uri -> calendarAdapter.pushAttachment(uri)));
@@ -41,6 +50,12 @@ public class CalendarActivity extends AppCompatActivity {
         findViewById(R.id.calendar_screen_view_change).setOnClickListener(v -> {
             calendarAdapter = calendar.rotateCalendarView(this, calendarAdapter, calendarEvents);
             calendarAdapter.refreshCalendarView(this, currentHouse, "refreshCalendar:failureToRefresh", calendar.getView() == Calendar.CalendarView.MONTHLY);
+            if (calendar.getView() == Calendar.CalendarView.MONTHLY) {
+                yearMonth.setVisibility(View.VISIBLE);
+            }
+            else {
+                yearMonth.setVisibility(View.GONE);
+            }
         });
         findViewById(R.id.calendar_screen_add_event).setOnClickListener(v -> calendarAdapter.showAddEventDialog(this, currentHouse, "addEvent:failure"));
         BottomNavigationView menu = findViewById(R.id.nav_bar);

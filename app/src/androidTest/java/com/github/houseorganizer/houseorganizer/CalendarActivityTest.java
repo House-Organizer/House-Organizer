@@ -7,11 +7,13 @@ import static androidx.test.espresso.intent.Intents.intended;
 import static androidx.test.espresso.intent.matcher.IntentMatchers.hasComponent;
 import static androidx.test.espresso.matcher.RootMatchers.isDialog;
 import static androidx.test.espresso.matcher.ViewMatchers.hasChildCount;
+import static androidx.test.espresso.matcher.ViewMatchers.hasDescendant;
 import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static androidx.test.espresso.matcher.ViewMatchers.isEnabled;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
 import static androidx.test.espresso.matcher.ViewMatchers.withText;
 import static com.github.houseorganizer.houseorganizer.FirebaseTestsHelper.EVENTS_TO_DISPLAY;
+import static com.github.houseorganizer.houseorganizer.RecyclerViewHelper.atPosition;
 import static org.hamcrest.Matchers.containsString;
 
 import androidx.test.espresso.contrib.RecyclerViewActions;
@@ -111,7 +113,13 @@ public class CalendarActivityTest {
         // The wait is here in order to wait for the refreshing of the calendar
         onView(withId(R.id.calendar_screen_view_change)).perform(click());
         Thread.sleep(1000);
-        onView(withId(R.id.calendar_screen_calendar)).check(matches(withText(containsString("!"))));
+        if (LocalDate.now().getDayOfMonth() == YearMonth.now().lengthOfMonth()) {
+            onView(withId(R.id.calendar_screen_calendar)).check(matches(atPosition(LocalDate.now().getDayOfMonth() - 2, hasDescendant(withText(containsString("!"))))));
+        }
+        else {
+            onView(withId(R.id.calendar_screen_calendar)).check(matches(atPosition(LocalDate.now().getDayOfMonth(), hasDescendant(withText(containsString("!"))))));
+        }
+
     }
 
     @Test
