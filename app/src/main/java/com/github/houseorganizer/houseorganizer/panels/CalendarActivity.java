@@ -50,12 +50,7 @@ public class CalendarActivity extends AppCompatActivity {
         findViewById(R.id.calendar_screen_view_change).setOnClickListener(v -> {
             calendarAdapter = calendar.rotateCalendarView(this, calendarAdapter, calendarEvents);
             calendarAdapter.refreshCalendarView(this, currentHouse, "refreshCalendar:failureToRefresh", calendar.getView() == Calendar.CalendarView.MONTHLY);
-            if (calendar.getView() == Calendar.CalendarView.MONTHLY) {
-                yearMonth.setVisibility(View.VISIBLE);
-            }
-            else {
-                yearMonth.setVisibility(View.GONE);
-            }
+            yearMonth.setVisibility(calendar.getView() == Calendar.CalendarView.MONTHLY ? View.VISIBLE : View.GONE);
         });
         findViewById(R.id.calendar_screen_add_event).setOnClickListener(v -> calendarAdapter.showAddEventDialog(this, currentHouse, "addEvent:failure"));
         BottomNavigationView menu = findViewById(R.id.nav_bar);
