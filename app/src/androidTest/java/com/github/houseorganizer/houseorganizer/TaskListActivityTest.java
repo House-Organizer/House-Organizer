@@ -18,11 +18,15 @@ import static androidx.test.espresso.matcher.ViewMatchers.withId;
 import static androidx.test.espresso.matcher.ViewMatchers.withTagValue;
 import static androidx.test.espresso.matcher.ViewMatchers.withText;
 
+import static com.github.houseorganizer.houseorganizer.FirebaseTestsHelper.TEST_HOUSEHOLD_NAMES;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 
 
+import android.content.Intent;
+
+import androidx.test.core.app.ApplicationProvider;
 import androidx.test.ext.junit.rules.ActivityScenarioRule;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 
@@ -49,6 +53,7 @@ public class TaskListActivityTest {
     public static final String NEW_TASK_TITLE = "this is my task now";
     public static final String NEW_SUBTASK_TITLE = "a new subtask!";
     private static FirebaseAuth auth;
+    private static Intent intentFromMainScreenActivity;
 
     @BeforeClass
     public static void createMockFirebase() throws ExecutionException, InterruptedException {
@@ -57,6 +62,7 @@ public class TaskListActivityTest {
         FirebaseTestsHelper.setUpFirebase();
 
         auth = FirebaseAuth.getInstance();
+        intentFromMainScreenActivity = new Intent(ApplicationProvider.getApplicationContext(), TaskListActivity.class).putExtra("house", TEST_HOUSEHOLD_NAMES[0]);
     }
 
     @AfterClass
@@ -71,7 +77,7 @@ public class TaskListActivityTest {
 
     @Rule
     public ActivityScenarioRule<TaskListActivity> taskActivityScenarioRule =
-            new ActivityScenarioRule<>(TaskListActivity.class);
+            new ActivityScenarioRule<>(intentFromMainScreenActivity);
 
     // "+" button; compact method since it's less important
     @Test

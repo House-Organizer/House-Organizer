@@ -18,20 +18,14 @@ import static androidx.test.espresso.matcher.ViewMatchers.withId;
 import static androidx.test.espresso.matcher.ViewMatchers.withTagValue;
 import static androidx.test.espresso.matcher.ViewMatchers.withText;
 
-import static com.github.houseorganizer.houseorganizer.FirebaseTestsHelper.TEST_HOUSEHOLD_NAMES;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 
-import android.content.Intent;
-
-import androidx.test.core.app.ApplicationProvider;
 import androidx.test.ext.junit.rules.ActivityScenarioRule;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 
-import com.github.houseorganizer.houseorganizer.house.EditHousehold;
 import com.github.houseorganizer.houseorganizer.panels.MainScreenActivity;
-import com.github.houseorganizer.houseorganizer.panels.TaskListActivity;
 import com.github.houseorganizer.houseorganizer.task.FirestoreTask;
 import com.google.firebase.auth.FirebaseAuth;
 
@@ -54,7 +48,6 @@ public class TaskListOnMainScreenTest {
     public static final String NEW_TASK_TITLE = "this is my task now";
     public static final String NEW_SUBTASK_TITLE = "a new subtask!";
     private static FirebaseAuth auth;
-    private static Intent intentFromMainScreenActivity;
 
     @BeforeClass
     public static void createMockFirebase() throws ExecutionException, InterruptedException {
@@ -63,7 +56,6 @@ public class TaskListOnMainScreenTest {
         FirebaseTestsHelper.setUpFirebase();
 
         auth = FirebaseAuth.getInstance();
-        intentFromMainScreenActivity = new Intent(ApplicationProvider.getApplicationContext(), TaskListActivity.class).putExtra("house", TEST_HOUSEHOLD_NAMES[0]);
     }
 
     @AfterClass
@@ -78,7 +70,7 @@ public class TaskListOnMainScreenTest {
 
     @Rule
     public ActivityScenarioRule<MainScreenActivity> mainScreenActivityActivityScenarioRule =
-            new ActivityScenarioRule<>(intentFromMainScreenActivity);
+            new ActivityScenarioRule<>(MainScreenActivity.class);
 
     // "+" button; compact method since it's less important
     @Test
