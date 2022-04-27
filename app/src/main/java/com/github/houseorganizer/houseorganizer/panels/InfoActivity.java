@@ -35,16 +35,10 @@ public class InfoActivity extends AppCompatActivity {
         firestore = FirebaseFirestore.getInstance();
         loadData();
 
-        usersView = findViewById(R.id.info_recycler_view);
-
         if (currentHouse != null) {
             currentHouse.get().addOnCompleteListener(task -> {
                 if(task.isSuccessful()){
                     List<String> residents = (List<String>) task.getResult().get("residents");
-
-                    UserAdapter adapter = new UserAdapter(getApplicationContext(),residents);
-                    usersView.setAdapter(adapter);
-                    usersView.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
 
                     String notes = (String) task.getResult().get("notes");
                     TextView notesText = findViewById(R.id.notesTextView);
@@ -53,6 +47,17 @@ public class InfoActivity extends AppCompatActivity {
                         EditText editNotes = findViewById(R.id.editTextHouseholdNotes);
                         editNotes.setText(notes);
                     }
+                    firestore.collection("email-to-nickname")
+                             .document("email-to-nickname-translations").get()
+                             .addOnCompleteListener(trans -> {
+                                 if(residents != null && trans.isSuccessful()){
+                                     residents.replaceAll(e -> {
+                                         String nickname = (String) trans.getResult().get(e);
+                                         return nickname == null ? e : nickname;
+                                     });
+                                 }
+                                 setupUserView(residents);
+                             });
                 }
             });
         } else {
@@ -72,6 +77,13 @@ public class InfoActivity extends AppCompatActivity {
             TextView notesText = findViewById(R.id.notesTextView);
             notesText.setText(notes);
         }
+    }
+  
+    private void setupUserView(List<String> residents){
+        usersView = findViewById(R.id.info_recycler_view);
+        UserAdapter adapter = new UserAdapter(getApplicationContext(),residents);
+        usersView.setAdapter(adapter);
+        usersView.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
     }
 
     private void loadData() {
