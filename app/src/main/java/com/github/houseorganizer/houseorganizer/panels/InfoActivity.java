@@ -31,8 +31,6 @@ public class InfoActivity extends AppCompatActivity {
         firestore = FirebaseFirestore.getInstance();
         loadData();
 
-        usersView = findViewById(R.id.info_recycler_view);
-
         if (currentHouse != null) {
             currentHouse.get().addOnCompleteListener(task -> {
                 if(task.isSuccessful()){
@@ -49,17 +47,21 @@ public class InfoActivity extends AppCompatActivity {
                                          return nickname == null ? e : nickname;
                                      });
                                  }
-                                 UserAdapter adapter = new UserAdapter(getApplicationContext(),residents);
-                                 usersView.setAdapter(adapter);
-                                 usersView.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
+                                 setupUserView(residents);
                              });
                 }
             });
-
         } else {
             TextView text = findViewById(R.id.infoHeader);
             text.setText(R.string.no_household_info);
         }
+    }
+
+    private void setupUserView(List<String> residents){
+        usersView = findViewById(R.id.info_recycler_view);
+        UserAdapter adapter = new UserAdapter(getApplicationContext(),residents);
+        usersView.setAdapter(adapter);
+        usersView.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
     }
 
     private void loadData() {
