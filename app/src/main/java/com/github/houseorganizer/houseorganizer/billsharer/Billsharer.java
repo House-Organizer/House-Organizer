@@ -57,6 +57,10 @@ public class Billsharer {
         this.residents = residents;
     }
 
+    public void addExpense(Expense expense) {
+        expenses.add((Expense) expense.clone());
+    }
+
     public void initResidents() {
         currentHouse.get().addOnCompleteListener(t -> {
             if (t.isSuccessful()) {

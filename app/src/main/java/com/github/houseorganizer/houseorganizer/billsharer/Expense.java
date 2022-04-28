@@ -4,7 +4,7 @@ import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Objects;
 
-public class Expense {
+public class Expense implements Cloneable {
 
     private String title;
     private int cost;
@@ -71,6 +71,12 @@ public class Expense {
     @Override
     public int hashCode() {
         return Objects.hash(title, cost, date, shares);
+    }
+
+    @Override
+    public Object clone() {
+        return new Expense(this.title, this.cost, this.date, this.payee,
+                (HashMap<String, Integer>) this.shares.clone());
     }
 
 
