@@ -124,5 +124,6 @@
     <string name="calendar">Calendar</string>
     <string name="add_an_event">Add an event</string>
     <string name="cycle_view">Cycle view</string>
+    <string name="offline_warning">You have gone offline.</string>
 
 </resources>

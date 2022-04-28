@@ -4,8 +4,6 @@ import static com.google.android.gms.tasks.Tasks.await;
 
 import android.content.Context;
 
-import androidx.annotation.NonNull;
-
 import com.github.houseorganizer.houseorganizer.calendar.Calendar;
 import com.github.houseorganizer.houseorganizer.shop.ShopItem;
 import com.github.houseorganizer.houseorganizer.task.HTask;
@@ -26,7 +24,6 @@ import java.io.InputStreamReader;
 import java.lang.reflect.Type;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -103,6 +100,13 @@ public class LocalStorage {
         for (DocumentSnapshot document : query.getDocuments()) {
             setOfHouseholds.put(document.getId(), (String) document.getData().get("name"));
         }
+        writeTxtToFile(context, OFFLINE_STORAGE_HOUSEHOLDS + OFFLINE_STORAGE_EXTENSION,
+                new Gson().toJson(setOfHouseholds));
+    }
+
+    // Temporary
+    public static void pushCurrentHouseOffline(Context context, DocumentReference currentHouse) {
+        setOfHouseholds.put(currentHouse.getId(), "Dummy house name");
         writeTxtToFile(context, OFFLINE_STORAGE_HOUSEHOLDS + OFFLINE_STORAGE_EXTENSION,
                 new Gson().toJson(setOfHouseholds));
     }
@@ -187,12 +191,10 @@ public class LocalStorage {
     public static boolean pushTaskListOffline(Context context, DocumentReference currentHouse, List<HTask> tasks) {
         ArrayList<OfflineTask> offlineTasks = new ArrayList<>();
         for (HTask task : tasks) {
-            offlineTasks.add(new OfflineTask( //TODO FIX ONCE TASK LIST IS FIXED
-                    "TASKNAME",
-                    "TAKSDESCRIPTION",
-                    Arrays.asList("USER1", "USER2")
-            ));
-            break; //TODO FIX ONCE TASK LIST IS FIXED
+            offlineTasks.add(new OfflineTask(
+                    task.getTitle(),
+                    task.getDescription(),
+                    task.getAssignees()));
         }
         String house_id = "temp";
         if (currentHouse != null) {

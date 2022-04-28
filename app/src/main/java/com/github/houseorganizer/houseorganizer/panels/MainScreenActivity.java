@@ -21,9 +21,11 @@ import com.github.houseorganizer.houseorganizer.calendar.Calendar;
 import com.github.houseorganizer.houseorganizer.calendar.EventsAdapter;
 import com.github.houseorganizer.houseorganizer.house.CreateHouseholdActivity;
 import com.github.houseorganizer.houseorganizer.house.HouseSelectionActivity;
+import com.github.houseorganizer.houseorganizer.panels.offline.OfflineScreenActivity;
 import com.github.houseorganizer.houseorganizer.shop.FirestoreShopList;
 import com.github.houseorganizer.houseorganizer.shop.ShopList;
 import com.github.houseorganizer.houseorganizer.shop.ShopListAdapter;
+import com.github.houseorganizer.houseorganizer.storage.LocalStorage;
 import com.github.houseorganizer.houseorganizer.task.TaskList;
 import com.github.houseorganizer.houseorganizer.task.TaskListAdapter;
 import com.github.houseorganizer.houseorganizer.task.TaskView;
@@ -144,7 +146,6 @@ public class MainScreenActivity extends AppCompatActivity {
                 .whereEqualTo("hh-id", currentHouse.getId())
                 .get().addOnCompleteListener(task -> {
                     if (task.isSuccessful()) {
-                        System.out.println(currentHouse.getId());
                         QueryDocumentSnapshot qds = task.getResult().iterator().next();
                         this.tlMetadata = db.collection("task_lists").document(qds.getId());
                         this.taskList = new TaskList(currentUser.uid(), "My weekly todo", new ArrayList<>());
@@ -283,5 +284,14 @@ public class MainScreenActivity extends AppCompatActivity {
                 });
                 break;
         }
+    }
+
+    public void goToOfflineScreen(View v) {
+        LocalStorage.clearOfflineStorage(this);
+        LocalStorage.pushCurrentHouseOffline(this, currentHouse);
+        LocalStorage.pushTaskListOffline(this, currentHouse, taskList.getTasks());
+        LocalStorage.pushEventsOffline(this, currentHouse, calendar.getEvents());
+        LocalStorage.pushGroceriesOffline(this, currentHouse, shopList.getItems());
+        startActivity(new Intent(this, OfflineScreenActivity.class));
     }
 }

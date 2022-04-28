@@ -92,6 +92,22 @@
         app:layout_constraintVertical_bias="0.75" />
 
     <Button
+        android:id="@+id/go_offline_button"
+        style="?android:attr/buttonBarButtonStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:backgroundTint="#6F1C739A"
+        android:onClick="goToOfflineScreen"
+        android:text="Go offline"
+        android:textColor="@color/white"
+        app:layout_constraintBottom_toTopOf="@id/task_list"
+        app:layout_constraintEnd_toStartOf="@id/new_task"
+        app:layout_constraintHorizontal_bias="0.858"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/calendar"
+        app:layout_constraintVertical_bias="0.75" />
+
+    <Button
         android:id="@+id/new_task"
         style="?android:attr/buttonBarButtonStyle"
         android:layout_width="48dp"
