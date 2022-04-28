@@ -52,6 +52,9 @@ public class FirebaseTestsHelper {
     protected static String[] TEST_HOUSEHOLD_NAMES =
             {"home_1", "home_2", "home_3"};
 
+    protected static String[] TEST_HOUSEHOLD_DESC =
+            {"home_1", "home_2", "home_3"};
+
     protected static String FIRST_TL_NAME = String.format("tl_for_%s", TEST_HOUSEHOLD_NAMES[0]);
 
     protected static ShopItem TEST_ITEM = new ShopItem("Egg", 3, "t");
@@ -123,7 +126,7 @@ public class FirebaseTestsHelper {
      * It is assumed the owner is logged in
      */
     protected static void createTestHouseholdOnFirestoreWithName(String householdName, String owner,
-                                                                 List<String> residents, String docName)
+                                                                 List<String> residents, String docName, String notes)
             throws ExecutionException, InterruptedException {
 
         FirebaseFirestore db = FirebaseFirestore.getInstance();
@@ -134,6 +137,7 @@ public class FirebaseTestsHelper {
         houseHold.put("owner", owner);
         houseHold.put("num_members", residents.size());
         houseHold.put("residents", residents);
+        houseHold.put("notes", notes);
 
         Task<Void> task = db.collection("households").document(docName).set(houseHold);
         Tasks.await(task);
@@ -164,15 +168,15 @@ public class FirebaseTestsHelper {
      */
     protected static void createHouseholds() throws ExecutionException, InterruptedException {
         createTestHouseholdOnFirestoreWithName(TEST_HOUSEHOLD_NAMES[0], TEST_USERS_EMAILS[0],
-                Arrays.asList(TEST_USERS_EMAILS[0], TEST_USERS_EMAILS[1]), TEST_HOUSEHOLD_NAMES[0]);
+                Arrays.asList(TEST_USERS_EMAILS[0], TEST_USERS_EMAILS[1]), TEST_HOUSEHOLD_NAMES[0], TEST_HOUSEHOLD_DESC[0]);
 
         createTestHouseholdOnFirestoreWithName(TEST_HOUSEHOLD_NAMES[1], TEST_USERS_EMAILS[0],
-                Arrays.asList(TEST_USERS_EMAILS[0], TEST_USERS_EMAILS[2]), TEST_HOUSEHOLD_NAMES[1]);
+                Arrays.asList(TEST_USERS_EMAILS[0], TEST_USERS_EMAILS[2]), TEST_HOUSEHOLD_NAMES[1], TEST_HOUSEHOLD_DESC[1]);
 
         createTestHouseholdOnFirestoreWithName(TEST_HOUSEHOLD_NAMES[2], TEST_USERS_EMAILS[1],
                 Arrays.asList(TEST_USERS_EMAILS[1], TEST_USERS_EMAILS[2], TEST_USERS_EMAILS[3],
                         TEST_USERS_EMAILS[4], TEST_USERS_EMAILS[5], TEST_USERS_EMAILS[6]),
-                TEST_HOUSEHOLD_NAMES[2]);
+                TEST_HOUSEHOLD_NAMES[2], TEST_HOUSEHOLD_DESC[2]);
     }
 
     protected static Map<String, Object> fetchHouseholdData(String houseName, FirebaseFirestore db) throws ExecutionException, InterruptedException {
@@ -285,6 +289,18 @@ public class FirebaseTestsHelper {
         Tasks.await(task7);
     }
 
+    protected static void setupNicknames() throws ExecutionException, InterruptedException {
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+
+        Map<String, String> nicknames = new HashMap<>();
+        nicknames.put("user_1@test.com", "user_1");
+
+        Task<Void> task = db.collection("email-to-nickname")
+                .document("email-to-nickname-translations")
+                .set(nicknames);
+        Tasks.await(task);
+    }
+
     /**
      * This method will create 8 users, 3 households (each with a task list), a task list and a list of events
      * After this call user_1 is logged in
@@ -309,6 +325,9 @@ public class FirebaseTestsHelper {
         }
 
         createHouseholds();
+
+        setupNicknames();
+
         createTestShopList();
 
         createTestEvents();
