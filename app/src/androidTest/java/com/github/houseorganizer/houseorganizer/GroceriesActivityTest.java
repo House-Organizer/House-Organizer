@@ -127,7 +127,7 @@ public class GroceriesActivityTest {
                 .perform(RecyclerViewActions.actionOnItemAtPosition(
                         1,
                         RecyclerViewHelper.clickChildViewWithId(R.id.delete_item_button)));
-        Thread.sleep(50);
+        Thread.sleep(500);
         onView(withId(R.id.groceries_recycler)).check(matches(hasChildCount(1)));
     }
 
