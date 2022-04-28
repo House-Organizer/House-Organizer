@@ -17,7 +17,6 @@ import static androidx.test.espresso.matcher.ViewMatchers.isEnabled;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
 import static androidx.test.espresso.matcher.ViewMatchers.withTagValue;
 import static androidx.test.espresso.matcher.ViewMatchers.withText;
-
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -56,6 +55,7 @@ public class TaskListOnMainScreenTest {
         FirebaseTestsHelper.setUpFirebase();
 
         auth = FirebaseAuth.getInstance();
+        FirestoreTaskTest.createMockFirebase();
     }
 
     @AfterClass
@@ -64,8 +64,10 @@ public class TaskListOnMainScreenTest {
     }
 
     @Before
-    public void forceTaskView() {
-        onView(withId(R.id.list_view_change)).perform(click(), click());
+    public void forceTaskView() throws InterruptedException {
+        onView(withId(R.id.list_view_change)).perform(click());
+        Thread.sleep(2000);
+        onView(withId(R.id.list_view_change)).perform(click());
     }
 
     @Rule

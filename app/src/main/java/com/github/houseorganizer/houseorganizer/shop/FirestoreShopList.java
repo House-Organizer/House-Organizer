@@ -91,6 +91,7 @@ public class FirestoreShopList extends ShopList{
             return Tasks.forCanceled();
         }
         return onlineReference.get().continueWith( r -> {
+            if(!r.isSuccessful())return null;
             DocumentSnapshot snap = r.getResult();
             setItems(convertFirebaseListToItems((List<Map<String, Object>>) snap.get("items")));
             return snap;
