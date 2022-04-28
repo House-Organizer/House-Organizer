@@ -192,17 +192,17 @@ public class FirebaseTestsHelper {
     protected static void createHouseholds() throws ExecutionException, InterruptedException {
         createTestHouseholdOnFirestoreWithName(TEST_HOUSEHOLD_NAMES[0], TEST_USERS_EMAILS[0],
                 Arrays.asList(TEST_USERS_EMAILS[0], TEST_USERS_EMAILS[1]), TEST_HOUSEHOLD_NAMES[0],
-                TEST_HOUSEHOLD_LATS[0], TEST_HOUSEHOLD_LONS[0], TEST_HOUSEHOLD_DESC[0]);
+                TEST_HOUSEHOLD_DESC[0], TEST_HOUSEHOLD_LATS[0], TEST_HOUSEHOLD_LONS[0]);
 
         createTestHouseholdOnFirestoreWithName(TEST_HOUSEHOLD_NAMES[1], TEST_USERS_EMAILS[0],
                 Arrays.asList(TEST_USERS_EMAILS[0], TEST_USERS_EMAILS[2]), TEST_HOUSEHOLD_NAMES[1],
-                TEST_HOUSEHOLD_LATS[1], TEST_HOUSEHOLD_LONS[1], TEST_HOUSEHOLD_DESC[1]);
+                TEST_HOUSEHOLD_DESC[1], TEST_HOUSEHOLD_LATS[1], TEST_HOUSEHOLD_LONS[1]);
 
         createTestHouseholdOnFirestoreWithName(TEST_HOUSEHOLD_NAMES[2], TEST_USERS_EMAILS[1],
                 Arrays.asList(TEST_USERS_EMAILS[1], TEST_USERS_EMAILS[2], TEST_USERS_EMAILS[3],
                         TEST_USERS_EMAILS[4], TEST_USERS_EMAILS[5], TEST_USERS_EMAILS[6]),
-                TEST_HOUSEHOLD_NAMES[2], TEST_HOUSEHOLD_LATS[2], TEST_HOUSEHOLD_LONS[2]
-                                              TEST_HOUSEHOLD_DESC[2]);
+                TEST_HOUSEHOLD_NAMES[2], TEST_HOUSEHOLD_DESC[2],
+                TEST_HOUSEHOLD_LATS[2], TEST_HOUSEHOLD_LONS[2]);
     }
 
     protected static Map<String, Object> fetchHouseholdData(String houseName, FirebaseFirestore db) throws ExecutionException, InterruptedException {
