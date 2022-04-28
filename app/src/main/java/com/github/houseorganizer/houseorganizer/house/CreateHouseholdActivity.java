@@ -44,16 +44,7 @@ public class CreateHouseholdActivity extends AppCompatActivity {
         int lat = Integer.parseInt(latitudeView.getText().toString());
         int lon = Integer.parseInt(longitudeView.getText().toString());
 
-        Map<String, Object> houseHold = new HashMap<>();
-        List<String> residents = new ArrayList<>();
-        residents.add(mUserEmail);
-
-        houseHold.put("name", houseHoldName.toString());
-        houseHold.put("owner", mUserEmail);
-        houseHold.put("num_members", 1);
-        houseHold.put("residents", residents);
-        houseHold.put("latitude", lat);
-        houseHold.put("longitude", lon);
+        Map<String, Object> houseHold = createHousehold(houseHoldName, lat, lon);
 
         db.collection("households").add(houseHold)
                 .addOnCompleteListener(this, task -> {
@@ -77,7 +68,20 @@ public class CreateHouseholdActivity extends AppCompatActivity {
                 });
     }
 
+    private Map<String, Object> createHousehold(CharSequence houseHoldName, int lat, int lon) {
+        Map<String, Object> houseHold = new HashMap<>();
+        List<String> residents = new ArrayList<>();
+        residents.add(mUserEmail);
 
+        houseHold.put("name", houseHoldName.toString());
+        houseHold.put("owner", mUserEmail);
+        houseHold.put("num_members", 1);
+        houseHold.put("residents", residents);
+        houseHold.put("latitude", lat);
+        houseHold.put("longitude", lon);
+
+        return houseHold;
+    }
 
     private void saveData(String addedHouse) {
         SharedPreferences.Editor editor = getSharedPrefsEditor(this);
