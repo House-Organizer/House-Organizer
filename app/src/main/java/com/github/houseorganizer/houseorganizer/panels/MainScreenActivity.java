@@ -115,7 +115,6 @@ public class MainScreenActivity extends AppCompatActivity {
                 .whereEqualTo("hh-id", currentHouse.getId())
                 .get().addOnCompleteListener(task -> {
                     if (task.isSuccessful()) {
-                        System.out.println(currentHouse.getId());
                         QueryDocumentSnapshot qds = task.getResult().iterator().next();
                         this.tlMetadata = db.collection("task_lists").document(qds.getId());
                         this.taskList = new TaskList(currentUser.uid(), "My weekly todo", new ArrayList<>());
