@@ -37,6 +37,12 @@ public class HouseSelectionActivityTest {
     private static FirebaseFirestore db;
     private static FirebaseAuth auth;
 
+    @Rule
+    public GrantPermissionRule permissionRules = GrantPermissionRule.grant(android.Manifest.permission.ACCESS_FINE_LOCATION);
+    
+    @Rule
+    public ActivityScenarioRule<HouseSelectionActivity> testRule = new ActivityScenarioRule<>(HouseSelectionActivity.class);
+
     @BeforeClass
     public static void createMockFirebase() throws ExecutionException, InterruptedException {
         FirebaseTestsHelper.startAuthEmulator();
@@ -51,12 +57,6 @@ public class HouseSelectionActivityTest {
     public static void signOut(){
         auth.signOut();
     }
-
-    @Rule
-    public ActivityScenarioRule<HouseSelectionActivity> testRule = new ActivityScenarioRule<>(HouseSelectionActivity.class);
-    @Rule
-    public GrantPermissionRule permissionRules = GrantPermissionRule.grant(android.Manifest.permission.ACCESS_COARSE_LOCATION,
-            android.Manifest.permission.ACCESS_FINE_LOCATION);
 
     @Test
     public void seeHousesList() {
