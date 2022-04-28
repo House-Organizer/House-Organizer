@@ -8,6 +8,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 
 import androidx.activity.result.contract.ActivityResultContracts;
@@ -17,20 +18,17 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.github.houseorganizer.houseorganizer.R;
 import com.github.houseorganizer.houseorganizer.calendar.Calendar;
-import com.github.houseorganizer.houseorganizer.calendar.EventsAdapter;
+import com.github.houseorganizer.houseorganizer.calendar.UpcomingAdapter;
 import com.github.houseorganizer.houseorganizer.house.CreateHouseholdActivity;
 import com.github.houseorganizer.houseorganizer.house.HouseSelectionActivity;
 import com.github.houseorganizer.houseorganizer.shop.FirestoreShopList;
-import com.github.houseorganizer.houseorganizer.shop.ShopList;
 import com.github.houseorganizer.houseorganizer.shop.ShopListAdapter;
 import com.github.houseorganizer.houseorganizer.task.TaskList;
 import com.github.houseorganizer.houseorganizer.task.TaskListAdapter;
 import com.github.houseorganizer.houseorganizer.task.TaskView;
 import com.google.android.gms.tasks.Task;
-import com.google.android.gms.tasks.Tasks;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
@@ -48,7 +46,9 @@ public class MainScreenActivity extends NavBarActivity {
     private final Calendar calendar = new Calendar();
     private FirebaseFirestore db;
     private FirebaseUser mUser;
-    private EventsAdapter calendarAdapter;
+
+    private DocumentReference currentHouse;
+    private UpcomingAdapter calendarAdapter;
     private RecyclerView calendarEvents;
 
     private TaskList taskList;
@@ -73,12 +73,11 @@ public class MainScreenActivity extends NavBarActivity {
         loadData();
 
         calendarEvents = findViewById(R.id.calendar);
-        calendarAdapter = new EventsAdapter(calendar,
+        calendarAdapter = new UpcomingAdapter(calendar,
                 registerForActivityResult(new ActivityResultContracts.GetContent(), uri -> calendarAdapter.pushAttachment(uri)));
         calendarEvents.setAdapter(calendarAdapter);
         calendarEvents.setLayoutManager(new GridLayoutManager(this, 1));
         findViewById(R.id.add_event).setOnClickListener(v -> calendarAdapter.showAddEventDialog( this, currentHouse, "addEvent:failureToAdd"));
-        initializeGroceriesList();
 
         // If you want to select the main button on the navBar,
         // use `OptionalInt.of(R.id. ...)`
@@ -86,35 +85,20 @@ public class MainScreenActivity extends NavBarActivity {
     }
 
     private Task<ShopListAdapter> initializeGroceriesList() {
-        if (currentHouse == null) return Tasks.forCanceled();
-        CollectionReference root = db.collection("shop_lists");
-        return root.whereEqualTo("household", currentHouse).get()
-                .continueWithTask(r -> {
-                    // If empty -> create new house
-                    if (r.getResult().getDocuments().size() == 0) {
-                        shopList = new FirestoreShopList(currentHouse);
-                        return FirestoreShopList.storeNewShopList(root, new ShopList(), currentHouse)
-                                .continueWith(t -> {
-                                    shopList.setOnlineReference(t.getResult());
-                                    shopListAdapter = new ShopListAdapter(shopList);
-                                    return shopListAdapter;
-                                });
-                        // If not empty then retrieve the existing shopList
-                    } else {
-                        return FirestoreShopList.retrieveShopList(root, currentHouse).continueWith(t -> {
-                            shopList = t.getResult();
-                            shopListAdapter = new ShopListAdapter(shopList);
-                            return shopListAdapter;
+        return ShopListAdapter.initializeFirestoreShopList(currentHouse, db).continueWith(c -> {
+                    if(c.isSuccessful()){
+                        shopList = c.getResult().getFirestoreShopList();
+                        shopListAdapter = c.getResult();
+                        shopList.getOnlineReference().addSnapshotListener((doc, e) -> {
+                            shopList = FirestoreShopList.buildShopList(doc);
+                            shopListAdapter.setShopList(shopList);
                         });
+                        return shopListAdapter;
                     }
-                    // Setting up real time actualisation
-                }).addOnCompleteListener(c -> {
-                    shopList.getOnlineReference().addSnapshotListener((doc, e) -> {
-                        shopList = FirestoreShopList.buildShopList(doc);
-                        shopListAdapter.setShopList(shopList);
-                    });
+                    return null;
                 });
     }
+
 
     @Override
     protected CurrentActivity currentActivity() {
@@ -141,7 +125,7 @@ public class MainScreenActivity extends NavBarActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        calendarAdapter.refreshCalendarView(this, currentHouse, "refreshCalendar:failureToRefresh");
+        calendarAdapter.refreshCalendarView(this, currentHouse, "refreshCalendar:failureToRefresh", false);
     }
 
     private void loadData() {
@@ -172,7 +156,7 @@ public class MainScreenActivity extends NavBarActivity {
                                 return;
                             }
                         }
-                        calendarAdapter.refreshCalendarView(this, currentHouse, "refreshCalendar:failureToRefresh");
+                        calendarAdapter.refreshCalendarView(this, currentHouse, "refreshCalendar:failureToRefresh", false);
                         initializeTaskList();
                     } else
                         logAndToast(this.toString(), "loadHousehold:failure", task.getException(), getApplicationContext(), "Could not get a house.");
@@ -252,9 +236,12 @@ public class MainScreenActivity extends NavBarActivity {
                 TaskView.setUpTaskListView(this, taskListAdapter, R.id.task_list);
                 break;
             case GROCERY_LIST:
-                if(shopList == null) {
+                if(shopList == null || shopListAdapter == null) {
                     initializeGroceriesList()
-                            .addOnCompleteListener(t -> shopListAdapter.setUpShopListView(this));
+                            .addOnCompleteListener(t -> {
+                                if(t.isSuccessful() && shopListAdapter != null) shopListAdapter.setUpShopListView(this);
+                                else Log.e("Groceries", "Could not create groceries view");
+                            });
                     return;
                 }
                 shopListAdapter.setUpShopListView(this);

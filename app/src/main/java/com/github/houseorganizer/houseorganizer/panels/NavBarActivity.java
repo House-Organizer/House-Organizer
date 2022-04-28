@@ -28,7 +28,6 @@ public abstract class NavBarActivity extends AppCompatActivity {
         protected static CurrentActivity activityWithName(String name) {
             for (CurrentActivity activity : values()) {
                 if (activity.name.equals(name)) {
-                    System.out.println("!!!!!!!!!" + name);
                     return activity;
                 }
             }
