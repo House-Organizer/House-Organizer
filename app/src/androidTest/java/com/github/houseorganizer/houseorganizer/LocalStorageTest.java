@@ -141,6 +141,6 @@ public class LocalStorageTest {
         assertEquals(offlineShopItems.get("home_1"),Arrays.asList(offlineShopItem));
     }
 
-    //------------------- GROCERIES ------------------->
+    //------------------- TASKS ------------------->
     //TODO AS HTASKS DO NOT HAVE THE RIGHT STRUCTURE YET
 }

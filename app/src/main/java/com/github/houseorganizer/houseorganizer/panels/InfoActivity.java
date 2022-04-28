@@ -31,24 +31,34 @@ public class InfoActivity extends AppCompatActivity {
         firestore = FirebaseFirestore.getInstance();
         loadData();
 
-        usersView = findViewById(R.id.info_recycler_view);
-
         if (currentHouse != null) {
             currentHouse.get().addOnCompleteListener(task -> {
                 if(task.isSuccessful()){
-                    DocumentSnapshot document = task.getResult();
-                    List<String> residents = (List<String>) document.get("residents");
-
-                    UserAdapter adapter = new UserAdapter(getApplicationContext(),residents);
-                    usersView.setAdapter(adapter);
-                    usersView.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
+                    List<String> residents = (List<String>) task.getResult().get("residents");
+                    firestore.collection("email-to-nickname")
+                             .document("email-to-nickname-translations").get()
+                             .addOnCompleteListener(trans -> {
+                                 if(residents != null && trans.isSuccessful()){
+                                     residents.replaceAll(e -> {
+                                         String nickname = (String) trans.getResult().get(e);
+                                         return nickname == null ? e : nickname;
+                                     });
+                                 }
+                                 setupUserView(residents);
+                             });
                 }
             });
-
         } else {
             TextView text = findViewById(R.id.infoHeader);
             text.setText(R.string.no_household_info);
         }
+    }
+
+    private void setupUserView(List<String> residents){
+        usersView = findViewById(R.id.info_recycler_view);
+        UserAdapter adapter = new UserAdapter(getApplicationContext(),residents);
+        usersView.setAdapter(adapter);
+        usersView.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
     }
 
     private void loadData() {
