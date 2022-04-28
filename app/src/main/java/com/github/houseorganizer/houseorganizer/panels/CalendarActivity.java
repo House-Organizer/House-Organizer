@@ -54,6 +54,10 @@ public class CalendarActivity extends AppCompatActivity {
             yearMonth.setVisibility(calendar.getView() == Calendar.CalendarView.MONTHLY ? View.VISIBLE : View.GONE);
         });
         findViewById(R.id.calendar_screen_add_event).setOnClickListener(v -> calendarAdapter.showAddEventDialog(this, currentHouse, "addEvent:failure"));
+        initializedNavBar();
+    }
+
+    private void initializedNavBar(){
         BottomNavigationView menu = findViewById(R.id.nav_bar);
         menu.setSelectedItemId(R.id.nav_bar_calendar);
         menu.setOnItemSelectedListener(l -> {
@@ -63,6 +67,5 @@ public class CalendarActivity extends AppCompatActivity {
             startActivity(intent);
             return true;
         });
-
     }
 }
