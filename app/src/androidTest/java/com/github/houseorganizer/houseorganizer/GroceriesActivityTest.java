@@ -20,6 +20,7 @@ import androidx.test.espresso.intent.Intents;
 import androidx.test.ext.junit.rules.ActivityScenarioRule;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 
+import com.github.houseorganizer.houseorganizer.panels.CalendarActivity;
 import com.github.houseorganizer.houseorganizer.panels.MainScreenActivity;
 import com.google.firebase.auth.FirebaseAuth;
 
@@ -115,7 +116,7 @@ public class GroceriesActivityTest {
     public void navBarTakesToCalendarScreen(){
         Intents.init();
         onView(withId(R.id.nav_bar_calendar)).perform(click());
-        intended(hasComponent(MainScreenActivity.class.getName()));
+        intended(hasComponent(CalendarActivity.class.getName()));
         Intents.release();
     }
 
