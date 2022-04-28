@@ -71,7 +71,7 @@ public class HouseSelectionActivity extends AppCompatActivity {
                 .setInterval(1000 * DEFAULT_UPDATE_INTERVAL)
                 .setPriority(LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY);
 
-        //requestPermission();
+        requestPermission();
         getCoordinates();
         setHousesView();
     }
