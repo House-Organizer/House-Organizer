@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:paddingTop="0dp"
+    android:paddingBottom="0dp">
+
+
+    <EditText
+        android:id="@+id/editTextName"
+        android:layout_width="200dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:ems="10"
+        android:inputType="textPersonName"
+        android:text="@string/name" />
+
+    <EditText
+        android:id="@+id/editTextQuantity"
+        android:layout_width="92dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:ems="10"
+        android:inputType="number"
+        android:text="0" />
+
+    <EditText
+        android:id="@+id/editTextUnit"
+        android:layout_width="106dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:ems="10"
+        android:inputType="textPersonName"
+        android:text="@string/unit" />
+</LinearLayout>

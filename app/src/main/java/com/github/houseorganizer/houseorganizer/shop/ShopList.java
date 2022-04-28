@@ -1,28 +1,19 @@
 package com.github.houseorganizer.houseorganizer.shop;
 
-import com.github.houseorganizer.houseorganizer.user.User;
-
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 public class ShopList {
 
-    private final User owner;
     private List<ShopItem> items;
-    private String name;
-    private List<User> authorizedUsers;
 
-    public ShopList(User owner, String listName){
-        this.owner = owner;
-        this.name = listName;
+    public ShopList(){
         items = new ArrayList<>();
     }
 
-    public ShopList(User owner, String listName, List<ShopItem> list, List<User> authorizedUsers){
-        this.owner = owner;
-        this.name = listName;
+    public ShopList(List<ShopItem> list){
         this.items = new ArrayList<>(list);
-        this.authorizedUsers = authorizedUsers;
     }
 
     public void addItem(ShopItem item){
@@ -37,7 +28,7 @@ public class ShopList {
         items.remove(index);
     }
 
-    public void removedPickedUpItems(){
+    public void removePickedUpItems(){
         items.removeIf(ShopItem::isPickedUp);
     }
 
@@ -45,14 +36,19 @@ public class ShopList {
         return items.isEmpty();
     }
 
-    //Getters
-    public String getListName() {
-        return name;
+    public void toggleItemPickedUp(int index){
+        getItemAt(index).togglePickedUp();
     }
 
-    public User getOwner() {
-        return owner;
+    public List<ShopItem> getItems(){
+        return new ArrayList<>(items);
     }
+
+    public void setItems(List<ShopItem> items) {
+        this.items = new LinkedList<>(items);
+    }
+
+    //Getters
 
     public int size(){
         return items.size();

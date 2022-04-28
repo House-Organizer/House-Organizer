@@ -1,13 +1,10 @@
 package com.github.houseorganizer.houseorganizer;
 
-import com.github.houseorganizer.houseorganizer.shop.FirestoreShopItem;
+import com.github.houseorganizer.houseorganizer.shop.FirestoreShopList;
 import com.github.houseorganizer.houseorganizer.shop.ShopItem;
-import com.github.houseorganizer.houseorganizer.shop.ShopList;
 import com.github.houseorganizer.houseorganizer.task.FirestoreTask;
 import com.github.houseorganizer.houseorganizer.task.HTask;
 import com.github.houseorganizer.houseorganizer.task.TaskList;
-import com.github.houseorganizer.houseorganizer.user.DummyUser;
-import com.github.houseorganizer.houseorganizer.user.User;
 import com.google.android.gms.tasks.Task;
 import com.google.android.gms.tasks.Tasks;
 import com.google.firebase.auth.AuthResult;
@@ -52,10 +49,12 @@ public class FirebaseTestsHelper {
     protected static String[] TEST_HOUSEHOLD_NAMES =
             {"home_1", "home_2", "home_3"};
 
+    protected static String[] TEST_HOUSEHOLD_DESC =
+            {"home_1", "home_2", "home_3"};
+
     protected static String FIRST_TL_NAME = String.format("tl_for_%s", TEST_HOUSEHOLD_NAMES[0]);
 
     protected static ShopItem TEST_ITEM = new ShopItem("Egg", 3, "t");
-    protected static String TEST_SHOPLIST_NAME = "TestList1";
 
     protected static String UNKNOWN_USER = "unknown@test.com";
     protected static String WRONG_EMAIL = "user_1.com";
@@ -144,7 +143,7 @@ public class FirebaseTestsHelper {
      * It is assumed the owner is logged in
      */
     protected static void createTestHouseholdOnFirestoreWithName(String householdName, String owner,
-                                                                 List<String> residents, String docName)
+                                                                 List<String> residents, String docName, String notes)
             throws ExecutionException, InterruptedException {
 
         FirebaseFirestore db = FirebaseFirestore.getInstance();
@@ -155,6 +154,7 @@ public class FirebaseTestsHelper {
         houseHold.put("owner", owner);
         houseHold.put("num_members", residents.size());
         houseHold.put("residents", residents);
+        houseHold.put("notes", notes);
 
         Task<Void> task = db.collection("households").document(docName).set(houseHold);
         Tasks.await(task);
@@ -185,15 +185,15 @@ public class FirebaseTestsHelper {
      */
     protected static void createHouseholds() throws ExecutionException, InterruptedException {
         createTestHouseholdOnFirestoreWithName(TEST_HOUSEHOLD_NAMES[0], TEST_USERS_EMAILS[0],
-                Arrays.asList(TEST_USERS_EMAILS[0], TEST_USERS_EMAILS[1]), TEST_HOUSEHOLD_NAMES[0]);
+                Arrays.asList(TEST_USERS_EMAILS[0], TEST_USERS_EMAILS[1]), TEST_HOUSEHOLD_NAMES[0], TEST_HOUSEHOLD_DESC[0]);
 
         createTestHouseholdOnFirestoreWithName(TEST_HOUSEHOLD_NAMES[1], TEST_USERS_EMAILS[0],
-                Arrays.asList(TEST_USERS_EMAILS[0], TEST_USERS_EMAILS[2]), TEST_HOUSEHOLD_NAMES[1]);
+                Arrays.asList(TEST_USERS_EMAILS[0], TEST_USERS_EMAILS[2]), TEST_HOUSEHOLD_NAMES[1], TEST_HOUSEHOLD_DESC[1]);
 
         createTestHouseholdOnFirestoreWithName(TEST_HOUSEHOLD_NAMES[2], TEST_USERS_EMAILS[1],
                 Arrays.asList(TEST_USERS_EMAILS[1], TEST_USERS_EMAILS[2], TEST_USERS_EMAILS[3],
                         TEST_USERS_EMAILS[4], TEST_USERS_EMAILS[5], TEST_USERS_EMAILS[6]),
-                TEST_HOUSEHOLD_NAMES[2]);
+                TEST_HOUSEHOLD_NAMES[2], TEST_HOUSEHOLD_DESC[2]);
     }
 
     protected static Map<String, Object> fetchHouseholdData(String houseName, FirebaseFirestore db) throws ExecutionException, InterruptedException {
@@ -225,10 +225,13 @@ public class FirebaseTestsHelper {
      */
     protected static void createTestShopList() throws ExecutionException, InterruptedException {
         FirebaseFirestore db = FirebaseFirestore.getInstance();
-        User owner = new DummyUser("test", TEST_USERS_EMAILS[0]);
-        ShopList shopList = new ShopList(owner, TEST_SHOPLIST_NAME);
+
+        DocumentReference household = db.collection("households").document(TEST_HOUSEHOLD_NAMES[0]);
+        FirestoreShopList shopList = new FirestoreShopList(household);
         shopList.addItem(TEST_ITEM);
-        FirestoreShopItem.storeShopList(shopList, db.collection("shop_lists"), TEST_SHOPLIST_NAME);
+        Task<DocumentReference> t = FirestoreShopList.storeNewShopList(db.collection("shop_lists"), shopList, household);
+        Tasks.await(t);
+        shopList.setOnlineReference(t.getResult());
     }
 
      /**
@@ -283,7 +286,7 @@ public class FirebaseTestsHelper {
         isAlreadyPast.put("description", "desc");
         isAlreadyPast.put("duration", 10);
         isAlreadyPast.put("household", db.collection("households").document(TEST_HOUSEHOLD_NAMES[0]));
-        isAlreadyPast.put("start", LocalDateTime.of(2020, 10, 10, 10, 10).toEpochSecond(ZoneOffset.UTC));
+        isAlreadyPast.put("start", LocalDateTime.now().minusDays(1).toEpochSecond(ZoneOffset.UTC));
         Task<Void> task6 = db.collection("events").document("is_already_past").set(isAlreadyPast);
 
         Map<String, Object> isInOtherHouse = new HashMap<>();
@@ -303,6 +306,18 @@ public class FirebaseTestsHelper {
         Tasks.await(task7);
     }
 
+    protected static void setupNicknames() throws ExecutionException, InterruptedException {
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+
+        Map<String, String> nicknames = new HashMap<>();
+        nicknames.put("user_1@test.com", "user_1");
+
+        Task<Void> task = db.collection("email-to-nickname")
+                .document("email-to-nickname-translations")
+                .set(nicknames);
+        Tasks.await(task);
+    }
+
     /**
      * This method will create 8 users, 3 households (each with a task list), a task list and a list of events
      * After this call user_1 is logged in
@@ -317,7 +332,7 @@ public class FirebaseTestsHelper {
                 .get();
         Tasks.await(task);
         Map<String, Object> result = task.getResult().getData();
-        if(result != null){
+        if(result != null && !result.isEmpty()){
             signInTestUserWithCredentials(TEST_USERS_EMAILS[0], TEST_USERS_PWD[0]);
             return;
         }
@@ -327,6 +342,9 @@ public class FirebaseTestsHelper {
         }
 
         createHouseholds();
+
+        setupNicknames();
+
         createTestShopList();
 
         createTestEvents();

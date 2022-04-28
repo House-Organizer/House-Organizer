@@ -4,7 +4,6 @@ import static com.github.houseorganizer.houseorganizer.util.Util.getSharedPrefs;
 import static com.github.houseorganizer.houseorganizer.util.Util.getSharedPrefsEditor;
 import static com.github.houseorganizer.houseorganizer.util.Util.logAndToast;
 
-import android.annotation.SuppressLint;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -15,15 +14,14 @@ import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.GridLayoutManager;
-import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.github.houseorganizer.houseorganizer.R;
 import com.github.houseorganizer.houseorganizer.calendar.Calendar;
-import com.github.houseorganizer.houseorganizer.calendar.EventsAdapter;
+import com.github.houseorganizer.houseorganizer.calendar.UpcomingAdapter;
 import com.github.houseorganizer.houseorganizer.house.CreateHouseholdActivity;
 import com.github.houseorganizer.houseorganizer.house.HouseSelectionActivity;
-import com.github.houseorganizer.houseorganizer.shop.ShopItem;
+import com.github.houseorganizer.houseorganizer.shop.FirestoreShopList;
 import com.github.houseorganizer.houseorganizer.shop.ShopList;
 import com.github.houseorganizer.houseorganizer.shop.ShopListAdapter;
 import com.github.houseorganizer.houseorganizer.task.TaskList;
@@ -31,9 +29,12 @@ import com.github.houseorganizer.houseorganizer.task.TaskListAdapter;
 import com.github.houseorganizer.houseorganizer.task.TaskView;
 import com.github.houseorganizer.houseorganizer.user.DummyUser;
 import com.github.houseorganizer.houseorganizer.user.User;
+import com.google.android.gms.tasks.Task;
+import com.google.android.gms.tasks.Tasks;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
@@ -51,12 +52,14 @@ public class MainScreenActivity extends AppCompatActivity {
     private FirebaseFirestore db;
     private FirebaseUser mUser;
     private DocumentReference currentHouse;
-    private EventsAdapter calendarAdapter;
+    private UpcomingAdapter calendarAdapter;
     private RecyclerView calendarEvents;
 
     private TaskList taskList;
     private DocumentReference tlMetadata;
     private TaskListAdapter taskListAdapter;
+    private FirestoreShopList shopList;
+    private ShopListAdapter shopListAdapter;
     private ListFragmentView listView = ListFragmentView.CHORES_LIST;
     public enum ListFragmentView { CHORES_LIST, GROCERY_LIST }
 
@@ -74,18 +77,46 @@ public class MainScreenActivity extends AppCompatActivity {
         loadData();
 
         calendarEvents = findViewById(R.id.calendar);
-        calendarAdapter = new EventsAdapter(calendar,
+        calendarAdapter = new UpcomingAdapter(calendar,
                 registerForActivityResult(new ActivityResultContracts.GetContent(), uri -> calendarAdapter.pushAttachment(uri)));
         calendarEvents.setAdapter(calendarAdapter);
         calendarEvents.setLayoutManager(new GridLayoutManager(this, 1));
         findViewById(R.id.add_event).setOnClickListener(v -> calendarAdapter.showAddEventDialog( this, currentHouse, "addEvent:failureToAdd"));
-        findViewById(R.id.new_task).setOnClickListener(v -> TaskView.addTask(db, taskList, taskListAdapter, listView, tlMetadata));
-        TaskView.recoverTaskList(this, taskList, taskListAdapter,
-                db.collection("task_lists").document("85IW3cYzxOo1YTWnNOQl"));
+        initializeGroceriesList();
         BottomNavigationView menu = findViewById(R.id.nav_bar);
         menu.setOnItemSelectedListener(l -> changeActivity(l.getTitle().toString()));
     }
 
+    private Task<ShopListAdapter> initializeGroceriesList() {
+        if (currentHouse == null) return Tasks.forCanceled();
+        CollectionReference root = db.collection("shop_lists");
+        return root.whereEqualTo("household", currentHouse).get()
+                .continueWithTask(r -> {
+                    // If empty -> create new house
+                    if (r.getResult().getDocuments().size() == 0) {
+                        shopList = new FirestoreShopList(currentHouse);
+                        return FirestoreShopList.storeNewShopList(root, new ShopList(), currentHouse)
+                                .continueWith(t -> {
+                                    shopList.setOnlineReference(t.getResult());
+                                    shopListAdapter = new ShopListAdapter(shopList);
+                                    return shopListAdapter;
+                                });
+                        // If not empty then retrieve the existing shopList
+                    } else {
+                        return FirestoreShopList.retrieveShopList(root, currentHouse).continueWith(t -> {
+                            shopList = t.getResult();
+                            shopListAdapter = new ShopListAdapter(shopList);
+                            return shopListAdapter;
+                        });
+                    }
+                    // Setting up real time actualisation
+                }).addOnCompleteListener(c -> {
+                    shopList.getOnlineReference().addSnapshotListener((doc, e) -> {
+                        shopList = FirestoreShopList.buildShopList(doc);
+                        shopListAdapter.setShopList(shopList);
+                    });
+                });
+    }
     private boolean changeActivity(String buttonText) {
         // Using the title and non resource strings here
         // otherwise there is a warning that ids inside a switch are non final
@@ -126,7 +157,7 @@ public class MainScreenActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        calendarAdapter.refreshCalendarView(this, currentHouse, "refreshCalendar:failureToRefresh");
+        calendarAdapter.refreshCalendarView(this, currentHouse, "refreshCalendar:failureToRefresh", false);
     }
 
     private void loadData() {
@@ -157,7 +188,7 @@ public class MainScreenActivity extends AppCompatActivity {
                                 return;
                             }
                         }
-                        calendarAdapter.refreshCalendarView(this, currentHouse, "refreshCalendar:failureToRefresh");
+                        calendarAdapter.refreshCalendarView(this, currentHouse, "refreshCalendar:failureToRefresh", false);
                         initializeTaskList();
                     } else
                         logAndToast(this.toString(), "loadHousehold:failure", task.getException(), getApplicationContext(), "Could not get a house.");
@@ -218,6 +249,17 @@ public class MainScreenActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
+    public void bottomAddButtonPressed(View view){
+        if(listView == ListFragmentView.CHORES_LIST){
+            TaskView.addTask(db, taskList, taskListAdapter, listView, tlMetadata);
+        }
+        else{
+            if(shopList != null){
+                shopListAdapter.addItem(this, shopList);
+            }
+        }
+    }
+
     public void rotateLists(View view) {
         listView = ListFragmentView.values()[1 - listView.ordinal()];
 
@@ -226,15 +268,19 @@ public class MainScreenActivity extends AppCompatActivity {
                 TaskView.setUpTaskListView(this, taskListAdapter);
                 break;
             case GROCERY_LIST:
-                ShopList shopList = new ShopList(new DummyUser("John", "uid"), "TestShopList");
-                shopList.addItem(new ShopItem("Eggs", 4, ""));
-                shopList.addItem(new ShopItem("Flour", 2, "kg"));
-                shopList.addItem(new ShopItem("Raclette", 3, "tons"));
+                if(shopList == null) {
+                    initializeGroceriesList()
+                            .addOnCompleteListener(t -> shopListAdapter.setUpShopListView(this));
+                    return;
+                }
+                shopListAdapter.setUpShopListView(this);
+                shopList.getOnlineReference().addSnapshotListener((snap, c) -> {
+                    if(snap != null){
+                        shopList = FirestoreShopList.buildShopList(snap);
+                        shopListAdapter.setShopList(shopList);
 
-                ShopListAdapter itemAdapter = new ShopListAdapter(shopList);
-                RecyclerView rView = findViewById(R.id.task_list);
-                rView.setAdapter(itemAdapter);
-                rView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
+                    }
+                });
                 break;
         }
     }
