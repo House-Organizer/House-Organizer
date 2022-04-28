@@ -101,7 +101,7 @@ public class GroceriesActivityTest {
         onView(withId(R.id.groceries_recycler))
                 .perform(RecyclerViewActions.actionOnItemAtPosition(
                         1,
-                        RecyclerViewHelperActions.clickChildViewWithId(R.id.delete_item_button)));
+                        RecyclerViewHelper.clickChildViewWithId(R.id.delete_item_button)));
     }
 
     @Test
@@ -126,7 +126,7 @@ public class GroceriesActivityTest {
         onView(withId(R.id.groceries_recycler))
                 .perform(RecyclerViewActions.actionOnItemAtPosition(
                         1,
-                        RecyclerViewHelperActions.clickChildViewWithId(R.id.delete_item_button)));
+                        RecyclerViewHelper.clickChildViewWithId(R.id.delete_item_button)));
         Thread.sleep(50);
         onView(withId(R.id.groceries_recycler)).check(matches(hasChildCount(1)));
     }
