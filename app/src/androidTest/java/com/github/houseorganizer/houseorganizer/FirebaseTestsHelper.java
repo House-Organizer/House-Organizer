@@ -2,12 +2,9 @@ package com.github.houseorganizer.houseorganizer;
 
 import com.github.houseorganizer.houseorganizer.shop.FirestoreShopList;
 import com.github.houseorganizer.houseorganizer.shop.ShopItem;
-import com.github.houseorganizer.houseorganizer.shop.ShopList;
 import com.github.houseorganizer.houseorganizer.task.FirestoreTask;
 import com.github.houseorganizer.houseorganizer.task.HTask;
 import com.github.houseorganizer.houseorganizer.task.TaskList;
-import com.github.houseorganizer.houseorganizer.user.DummyUser;
-import com.github.houseorganizer.houseorganizer.user.User;
 import com.google.android.gms.tasks.Task;
 import com.google.android.gms.tasks.Tasks;
 import com.google.firebase.auth.AuthResult;
@@ -269,7 +266,7 @@ public class FirebaseTestsHelper {
         isAlreadyPast.put("description", "desc");
         isAlreadyPast.put("duration", 10);
         isAlreadyPast.put("household", db.collection("households").document(TEST_HOUSEHOLD_NAMES[0]));
-        isAlreadyPast.put("start", LocalDateTime.of(2020, 10, 10, 10, 10).toEpochSecond(ZoneOffset.UTC));
+        isAlreadyPast.put("start", LocalDateTime.now().minusDays(1).toEpochSecond(ZoneOffset.UTC));
         Task<Void> task6 = db.collection("events").document("is_already_past").set(isAlreadyPast);
 
         Map<String, Object> isInOtherHouse = new HashMap<>();
