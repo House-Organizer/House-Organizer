@@ -51,9 +51,7 @@ public class CreateHouseholdActivity extends AppCompatActivity {
                     if (task.isSuccessful()) {
                         saveData(task.getResult().getId());
 
-                        Toast.makeText(view.getContext(),
-                                view.getContext().getString(R.string.add_household_success),
-                                Toast.LENGTH_SHORT).show();
+                        Toast.makeText(view.getContext(), view.getContext().getString(R.string.add_household_success), Toast.LENGTH_SHORT).show();
 
                         Intent intent = new Intent(this, MainScreenActivity.class);
                         startActivity(intent);
@@ -79,6 +77,7 @@ public class CreateHouseholdActivity extends AppCompatActivity {
         houseHold.put("residents", residents);
         houseHold.put("latitude", lat);
         houseHold.put("longitude", lon);
+        houseHold.put("notes", "");
 
         return houseHold;
     }
