@@ -78,12 +78,9 @@ public class HouseSelectionActivity extends AppCompatActivity {
 
     private void requestPermission() {
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            // Permissions not granted yet
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                // Comment next line to pass the tests, GrantPermissionRule doesn't prevent the pop up from appearomment next line to pass the tests, GrantPermissionRule doesn't prevent the pop up from appear
-                // TODO: Find alternative
-                //requestPermissions(new String[] {Manifest.permission.ACCESS_FINE_LOCATION}, PERMISSIONS_FINE_LOCATION);
-            }
+            // Comment next line to pass the tests, GrantPermissionRule doesn't prevent the pop up from appearomment next line to pass the tests, GrantPermissionRule doesn't prevent the pop up from appear
+            // TODO: Find alternative
+            //requestPermissions(new String[] {Manifest.permission.ACCESS_FINE_LOCATION}, PERMISSIONS_FINE_LOCATION);
         }
     }
 
