@@ -13,7 +13,7 @@ public class Billsharer {
     private ArrayList<Expense> expenses;
     private ArrayList<Debt> debts;
     private HashMap<String, Integer> balances;
-    private DocumentReference currentHouse;
+    private final DocumentReference currentHouse;
     private ArrayList<String> residents;
 
     public Billsharer(DocumentReference currentHouse) {
@@ -75,7 +75,7 @@ public class Billsharer {
         }
     }
 
-    public void computeDepts() {}
+    public void computeDebts() {}
 
     private int computeTotal(String resident, Expense expense) {
         int total = 0;
