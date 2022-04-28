@@ -13,8 +13,10 @@ import com.github.houseorganizer.houseorganizer.R;
 import com.github.houseorganizer.houseorganizer.login.LoginActivity;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.FieldPath;
 import com.google.firebase.firestore.FirebaseFirestore;
 
+import java.lang.reflect.Field;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -60,10 +62,11 @@ public class SettingsActivity extends AppCompatActivity {
                 FirebaseUser Uid = FirebaseAuth.getInstance().getCurrentUser();
                 FirebaseFirestore db = FirebaseFirestore.getInstance();
 
-                user_nickname.put(Uid.getEmail(), sharedPreferences.getString("nickname",""));
+                FieldPath field = FieldPath.of(Uid.getEmail());
+
                 db.collection("email-to-nickname")
                    .document("email-to-nickname-translations")
-                   .update(user_nickname);
+                   .update(field, sharedPreferences.getString("nickname",""));
             }
         }
 
