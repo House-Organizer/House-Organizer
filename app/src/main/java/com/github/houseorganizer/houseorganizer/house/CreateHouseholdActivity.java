@@ -47,15 +47,14 @@ public class CreateHouseholdActivity extends AppCompatActivity {
         houseHold.put("owner", mUserEmail);
         houseHold.put("num_members", 1);
         houseHold.put("residents", residents);
+        houseHold.put("notes", "");
 
         db.collection("households").add(houseHold)
                 .addOnCompleteListener(this, task -> {
                     if (task.isSuccessful()) {
                         saveData(task.getResult().getId());
 
-                        Toast.makeText(view.getContext(),
-                                view.getContext().getString(R.string.add_household_success),
-                                Toast.LENGTH_SHORT).show();
+                        Toast.makeText(view.getContext(), view.getContext().getString(R.string.add_household_success), Toast.LENGTH_SHORT).show();
 
                         Intent intent = new Intent(this, MainScreenActivity.class);
                         startActivity(intent);
