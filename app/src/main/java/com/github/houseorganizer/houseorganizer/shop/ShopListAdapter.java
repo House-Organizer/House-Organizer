@@ -15,10 +15,15 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.github.houseorganizer.houseorganizer.R;
+import com.google.android.gms.tasks.Task;
+import com.google.android.gms.tasks.Tasks;
+import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.FirebaseFirestore;
 
 public class ShopListAdapter extends RecyclerView.Adapter<ShopListAdapter.ItemsHolder> {
 
-    public class ItemsHolder extends RecyclerView.ViewHolder{
+    public static class ItemsHolder extends RecyclerView.ViewHolder{
         public ImageButton cancel;
         public CheckBox checkBox;
         public ItemsHolder(@NonNull View itemView) {
@@ -41,6 +46,35 @@ public class ShopListAdapter extends RecyclerView.Adapter<ShopListAdapter.ItemsH
         this.notifyDataSetChanged();
     }
 
+    public FirestoreShopList getFirestoreShopList(){
+        if(shopList instanceof FirestoreShopList) return (FirestoreShopList) shopList;
+        return null;
+    }
+
+    public static Task<ShopListAdapter> initializeFirestoreShopList(DocumentReference currentHouse,
+                                                                     FirebaseFirestore db) {
+        if (currentHouse == null) return Tasks.forCanceled();
+        CollectionReference root = db.collection("shop_lists");
+        return root.whereEqualTo("household", currentHouse).get()
+                .continueWithTask(r -> {
+                    // If empty -> create new house
+                    if (r.getResult().getDocuments().size() == 0) {
+                        FirestoreShopList shopList = new FirestoreShopList(currentHouse);
+                        return FirestoreShopList.storeNewShopList(root, new ShopList(), currentHouse)
+                                .continueWith(t -> {
+                                    shopList.setOnlineReference(t.getResult());
+                                    return new ShopListAdapter(shopList);
+                                });
+                        // If not empty then retrieve the existing shopList
+                    } else {
+                        return FirestoreShopList.retrieveShopList(root, currentHouse).continueWith(t -> {
+                            FirestoreShopList shopList = t.getResult();
+                            return new ShopListAdapter(shopList);
+                        });
+                    }
+                });
+    }
+
     @NonNull
     @Override
     public ItemsHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -56,10 +90,7 @@ public class ShopListAdapter extends RecyclerView.Adapter<ShopListAdapter.ItemsH
         String text = item.toString();
         box.setText(text);
         box.setChecked(item.isPickedUp());
-        box.setOnClickListener( v -> {
-                    shopList.toggleItemPickedUp(position);
-                    box.setChecked(item.isPickedUp());
-                });
+        box.setOnClickListener( v -> shopList.toggleItemPickedUp(position));
         holder.cancel.setOnClickListener(v -> {
             shopList.removeItem(item);
             this.notifyItemRemoved(position);
@@ -89,11 +120,11 @@ public class ShopListAdapter extends RecyclerView.Adapter<ShopListAdapter.ItemsH
     }
 
     private void retrieveItemFromDialog(FirestoreShopList shopList, View dialogView){
-        final String name = ((EditText) dialogView.findViewById(R.id.editTextName)).getText().toString();
-        final String unit = ((EditText) dialogView.findViewById(R.id.editTextUnit)).getText().toString();
+        final String name = ((EditText) dialogView.findViewById(R.id.edit_text_name)).getText().toString();
+        final String unit = ((EditText) dialogView.findViewById(R.id.edit_text_unit)).getText().toString();
         int quantity = 0;
         try {
-            quantity = Integer.parseInt(((EditText) dialogView.findViewById(R.id.editTextQuantity)).getText().toString());
+            quantity = Integer.parseInt(((EditText) dialogView.findViewById(R.id.edit_text_quantity)).getText().toString());
         }catch (Exception e){
             // Only possible bad input is empty field
         }
