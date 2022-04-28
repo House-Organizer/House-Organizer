@@ -72,7 +72,7 @@ public class HouseSelectionActivity extends AppCompatActivity {
                 .setPriority(LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY);
 
         //requestPermission();
-        //getCoordinates();
+        getCoordinates();
         setHousesView();
     }
 
