@@ -20,7 +20,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.github.houseorganizer.houseorganizer.NavBar.NavBarHelpers;
 import com.github.houseorganizer.houseorganizer.R;
 import com.github.houseorganizer.houseorganizer.calendar.Calendar;
-import com.github.houseorganizer.houseorganizer.calendar.EventsAdapter;
+import com.github.houseorganizer.houseorganizer.calendar.UpcomingAdapter;
 import com.github.houseorganizer.houseorganizer.house.CreateHouseholdActivity;
 import com.github.houseorganizer.houseorganizer.house.HouseSelectionActivity;
 import com.github.houseorganizer.houseorganizer.shop.FirestoreShopList;
@@ -51,7 +51,7 @@ public class MainScreenActivity extends AppCompatActivity {
     private FirebaseFirestore db;
     private FirebaseUser mUser;
     private DocumentReference currentHouse;
-    private EventsAdapter calendarAdapter;
+    private UpcomingAdapter calendarAdapter;
     private RecyclerView calendarEvents;
 
     private TaskList taskList;
@@ -76,7 +76,7 @@ public class MainScreenActivity extends AppCompatActivity {
         loadData();
 
         calendarEvents = findViewById(R.id.calendar);
-        calendarAdapter = new EventsAdapter(calendar,
+        calendarAdapter = new UpcomingAdapter(calendar,
                 registerForActivityResult(new ActivityResultContracts.GetContent(), uri -> calendarAdapter.pushAttachment(uri)));
         calendarEvents.setAdapter(calendarAdapter);
         calendarEvents.setLayoutManager(new GridLayoutManager(this, 1));
@@ -128,7 +128,7 @@ public class MainScreenActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        calendarAdapter.refreshCalendarView(this, currentHouse, "refreshCalendar:failureToRefresh");
+        calendarAdapter.refreshCalendarView(this, currentHouse, "refreshCalendar:failureToRefresh", false);
     }
 
     private void loadData() {
@@ -159,7 +159,7 @@ public class MainScreenActivity extends AppCompatActivity {
                                 return;
                             }
                         }
-                        calendarAdapter.refreshCalendarView(this, currentHouse, "refreshCalendar:failureToRefresh");
+                        calendarAdapter.refreshCalendarView(this, currentHouse, "refreshCalendar:failureToRefresh", false);
                         initializeTaskList();
                     } else
                         logAndToast(this.toString(), "loadHousehold:failure", task.getException(), getApplicationContext(), "Could not get a house.");

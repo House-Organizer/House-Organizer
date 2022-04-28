@@ -4,8 +4,6 @@ import static com.google.android.gms.tasks.Tasks.await;
 
 import android.content.Context;
 
-import androidx.annotation.NonNull;
-
 import com.github.houseorganizer.houseorganizer.calendar.Calendar;
 import com.github.houseorganizer.houseorganizer.shop.ShopItem;
 import com.github.houseorganizer.houseorganizer.task.HTask;

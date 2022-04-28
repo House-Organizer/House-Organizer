@@ -63,7 +63,7 @@
     <!-- Calendar view and its buttons -->
     <string name="add_event">+</string>
     <string name="cycle_calendar_views">↻</string>
-    <string name="refresh_calendar">Refresh</string>
+    <string name="no_events">No events on this day.</string>
     <string name="refresh_calendar_fail">Could not refresh.</string>
     <string name="calendar_upcoming_date">On the %1$s.</string>
 
