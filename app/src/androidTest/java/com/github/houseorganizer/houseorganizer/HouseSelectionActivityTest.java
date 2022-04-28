@@ -39,9 +39,6 @@ public class HouseSelectionActivityTest {
 
     @Rule
     public GrantPermissionRule permissionRules = GrantPermissionRule.grant(android.Manifest.permission.ACCESS_FINE_LOCATION);
-    
-    @Rule
-    public ActivityScenarioRule<HouseSelectionActivity> testRule = new ActivityScenarioRule<>(HouseSelectionActivity.class);
 
     @BeforeClass
     public static void createMockFirebase() throws ExecutionException, InterruptedException {
@@ -57,6 +54,9 @@ public class HouseSelectionActivityTest {
     public static void signOut(){
         auth.signOut();
     }
+
+    @Rule
+    public ActivityScenarioRule<HouseSelectionActivity> testRule = new ActivityScenarioRule<>(HouseSelectionActivity.class);
 
     @Test
     public void seeHousesList() {
