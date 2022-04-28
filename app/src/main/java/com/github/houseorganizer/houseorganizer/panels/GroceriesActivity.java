@@ -44,7 +44,7 @@ public class GroceriesActivity extends NavBarActivity {
             shopList.removePickedUpItems();
             shopListAdapter.notifyDataSetChanged();
         });
-        
+
         super.setUpNavBar(R.id.nav_bar, OptionalInt.of(R.id.nav_bar_cart));
     }
 
