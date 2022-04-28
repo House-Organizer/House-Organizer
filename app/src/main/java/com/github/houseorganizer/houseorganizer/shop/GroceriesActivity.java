@@ -3,8 +3,6 @@ package com.github.houseorganizer.houseorganizer.shop;
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
-import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -12,6 +10,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.github.houseorganizer.houseorganizer.NavBar.NavBarHelpers;
 import com.github.houseorganizer.houseorganizer.R;
+import com.github.houseorganizer.houseorganizer.util.Util;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -70,8 +69,8 @@ public class GroceriesActivity extends AppCompatActivity {
                         view.setLayoutManager(new LinearLayoutManager(this));
                         view.setAdapter(shopListAdapter);
                     }else {
-                        Log.e("Groceries", "Could not initialize shop list");
-                        Toast.makeText(this, R.string.shop_loading_error, Toast.LENGTH_LONG).show();
+                        Util.logAndToast("Groceries", "Could not initialize shop list",
+                                t.getException(), this, "Could not load shop list");
                     }
                 });
     }
