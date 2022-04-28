@@ -39,6 +39,8 @@ import java.util.List;
 import java.util.Objects;
 import java.util.OptionalInt;
 
+// [!!!] the current house is now an attribute of NavBarActivity
+// please don't add it back here in your merges
 public class MainScreenActivity extends NavBarActivity {
 
     public static final String CURRENT_HOUSEHOLD = "com.github.houseorganizer.houseorganizer.CURRENT_HOUSEHOLD";
@@ -47,7 +49,6 @@ public class MainScreenActivity extends NavBarActivity {
     private FirebaseFirestore db;
     private FirebaseUser mUser;
 
-    private DocumentReference currentHouse;
     private UpcomingAdapter calendarAdapter;
     private RecyclerView calendarEvents;
 

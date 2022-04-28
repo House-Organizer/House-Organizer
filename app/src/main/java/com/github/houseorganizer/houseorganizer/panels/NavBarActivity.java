@@ -14,7 +14,7 @@ public abstract class NavBarActivity extends AppCompatActivity {
     protected enum CurrentActivity{
         MAIN("Main Screen", MainScreenActivity.class),
         CALENDAR("Calendar", CalendarActivity.class),
-        GROCERIES("Groceries", null), /* TODO */
+        GROCERIES("Groceries", GroceriesActivity.class),
         TASKS("Tasks", TaskListActivity.class);
 
         protected final String name;
@@ -31,7 +31,6 @@ public abstract class NavBarActivity extends AppCompatActivity {
                     return activity;
                 }
             }
-
             return MAIN; // Should never happen
         }
     }

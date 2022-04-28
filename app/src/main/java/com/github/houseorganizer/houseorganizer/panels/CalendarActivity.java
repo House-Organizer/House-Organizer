@@ -9,13 +9,10 @@ import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.github.houseorganizer.houseorganizer.NavBar.NavBarHelpers;
 import com.github.houseorganizer.houseorganizer.R;
 import com.github.houseorganizer.houseorganizer.calendar.Calendar;
 import com.github.houseorganizer.houseorganizer.calendar.CalendarAdapter;
 import com.github.houseorganizer.houseorganizer.calendar.UpcomingAdapter;
-import com.google.android.material.bottomnavigation.BottomNavigationView;
-import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.time.YearMonth;
@@ -24,8 +21,6 @@ import java.time.format.DateTimeFormatter;
 import java.util.OptionalInt;
 
 public final class CalendarActivity extends NavBarActivity {
-    private DocumentReference currentHouse;
-
     private CalendarAdapter calendarAdapter;
 
     private RecyclerView calendarEvents;

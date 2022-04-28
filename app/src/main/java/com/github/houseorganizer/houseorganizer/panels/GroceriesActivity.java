@@ -1,4 +1,4 @@
-package com.github.houseorganizer.houseorganizer.shop;
+package com.github.houseorganizer.houseorganizer.panels;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
@@ -10,14 +10,17 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.github.houseorganizer.houseorganizer.NavBar.NavBarHelpers;
 import com.github.houseorganizer.houseorganizer.R;
+import com.github.houseorganizer.houseorganizer.panels.NavBarActivity;
+import com.github.houseorganizer.houseorganizer.shop.FirestoreShopList;
+import com.github.houseorganizer.houseorganizer.shop.ShopListAdapter;
 import com.github.houseorganizer.houseorganizer.util.Util;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 
-public class GroceriesActivity extends AppCompatActivity {
+import java.util.OptionalInt;
 
-    private DocumentReference currentHouse;
+public class GroceriesActivity extends NavBarActivity {
 
     private ShopListAdapter shopListAdapter;
     private FirestoreShopList shopList;
@@ -41,17 +44,8 @@ public class GroceriesActivity extends AppCompatActivity {
             shopList.removePickedUpItems();
             shopListAdapter.notifyDataSetChanged();
         });
-
-
-        BottomNavigationView menu = findViewById(R.id.nav_bar);
-        menu.setSelectedItemId(R.id.nav_bar_cart);
-        menu.setOnItemSelectedListener(l -> {
-            Intent intent = NavBarHelpers.changeActivityIntent(l.getTitle().toString(),
-                    currentHouse, "Groceries", this);
-            if(intent==null)return false;
-            startActivity(intent);
-            return true;
-        });
+        
+        super.setUpNavBar(R.id.nav_bar, OptionalInt.of(R.id.nav_bar_cart));
     }
 
     private void initializeData(){
@@ -75,4 +69,8 @@ public class GroceriesActivity extends AppCompatActivity {
                 });
     }
 
+    @Override
+    protected CurrentActivity currentActivity() {
+        return CurrentActivity.GROCERIES;
+    }
 }

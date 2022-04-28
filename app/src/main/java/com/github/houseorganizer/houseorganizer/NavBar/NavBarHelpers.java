@@ -5,7 +5,7 @@ import android.content.Intent;
 
 import com.github.houseorganizer.houseorganizer.panels.CalendarActivity;
 import com.github.houseorganizer.houseorganizer.panels.MainScreenActivity;
-import com.github.houseorganizer.houseorganizer.shop.GroceriesActivity;
+import com.github.houseorganizer.houseorganizer.panels.GroceriesActivity;
 import com.google.firebase.firestore.DocumentReference;
 
 public class NavBarHelpers {
