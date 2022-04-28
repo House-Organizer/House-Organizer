@@ -11,6 +11,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.github.houseorganizer.houseorganizer.NavBar.NavBarHelpers;
 import com.github.houseorganizer.houseorganizer.R;
 import com.github.houseorganizer.houseorganizer.calendar.Calendar;
 import com.github.houseorganizer.houseorganizer.calendar.CalendarAdapter;
@@ -53,26 +54,18 @@ public class CalendarActivity extends AppCompatActivity {
             yearMonth.setVisibility(calendar.getView() == Calendar.CalendarView.MONTHLY ? View.VISIBLE : View.GONE);
         });
         findViewById(R.id.calendar_screen_add_event).setOnClickListener(v -> calendarAdapter.showAddEventDialog(this, currentHouse, "addEvent:failure"));
-        BottomNavigationView menu = findViewById(R.id.nav_bar);
-        menu.setSelectedItemId(R.id.nav_bar_calendar);
-        menu.setOnItemSelectedListener(l -> changeActivity(l.getTitle().toString()));
+        initializedNavBar();
     }
 
-    private boolean changeActivity(String buttonText) {
-        // Using the title and non resource strings here
-        // otherwise there is a warning that ids inside a switch are non final
-        switch(buttonText){
-            case "Main Screen":
-                Intent intent = new Intent(this, MainScreenActivity.class);
-                startActivity(intent);
-                break;
-            case "Groceries":
-                break;
-            case "Tasks":
-                break;
-            default:
-                break;
-        }
-        return true;
+    private void initializedNavBar(){
+        BottomNavigationView menu = findViewById(R.id.nav_bar);
+        menu.setSelectedItemId(R.id.nav_bar_calendar);
+        menu.setOnItemSelectedListener(l -> {
+            Intent intent = NavBarHelpers.changeActivityIntent(l.getTitle().toString(), currentHouse,
+                    "Calendar", this);
+            if(intent==null)return false;
+            startActivity(intent);
+            return true;
+        });
     }
 }

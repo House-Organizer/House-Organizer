@@ -55,6 +55,7 @@ public class TaskListOnMainScreenTest {
         FirebaseTestsHelper.setUpFirebase();
 
         auth = FirebaseAuth.getInstance();
+        FirestoreTaskTest.createMockFirebase();
     }
 
     @AfterClass
