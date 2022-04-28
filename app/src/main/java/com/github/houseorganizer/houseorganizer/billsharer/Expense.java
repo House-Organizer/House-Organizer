@@ -1,6 +1,5 @@
 package com.github.houseorganizer.houseorganizer.billsharer;
 
-import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Objects;
 
@@ -8,14 +7,12 @@ public class Expense implements Cloneable {
 
     private String title;
     private int cost;
-    private LocalDateTime date;
     private String payee;
     private HashMap<String, Integer> shares;
 
-    public Expense(String title, int cost, LocalDateTime date, String payee, HashMap<String, Integer> shares) {
+    public Expense(String title, int cost, String payee, HashMap<String, Integer> shares) {
         this.title = title;
         this.cost = cost;
-        this.date = date;
         this.payee = payee;
         this.shares = shares;
     }
@@ -34,14 +31,6 @@ public class Expense implements Cloneable {
 
     public void setCost(int cost) {
         this.cost = cost;
-    }
-
-    public LocalDateTime getDate() {
-        return date;
-    }
-
-    public void setDate(LocalDateTime date) {
-        this.date = date;
     }
 
     public String getPayee() {
@@ -65,19 +54,23 @@ public class Expense implements Cloneable {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Expense expense = (Expense) o;
-        return cost == expense.cost && title.equals(expense.title) && date.equals(expense.date) && shares.equals(expense.shares);
+        return cost == expense.cost && title.equals(expense.title) && shares.equals(expense.shares);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(title, cost, date, shares);
+        return Objects.hash(title, cost, shares);
     }
 
     @Override
     public Object clone() {
-        return new Expense(this.title, this.cost, this.date, this.payee,
+        return new Expense(this.title, this.cost, this.payee,
                 (HashMap<String, Integer>) this.shares.clone());
     }
 
+    public String toText() {
+        // TODO
+        return null;
+    }
 
 }
