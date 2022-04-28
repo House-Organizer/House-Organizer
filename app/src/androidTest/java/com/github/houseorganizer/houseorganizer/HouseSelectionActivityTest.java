@@ -55,9 +55,8 @@ public class HouseSelectionActivityTest {
     @Rule
     public ActivityScenarioRule<HouseSelectionActivity> testRule = new ActivityScenarioRule<>(HouseSelectionActivity.class);
     @Rule
-    public GrantPermissionRule coarseLocation = GrantPermissionRule.grant(android.Manifest.permission.ACCESS_COARSE_LOCATION);
-    @Rule
-    public GrantPermissionRule fineLocation = GrantPermissionRule.grant(android.Manifest.permission.ACCESS_FINE_LOCATION);
+    public GrantPermissionRule permissionRules = GrantPermissionRule.grant(android.Manifest.permission.ACCESS_COARSE_LOCATION,
+            android.Manifest.permission.ACCESS_FINE_LOCATION);
 
     @Test
     public void seeHousesList() {
