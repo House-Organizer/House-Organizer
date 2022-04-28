@@ -58,6 +58,7 @@ public class FirebaseTestsHelper {
 
     protected static String UNKNOWN_USER = "unknown@test.com";
     protected static String WRONG_EMAIL = "user_1.com";
+    protected static final String VALID_PASSWORD_FOR_APP = "A3@ef678!";
     protected static final int EVENTS_TO_DISPLAY = 5;
     protected static final int EVENTS_NOT_TO_DISPLAY = 2;
     protected static LocalDateTime DELETED_EVENT_TIME;
@@ -100,21 +101,40 @@ public class FirebaseTestsHelper {
      * It is assumed no user is logged in
      * Upon return the user has been added but is not logged in
      */
-    protected static void createFirebaseTestUserWithCredentials(String email, String pwd)
-            throws ExecutionException, InterruptedException {
+    protected static void createFirebaseTestUserWithCredentials(String email, String pwd) {
+
         Task<AuthResult> t = FirebaseAuth.getInstance().createUserWithEmailAndPassword(email, pwd);
+        try {
+            Tasks.await(t);
+        } catch (ExecutionException | InterruptedException e) {
+            System.err.println("Error creating firebase test user.");
+        }
         FirebaseAuth.getInstance().signOut();
-        Tasks.await(t);
+    }
+
+    /**
+     * This method deletes a user, it is assumed the user is logged in.
+     */
+    protected static void deleteTestUser() {
+        Task<Void> t = Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser()).delete();
+        try {
+            Tasks.await(t);
+        } catch (ExecutionException | InterruptedException e) {
+            System.err.println("Error deleting firebase test user.");
+        }
     }
 
     /**
      * This method will log in a user given an email and a password
      * It is assumed the user exists within the authentication database
      */
-    protected static void signInTestUserWithCredentials(String email, String pwd)
-            throws ExecutionException, InterruptedException {
+    protected static void signInTestUserWithCredentials(String email, String pwd) {
         Task<AuthResult> t = FirebaseAuth.getInstance().signInWithEmailAndPassword(email, pwd);
-        Tasks.await(t);
+        try {
+            Tasks.await(t);
+        } catch (ExecutionException | InterruptedException e) {
+            System.err.println("Error signing in firebase test user.");
+        }
     }
 
     /**
