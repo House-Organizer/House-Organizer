@@ -17,14 +17,20 @@ import static androidx.test.espresso.matcher.ViewMatchers.isEnabled;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
 import static androidx.test.espresso.matcher.ViewMatchers.withTagValue;
 import static androidx.test.espresso.matcher.ViewMatchers.withText;
+
+import static com.github.houseorganizer.houseorganizer.FirebaseTestsHelper.TEST_HOUSEHOLD_NAMES;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 
+
+import android.content.Intent;
+
+import androidx.test.core.app.ApplicationProvider;
 import androidx.test.ext.junit.rules.ActivityScenarioRule;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 
-import com.github.houseorganizer.houseorganizer.panels.MainScreenActivity;
+import com.github.houseorganizer.houseorganizer.panels.TaskListActivity;
 import com.github.houseorganizer.houseorganizer.task.FirestoreTask;
 import com.google.firebase.auth.FirebaseAuth;
 
@@ -38,15 +44,16 @@ import org.junit.runner.RunWith;
 import java.util.concurrent.ExecutionException;
 
 /*
-* To add tests for: adding/removing tasks, changing task title [for now need bug fixes]
-*/
+ * To add tests for: adding/removing tasks, changing task title [for now need bug fixes]
+ */
 
 @RunWith(AndroidJUnit4.class)
-public class TaskListOnMainScreenTest {
+public class TaskListActivityTest {
 
     public static final String NEW_TASK_TITLE = "this is my task now";
     public static final String NEW_SUBTASK_TITLE = "a new subtask!";
     private static FirebaseAuth auth;
+    private static Intent intentFromMainScreenActivity;
 
     @BeforeClass
     public static void createMockFirebase() throws ExecutionException, InterruptedException {
@@ -55,7 +62,7 @@ public class TaskListOnMainScreenTest {
         FirebaseTestsHelper.setUpFirebase();
 
         auth = FirebaseAuth.getInstance();
-        FirestoreTaskTest.createMockFirebase();
+        intentFromMainScreenActivity = new Intent(ApplicationProvider.getApplicationContext(), TaskListActivity.class).putExtra("house", TEST_HOUSEHOLD_NAMES[0]);
     }
 
     @AfterClass
@@ -69,15 +76,15 @@ public class TaskListOnMainScreenTest {
     }
 
     @Rule
-    public ActivityScenarioRule<MainScreenActivity> mainScreenActivityActivityScenarioRule =
-            new ActivityScenarioRule<>(MainScreenActivity.class);
+    public ActivityScenarioRule<TaskListActivity> taskActivityScenarioRule =
+            new ActivityScenarioRule<>(intentFromMainScreenActivity);
 
     // "+" button; compact method since it's less important
     @Test
     public void addTaskButtonUIWorks() {
-        onView(withId(R.id.new_task)).check(matches(isEnabled()));
-        onView(withId(R.id.new_task)).check(matches(isDisplayed()));
-        onView(withId(R.id.new_task)).check(matches(isClickable()));
+        onView(withId(R.id.tl_screen_new_task)).check(matches(isEnabled()));
+        onView(withId(R.id.tl_screen_new_task)).check(matches(isDisplayed()));
+        onView(withId(R.id.tl_screen_new_task)).check(matches(isClickable()));
     }
 
     // RecyclerView Tests
@@ -85,7 +92,7 @@ public class TaskListOnMainScreenTest {
     /* Display / navigation | DB: unchanged */
     @Test
     public void taskViewHasCorrectNumberOfChildren() {
-        onView(withId(R.id.task_list)).check(matches(hasChildCount(1)));
+        onView(withId(R.id.tl_screen_tasks)).check(matches(hasChildCount(1)));
     }
 
     @Test
