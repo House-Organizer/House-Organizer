@@ -58,6 +58,10 @@ public class CreateHouseholdActivityTest {
     public void createHouseholdWorks() throws ExecutionException, InterruptedException {
         onView(withId(R.id.editTextHouseholdName)).perform(click(),
                 typeText("Test"), closeSoftKeyboard());
+        onView(withId(R.id.editTextLatitude)).perform(click(),
+                typeText("45"), closeSoftKeyboard());
+        onView(withId(R.id.editTextLongitude)).perform(click(),
+                typeText("45"), closeSoftKeyboard());
         onView(withId(R.id.submitHouseholdButton)).perform(click());
 
         assertTrue(FirebaseTestsHelper.householdExists(TEST_HOUSEHOLD_NAMES[0], db));
