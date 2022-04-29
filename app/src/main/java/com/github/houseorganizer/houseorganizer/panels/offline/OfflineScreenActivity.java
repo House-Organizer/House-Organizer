@@ -8,6 +8,8 @@ import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.view.View;
 
+import androidx.annotation.IdRes;
+import androidx.annotation.LayoutRes;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -17,6 +19,7 @@ import com.github.houseorganizer.houseorganizer.panels.MainScreenActivity;
 import com.github.houseorganizer.houseorganizer.storage.LocalStorage;
 import com.github.houseorganizer.houseorganizer.storage.OfflineAdapter;
 import com.github.houseorganizer.houseorganizer.storage.OfflineEvent;
+import com.github.houseorganizer.houseorganizer.storage.OfflineItem;
 import com.github.houseorganizer.houseorganizer.storage.OfflineShopItem;
 import com.github.houseorganizer.houseorganizer.storage.OfflineTask;
 
@@ -46,22 +49,15 @@ public final class OfflineScreenActivity extends AppCompatActivity{
         groceriesMap = LocalStorage.retrieveGroceriesOffline(this);
         tasksMap = LocalStorage.retrieveTaskListOffline(this);
 
-        setUpEvents();
-        setUpTaskList();
+        setUpItemCollection(eventsMap.getOrDefault(currentHouseId, new ArrayList<>()), R.id.offline_calendar, R.layout.offline_event_row, R.id.offline_event_button);
+        setUpItemCollection(tasksMap.getOrDefault(currentHouseId, new ArrayList<>()), R.id.offline_task_list, R.layout.offline_task_row, R.id.offline_task_button);
     }
 
-    private void setUpTaskList() {
-        List<OfflineTask> offlineTasks = tasksMap.getOrDefault(currentHouseId, new ArrayList<>());
-        RecyclerView tasksOrGroceries = findViewById(R.id.offline_task_list);
+    private <T extends OfflineItem> void setUpItemCollection(List<T> itemCollection, @IdRes int recyclerViewResId,
+                                                             @LayoutRes int itemRowLayoutId, @IdRes int itemButtonResId) {
+        RecyclerView tasksOrGroceries = findViewById(recyclerViewResId);
         tasksOrGroceries.setLayoutManager(new LinearLayoutManager(this));
-        tasksOrGroceries.setAdapter(new OfflineAdapter<>(offlineTasks, R.layout.offline_task_row, R.id.offline_task_button));
-    }
-
-    private void setUpEvents() {
-        List<OfflineEvent> offlineEvents = eventsMap.getOrDefault(currentHouseId, new ArrayList<>());
-        RecyclerView calendarEvents = findViewById(R.id.offline_calendar);
-        calendarEvents.setLayoutManager(new LinearLayoutManager(this));
-        calendarEvents.setAdapter(new OfflineAdapter<>(offlineEvents, R.layout.offline_event_row, R.id.offline_event_button));
+        tasksOrGroceries.setAdapter(new OfflineAdapter<>(itemCollection, itemRowLayoutId, itemButtonResId));
     }
 
     public void unsupportedActionAlert(View view) {
