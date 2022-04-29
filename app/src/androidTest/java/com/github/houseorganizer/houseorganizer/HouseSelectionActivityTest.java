@@ -12,6 +12,7 @@ import static androidx.test.espresso.matcher.ViewMatchers.withText;
 import androidx.test.espresso.intent.Intents;
 import androidx.test.ext.junit.rules.ActivityScenarioRule;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
+import androidx.test.rule.GrantPermissionRule;
 
 import com.github.houseorganizer.houseorganizer.house.HouseSelectionActivity;
 import com.github.houseorganizer.houseorganizer.panels.MainScreenActivity;
@@ -30,6 +31,9 @@ import java.util.concurrent.ExecutionException;
 public class HouseSelectionActivityTest {
     private static FirebaseFirestore db;
     private static FirebaseAuth auth;
+
+    @Rule
+    public GrantPermissionRule permissionRules = GrantPermissionRule.grant(android.Manifest.permission.ACCESS_FINE_LOCATION);
 
     @BeforeClass
     public static void createMockFirebase() throws ExecutionException, InterruptedException {

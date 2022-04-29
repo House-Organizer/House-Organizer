@@ -1,32 +1,28 @@
 package com.github.houseorganizer.houseorganizer.panels;
 
 import android.annotation.SuppressLint;
-import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.TextView;
 
 import androidx.activity.result.contract.ActivityResultContracts;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.github.houseorganizer.houseorganizer.NavBar.NavBarHelpers;
 import com.github.houseorganizer.houseorganizer.R;
 import com.github.houseorganizer.houseorganizer.calendar.Calendar;
 import com.github.houseorganizer.houseorganizer.calendar.CalendarAdapter;
 import com.github.houseorganizer.houseorganizer.calendar.UpcomingAdapter;
-import com.google.android.material.bottomnavigation.BottomNavigationView;
-import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.time.YearMonth;
 import java.time.format.DateTimeFormatter;
 
-public class CalendarActivity extends AppCompatActivity {
-    private DocumentReference currentHouse;
+import java.util.OptionalInt;
 
+public final class CalendarActivity extends NavBarActivity {
     private CalendarAdapter calendarAdapter;
+
     private RecyclerView calendarEvents;
     private final Calendar calendar = new Calendar();
 
@@ -54,18 +50,12 @@ public class CalendarActivity extends AppCompatActivity {
             yearMonth.setVisibility(calendar.getView() == Calendar.CalendarView.MONTHLY ? View.VISIBLE : View.GONE);
         });
         findViewById(R.id.calendar_screen_add_event).setOnClickListener(v -> calendarAdapter.showAddEventDialog(this, currentHouse, "addEvent:failure"));
-        initializedNavBar();
+
+        super.setUpNavBar(R.id.nav_bar, OptionalInt.of(R.id.nav_bar_calendar));
     }
 
-    private void initializedNavBar(){
-        BottomNavigationView menu = findViewById(R.id.nav_bar);
-        menu.setSelectedItemId(R.id.nav_bar_calendar);
-        menu.setOnItemSelectedListener(l -> {
-            Intent intent = NavBarHelpers.changeActivityIntent(l.getTitle().toString(), currentHouse,
-                    "Calendar", this);
-            if(intent==null)return false;
-            startActivity(intent);
-            return true;
-        });
+    @Override
+    protected CurrentActivity currentActivity() {
+        return CurrentActivity.CALENDAR;
     }
 }
