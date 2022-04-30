@@ -12,7 +12,7 @@ import com.github.houseorganizer.houseorganizer.util.BiViewHolder;
 
 import java.util.List;
 
-public class TaskAssigneeAdapter extends RecyclerView.Adapter<BiViewHolder<TextView, ImageButton>> {
+public final class TaskAssigneeAdapter extends RecyclerView.Adapter<BiViewHolder<TextView, ImageButton>> {
     private final HTask parentTask;
     private final List<String> allHouseHoldMembers;
 

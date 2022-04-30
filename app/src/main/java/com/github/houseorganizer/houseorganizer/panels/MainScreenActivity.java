@@ -13,11 +13,9 @@ import android.view.View;
 
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.github.houseorganizer.houseorganizer.NavBar.NavBarHelpers;
 import com.github.houseorganizer.houseorganizer.R;
 import com.github.houseorganizer.houseorganizer.calendar.Calendar;
 import com.github.houseorganizer.houseorganizer.calendar.UpcomingAdapter;
@@ -28,10 +26,7 @@ import com.github.houseorganizer.houseorganizer.shop.ShopListAdapter;
 import com.github.houseorganizer.houseorganizer.task.TaskList;
 import com.github.houseorganizer.houseorganizer.task.TaskListAdapter;
 import com.github.houseorganizer.houseorganizer.task.TaskView;
-import com.github.houseorganizer.houseorganizer.user.DummyUser;
-import com.github.houseorganizer.houseorganizer.user.User;
 import com.google.android.gms.tasks.Task;
-import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
@@ -42,15 +37,18 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
+import java.util.OptionalInt;
 
-public class MainScreenActivity extends AppCompatActivity {
+// [!!!] the current house is now an attribute of NavBarActivity
+// please don't add it back here in your merges
+public class MainScreenActivity extends NavBarActivity {
 
     public static final String CURRENT_HOUSEHOLD = "com.github.houseorganizer.houseorganizer.CURRENT_HOUSEHOLD";
 
     private final Calendar calendar = new Calendar();
     private FirebaseFirestore db;
     private FirebaseUser mUser;
-    private DocumentReference currentHouse;
+
     private UpcomingAdapter calendarAdapter;
     private RecyclerView calendarEvents;
 
@@ -63,7 +61,7 @@ public class MainScreenActivity extends AppCompatActivity {
     public enum ListFragmentView { CHORES_LIST, GROCERY_LIST }
 
     /* for setting up the task owner. Not related to firebase */
-    private final User currentUser = new DummyUser("Test User", "0");
+    private final String currentUID = "0";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -81,15 +79,10 @@ public class MainScreenActivity extends AppCompatActivity {
         calendarEvents.setAdapter(calendarAdapter);
         calendarEvents.setLayoutManager(new GridLayoutManager(this, 1));
         findViewById(R.id.add_event).setOnClickListener(v -> calendarAdapter.showAddEventDialog( this, currentHouse, "addEvent:failureToAdd"));
-        BottomNavigationView menu = findViewById(R.id.nav_bar);
-        menu.setOnItemSelectedListener(l -> {
-            Intent intent = NavBarHelpers.changeActivityIntent(l.getTitle().toString(),
-                    currentHouse, "Main Screen", this);
-            if(intent==null) return false;
-            startActivity(intent);
-            return true;
-        });
 
+        // If you want to select the main button on the navBar,
+        // use `OptionalInt.of(R.id. ...)`
+        super.setUpNavBar(R.id.nav_bar, OptionalInt.empty());
     }
 
     private Task<ShopListAdapter> initializeGroceriesList() {
@@ -107,6 +100,12 @@ public class MainScreenActivity extends AppCompatActivity {
                 });
     }
 
+
+    @Override
+    protected CurrentActivity currentActivity() {
+        return CurrentActivity.MAIN;
+    }
+
     private void initializeTaskList() {
         List<String> memberEmails = Arrays.asList("aindreias@houseorganizer.com", "sansive@houseorganizer.com",
                 "shau@reds.com", "oxydeas@houseorganizer.com");
@@ -117,9 +116,9 @@ public class MainScreenActivity extends AppCompatActivity {
                     if (task.isSuccessful()) {
                         QueryDocumentSnapshot qds = task.getResult().iterator().next();
                         this.tlMetadata = db.collection("task_lists").document(qds.getId());
-                        this.taskList = new TaskList(currentUser.uid(), "My weekly todo", new ArrayList<>());
+                        this.taskList = new TaskList(currentUID, "My weekly todo", new ArrayList<>());
                         this.taskListAdapter = new TaskListAdapter(taskList, memberEmails);
-                        TaskView.recoverTaskList(this, taskList, taskListAdapter, tlMetadata);
+                        TaskView.recoverTaskList(this, taskList, taskListAdapter, tlMetadata, R.id.task_list);
                     }
         });
     }
@@ -235,7 +234,7 @@ public class MainScreenActivity extends AppCompatActivity {
 
         switch(listView) {
             case CHORES_LIST:
-                TaskView.setUpTaskListView(this, taskListAdapter);
+                TaskView.setUpTaskListView(this, taskListAdapter, R.id.task_list);
                 break;
             case GROCERY_LIST:
                 if(shopList == null || shopListAdapter == null) {
