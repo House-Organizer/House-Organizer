@@ -16,6 +16,7 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.util.Size;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.github.houseorganizer.houseorganizer.R;
@@ -24,8 +25,18 @@ import com.github.houseorganizer.houseorganizer.image.QRListener;
 import com.github.houseorganizer.houseorganizer.panels.MainScreenActivity;
 import com.github.houseorganizer.houseorganizer.util.Util;
 import com.google.common.util.concurrent.ListenableFuture;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.FieldValue;
+import com.google.firebase.firestore.FirebaseFirestore;
+
+import java.util.List;
+import java.util.Map;
 
 public class QRCodeScanActivity extends AppCompatActivity {
+
+    private FirebaseFirestore db;
+    private FirebaseAuth auth;
 
     private static final int CAMERA_PERMISSION_REQ_CODE = 1; //Can be chosen but has to be unique
     private static final String CAMERA_PERMISSION = Manifest.permission.CAMERA;
@@ -37,6 +48,9 @@ public class QRCodeScanActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_qrcode_scan);
+
+        db = FirebaseFirestore.getInstance();
+        auth = FirebaseAuth.getInstance();
 
         cameraPreview = findViewById(R.id.cameraPreview);
         cameraProvider = ProcessCameraProvider.getInstance(this);
@@ -90,7 +104,7 @@ public class QRCodeScanActivity extends AppCompatActivity {
             @Override
             public void QRCodeFound(String QRCode) {
                 imageAnalysis.clearAnalyzer();
-                acceptInvite(QRCode); //TODO will be replaced by addUser
+                acceptInvite(QRCode);
             }
 
             @Override
@@ -102,9 +116,24 @@ public class QRCodeScanActivity extends AppCompatActivity {
     }
 
     private void acceptInvite(String QRCode){
-        System.out.println(QRCode); //TODO will be replaced
+        String email = auth.getCurrentUser().getEmail();
+        if(email == null || QRCode == null){
+            return;
+        }
 
-        Intent intent = new Intent(this, MainScreenActivity.class);
-        startActivity(intent);
+        DocumentReference targetHousehold = db.collection("households").document(QRCode);
+        targetHousehold.get().addOnCompleteListener(task -> {
+            Map<String, Object> householdData = task.getResult().getData();
+            if (householdData != null) {
+                List<String> listOfUsers = (List<String>) householdData.getOrDefault("residents", "[]");
+                Long num_users = (Long) householdData.get("num_members");
+                if (!listOfUsers.contains(email)) {
+                    targetHousehold.update("residents", FieldValue.arrayUnion(email));
+                    targetHousehold.update("num_members", num_users + 1);
+                }
+                Intent intent = new Intent(this, MainScreenActivity.class);
+                startActivity(intent);
+            }
+        });
     }
 }

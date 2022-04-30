@@ -35,6 +35,11 @@ public class CreateHouseholdActivity extends AppCompatActivity {
         mUserEmail = getIntent().getStringExtra("mUserEmail");
     }
 
+    public void goToQRScan(View view){
+        Intent intent = new Intent(this, QRCodeScanActivity.class);
+        startActivity(intent);
+    }
+
     public void submitHouseholdToFirestore(View view){
         TextView houseHoldNameView = findViewById(R.id.editTextHouseholdName);
         TextView latitudeView = findViewById(R.id.editTextLatitude);

@@ -15,9 +15,10 @@
     <string name="info_header">Residents</string>
 
     <!-- Create household -->
-    <string name="add_household">Add household</string>
+    <string name="add_household">Join/Create household</string>
     <string name="add_household_success">Added household!</string>
     <string name="add_household_failure">Failed to add household!</string>
+    <string name="scanQRButton">Scan QR code</string>
     <string name="household_creation_hint">Household name</string>
     <string name="latitude_hint">Latitude</string>
     <string name="longitude_hint">Longitude</string>
