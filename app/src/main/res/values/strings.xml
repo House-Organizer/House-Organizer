@@ -22,6 +22,7 @@
     <string name="household_creation_hint">Household name</string>
     <string name="latitude_hint">Latitude</string>
     <string name="longitude_hint">Longitude</string>
+    <string name="leave_house">Leave</string>
 
     <!-- Household selection -->
     <string name="house_name">House name</string>>
