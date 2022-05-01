@@ -4,15 +4,20 @@ import static com.github.houseorganizer.houseorganizer.util.Util.getSharedPrefs;
 import static com.github.houseorganizer.houseorganizer.util.Util.getSharedPrefsEditor;
 import static com.github.houseorganizer.houseorganizer.util.Util.logAndToast;
 
+import android.Manifest;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.Toast;
 
 import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -21,17 +26,23 @@ import com.github.houseorganizer.houseorganizer.calendar.Calendar;
 import com.github.houseorganizer.houseorganizer.calendar.UpcomingAdapter;
 import com.github.houseorganizer.houseorganizer.house.CreateHouseholdActivity;
 import com.github.houseorganizer.houseorganizer.house.HouseSelectionActivity;
+import com.github.houseorganizer.houseorganizer.location.LocationHelpers;
 import com.github.houseorganizer.houseorganizer.shop.FirestoreShopList;
 import com.github.houseorganizer.houseorganizer.shop.ShopListAdapter;
 import com.github.houseorganizer.houseorganizer.task.TaskList;
 import com.github.houseorganizer.houseorganizer.task.TaskListAdapter;
 import com.github.houseorganizer.houseorganizer.task.TaskView;
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.tasks.Task;
+import com.google.android.gms.tasks.Tasks;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -62,6 +73,8 @@ public class MainScreenActivity extends NavBarActivity {
 
     /* for setting up the task owner. Not related to firebase */
     private final String currentUID = "0";
+    private boolean locationPermitted = false;
+    private FusedLocationProviderClient fusedLocationClient;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -70,7 +83,16 @@ public class MainScreenActivity extends NavBarActivity {
 
         mUser = FirebaseAuth.getInstance().getCurrentUser();
         db = FirebaseFirestore.getInstance();
+        fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
 
+        if(LocationHelpers.checkLocationPermission(this, this)){ // TODO find a way for not having 2 "this"
+            // TODO find closest house
+            locationPermitted = true;
+            initializeScreen();
+        }
+    }
+
+    private void initializeScreen(){
         loadData();
 
         calendarEvents = findViewById(R.id.calendar);
@@ -129,6 +151,26 @@ public class MainScreenActivity extends NavBarActivity {
         calendarAdapter.refreshCalendarView(this, currentHouse, "refreshCalendar:failureToRefresh", false);
     }
 
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+
+        switch (requestCode) {
+            case LocationHelpers.PERMISSION_FINE_LOCATION:
+                if (grantResults.length > 0
+                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+
+                    // permission granted, find the closest house
+                    if (ContextCompat.checkSelfPermission(this,
+                            Manifest.permission.ACCESS_FINE_LOCATION)
+                            == PackageManager.PERMISSION_GRANTED) {
+                        // TODO closest_house
+                    }
+
+                } else initializeScreen();// permission denied, calling previous house selector
+        }
+    }
+
     private void loadData() {
         SharedPreferences sharedPreferences = getSharedPrefs(this);
         String householdId = sharedPreferences.getString(CURRENT_HOUSEHOLD, "");
@@ -136,12 +178,57 @@ public class MainScreenActivity extends NavBarActivity {
         loadHouseholdAndTaskList(householdId);
     }
 
+    private Task<DocumentReference> selectHouse(String householdId){
+        return db.collection("households").whereArrayContains("residents", Objects.requireNonNull(mUser.getEmail()))
+                .get().continueWithTask(task -> {
+            if (task.isSuccessful()) {
+                if(LocationHelpers.checkLocationPermission(this, this)){
+                    return fusedLocationClient.getLastLocation().continueWith(r -> {
+                        if(r.isSuccessful()){
+                            DocumentSnapshot house = LocationHelpers.getClosestHouse(task.getResult(), r.getResult());
+                            currentHouse = house.getReference();
+                            saveData(house.getId());
+                            return house.getReference();
+                        }
+                        return null;
+                    });
+                    // No permission for localization
+                }else{
+                    return Tasks.forResult(defaultHouseSelection(task.getResult(), householdId));
+                }
+            }
+            return Tasks.forCanceled();
+        });
+    }
+
+    private void defaultHouseSelection(QuerySnapshot snap, String householdId){
+        ArrayList<String> households = new ArrayList<>();
+        for (QueryDocumentSnapshot document : snap) {
+            if (householdId.equals(document.getId()) && !locationPermitted) {
+                currentHouse = db.collection("households").document(document.getId());
+                saveData(document.getId());
+                return;
+            }
+            households.add(document.getId());
+        }
+        if (currentHouse == null) {
+            if (!households.isEmpty()) {
+                currentHouse = db.collection("households").document(households.get(0));
+                saveData(households.get(0));
+                return;
+            } else {
+                noHousehold();
+                return;
+            }
+        }
+    }
+
     private void loadHouseholdAndTaskList(String householdId) {
         db.collection("households").whereArrayContains("residents", Objects.requireNonNull(mUser.getEmail())).get().addOnCompleteListener(task -> {
                     if (task.isSuccessful()) {
                         ArrayList<String> households = new ArrayList<>();
                         for (QueryDocumentSnapshot document : task.getResult()) {
-                            if (householdId.equals(document.getId())) {
+                            if (householdId.equals(document.getId()) && !locationPermitted) {
                                 currentHouse = db.collection("households").document(document.getId());
                                 saveData(document.getId());
                                 break;

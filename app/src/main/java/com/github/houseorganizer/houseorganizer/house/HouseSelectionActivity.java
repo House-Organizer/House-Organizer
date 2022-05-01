@@ -25,6 +25,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter;
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
 import com.github.houseorganizer.houseorganizer.R;
+import com.github.houseorganizer.houseorganizer.location.LocationHelpers;
 import com.github.houseorganizer.houseorganizer.panels.MainScreenActivity;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationRequest;
@@ -42,7 +43,6 @@ public class HouseSelectionActivity extends AppCompatActivity {
 
     public static final String HOUSEHOLD_TO_EDIT = "com.github.houseorganizer.houseorganizer.HOUSEHOLD_TO_EDIT";
     public static final int DEFAULT_UPDATE_INTERVAL = 30;
-    private static final int PERMISSIONS_FINE_LOCATION = 99;
 
     String emailUser;
     RecyclerView housesView;
@@ -78,7 +78,7 @@ public class HouseSelectionActivity extends AppCompatActivity {
 
     private void requestPermission() {
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            // Comment next line to pass the tests, GrantPermissionRule doesn't prevent the pop up from appearomment next line to pass the tests, GrantPermissionRule doesn't prevent the pop up from appear
+            // Comment next line to pass the tests, GrantPermissionRule doesn't prevent the pop up from appearing
             // TODO: Find alternative
             //requestPermissions(new String[] {Manifest.permission.ACCESS_FINE_LOCATION}, PERMISSIONS_FINE_LOCATION);
         }
@@ -204,7 +204,7 @@ public class HouseSelectionActivity extends AppCompatActivity {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
 
         switch (requestCode) {
-            case PERMISSIONS_FINE_LOCATION:
+            case LocationHelpers.PERMISSION_FINE_LOCATION:
                 if (grantResults[0] != PackageManager.PERMISSION_GRANTED)
                     Toast.makeText(this, getString(R.string.permission_denied), Toast.LENGTH_SHORT).show();
                 break;
