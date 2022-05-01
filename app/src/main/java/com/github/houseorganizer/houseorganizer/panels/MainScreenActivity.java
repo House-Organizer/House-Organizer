@@ -73,7 +73,7 @@ public class MainScreenActivity extends NavBarActivity {
 
     /* for setting up the task owner. Not related to firebase */
     private final String currentUID = "0";
-    private boolean locationPermitted = false;
+    private boolean noReload = false;
     private FusedLocationProviderClient fusedLocationClient;
 
     @Override
@@ -85,9 +85,11 @@ public class MainScreenActivity extends NavBarActivity {
         db = FirebaseFirestore.getInstance();
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
 
+        noReload = getIntent().hasExtra("ActivityTransfer");
+
+
         if(LocationHelpers.checkLocationPermission(this, this)){ // TODO find a way for not having 2 "this"
             // TODO find closest house
-            locationPermitted = true;
             initializeScreen();
         }
     }
@@ -164,7 +166,7 @@ public class MainScreenActivity extends NavBarActivity {
                     if (ContextCompat.checkSelfPermission(this,
                             Manifest.permission.ACCESS_FINE_LOCATION)
                             == PackageManager.PERMISSION_GRANTED) {
-                        // TODO closest_house
+                        initializeScreen();
                     }
 
                 } else initializeScreen();// permission denied, calling previous house selector
@@ -182,32 +184,36 @@ public class MainScreenActivity extends NavBarActivity {
         return db.collection("households").whereArrayContains("residents", Objects.requireNonNull(mUser.getEmail()))
                 .get().continueWithTask(task -> {
             if (task.isSuccessful()) {
-                if(LocationHelpers.checkLocationPermission(this, this)){
-                    return fusedLocationClient.getLastLocation().continueWith(r -> {
-                        if(r.isSuccessful()){
-                            DocumentSnapshot house = LocationHelpers.getClosestHouse(task.getResult(), r.getResult());
+                if(LocationHelpers.checkLocationPermission(this, this) && !noReload){
+                    // We have the permissions and the query, we can select the closest house
+                    return fusedLocationClient.getLastLocation().continueWith(loc -> {
+                        if(loc.isSuccessful()){
+                            // Get the closest house
+                            DocumentSnapshot house = LocationHelpers.getClosestHouse(task.getResult(), loc.getResult());
                             currentHouse = house.getReference();
                             saveData(house.getId());
                             return house.getReference();
                         }
-                        return null;
+                        // Could not get last location
+                        return defaultHouseSelection(task.getResult(), householdId);
                     });
                     // No permission for localization
                 }else{
                     return Tasks.forResult(defaultHouseSelection(task.getResult(), householdId));
                 }
             }
-            return Tasks.forCanceled();
+            // Could not fetch the houses
+            return Tasks.forResult(null);
         });
     }
 
-    private void defaultHouseSelection(QuerySnapshot snap, String householdId){
+    private DocumentReference defaultHouseSelection(QuerySnapshot snap, String householdId){
         ArrayList<String> households = new ArrayList<>();
         for (QueryDocumentSnapshot document : snap) {
-            if (householdId.equals(document.getId()) && !locationPermitted) {
+            if (householdId.equals(document.getId())) {
                 currentHouse = db.collection("households").document(document.getId());
                 saveData(document.getId());
-                return;
+                return currentHouse;
             }
             households.add(document.getId());
         }
@@ -215,40 +221,24 @@ public class MainScreenActivity extends NavBarActivity {
             if (!households.isEmpty()) {
                 currentHouse = db.collection("households").document(households.get(0));
                 saveData(households.get(0));
-                return;
+                return currentHouse;
             } else {
                 noHousehold();
-                return;
+                return null;
             }
         }
+        return null;
     }
 
     private void loadHouseholdAndTaskList(String householdId) {
-        db.collection("households").whereArrayContains("residents", Objects.requireNonNull(mUser.getEmail())).get().addOnCompleteListener(task -> {
-                    if (task.isSuccessful()) {
-                        ArrayList<String> households = new ArrayList<>();
-                        for (QueryDocumentSnapshot document : task.getResult()) {
-                            if (householdId.equals(document.getId()) && !locationPermitted) {
-                                currentHouse = db.collection("households").document(document.getId());
-                                saveData(document.getId());
-                                break;
-                            }
-                            households.add(document.getId());
-                        }
-                        if (currentHouse == null) {
-                            if (!households.isEmpty()) {
-                                currentHouse = db.collection("households").document(households.get(0));
-                                saveData(households.get(0));
-                            } else {
-                                noHousehold();
-                                return;
-                            }
-                        }
-                        calendarAdapter.refreshCalendarView(this, currentHouse, "refreshCalendar:failureToRefresh", false);
-                        initializeTaskList();
-                    } else
-                        logAndToast(this.toString(), "loadHousehold:failure", task.getException(), getApplicationContext(), "Could not get a house.");
-                });
+        selectHouse(householdId).addOnCompleteListener(h -> {
+            if(h.isSuccessful()){
+                calendarAdapter.refreshCalendarView(this, currentHouse, "refreshCalendar:failureToRefresh", false);
+                initializeTaskList();
+            }else{
+                logAndToast(this.toString(), "loadHousehold:failure", h.getException(), getApplicationContext(), "Could not get a house.");
+            }
+        });
     }
 
     private void noHousehold() {

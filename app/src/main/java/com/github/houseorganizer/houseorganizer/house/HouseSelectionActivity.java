@@ -145,6 +145,7 @@ public class HouseSelectionActivity extends AppCompatActivity {
         saveData(view.getTag().toString());
 
         Intent intent = new Intent(this, MainScreenActivity.class);
+        intent.putExtra("ActivityTransfer", true);
         startActivity(intent);
     }
 

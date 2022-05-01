@@ -43,6 +43,7 @@ public abstract class NavBarActivity extends AppCompatActivity {
         if(!currentActivity().name.equals(buttonText)) {
             Intent intent = new Intent(this, CurrentActivity.activityWithName(buttonText).panelActivity);
             intent.putExtra("house", currentHouse.getId());
+            intent.putExtra("ActivityTransfer", true);
             startActivity(intent);
         }
         return true;
