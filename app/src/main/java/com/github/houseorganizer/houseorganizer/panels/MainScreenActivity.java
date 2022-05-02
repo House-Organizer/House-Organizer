@@ -5,6 +5,7 @@ import static com.github.houseorganizer.houseorganizer.util.Util.getSharedPrefsE
 import static com.github.houseorganizer.houseorganizer.util.Util.logAndToast;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -73,7 +74,8 @@ public class MainScreenActivity extends NavBarActivity {
 
     /* for setting up the task owner. Not related to firebase */
     private final String currentUID = "0";
-    private boolean noReload = false;
+    private boolean loadHouse = false;
+    private boolean locationPermission = false;
     private FusedLocationProviderClient fusedLocationClient;
 
     @Override
@@ -85,17 +87,14 @@ public class MainScreenActivity extends NavBarActivity {
         db = FirebaseFirestore.getInstance();
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
 
-        noReload = getIntent().hasExtra("ActivityTransfer");
+        loadHouse = getIntent().hasExtra("LoadHouse");
 
 
         if(LocationHelpers.checkLocationPermission(this, this)){ // TODO find a way for not having 2 "this"
             // TODO find closest house
-            initializeScreen();
+            locationPermission = true;
+            loadData();
         }
-    }
-
-    private void initializeScreen(){
-        loadData();
 
         calendarEvents = findViewById(R.id.calendar);
         calendarAdapter = new UpcomingAdapter(calendar,
@@ -159,17 +158,9 @@ public class MainScreenActivity extends NavBarActivity {
 
         switch (requestCode) {
             case LocationHelpers.PERMISSION_FINE_LOCATION:
-                if (grantResults.length > 0
-                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-
-                    // permission granted, find the closest house
-                    if (ContextCompat.checkSelfPermission(this,
-                            Manifest.permission.ACCESS_FINE_LOCATION)
-                            == PackageManager.PERMISSION_GRANTED) {
-                        initializeScreen();
-                    }
-
-                } else initializeScreen();// permission denied, calling previous house selector
+                if(loadHouse){
+                    loadData();
+                }
         }
     }
 
@@ -180,11 +171,13 @@ public class MainScreenActivity extends NavBarActivity {
         loadHouseholdAndTaskList(householdId);
     }
 
+    @SuppressLint("MissingPermission")
     private Task<DocumentReference> selectHouse(String householdId){
         return db.collection("households").whereArrayContains("residents", Objects.requireNonNull(mUser.getEmail()))
                 .get().continueWithTask(task -> {
             if (task.isSuccessful()) {
-                if(LocationHelpers.checkLocationPermission(this, this) && !noReload){
+                if(locationPermission && loadHouse){
+                    loadHouse = false;
                     // We have the permissions and the query, we can select the closest house
                     return fusedLocationClient.getLastLocation().continueWith(loc -> {
                         if(loc.isSuccessful()){
