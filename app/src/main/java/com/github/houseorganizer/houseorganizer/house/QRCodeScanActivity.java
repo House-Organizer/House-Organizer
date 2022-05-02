@@ -1,5 +1,8 @@
 package com.github.houseorganizer.houseorganizer.house;
 
+import static com.github.houseorganizer.houseorganizer.panels.MainScreenActivity.CURRENT_HOUSEHOLD;
+import static com.github.houseorganizer.houseorganizer.util.Util.getSharedPrefsEditor;
+
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.camera.core.CameraSelector;
@@ -13,6 +16,7 @@ import androidx.lifecycle.LifecycleOwner;
 
 import android.Manifest;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.util.Size;
@@ -131,7 +135,18 @@ public class QRCodeScanActivity extends AppCompatActivity {
                     targetHousehold.update("residents", FieldValue.arrayUnion(email));
                     targetHousehold.update("num_members", num_users + 1);
                 }
+
+                SharedPreferences.Editor editor = getSharedPrefsEditor(this);
+                editor.putString(CURRENT_HOUSEHOLD, QRCode);
+                editor.apply();
+
                 Intent intent = new Intent(this, MainScreenActivity.class);
+                Toast.makeText(getApplicationContext(), this.getString(R.string.add_user_success),Toast.LENGTH_SHORT).show();
+                startActivity(intent);
+            } else {
+                Intent intent = new Intent(this, CreateHouseholdActivity.class);
+                intent.putExtra("mUserEmail", email);
+                Toast.makeText(getApplicationContext(), this.getString(R.string.QR_invalid),Toast.LENGTH_SHORT).show();
                 startActivity(intent);
             }
         });

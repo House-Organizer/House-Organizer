@@ -42,6 +42,7 @@
     <string name="owner_change_success">Successfully changed owner</string>
     <string name="add_user_success">Successfully added user</string>
     <string name="remove_user_success">Successfully removed user</string>
+    <string name="QR_invalid">Not a valid household</string>
     <string name="remove_user">Remove user</string>
     <string name="cant_remove_yourself">You cannot remove yourself</string>
     <string name="remove_calendar_failure">Cannot remove calendar</string>
