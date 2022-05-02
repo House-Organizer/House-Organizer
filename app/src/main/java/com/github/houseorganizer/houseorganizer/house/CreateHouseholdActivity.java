@@ -91,7 +91,7 @@ public class CreateHouseholdActivity extends AppCompatActivity {
     }
 
     private Task<DocumentReference> attachTaskList(String hhID) {
-        return db.collection("task-lists")
+        return db.collection("task_lists")
                 .add(createTaskList(hhID));
     }
 
