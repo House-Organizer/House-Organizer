@@ -22,7 +22,7 @@
         android:layout_height="wrap_content"
         android:layout_marginBottom="32dp"
         android:onClick="addHouseholdButtonPressed"
-        android:text="@string/add_household"
+        android:text="@string/add_join_household"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />

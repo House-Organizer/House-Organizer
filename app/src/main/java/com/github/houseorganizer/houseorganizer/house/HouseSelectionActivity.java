@@ -185,7 +185,9 @@ public class HouseSelectionActivity extends AppCompatActivity {
                 if (householdData != null) {
                     List<String> residents = (List<String>) householdData.getOrDefault("residents", "[]");
                     Long num_users = (Long) householdData.get("num_members");
-                    if (residents.contains(FirebaseAuth.getInstance().getCurrentUser().getEmail())) {
+                    String owner = (String) householdData.get("owner");
+                    String currentEmail = FirebaseAuth.getInstance().getCurrentUser().getEmail();
+                    if (residents.contains(currentEmail) && !owner.equals(currentEmail)) {
                         currentHouse.update("num_members", num_users - 1);
                         currentHouse.update("residents", FieldValue.arrayRemove(FirebaseAuth.getInstance().getCurrentUser().getEmail()));
                         SharedPreferences.Editor editor = getSharedPrefsEditor(this);
@@ -193,6 +195,8 @@ public class HouseSelectionActivity extends AppCompatActivity {
                         editor.apply();
                         Intent intent = new Intent(this, MainScreenActivity.class);
                         startActivity(intent);
+                    } else {
+                        Toast.makeText(getApplicationContext(), this.getString(R.string.cant_remove_owner),Toast.LENGTH_SHORT).show();
                     }
                 }
             });
