@@ -33,11 +33,7 @@ public final class FirestoreTask extends HTask {
     public void changeTitle(String newTitle) {
         super.changeTitle(newTitle);
 
-        try {
-            Tasks.await(taskDocRef.update("title", newTitle));
-        } catch (ExecutionException | InterruptedException e) {
-            e.printStackTrace();
-        }
+        taskDocRef.update("title", newTitle);
     }
 
     @Override

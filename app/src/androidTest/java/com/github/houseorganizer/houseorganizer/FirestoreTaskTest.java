@@ -141,6 +141,7 @@ public class FirestoreTaskTest {
 
         ft.changeTitle(NEW_FANCY_TITLE);
         ft.changeDescription(NEW_FANCY_DESCRIPTION);
+        Thread.sleep(200); // cushion time to update title & description
         FirestoreTask changedFT = recoverFirestoreTask();
 
         assertEquals(NEW_FANCY_TITLE, ft.getTitle());
@@ -151,6 +152,7 @@ public class FirestoreTaskTest {
 
         // Revert changes
         ft.changeTitle(oldTitle); ft.changeDescription(oldDescription);
+        Thread.sleep(200); // same cushion time
     }
 
     @Test /* adds a subtask, changes its title, then removes it | DB: unchanged */
