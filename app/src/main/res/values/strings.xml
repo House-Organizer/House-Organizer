@@ -138,7 +138,13 @@
     <string name="add_an_event">Add an event</string>
     <string name="cycle_view">Cycle view</string>
     <string name="tl_screen_new_task">New task</string>
+
+    <!-- Billsharer -->
     <string name="bs_add_expense">Add expense</string>
     <string name="billsharer">Billsharer</string>
+    <string name="expenses">Expenses</string>
+    <string name="balances">Balances</string>
+    <string name="amount">Amount</string>
+    <string name="payer">Payer</string>
 
 </resources>

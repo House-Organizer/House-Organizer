@@ -20,18 +20,30 @@ public class Billsharer {
     private List<Debt> debts;
     private Map<String, Integer> balances;
     private final DocumentReference currentHouse;
-    private final DocumentReference onlineReference;
+    private DocumentReference onlineReference;
     private List<String> residents;
     private final FirebaseFirestore db = FirebaseFirestore.getInstance();
+
+    public Billsharer(DocumentReference currentHouse) {
+        this.expenses = new ArrayList<>();
+        debts = new ArrayList<>();
+        this.currentHouse = currentHouse;
+        startUpBillsharer();
+    }
 
     public Billsharer(DocumentReference currentHouse, DocumentReference onlineReference, List<Expense> expenses) {
         this.expenses = expenses;
         debts = new ArrayList<>();
         this.currentHouse = currentHouse;
         this.onlineReference = onlineReference;
+        startUpBillsharer();
+    }
+
+    private void startUpBillsharer() {
         initResidents();
         initBalances();
         computeBalances();
+        computeDebts();
     }
 
     public List<Expense> getExpenses() {
@@ -40,6 +52,14 @@ public class Billsharer {
 
     public void setExpenses(List<Expense> expenses) {
         this.expenses = expenses;
+    }
+
+    public void setOnlineReference(DocumentReference onlineReference){
+        this.onlineReference = onlineReference;
+    }
+
+    public DocumentReference getOnlineReference() {
+        return onlineReference;
     }
 
     public List<Debt> getDebts() {
@@ -67,17 +87,21 @@ public class Billsharer {
     }
 
     public void initResidents() {
+        residents = new ArrayList<>();
         currentHouse.get().addOnCompleteListener(t -> {
             if (t.isSuccessful()) {
                 DocumentSnapshot house = t.getResult();
                 setResidents((ArrayList<String>) house.get("residents"));
             } else {
-                Log.e("Billsharer", "initResidents:could not fetch users");
+                Log.e("Billsharer", "failure to get house.");
             }
         });
     }
 
     public void initBalances() {
+        if (residents == null) {
+            Log.e("Billsharer", "initResidents:could not fetch users.");
+        }
         balances = new HashMap<>();
         for (String resident : residents) {
             balances.put(resident, 0);
@@ -117,6 +141,12 @@ public class Billsharer {
         updateExpenses();
     }
 
+    public void editExpense(Expense expense, int pos) {
+        removeExpense(expenses.get(pos));
+        expenses.add(pos, expense);
+        updateExpenses();
+    }
+
     public void removeExpense(Expense expense) {
         expenses.remove(expense);
         updateExpenses();
@@ -126,7 +156,7 @@ public class Billsharer {
         if(currentHouse == null || onlineReference == null){
             return Tasks.forCanceled();
         }
-        List<Map<String, Object>> expenses = convertExpensesListToFirebase();
+        List<Map<String, Object>> expenses = convertExpensesListToFirebase(getExpenses());
 
         return onlineReference.update("expenses", expenses);
     }
@@ -143,7 +173,7 @@ public class Billsharer {
         });
     }
 
-    private List<Map<String, Object>> convertExpensesListToFirebase(){
+    private static List<Map<String, Object>> convertExpensesListToFirebase(List<Expense> expenses){
         List<Map<String, Object>> result = new ArrayList<>();
         for(Expense expense : expenses){
             Map<String, Object> expenseMap = new HashMap<>();
@@ -159,10 +189,18 @@ public class Billsharer {
     private static List<Expense> convertFirebaseListToExpenses(List<Map<String, Object>> list){
         List<Expense> expenses = new ArrayList<>();
         for(Map<String, Object> m : list){
-            expenses.add(new Expense((String)m.get("title"), (int)m.get("cost"), (String)m.get("payee"),
-                    (HashMap<String, Integer>)m.get("shares")));
+            expenses.add(new Expense((String)m.get("title"), new Long((long) m.get("cost")).intValue(), (String)m.get("payee"),
+                    (HashMap<String, Double>)m.get("shares")));
         }
         return expenses;
+    }
+
+    public static Task<DocumentReference> storeNewBillsharer(CollectionReference billsharerRoot, List<Expense> list, DocumentReference household){
+        Map<String, Object> map = new HashMap<>();
+        map.put("household", household);
+        List<Map<String, Object>> expenses = convertExpensesListToFirebase(list);
+        map.put("expenses", expenses);
+        return billsharerRoot.add(map);
     }
 
     public static Task<Billsharer> retrieveBillsharer(CollectionReference billsharerRoot, DocumentReference household){
@@ -180,5 +218,31 @@ public class Billsharer {
         List<Map<String, Object>> list = (List<Map<String, Object>>) documentSnapshot.get("expenses");
         List<Expense> expenses = convertFirebaseListToExpenses(list);
         return new Billsharer(household, documentSnapshot.getReference(), expenses);
+    }
+
+    public static Task<ExpenseAdapter> initializeBillsharer(DocumentReference currentHouse, FirebaseFirestore db) {
+        if (currentHouse == null) return Tasks.forCanceled();
+        CollectionReference root = db.collection("billsharers");
+        return root.whereEqualTo("household", currentHouse).get()
+                .continueWithTask(r -> {
+                    if (r.getResult().getDocuments().size() == 0) {
+                        Billsharer bs = new Billsharer(currentHouse);
+                        return Billsharer.storeNewBillsharer(root, new ArrayList<>(), currentHouse)
+                                .continueWith(t -> {
+                                    bs.setOnlineReference(t.getResult());
+                                    return new ExpenseAdapter(bs);
+                                });
+                    } else {
+                        return Billsharer.retrieveBillsharer(root, currentHouse).continueWith(t -> {
+                            Billsharer bs = t.getResult();
+                            return new ExpenseAdapter(bs);
+                        });
+                    }
+                });
+    }
+
+    public static Task<Void> deleteBillsharer(DocumentReference onlineReference) {
+        if (onlineReference == null) return Tasks.forCanceled();
+        return onlineReference.delete();
     }
 }

@@ -14,11 +14,10 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.HouseOrganizer">
         <activity
-            android:name=".panels.BillsharerActivity"
+            android:name=".panels.BalanceActivity"
             android:exported="false" />
         <activity
-            android:name=".panels.GroceriesActivity"
-            android:name=".billsharer.ExpenseActivity"
+            android:name=".panels.ExpenseActivity"
             android:exported="false" />
         <activity
             android:name=".panels.GroceriesActivity"
