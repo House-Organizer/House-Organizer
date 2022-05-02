@@ -11,6 +11,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.HouseOrganizer">
         <activity
+            android:name=".billsharer.ExpenseActivity"
+            android:exported="false" />
+        <activity
             android:name=".shop.GroceriesActivity"
             android:exported="false" />
         <activity

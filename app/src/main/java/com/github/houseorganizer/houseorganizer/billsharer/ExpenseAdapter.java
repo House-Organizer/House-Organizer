@@ -21,7 +21,13 @@ public class ExpenseAdapter extends RecyclerView.Adapter<ExpenseAdapter.ExpenseV
         this.billsharer = billsharer;
     }
 
+    public Billsharer getBillsharer() {
+        return billsharer;
+    }
+
     public void addExpense() {}
+
+    private void addExpenseFromDialog() {}
 
     public void editExpense() {}
 
