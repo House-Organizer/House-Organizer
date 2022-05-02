@@ -5,12 +5,12 @@ import java.util.Objects;
 
 public class Expense implements Cloneable {
 
-    private String title;
-    private int cost;
-    private String payee;
-    private HashMap<String, Integer> shares;
+    private final String title;
+    private final int cost;
+    private final String payee;
+    private final HashMap<String, Double> shares;
 
-    public Expense(String title, int cost, String payee, HashMap<String, Integer> shares) {
+    public Expense(String title, int cost, String payee, HashMap<String, Double> shares) {
         this.title = title;
         this.cost = cost;
         this.payee = payee;
@@ -21,32 +21,16 @@ public class Expense implements Cloneable {
         return title;
     }
 
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
     public int getCost() {
         return cost;
-    }
-
-    public void setCost(int cost) {
-        this.cost = cost;
     }
 
     public String getPayee() {
         return payee;
     }
 
-    public void setPayee(String payee) {
-        this.payee = payee;
-    }
-
-    public HashMap<String, Integer> getShares() {
+    public HashMap<String, Double> getShares() {
         return shares;
-    }
-
-    public void setShares(HashMap<String, Integer> shares) {
-        this.shares = shares;
     }
 
     @Override
@@ -65,12 +49,11 @@ public class Expense implements Cloneable {
     @Override
     public Object clone() {
         return new Expense(this.title, this.cost, this.payee,
-                (HashMap<String, Integer>) this.shares.clone());
+                (HashMap<String, Double>) this.shares.clone());
     }
 
     public String toText() {
-        // TODO
-        return null;
+        return title + " by " + payee + " : " + cost;
     }
 
 }
