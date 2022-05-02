@@ -13,7 +13,6 @@ import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-import android.widget.Toast;
 
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
@@ -89,12 +88,12 @@ public class MainScreenActivity extends NavBarActivity {
 
         loadHouse = getIntent().hasExtra("LoadHouse");
 
-
-        if(LocationHelpers.checkLocationPermission(this, this)){ // TODO find a way for not having 2 "this"
-            // TODO find closest house
+        if(!loadHouse) loadData();
+        if(loadHouse && LocationHelpers.checkLocationPermission(this, this)){ // TODO find a way for not having 2 "this"
             locationPermission = true;
             loadData();
         }
+
 
         calendarEvents = findViewById(R.id.calendar);
         calendarAdapter = new UpcomingAdapter(calendar,
@@ -158,9 +157,23 @@ public class MainScreenActivity extends NavBarActivity {
 
         switch (requestCode) {
             case LocationHelpers.PERMISSION_FINE_LOCATION:
-                if(loadHouse){
-                    loadData();
+                // If request is cancelled, the result arrays are empty.
+                if (grantResults.length > 0
+                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+
+                    // permission was granted, yay! Do the
+                    // location-related task you need to do.
+                    locationPermission = (ContextCompat.checkSelfPermission(this,
+                            Manifest.permission.ACCESS_FINE_LOCATION)
+                            == PackageManager.PERMISSION_GRANTED);
+
+                } else {
+                    // permission denied, boo! Disable the
+                    // functionality that depends on this permission.
+                    locationPermission = false;
                 }
+                loadData();
+                break;
         }
     }
 
