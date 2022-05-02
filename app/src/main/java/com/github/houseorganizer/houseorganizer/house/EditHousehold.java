@@ -11,6 +11,7 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.github.houseorganizer.houseorganizer.R;
+import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.SignInMethodQueryResult;
@@ -20,6 +21,7 @@ import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -218,7 +220,27 @@ public class EditHousehold extends AppCompatActivity {
     }
 
     public void deleteTaskList(View view) {
-        // TODO : The task list is not linked to households yet
+        OnFailureListener tlDeletionFailed =
+                exception -> Toast.makeText(getApplicationContext(),
+                        "Cannot remove task list", Toast.LENGTH_SHORT).show();
+
+        firestore.collection("task_lists")
+                .whereEqualTo("hh-id", currentHousehold.getId())
+                .get()
+                .addOnSuccessListener(docRefList -> {
+                    assert docRefList.getDocuments().size() == 1;
+
+                    DocumentSnapshot metadataSnap = docRefList.getDocuments().get(0);
+
+                    List<DocumentReference> taskPtrs = (ArrayList<DocumentReference>)
+                            metadataSnap.getData().getOrDefault("task-ptrs", new ArrayList<>());
+
+                    assert taskPtrs != null;
+                    taskPtrs.forEach(taskDocRef -> taskDocRef.delete().addOnFailureListener(tlDeletionFailed));
+
+                    metadataSnap.getReference().delete().addOnFailureListener(tlDeletionFailed);
+                })
+                .addOnFailureListener(tlDeletionFailed);
     }
 
     public void deleteCalendar(View view) {
