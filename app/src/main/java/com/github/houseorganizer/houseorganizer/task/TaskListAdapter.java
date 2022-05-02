@@ -15,16 +15,21 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.github.houseorganizer.houseorganizer.R;
 import com.github.houseorganizer.houseorganizer.util.BiViewHolder;
+import com.google.firebase.firestore.DocumentReference;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 public final class TaskListAdapter extends RecyclerView.Adapter<BiViewHolder<Button, Button>> {
     private final TaskList taskList;
+    private final DocumentReference metadataDocRef;
     private final List<String> memberEmails;
 
-    public TaskListAdapter(TaskList taskList, List<String> memberEmails) {
-        this.taskList     = taskList;
-        this.memberEmails = memberEmails;
+    public TaskListAdapter(TaskList taskList, DocumentReference metadataDocRef, List<String> memberEmails) {
+        this.taskList       = taskList;
+        this.metadataDocRef = metadataDocRef;
+        this.memberEmails   = memberEmails;
     }
 
     @NonNull
@@ -45,22 +50,43 @@ public final class TaskListAdapter extends RecyclerView.Adapter<BiViewHolder<But
         doneButton.setOnClickListener(doneButtonListener(position));
     }
 
+    // TODO move somewhere else [code duplication w/ TaskView for adding a taskPtr
     private View.OnClickListener doneButtonListener(int position) {
-        return v -> ((FirestoreTask)(taskList.getTaskAt(position))).getTaskDocRef()
-                .delete()
-                .addOnCompleteListener(task -> {
-                    if (task.isSuccessful()) {
+        return v -> {
+            DocumentReference taskDocRef =
+                    ((FirestoreTask) (taskList.getTaskAt(position))).getTaskDocRef();
 
-                        new AlertDialog.Builder(v.getContext())
-                                .setTitle(R.string.task_completion_title)
-                                .setMessage(R.string.task_completion_desc)
-                                .show();
+            metadataDocRef.get().addOnCompleteListener(task -> {
+                if(task.isSuccessful()) {
+                    Map<String, Object> metadata = task.getResult().getData();
+                    assert metadata != null;
 
-                        taskList.removeTask(position);
-                        notifyItemRemoved(position);
-                        notifyItemRangeChanged(0, getItemCount());
-                    }
-                });
+                    List<DocumentReference> taskPtrs = (ArrayList<DocumentReference>)
+                            metadata.getOrDefault("task-ptrs", new ArrayList<>());
+
+                    assert taskPtrs != null;
+                    taskPtrs.removeIf(docRef -> docRef.getId().equals(taskDocRef.getId()));
+
+                    metadata.put("task-ptrs", taskPtrs);
+
+                    task.getResult().getReference().set(metadata);
+
+                    taskDocRef.delete().addOnCompleteListener(task2 -> {
+                        if (task2.isSuccessful()) {
+
+                            new AlertDialog.Builder(v.getContext())
+                                    .setTitle(R.string.task_completion_title)
+                                    .setMessage(R.string.task_completion_desc)
+                                    .show();
+
+                            taskList.removeTask(position);
+                            notifyItemRemoved(position);
+                            notifyItemRangeChanged(0, getItemCount());
+                        }
+                    });
+                }
+            });
+        };
     }
 
     // todo: modify due date

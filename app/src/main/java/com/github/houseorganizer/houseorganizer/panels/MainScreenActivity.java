@@ -117,7 +117,7 @@ public class MainScreenActivity extends NavBarActivity {
                         QueryDocumentSnapshot qds = task.getResult().iterator().next();
                         this.tlMetadata = db.collection("task_lists").document(qds.getId());
                         this.taskList = new TaskList(currentUID, "My weekly todo", new ArrayList<>());
-                        this.taskListAdapter = new TaskListAdapter(taskList, memberEmails);
+                        this.taskListAdapter = new TaskListAdapter(taskList, tlMetadata, memberEmails);
                         TaskView.recoverTaskList(this, taskList, taskListAdapter, tlMetadata, R.id.task_list);
                     }
         });

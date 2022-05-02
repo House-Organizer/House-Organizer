@@ -45,7 +45,7 @@ public class FirestoreTaskTest {
     private static FirebaseFirestore db;
     private static FirebaseAuth auth;
 
-    private static DocumentReference metadataRef() {
+    protected static DocumentReference metadataRef() {
         return db.collection("task_lists").document(FirebaseTestsHelper.FIRST_TL_NAME);
     }
 
@@ -136,13 +136,13 @@ public class FirestoreTaskTest {
      * [!] these tests DO need emulators */
     @Test /* reverts its changes | DB: unchanged */
     public void changeTitleAndDescriptionWorks() throws ExecutionException, InterruptedException {
-        FirestoreTask ft = recoverFirestoreTask();
+        FirestoreTask ft = recoverFirestoreTask(0);
         String oldTitle = ft.getTitle(), oldDescription = ft.getDescription();
 
         ft.changeTitle(NEW_FANCY_TITLE);
         ft.changeDescription(NEW_FANCY_DESCRIPTION);
         Thread.sleep(200); // cushion time to update title & description
-        FirestoreTask changedFT = recoverFirestoreTask();
+        FirestoreTask changedFT = recoverFirestoreTask(0);
 
         assertEquals(NEW_FANCY_TITLE, ft.getTitle());
         assertEquals(NEW_FANCY_TITLE, changedFT.getTitle());
@@ -157,7 +157,7 @@ public class FirestoreTaskTest {
 
     @Test /* adds a subtask, changes its title, then removes it | DB: unchanged */
     public void subTaskModificationsWork() throws ExecutionException, InterruptedException {
-        FirestoreTask ft = recoverFirestoreTask();
+        FirestoreTask ft = recoverFirestoreTask(0);
 
         HTask.SubTask st = new HTask.SubTask(BASIC_SUBTASK_TITLE);
 
@@ -165,7 +165,7 @@ public class FirestoreTaskTest {
         ft.addSubTask(st);
         ft.changeSubTaskTitle(0, NEW_FANCY_TITLE);
 
-        FirestoreTask changedFT = recoverFirestoreTask();
+        FirestoreTask changedFT = recoverFirestoreTask(0);
 
         assertEquals(1, changedFT.getSubTasks().size());
         assertEquals(NEW_FANCY_TITLE, changedFT.getSubTaskAt(0).getTitle());
@@ -173,7 +173,7 @@ public class FirestoreTaskTest {
         // Remove subtask
         ft.removeSubTask(0);
 
-        changedFT = recoverFirestoreTask();
+        changedFT = recoverFirestoreTask(0);
 
         assertEquals(0, changedFT.getSubTasks().size());
     }
@@ -199,8 +199,8 @@ public class FirestoreTaskTest {
         return data;
     }
 
-    // recovers the first task of the first household's task list :)
-    protected static FirestoreTask recoverFirestoreTask() throws ExecutionException, InterruptedException {
+    // recovers the (idx+1)th task of the first household's task list :)
+    protected static FirestoreTask recoverFirestoreTask(int idx) throws ExecutionException, InterruptedException {
         // S1. Get metadata, read list of task ptrs, pick first one
         Task<DocumentSnapshot> task = metadataRef().get();
         Tasks.await(task);
@@ -215,7 +215,7 @@ public class FirestoreTaskTest {
         assertNotNull(taskPtrs);
 
         // S2. Get task data from chosen task ptr
-        DocumentReference taskDocRef = taskPtrs.get(0);
+        DocumentReference taskDocRef = taskPtrs.get(idx);
         Task<DocumentSnapshot> task2 = taskDocRef.get();
         Tasks.await(task2);
 
