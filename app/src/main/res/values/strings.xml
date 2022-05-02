@@ -6,7 +6,6 @@
     <string name="settings_speakable_text">Settings</string>
     <string name="house_speakable_text">Home selection</string>
     <string name="info_speakable_text">Info</string>
-    <string name="house_name">House name</string>>
     <string name="img_house_row_desc">Image for the given house name</string>
     <string name="home_logo">Home Logo</string>
     <string name="title_activity_settings">Settings</string>
@@ -14,6 +13,18 @@
     <string name="edit_household_notes">Edit the description</string>
     <string name="edit_notes_button">Edit</string>
     <string name="info_header">Residents</string>
+
+    <!-- Create household -->
+    <string name="add_household">Add household</string>
+    <string name="add_household_success">Added household!</string>
+    <string name="add_household_failure">Failed to add household!</string>
+    <string name="household_creation_hint">Household name</string>
+    <string name="latitude_hint">Latitude</string>
+    <string name="longitude_hint">Longitude</string>
+
+    <!-- Household selection -->
+    <string name="house_name">House name</string>>
+    <string name="permission_denied">This app requires permission to be granted in order to work properly</string>
 
     <!-- Edit Household -->
     <string name="user_name">User name</string>
@@ -80,10 +91,6 @@
     <string name="edit">Edit</string>
     <string name="event_editing_title">Edit event</string>
     <string name="confirm">Confirm</string>
-    <string name="add_household">Add household</string>
-    <string name="add_household_success">Added household!</string>
-    <string name="add_household_failure">Failed to add household!</string>
-    <string name="household_creation_hint">Household name</string>
 
     <!-- Login -->
     <string name="tag_login_activity">LoginActivity</string>
@@ -130,5 +137,8 @@
     <string name="calendar">Calendar</string>
     <string name="add_an_event">Add an event</string>
     <string name="cycle_view">Cycle view</string>
+    <string name="tl_screen_new_task">New task</string>
+    <string name="bs_add_expense">Add expense</string>
+    <string name="billsharer">Billsharer</string>
 
 </resources>

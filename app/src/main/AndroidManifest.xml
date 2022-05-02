@@ -2,6 +2,9 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.github.houseorganizer.houseorganizer">
 
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
@@ -11,10 +14,14 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.HouseOrganizer">
         <activity
+            android:name=".panels.BillsharerActivity"
+            android:exported="false" />
+        <activity
+            android:name=".panels.GroceriesActivity"
             android:name=".billsharer.ExpenseActivity"
             android:exported="false" />
         <activity
-            android:name=".shop.GroceriesActivity"
+            android:name=".panels.GroceriesActivity"
             android:exported="false" />
         <activity
             android:name=".panels.MainActivity"
@@ -27,6 +34,9 @@
         </activity>
         <activity
             android:name=".panels.CalendarActivity"
+            android:exported="false" />
+        <activity
+            android:name=".panels.TaskListActivity"
             android:exported="false" />
         <activity
             android:name=".login.LoginActivity"
