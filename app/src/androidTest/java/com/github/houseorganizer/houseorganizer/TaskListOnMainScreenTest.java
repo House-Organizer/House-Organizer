@@ -122,7 +122,7 @@ public class TaskListOnMainScreenTest {
     }
 
     private void changeTitleOrDesc(boolean changeTitle) throws ExecutionException, InterruptedException {
-        int inputId = changeTitle ? R.id.task_title_input : R.id.subtask_title_input;
+        int inputId = changeTitle ? R.id.task_title_input : R.id.task_description_input;
 
         onView(withText(FirebaseTestsHelper.TEST_TASK_TITLE)).perform(click());
 
