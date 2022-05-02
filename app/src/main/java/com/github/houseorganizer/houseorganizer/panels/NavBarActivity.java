@@ -15,7 +15,8 @@ public abstract class NavBarActivity extends AppCompatActivity {
         MAIN("Main Screen", MainScreenActivity.class),
         CALENDAR("Calendar", CalendarActivity.class),
         GROCERIES("Groceries", GroceriesActivity.class),
-        TASKS("Tasks", TaskListActivity.class);
+        TASKS("Tasks", TaskListActivity.class),
+        BILLSHARER("Billsharer", BillsharerActivity.class);
 
         protected final String name;
         protected final Class<? extends AppCompatActivity> panelActivity;
