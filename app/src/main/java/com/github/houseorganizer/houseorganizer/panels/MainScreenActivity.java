@@ -239,6 +239,10 @@ public class MainScreenActivity extends NavBarActivity {
     private void loadHouseholdAndTaskList(String householdId) {
         selectHouse(householdId).addOnCompleteListener(h -> {
             if(h.isSuccessful()){
+                if(currentHouse == null){
+                    noHousehold();
+                    return;
+                }
                 calendarAdapter.refreshCalendarView(this, currentHouse, "refreshCalendar:failureToRefresh", false);
                 initializeTaskList();
             }else{
