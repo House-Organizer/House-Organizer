@@ -145,8 +145,7 @@ public class EditHouseholdActivityTest {
     public void showQRCodeDisplaysCorrectQRCode() throws WriterException {
         // Perform clicks
         onView(withId(R.id.showQRCode)).perform(click());
-        int length = 2000;
-        Bitmap expected = EditHouseholdActivity.createQRCodeBitmap(TEST_HOUSEHOLD_NAMES[0], length);
+        Bitmap expected = EditHouseholdActivity.createQRCodeBitmap(TEST_HOUSEHOLD_NAMES[0]);
         onView(withId(R.id.image_dialog)).check(matches(withBitmap(expected)));
     }
 

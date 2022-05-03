@@ -184,14 +184,11 @@ public class EditHouseholdActivity extends AppCompatActivity {
 
     public void showInviteQR(View view) {
         Dialog qrDialog = new Dialog(this);
-        Point size = new Point();
-        getWindowManager().getDefaultDisplay().getSize(size);
-        final int padding = 50;
-        int length = size.x - padding;
+        int length = 800;
         try {
             @SuppressLint("InflateParams") View qrDialogView = LayoutInflater.from(this).inflate(R.layout.image_dialog, null);
             ImageView qrView = qrDialogView.findViewById(R.id.image_dialog);
-            qrView.setImageBitmap(createQRCodeBitmap(householdId, length));
+            qrView.setImageBitmap(createQRCodeBitmap(householdId));
             qrDialog.setContentView(qrDialogView);
             qrDialog.show();
 
@@ -200,7 +197,8 @@ public class EditHouseholdActivity extends AppCompatActivity {
         }
     }
 
-    public static Bitmap createQRCodeBitmap(String householdId, int length) throws WriterException {
+    public static Bitmap createQRCodeBitmap(String householdId) throws WriterException {
+        int length = 800;
         BitMatrix qrCode = new QRCodeWriter().encode(householdId, BarcodeFormat.QR_CODE, length, length);
         return Bitmap.createBitmap(IntStream.range(0, length)
                         .flatMap(h -> IntStream.range(0, length)
