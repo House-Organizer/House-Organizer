@@ -16,7 +16,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 
-import java.util.Objects;
 import java.util.concurrent.ExecutionException;
 
 @RunWith(JUnit4.class)

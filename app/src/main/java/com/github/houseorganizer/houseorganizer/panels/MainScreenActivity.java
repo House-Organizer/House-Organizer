@@ -75,7 +75,7 @@ public class MainScreenActivity extends NavBarActivity {
     private final String currentUID = "0";
     private boolean loadHouse = false;
     private boolean locationPermission = false;
-    private FusedLocationProviderClient fusedLocationClient;
+    public FusedLocationProviderClient fusedLocationClient;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -193,7 +193,7 @@ public class MainScreenActivity extends NavBarActivity {
                     loadHouse = false;
                     // We have the permissions and the query, we can select the closest house
                     return fusedLocationClient.getLastLocation().continueWith(loc -> {
-                        if(loc.isSuccessful()){
+                        if(loc.isSuccessful() && loc.getResult() != null){
                             // Get the closest house
                             DocumentSnapshot house = LocationHelpers.getClosestHouse(task.getResult(), loc.getResult());
                             currentHouse = house.getReference();
