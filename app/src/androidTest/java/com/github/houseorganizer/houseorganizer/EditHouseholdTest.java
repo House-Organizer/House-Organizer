@@ -23,12 +23,14 @@ import static org.junit.Assert.assertTrue;
 import android.content.Intent;
 
 import androidx.test.core.app.ApplicationProvider;
+import androidx.test.espresso.IdlingRegistry;
 import androidx.test.espresso.intent.Intents;
 import androidx.test.ext.junit.rules.ActivityScenarioRule;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 
 import com.github.houseorganizer.houseorganizer.house.EditHousehold;
 import com.github.houseorganizer.houseorganizer.house.HouseSelectionActivity;
+import com.github.houseorganizer.houseorganizer.util.EspressoIdlingResource;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -59,12 +61,16 @@ public class EditHouseholdTest {
         db = FirebaseFirestore.getInstance();
         auth = FirebaseAuth.getInstance();
         intentFromHouseSelection = new Intent(ApplicationProvider.getApplicationContext(), EditHousehold.class).putExtra(HouseSelectionActivity.HOUSEHOLD_TO_EDIT, TEST_HOUSEHOLD_NAMES[0]);
+
+        IdlingRegistry.getInstance().register(EspressoIdlingResource.countingIdlingResource);
     }
 
     @AfterClass
     public static void signOut() throws ExecutionException, InterruptedException {
         FirebaseTestsHelper.createHouseholds();
         auth.signOut();
+
+        IdlingRegistry.getInstance().unregister(EspressoIdlingResource.countingIdlingResource);
     }
 
     @Rule
@@ -303,6 +309,7 @@ public class EditHouseholdTest {
     @Test
     public void changeOwnerWorksWithCorrectEmail() throws ExecutionException, InterruptedException {
         Intents.init();
+
         // Get state of house
         Map<String, Object> houseData_before = FirebaseTestsHelper.fetchHouseholdData(TEST_HOUSEHOLD_NAMES[0], db);
         String owner_before = (String) houseData_before.get("owner");

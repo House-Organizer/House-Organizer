@@ -7,11 +7,11 @@ public class EspressoIdlingResource {
     public static final String RESOURCE = "GLOBAL";
     public static CountingIdlingResource countingIdlingResource = new CountingIdlingResource(RESOURCE);
 
-    public void increment() {
+    public static void increment() {
         countingIdlingResource.increment();
     }
 
-    public void decrement() {
+    public static void decrement() {
         if (!countingIdlingResource.isIdleNow())
             countingIdlingResource.decrement();
     }

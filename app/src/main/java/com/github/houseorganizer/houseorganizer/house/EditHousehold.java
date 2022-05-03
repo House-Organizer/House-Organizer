@@ -11,6 +11,7 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.github.houseorganizer.houseorganizer.R;
+import com.github.houseorganizer.houseorganizer.util.EspressoIdlingResource;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.SignInMethodQueryResult;
@@ -123,6 +124,8 @@ public class EditHousehold extends AppCompatActivity {
     }
 
     public void changeOwner(String email, View view) {
+        EspressoIdlingResource.increment();
+
         firestore.collection("households").document(householdId).get()
                 .addOnCompleteListener(task -> {
                     Map<String, Object> householdData = task.getResult().getData();
@@ -141,6 +144,7 @@ public class EditHousehold extends AppCompatActivity {
                             startActivity(intent);
                         }
                     }
+                    EspressoIdlingResource.decrement();
                 });
     }
 
