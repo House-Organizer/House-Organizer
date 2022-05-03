@@ -68,6 +68,8 @@ public class EditHousehold extends AppCompatActivity {
     }
 
     public void addUser(View view) {
+        EspressoIdlingResource.increment();
+
         TextView emailView = findViewById(R.id.editTextAddUser);
         if (!verifyEmailInput(findViewById(R.id.editTextAddUser), view)) {
             return;
@@ -82,6 +84,9 @@ public class EditHousehold extends AppCompatActivity {
                     if (signInMethods != null && signInMethods.size() > 0)
                         addUserIfNotPresent(email, view);
                 });
+
+
+        EspressoIdlingResource.decrement();
     }
 
     public void addUserIfNotPresent(String email, View view) {
@@ -102,10 +107,14 @@ public class EditHousehold extends AppCompatActivity {
                                     Toast.LENGTH_SHORT).show();
                         }
                     }
+
+                    EspressoIdlingResource.decrement();
                 });
     }
 
     public void transmitOwnership(View view) {
+        EspressoIdlingResource.increment();
+
         TextView emailView = findViewById(R.id.editTextChangeOwner);
         if (!verifyEmailInput(emailView, view)) {
             return;
@@ -124,8 +133,6 @@ public class EditHousehold extends AppCompatActivity {
     }
 
     public void changeOwner(String email, View view) {
-        EspressoIdlingResource.increment();
-
         firestore.collection("households").document(householdId).get()
                 .addOnCompleteListener(task -> {
                     Map<String, Object> householdData = task.getResult().getData();
