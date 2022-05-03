@@ -55,7 +55,6 @@ public class HouseSelectionActivityTestLeave {
     @AfterClass
     public static void signOut(){
         auth.signOut();
-        signInTestUserWithCredentials(TEST_USERS_EMAILS[0], TEST_USERS_PWD[0]);
     }
 
     @Rule
@@ -66,6 +65,7 @@ public class HouseSelectionActivityTestLeave {
         onView(withId(R.id.house_imageButton)).perform(click());
         onView(withId(R.id.housesView)).perform(RecyclerViewActions.actionOnItemAtPosition(0, RecyclerViewHelper.clickChildViewWithId(R.id.houseName)));
         onView(withId(R.id.house_imageButton)).perform(click());
+        Thread.sleep(100);
 
         Map<String, Object> houseData_before = FirebaseTestsHelper.fetchHouseholdData(TEST_HOUSEHOLD_NAMES[0], db);
         List<String> resident_before = (List<String>) houseData_before.get("residents");
