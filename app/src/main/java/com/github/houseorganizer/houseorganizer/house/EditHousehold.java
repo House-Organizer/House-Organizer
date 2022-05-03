@@ -72,6 +72,7 @@ public class EditHousehold extends AppCompatActivity {
 
         TextView emailView = findViewById(R.id.editTextAddUser);
         if (!verifyEmailInput(findViewById(R.id.editTextAddUser), view)) {
+            EspressoIdlingResource.decrement();
             return;
         }
         String email = emailView.getText().toString();
@@ -83,10 +84,9 @@ public class EditHousehold extends AppCompatActivity {
 
                     if (signInMethods != null && signInMethods.size() > 0)
                         addUserIfNotPresent(email, view);
+                    else
+                        EspressoIdlingResource.decrement();
                 });
-
-
-        EspressoIdlingResource.decrement();
     }
 
     public void addUserIfNotPresent(String email, View view) {
@@ -117,6 +117,7 @@ public class EditHousehold extends AppCompatActivity {
 
         TextView emailView = findViewById(R.id.editTextChangeOwner);
         if (!verifyEmailInput(emailView, view)) {
+            EspressoIdlingResource.decrement();
             return;
         }
         String new_owner_email = emailView.getText().toString();
@@ -156,6 +157,9 @@ public class EditHousehold extends AppCompatActivity {
     }
 
     public void removeUser(View view) {
+
+        EspressoIdlingResource.increment();
+
         TextView emailView = findViewById(R.id.editTextRemoveUser);
         if (!verifyEmailInput(emailView, view)) {
             return;
@@ -176,6 +180,8 @@ public class EditHousehold extends AppCompatActivity {
             int sizeOfSignInMethods = task.getResult().getSignInMethods().size();
             if (sizeOfSignInMethods > 0) {
                 removeUserFromHousehold(email, view);
+            } else {
+                EspressoIdlingResource.decrement();
             }
         });
     }
@@ -196,6 +202,8 @@ public class EditHousehold extends AppCompatActivity {
                                     Toast.LENGTH_SHORT).show();
                         }
                     }
+
+                    EspressoIdlingResource.decrement();
                 });
     }
 
