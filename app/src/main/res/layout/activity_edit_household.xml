@@ -119,4 +119,17 @@
         app:layout_constraintTop_toBottomOf="@+id/edit_household_name"
         app:srcCompat="@drawable/add_person" />
 
+    <ImageButton
+        android:id="@+id/showQRCode"
+        android:layout_width="49dp"
+        android:layout_height="48dp"
+        android:layout_marginTop="32dp"
+        android:layout_marginEnd="4dp"
+        android:contentDescription="@string/show_qr_code"
+        android:minHeight="48dp"
+        android:onClick="showInviteQR"
+        app:layout_constraintEnd_toStartOf="@id/imageButtonAddUser"
+        app:layout_constraintTop_toBottomOf="@+id/edit_household_name"
+        app:srcCompat="@drawable/qr_code" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>
