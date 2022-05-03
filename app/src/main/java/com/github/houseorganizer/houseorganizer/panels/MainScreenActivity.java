@@ -199,9 +199,7 @@ public class MainScreenActivity extends NavBarActivity {
                         return defaultHouseSelection(task.getResult(), householdId);
                     });
                     // No permission for localization
-                }else{
-                    return Tasks.forResult(defaultHouseSelection(task.getResult(), householdId));
-                }
+                }else return Tasks.forResult(defaultHouseSelection(task.getResult(), householdId));
             }
             // Could not fetch the houses
             return Tasks.forResult(null);
