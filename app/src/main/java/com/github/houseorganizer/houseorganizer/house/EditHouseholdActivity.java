@@ -36,7 +36,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.IntStream;
 
-public class EditHousehold extends AppCompatActivity {
+public class EditHouseholdActivity extends AppCompatActivity {
     private FirebaseFirestore firestore;
     private FirebaseAuth mAuth;
     private String householdId;

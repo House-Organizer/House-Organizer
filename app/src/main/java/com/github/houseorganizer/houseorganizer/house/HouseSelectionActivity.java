@@ -7,7 +7,6 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.location.Location;
-import android.os.Build;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -171,7 +170,7 @@ public class HouseSelectionActivity extends AppCompatActivity {
     }
 
     public void sendToEditHouse(View view){
-        Intent intent = new Intent(this, EditHousehold.class);
+        Intent intent = new Intent(this, EditHouseholdActivity.class);
         intent.putExtra(HOUSEHOLD_TO_EDIT, view.getTag().toString());
         startActivity(intent);
     }

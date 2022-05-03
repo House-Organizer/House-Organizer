@@ -17,7 +17,6 @@ import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.time.YearMonth;
 import java.time.format.DateTimeFormatter;
-
 import java.util.OptionalInt;
 
 public final class CalendarActivity extends NavBarActivity {
