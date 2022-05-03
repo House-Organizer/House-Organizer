@@ -189,21 +189,24 @@ public class EditHousehold extends AppCompatActivity {
         final int padding = 50;
         int length = size.x - padding;
         try {
-            BitMatrix qrCode = new QRCodeWriter().encode(householdId, BarcodeFormat.QR_CODE, length, length);
             @SuppressLint("InflateParams") View qrDialogView = LayoutInflater.from(this).inflate(R.layout.image_dialog, null);
             ImageView qrView = qrDialogView.findViewById(R.id.image_dialog);
-            qrView.setImageBitmap(
-                    Bitmap.createBitmap(IntStream.range(0, length)
-                                            .flatMap(h -> IntStream.range(0, length)
-                                                .map(w -> qrCode.get(w, h) ? Color.BLACK : Color.WHITE))
-                                            .toArray(),
-                                        length, length, Bitmap.Config.ARGB_8888));
+            qrView.setImageBitmap(createQRCodeBitmap(householdId, length));
             qrDialog.setContentView(qrDialogView);
             qrDialog.show();
 
         } catch (WriterException e) {
             Util.logAndToast(this.toString(), "generateQRCode:failure", e, getApplicationContext(), "Could not generate a QR code");
         }
+    }
+
+    public static Bitmap createQRCodeBitmap(String householdId, int length) throws WriterException {
+        BitMatrix qrCode = new QRCodeWriter().encode(householdId, BarcodeFormat.QR_CODE, length, length);
+        return Bitmap.createBitmap(IntStream.range(0, length)
+                        .flatMap(h -> IntStream.range(0, length)
+                                .map(w -> qrCode.get(w, h) ? Color.BLACK : Color.WHITE))
+                        .toArray(),
+                length, length, Bitmap.Config.ARGB_8888);
     }
 
     public void removeUserFromHousehold(String email, View view) {

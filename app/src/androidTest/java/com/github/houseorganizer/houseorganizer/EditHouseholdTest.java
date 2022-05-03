@@ -10,6 +10,7 @@ import static androidx.test.espresso.intent.matcher.IntentMatchers.hasComponent;
 import static androidx.test.espresso.matcher.ViewMatchers.isClickable;
 import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static androidx.test.espresso.matcher.ViewMatchers.isEnabled;
+import static androidx.test.espresso.matcher.ViewMatchers.withEffectiveVisibility;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
 import static androidx.test.espresso.matcher.ViewMatchers.withText;
 import static com.github.houseorganizer.houseorganizer.FirebaseTestsHelper.TEST_HOUSEHOLD_NAMES;
@@ -20,19 +21,34 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.res.Resources;
+import android.graphics.Bitmap;
+import android.graphics.Canvas;
+import android.graphics.Point;
+import android.graphics.drawable.Drawable;
+import android.view.View;
+import android.widget.ImageView;
 
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.test.core.app.ApplicationProvider;
 import androidx.test.espresso.intent.Intents;
+import androidx.test.espresso.matcher.ViewMatchers;
 import androidx.test.ext.junit.rules.ActivityScenarioRule;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
+import androidx.test.platform.app.InstrumentationRegistry;
 
 import com.github.houseorganizer.houseorganizer.house.EditHousehold;
 import com.github.houseorganizer.houseorganizer.house.HouseSelectionActivity;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.zxing.WriterException;
 
+import org.hamcrest.Description;
+import org.hamcrest.Matcher;
+import org.hamcrest.TypeSafeMatcher;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -91,6 +107,11 @@ public class EditHouseholdTest {
     }
 
     @Test
+    public void showQRCodeIsDisplayed() {
+        onView(withId(R.id.showQRCode)).check(matches(isDisplayed()));
+    }
+
+    @Test
     public void addUserIsClickable() {
         onView(withId(R.id.editTextAddUser)).check(matches(isClickable()));
     }
@@ -103,6 +124,11 @@ public class EditHouseholdTest {
     @Test
     public void changeOwnerIsClickable() {
         onView(withId(R.id.editTextAddUser)).check(matches(isClickable()));
+    }
+
+    @Test
+    public void showQRCodeIsClickable() {
+        onView(withId(R.id.showQRCode)).check(matches(isClickable()));
     }
 
     @Test
@@ -126,6 +152,49 @@ public class EditHouseholdTest {
         Long expected_num_residents = num_residents_before + 1;
         assertEquals(expected_num_residents, num_residents_after);
         assertTrue(resident_after.contains(TEST_USERS_EMAILS[2]));
+    }
+
+    @Test
+    public void showQRCodeDisplaysCorrectQRCode() throws WriterException {
+        // Perform clicks
+        onView(withId(R.id.showQRCode)).perform(click());
+        Context cx = InstrumentationRegistry.getInstrumentation().getTargetContext();
+        Point size = new Point();
+        ((AppCompatActivity)cx).getWindowManager().getDefaultDisplay().getSize(size);
+        final int padding = 50;
+        int length = size.x - padding;
+        Bitmap expected = EditHousehold.createQRCodeBitmap(TEST_HOUSEHOLD_NAMES[0], length);
+        onView(withId(R.id.image_dialog)).check(matches(withBitmap(expected)));
+    }
+
+    public static Matcher<View> withBitmap(final Bitmap expected) {
+        return new TypeSafeMatcher<View>() {
+            @Override
+            protected boolean matchesSafely(View target) {
+                if (!(target instanceof ImageView)){
+                    return false;
+                }
+                ImageView imageView = (ImageView) target;
+
+                Bitmap bitmap = getBitmap (imageView.getDrawable());
+
+                return bitmap.sameAs(expected);
+            }
+
+            private Bitmap getBitmap(Drawable drawable){
+                Bitmap bitmap = Bitmap.createBitmap(drawable.getIntrinsicWidth(),
+                        drawable.getIntrinsicHeight(), Bitmap.Config.ARGB_8888);
+                Canvas canvas = new Canvas(bitmap);
+                drawable.setBounds(0, 0, canvas.getWidth(), canvas.getHeight());
+                drawable.draw(canvas);
+                return bitmap;
+            }
+
+            @Override
+            public void describeTo(Description description) {
+                description.appendText("ImageView with bitmap same as bitmap " + expected.toString());
+            }
+        };
     }
 
     @Test
