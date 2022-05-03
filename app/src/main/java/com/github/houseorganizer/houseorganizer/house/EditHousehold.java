@@ -129,6 +129,8 @@ public class EditHousehold extends AppCompatActivity {
                     List<String> signInMethods = querySignIn.getSignInMethods();
                     if (signInMethods != null && signInMethods.size() > 0) {
                         changeOwner(new_owner_email, view);
+                    } else {
+                        EspressoIdlingResource.decrement();
                     }
                 });
     }
@@ -162,6 +164,7 @@ public class EditHousehold extends AppCompatActivity {
 
         TextView emailView = findViewById(R.id.editTextRemoveUser);
         if (!verifyEmailInput(emailView, view)) {
+            EspressoIdlingResource.decrement();
             return;
         }
         String email = emailView.getText().toString();
@@ -170,6 +173,7 @@ public class EditHousehold extends AppCompatActivity {
             Toast.makeText(getApplicationContext(),
                     view.getContext().getString(R.string.cant_remove_yourself),
                     Toast.LENGTH_SHORT).show();
+            EspressoIdlingResource.decrement();
             return;
         }
 
