@@ -154,22 +154,17 @@ public class MainScreenActivity extends NavBarActivity {
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-
         switch (requestCode) {
             case LocationHelpers.PERMISSION_FINE_LOCATION:
                 // If request is cancelled, the result arrays are empty.
                 if (grantResults.length > 0
                         && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-
-                    // permission was granted, yay! Do the
-                    // location-related task you need to do.
+                    // permission was granted
                     locationPermission = (ContextCompat.checkSelfPermission(this,
                             Manifest.permission.ACCESS_FINE_LOCATION)
                             == PackageManager.PERMISSION_GRANTED);
-
                 } else {
-                    // permission denied, boo! Disable the
-                    // functionality that depends on this permission.
+                    // permission denied
                     locationPermission = false;
                 }
                 loadData();
@@ -228,10 +223,7 @@ public class MainScreenActivity extends NavBarActivity {
                 currentHouse = db.collection("households").document(households.get(0));
                 saveData(households.get(0));
                 return currentHouse;
-            } else {
-                noHousehold();
-                return null;
-            }
+            } else noHousehold();
         }
         return null;
     }
