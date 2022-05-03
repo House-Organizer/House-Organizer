@@ -26,6 +26,7 @@ import com.firebase.ui.firestore.FirestoreRecyclerAdapter;
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
 import com.github.houseorganizer.houseorganizer.R;
 import com.github.houseorganizer.houseorganizer.panels.MainScreenActivity;
+import com.github.houseorganizer.houseorganizer.util.EspressoIdlingResource;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
@@ -125,6 +126,8 @@ public class HouseSelectionActivity extends AppCompatActivity {
                 holder.houseName.setText(model.getName());
                 holder.houseName.setTag(adapter.getSnapshots().getSnapshot(position).getId());
                 holder.editButton.setTag(adapter.getSnapshots().getSnapshot(position).getId());
+
+                EspressoIdlingResource.decrement();
             }
         };
 
