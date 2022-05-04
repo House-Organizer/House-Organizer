@@ -129,7 +129,6 @@ public class QRCodeScanActivity extends AppCompatActivity {
                 List<String> listOfUsers = (List<String>) householdData.getOrDefault("residents", "[]");
                 Long num_users = (Long) householdData.get("num_members");
                 if (!listOfUsers.contains(email)) {
-                    System.out.println("HELLOHELLOHELLOHELLOHELLOHELLOHELLOHELLOHELLOHELLOHELLOHELLOHELLOHELLOHELLOHELLOHELLOHELLOHELLOHELLOHELLOHELLOHELLOHELLOHELLOHELLOHELLOHELLOHELLOHELLOHELLOHELLOHELLOHELLOHELLOHELLOHELLOHELLOHELLOHELLOHELLOHELLOHELLOHELLOHELLOHELLOHELLOHELLOHELLOHELLOHELLOHELLOHELLOHELLOHELLOHELLOHELLOHELLOHELLOHELLOHELLOHELLOHELLOHELLOHELLOHELLOHELLOHELLOHELLOHELLOHELLOHELLOHELLOHELLOHELLOHELLOHELLOHELLOHELLO");
                     targetHousehold.update("residents", FieldValue.arrayUnion(email));
                     targetHousehold.update("num_members", num_users + 1);
                 }
