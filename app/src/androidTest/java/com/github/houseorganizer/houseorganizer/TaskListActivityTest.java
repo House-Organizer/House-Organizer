@@ -224,7 +224,7 @@ public class TaskListActivityTest {
     @Test /* DB: unchanged */
     public void canAddAndRemoveTasks() throws InterruptedException, ExecutionException {
         onView(withId(R.id.tl_screen_new_task)).perform(click());
-        Thread.sleep(200); // time for new task to show up in the recyclerview
+        Thread.sleep(500); // time for new task to show up in the recyclerview
 
         /* ADD: UI check */
         onView(withId(R.id.tl_screen_tasks)).check(matches(hasChildCount(2)));
