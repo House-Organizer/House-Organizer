@@ -143,5 +143,6 @@
     <string name="add_an_event">Add an event</string>
     <string name="cycle_view">Cycle view</string>
     <string name="tl_screen_new_task">New task</string>
+    <string name="show_qr_code">Show QR code</string>
 
 </resources>

@@ -203,7 +203,7 @@ public class HouseSelectionActivity extends AppCompatActivity {
     }
 
     public void sendToEditHouse(View view){
-        Intent intent = new Intent(this, EditHousehold.class);
+        Intent intent = new Intent(this, EditHouseholdActivity.class);
         intent.putExtra(HOUSEHOLD_TO_EDIT, view.getTag().toString());
         startActivity(intent);
     }
