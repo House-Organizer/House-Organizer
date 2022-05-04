@@ -123,7 +123,7 @@
         android:id="@+id/showQRCodeText"
         android:layout_width="wrap_content"
         android:layout_height="30dp"
-        android:layout_marginTop="76dp"
+        android:layout_marginTop="68dp"
         android:text="@string/show_invite_qr_code"
         android:textSize="20sp"
 
@@ -136,6 +136,7 @@
         android:id="@+id/showQRCode"
         android:layout_width="145dp"
         android:layout_height="144dp"
+        android:layout_marginTop="20dp"
         android:background="#00000000"
         android:contentDescription="@string/show_qr_code"
         android:minHeight="48dp"
