@@ -95,16 +95,13 @@ public class QRCodeScanActivityTest {
         Map<String, Object> houseData_before = FirebaseTestsHelper.fetchHouseholdData(TEST_HOUSEHOLD_NAMES[0], db);
         QRJoinRule.getScenario().onActivity(qrCodeScanActivity -> {
             qrCodeScanActivity.acceptInvite("not_a_valid_household_id");
-            try {
-                Thread.sleep(1000);
-                Map<String, Object> houseData_after = FirebaseTestsHelper.fetchHouseholdData(TEST_HOUSEHOLD_NAMES[0], db);
-                assertEquals(houseData_before, houseData_after);
-                Intents.intended(hasComponent(CreateHouseholdActivity.class.getName()));
-                qrCodeScanActivity.finish();
-            } catch (ExecutionException | InterruptedException e) {
-                e.printStackTrace();
-            }
+            qrCodeScanActivity.finish();
         }).getResult();
+
+        Thread.sleep(1000);
+        Map<String, Object> houseData_after = FirebaseTestsHelper.fetchHouseholdData(TEST_HOUSEHOLD_NAMES[0], db);
+        assertEquals(houseData_before, houseData_after);
+        Intents.intended(hasComponent(CreateHouseholdActivity.class.getName()));
     }
 
     @Test
@@ -116,23 +113,20 @@ public class QRCodeScanActivityTest {
 
         QRJoinRule.getScenario().onActivity(qrCodeScanActivity -> {
             qrCodeScanActivity.acceptInvite(TEST_HOUSEHOLD_NAMES[0]);
-            try {
-                Thread.sleep(1000);
-                Map<String, Object> houseData_after = FirebaseTestsHelper.fetchHouseholdData(TEST_HOUSEHOLD_NAMES[0], db);
-                List<String> resident_after = (List<String>) houseData_after.get("residents");
-                Long num_residents_after = (Long) houseData_after.get("num_members");
-
-                // Compare states
-                assertFalse(resident_before.contains(TEST_USERS_EMAILS[2]));
-                Long expected_num_residents = num_residents_before + 1;
-                assertEquals(expected_num_residents, num_residents_after);
-                assertTrue(resident_after.contains(TEST_USERS_EMAILS[2]));
-                Intents.intended(hasComponent(MainScreenActivity.class.getName()));
-                createHouseholds();
-            } catch (ExecutionException | InterruptedException e) {
-                e.printStackTrace();
-            }
-
+            qrCodeScanActivity.finish();
         }).getResult();
+        
+        Thread.sleep(1000);
+        Map<String, Object> houseData_after = FirebaseTestsHelper.fetchHouseholdData(TEST_HOUSEHOLD_NAMES[0], db);
+        List<String> resident_after = (List<String>) houseData_after.get("residents");
+        Long num_residents_after = (Long) houseData_after.get("num_members");
+
+        // Compare states
+        assertFalse(resident_before.contains(TEST_USERS_EMAILS[2]));
+        Long expected_num_residents = num_residents_before + 1;
+        assertEquals(expected_num_residents, num_residents_after);
+        assertTrue(resident_after.contains(TEST_USERS_EMAILS[2]));
+        Intents.intended(hasComponent(MainScreenActivity.class.getName()));
+        createHouseholds();
     }
 }
