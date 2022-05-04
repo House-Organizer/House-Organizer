@@ -136,9 +136,7 @@ public class QRCodeScanActivity extends AppCompatActivity {
                     targetHousehold.update("num_members", num_users + 1);
                 }
 
-                SharedPreferences.Editor editor = getSharedPrefsEditor(this);
-                editor.putString(CURRENT_HOUSEHOLD, QRCode);
-                editor.apply();
+                getSharedPrefsEditor(this).putString(CURRENT_HOUSEHOLD, QRCode).apply();
 
                 Intent intent = new Intent(this, MainScreenActivity.class);
                 Toast.makeText(getApplicationContext(), this.getString(R.string.add_user_success),Toast.LENGTH_SHORT).show();
