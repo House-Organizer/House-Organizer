@@ -27,11 +27,13 @@ import static org.junit.Assert.assertFalse;
 import android.content.Intent;
 
 import androidx.test.core.app.ApplicationProvider;
+import androidx.test.espresso.IdlingRegistry;
 import androidx.test.ext.junit.rules.ActivityScenarioRule;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 
 import com.github.houseorganizer.houseorganizer.panels.TaskListActivity;
 import com.github.houseorganizer.houseorganizer.task.FirestoreTask;
+import com.github.houseorganizer.houseorganizer.util.EspressoIdlingResource;
 import com.google.firebase.auth.FirebaseAuth;
 
 import org.junit.AfterClass;
@@ -63,11 +65,14 @@ public class TaskListActivityTest {
 
         auth = FirebaseAuth.getInstance();
         intentFromMainScreenActivity = new Intent(ApplicationProvider.getApplicationContext(), TaskListActivity.class).putExtra("house", TEST_HOUSEHOLD_NAMES[0]);
+
+        IdlingRegistry.getInstance().register(EspressoIdlingResource.countingIdlingResource);
     }
 
     @AfterClass
     public static void signOut() {
         auth.signOut();
+        IdlingRegistry.getInstance().unregister(EspressoIdlingResource.countingIdlingResource);
     }
 
     @Before
