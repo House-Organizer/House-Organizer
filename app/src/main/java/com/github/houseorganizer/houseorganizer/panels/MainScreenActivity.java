@@ -34,8 +34,6 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 import java.util.Objects;
 import java.util.OptionalInt;
 
@@ -107,8 +105,6 @@ public class MainScreenActivity extends NavBarActivity {
     }
 
     private void initializeTaskList() {
-        List<String> memberEmails = Arrays.asList("aindreias@houseorganizer.com", "sansive@houseorganizer.com",
-                "shau@reds.com", "oxydeas@houseorganizer.com");
 
         db.collection("task_lists")
                 .whereEqualTo("hh-id", currentHouse.getId())
@@ -117,7 +113,7 @@ public class MainScreenActivity extends NavBarActivity {
                         QueryDocumentSnapshot qds = task.getResult().iterator().next();
                         this.tlMetadata = db.collection("task_lists").document(qds.getId());
                         this.taskList = new TaskList(currentUID, "My weekly todo", new ArrayList<>());
-                        this.taskListAdapter = new TaskListAdapter(taskList, tlMetadata, memberEmails);
+                        this.taskListAdapter = new TaskListAdapter(taskList, tlMetadata, currentHouse);
                         TaskView.recoverTaskList(this, taskList, taskListAdapter, tlMetadata, R.id.task_list);
                     }
         });

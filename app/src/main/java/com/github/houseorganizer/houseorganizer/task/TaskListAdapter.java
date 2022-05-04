@@ -24,12 +24,13 @@ import java.util.Map;
 public final class TaskListAdapter extends RecyclerView.Adapter<BiViewHolder<Button, Button>> {
     private final TaskList taskList;
     private final DocumentReference metadataDocRef;
-    private final List<String> memberEmails;
+    private List<String> memberEmails = new ArrayList<>();
 
-    public TaskListAdapter(TaskList taskList, DocumentReference metadataDocRef, List<String> memberEmails) {
+    public TaskListAdapter(TaskList taskList, DocumentReference metadataDocRef, DocumentReference currentHouse) {
         this.taskList       = taskList;
         this.metadataDocRef = metadataDocRef;
-        this.memberEmails   = memberEmails;
+
+        setMemberEmails(currentHouse);
     }
 
     @NonNull
@@ -160,5 +161,14 @@ public final class TaskListAdapter extends RecyclerView.Adapter<BiViewHolder<But
     @Override
     public int getItemCount() {
         return taskList.getTasks().size();
+    }
+
+    private void setMemberEmails(DocumentReference currentHouse) {
+        if (currentHouse == null) return;
+
+        currentHouse.get().addOnSuccessListener(docSnap ->
+                memberEmails = (List<String>)
+                        docSnap.getData().getOrDefault("residents", new ArrayList<>())
+        );
     }
 }

@@ -101,13 +101,18 @@ public class TaskListOnMainScreenTest {
         onView(withText(FirebaseTestsHelper.TEST_TASK_DESC)).inRoot(isDialog()).check(matches(isDisplayed()));
     }
 
-    @Test
+    @Test // For House 1, we have User0 & User1 as residents
     public void assigneePopUpIsDisplayed() {
         onView(withText(FirebaseTestsHelper.TEST_TASK_TITLE)).perform(click());
         onView(withText(R.string.assignees_button)).perform(click());
 
-        // This line will be changed to the user of the household
-        onView(withText("aindreias@houseorganizer.com")).inRoot(isDialog()).check(matches(isDisplayed()));
+        onView(withText(FirebaseTestsHelper.TEST_USERS_EMAILS[0]))
+                .inRoot(isDialog())
+                .check(matches(isDisplayed()));
+
+        onView(withText(FirebaseTestsHelper.TEST_USERS_EMAILS[1]))
+                .inRoot(isDialog())
+                .check(matches(isDisplayed()));
     }
 
     /* Actions work [changing title & description, adding/removing (sub)tasks, adding/removing assignees */
@@ -201,16 +206,16 @@ public class TaskListOnMainScreenTest {
         onView(withText(FirebaseTestsHelper.TEST_TASK_TITLE)).perform(click());
         onView(withText(R.string.assignees_button)).perform(click());
 
-        onView(hasSibling(withText("aindreias@houseorganizer.com"))).perform(click());
+        onView(hasSibling(withText(FirebaseTestsHelper.TEST_USERS_EMAILS[0]))).perform(click());
         Thread.sleep(200); // time for image to change
 
         /* UI check */
-        onView(hasSibling(withText("aindreias@houseorganizer.com")))
+        onView(hasSibling(withText(FirebaseTestsHelper.TEST_USERS_EMAILS[0])))
                 .check(matches(withTagValue(equalTo(R.drawable.remove_person))));
 
         // Undoing + UI check
-        onView(hasSibling(withText("aindreias@houseorganizer.com"))).perform(click());
-        onView(hasSibling(withText("aindreias@houseorganizer.com")))
+        onView(hasSibling(withText(FirebaseTestsHelper.TEST_USERS_EMAILS[0]))).perform(click());
+        onView(hasSibling(withText(FirebaseTestsHelper.TEST_USERS_EMAILS[0])))
                 .check(matches(withTagValue(equalTo(R.drawable.add_person))));
     }
 
