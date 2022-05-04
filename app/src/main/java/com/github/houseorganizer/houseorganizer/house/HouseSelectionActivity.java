@@ -1,5 +1,7 @@
 package com.github.houseorganizer.houseorganizer.house;
 
+import static com.github.houseorganizer.houseorganizer.panels.MainScreenActivity.CURRENT_HOUSEHOLD;
+import static com.github.houseorganizer.houseorganizer.util.Util.getSharedPrefs;
 import static com.github.houseorganizer.houseorganizer.util.Util.getSharedPrefsEditor;
 
 import android.Manifest;
@@ -30,10 +32,13 @@ import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
 
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
@@ -135,7 +140,7 @@ public class HouseSelectionActivity extends AppCompatActivity {
     private void saveData(String selectedHouse) {
         SharedPreferences.Editor editor = getSharedPrefsEditor(this);
 
-        editor.putString(MainScreenActivity.CURRENT_HOUSEHOLD, selectedHouse);
+        editor.putString(CURRENT_HOUSEHOLD, selectedHouse);
         editor.apply();
     }
 
@@ -167,6 +172,34 @@ public class HouseSelectionActivity extends AppCompatActivity {
                         }
                     }
                 });
+    }
+
+    public void leaveHouse(View view){
+        SharedPreferences sharedPreferences = getSharedPrefs(this);
+        String householdId = sharedPreferences.getString(CURRENT_HOUSEHOLD, "");
+        if(householdId != null){
+            DocumentReference currentHouse = firestore.collection("households").document(householdId);
+            currentHouse.get().addOnCompleteListener(task -> {
+                Map<String, Object> householdData = task.getResult().getData();
+                if (householdData != null) {
+                    List<String> residents = (List<String>) householdData.getOrDefault("residents", "[]");
+                    Long num_users = (Long) householdData.get("num_members");
+                    String owner = (String) householdData.get("owner");
+                    String currentEmail = FirebaseAuth.getInstance().getCurrentUser().getEmail();
+                    if (residents.contains(currentEmail) && !owner.equals(currentEmail)) {
+                        currentHouse.update("num_members", num_users - 1);
+                        currentHouse.update("residents", FieldValue.arrayRemove(currentEmail));
+                        SharedPreferences.Editor editor = getSharedPrefsEditor(this);
+                        editor.putString(CURRENT_HOUSEHOLD, "");
+                        editor.apply();
+                        Intent intent = new Intent(this, MainScreenActivity.class);
+                        startActivity(intent);
+                    } else {
+                        Toast.makeText(getApplicationContext(), this.getString(R.string.cant_remove_owner),Toast.LENGTH_SHORT).show();
+                    }
+                }
+            });
+        }
     }
 
     public void sendToEditHouse(View view){
