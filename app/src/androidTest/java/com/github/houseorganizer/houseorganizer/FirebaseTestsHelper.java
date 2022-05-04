@@ -12,6 +12,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FieldPath;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.storage.FirebaseStorage;
@@ -325,12 +326,21 @@ public class FirebaseTestsHelper {
     protected static void setupNicknames() throws ExecutionException, InterruptedException {
         FirebaseFirestore db = FirebaseFirestore.getInstance();
 
+        FieldPath field = FieldPath.of("user_1@test.com");
+
         Map<String, String> nicknames = new HashMap<>();
-        nicknames.put("user_1@test.com", "user_1");
+        nicknames.put("test", "test");
+        //We have to give a sample input to set in the collection and then we can update with a
+        //field value
 
         Task<Void> task = db.collection("email-to-nickname")
                 .document("email-to-nickname-translations")
-                .set(nicknames);
+                .set(nicknames).continueWithTask(task1 -> {
+                    db.collection("email-to-nickname")
+                            .document("email-to-nickname-translations")
+                            .update(field, "user_1");
+                    return task1;
+                });
         Tasks.await(task);
     }
 
