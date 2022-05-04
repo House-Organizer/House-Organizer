@@ -54,7 +54,7 @@ public class FirestoreShopListTest {
     }
 
     @AfterClass
-    public void removeShopList() throws ExecutionException, InterruptedException {
+    public static void removeShopList() throws ExecutionException, InterruptedException {
         Task<Void> task = db.collection("shop_lists")
                 .document(FirebaseTestsHelper.TEST_HOUSEHOLD_NAMES[2])
                 .delete();
@@ -62,7 +62,7 @@ public class FirestoreShopListTest {
     }
 
     @After
-    public void removeItems(){
+    public static void removeItems() {
         if(shopList.size() > 1){
             for(int i = shopList.size()-1; i > 0; --i){
                 shopList.removeItem(i);

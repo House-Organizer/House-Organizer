@@ -185,6 +185,7 @@ public class TaskListActivityTest {
 
         /* UI check */
         onView(withText("Congratulations!")).inRoot(isDialog()).check(matches(isDisplayed())).perform(pressBack());
+        Thread.sleep(1000);
         onView(withId(R.id.subtask_list)).check(matches(hasChildCount(0)));
 
         /* DB double-check */
