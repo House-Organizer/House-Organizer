@@ -35,20 +35,10 @@ public class FirestoreShopListTest {
         FirebaseTestsHelper.startFirestoreEmulator();
         FirebaseTestsHelper.setUpFirebase();
         db = FirebaseFirestore.getInstance();
-        Task<QuerySnapshot> t = db.collection("shop_lists").get();
+        Task<FirestoreShopList> t = FirestoreShopList.retrieveShopList(db.collection("shop_lists"),
+                db.collection("households").document(FirebaseTestsHelper.TEST_HOUSEHOLD_NAMES[0]));
         Tasks.await(t);
-        assertThat(t.getResult().getDocuments().size() > 0, is(true));
-        DocumentSnapshot snap = t.getResult().getDocuments().get(1);
-        List<Map<String, Object>> map = (List<Map<String, Object>>) snap.get("items");
-        assertThat(map.isEmpty(), is(false));
-        String name = (String) map.get(0).get("name");
-        int quantity = new Long((long) map.get(0).get("quantity")).intValue();
-        String unit = (String) map.get(0).get("unit");
-        List<ShopItem> list = new ArrayList<>();
-        list.add(new ShopItem(name, quantity, unit));
-        localShopList = new FirestoreShopList(db.collection("households")
-                .document(FirebaseTestsHelper.TEST_HOUSEHOLD_NAMES[0]),
-                snap.getReference(), list);
+        localShopList = t.getResult();
     }
 
     @Test
