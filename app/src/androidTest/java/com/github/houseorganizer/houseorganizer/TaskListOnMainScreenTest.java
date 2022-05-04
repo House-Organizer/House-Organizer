@@ -229,15 +229,18 @@ public class TaskListOnMainScreenTest {
         assertEquals(0, recoveredAssignees.size());
     }
 
+    // NB. this test first removes, then adds a task
+    // because screen size is limited on Cirrus &
+    // the second task has less than 90% visibility.
     @Test /* DB: unchanged */
     public void canAddAndRemoveTasks() throws InterruptedException, ExecutionException {
-        onView(withId(R.id.new_task)).perform(click());
-        Thread.sleep(500); // time for new task to show up in the recyclerview
+        onView(withId(R.id.task_done_button)).perform(click());
+        Thread.sleep(200);
 
-        /* ADD: UI check */
-        onView(withId(R.id.task_list)).check(matches(hasChildCount(2)));
+        /* REMOVE: UI check */
+        onView(withId(R.id.task_list)).check(matches(hasChildCount(0)));
 
-        /* ADD: DB check: taskPtr size */
+        /* REMOVE: DB check: taskPtr size */
         Task<DocumentSnapshot> t = FirestoreTaskTest.metadataRef().get();
         Tasks.await(t);
         assertTrue(t.isSuccessful());
@@ -246,13 +249,16 @@ public class TaskListOnMainScreenTest {
 
         List<DocumentReference> taskPtrs = (ArrayList<DocumentReference>) metadata.get("task-ptrs");
         assertNotNull(taskPtrs);
-        assertEquals(2, taskPtrs.size());
+        assertTrue(taskPtrs.isEmpty());
 
-        /* REMOVE: UI check */
-        onView(hasSibling(withText("Untitled task"))).perform(click());
-        Thread.sleep(200);
+        /* Undoing: Recreating the test task */
+        onView(withId(R.id.new_task)).perform(click());
+        Thread.sleep(500); // time for new task to show up in the recyclerview
 
-        /* REMOVE: DB check: taskPtr size */
+        /* ADD: UI check */
+        onView(withId(R.id.task_list)).check(matches(hasChildCount(1)));
+
+        /* ADD: DB check: taskPtr size */
         t = FirestoreTaskTest.metadataRef().get();
         Tasks.await(t);
         assertTrue(t.isSuccessful());
@@ -262,5 +268,14 @@ public class TaskListOnMainScreenTest {
         taskPtrs = (ArrayList<DocumentReference>) metadata.get("task-ptrs");
         assertNotNull(taskPtrs);
         assertEquals(1, taskPtrs.size());
+
+        /* Changing back name & desc */
+        onView(withText("Untitled task")).perform(click());
+
+        onView(withId(R.id.task_title_input)).perform(clearText(),
+                typeText(FirebaseTestsHelper.TEST_TASK_TITLE), closeSoftKeyboard());
+
+        onView(withId(R.id.task_description_input)).perform(clearText(),
+                typeText(FirebaseTestsHelper.TEST_TASK_DESC), closeSoftKeyboard());
     }
 }
