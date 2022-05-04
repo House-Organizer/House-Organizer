@@ -3,6 +3,13 @@ package com.github.houseorganizer.houseorganizer.house;
 import static com.github.houseorganizer.houseorganizer.panels.MainScreenActivity.CURRENT_HOUSEHOLD;
 import static com.github.houseorganizer.houseorganizer.util.Util.getSharedPrefsEditor;
 
+import android.Manifest;
+import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.os.Bundle;
+import android.util.Size;
+import android.widget.Toast;
+
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.camera.core.CameraSelector;
@@ -12,16 +19,6 @@ import androidx.camera.lifecycle.ProcessCameraProvider;
 import androidx.camera.view.PreviewView;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
-import androidx.lifecycle.LifecycleOwner;
-
-import android.Manifest;
-import android.content.Intent;
-import android.content.SharedPreferences;
-import android.content.pm.PackageManager;
-import android.os.Bundle;
-import android.util.Size;
-import android.widget.TextView;
-import android.widget.Toast;
 
 import com.github.houseorganizer.houseorganizer.R;
 import com.github.houseorganizer.houseorganizer.image.QRAnalyzer;
@@ -116,10 +113,10 @@ public class QRCodeScanActivity extends AppCompatActivity {
                 //Nothing, as this function has to be fast
             }
         }));
-        cameraProvider.bindToLifecycle((LifecycleOwner)this, cameraSelector, imageAnalysis, preview);
+        cameraProvider.bindToLifecycle(this, cameraSelector, imageAnalysis, preview);
     }
 
-    private void acceptInvite(String QRCode){
+    public void acceptInvite(String QRCode){
         String email = auth.getCurrentUser().getEmail();
         if(email == null || QRCode == null){
             return;
