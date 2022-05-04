@@ -145,7 +145,7 @@ public final class TaskListAdapter extends RecyclerView.Adapter<BiViewHolder<But
             RecyclerView assigneeView = assigneeEditor.findViewById(R.id.assignee_editor);
 
             TaskAssigneeAdapter assigneeAdapter =
-                    new TaskAssigneeAdapter(taskList.getTaskAt(position),memberEmails);
+                    new TaskAssigneeAdapter((FirestoreTask) taskList.getTaskAt(position),memberEmails);
 
             assigneeView.setAdapter(assigneeAdapter);
             assigneeView.setLayoutManager(new LinearLayoutManager(v.getContext()));
