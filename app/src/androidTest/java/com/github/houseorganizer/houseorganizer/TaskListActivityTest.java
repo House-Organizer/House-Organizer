@@ -210,21 +210,31 @@ public class TaskListActivityTest {
 
     /* Assignee tests don't use the DB for now */
     @Test /* DB: not used */
-    public void assigneeButtonWorks() throws InterruptedException {
+    public void assigneeButtonWorks() throws InterruptedException, ExecutionException {
         onView(withText(FirebaseTestsHelper.TEST_TASK_TITLE)).perform(click());
         onView(withText(R.string.assignees_button)).perform(click());
 
         onView(hasSibling(withText(FirebaseTestsHelper.TEST_USERS_EMAILS[0]))).perform(click());
-        Thread.sleep(200); // time for the image to change
+        Thread.sleep(200); // time for image to change
 
-        /* UI check */
+        /* ADD: UI check */
         onView(hasSibling(withText(FirebaseTestsHelper.TEST_USERS_EMAILS[0])))
                 .check(matches(withTagValue(equalTo(R.drawable.remove_person))));
 
-        // Undoing + UI check
+        /* ADD: DB check */
+        List<String> recoveredAssignees = FirestoreTaskTest.recoverFirestoreTask(0).getAssignees();
+        assertEquals(1, recoveredAssignees.size());
+        assertTrue(recoveredAssignees.contains(FirebaseTestsHelper.TEST_USERS_EMAILS[0]));
+
+        // Undoing + UI & DB checks
         onView(hasSibling(withText(FirebaseTestsHelper.TEST_USERS_EMAILS[0]))).perform(click());
+        Thread.sleep(200);
+
         onView(hasSibling(withText(FirebaseTestsHelper.TEST_USERS_EMAILS[0])))
                 .check(matches(withTagValue(equalTo(R.drawable.add_person))));
+
+        recoveredAssignees = FirestoreTaskTest.recoverFirestoreTask(0).getAssignees();
+        assertEquals(0, recoveredAssignees.size());
     }
 
     @Test /* DB: unchanged */
