@@ -188,7 +188,7 @@ public class HouseSelectionActivity extends AppCompatActivity {
                     String currentEmail = FirebaseAuth.getInstance().getCurrentUser().getEmail();
                     if (residents.contains(currentEmail) && !owner.equals(currentEmail)) {
                         currentHouse.update("num_members", num_users - 1);
-                        currentHouse.update("residents", FieldValue.arrayRemove(FirebaseAuth.getInstance().getCurrentUser().getEmail()));
+                        currentHouse.update("residents", FieldValue.arrayRemove(currentEmail));
                         SharedPreferences.Editor editor = getSharedPrefsEditor(this);
                         editor.putString(CURRENT_HOUSEHOLD, "");
                         editor.apply();

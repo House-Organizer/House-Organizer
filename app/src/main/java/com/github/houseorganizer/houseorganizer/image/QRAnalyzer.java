@@ -15,8 +15,8 @@ import com.google.zxing.multi.qrcode.QRCodeMultiReader;
 
 import java.nio.ByteBuffer;
 
-public class QRAnalyzer implements ImageAnalysis.Analyzer {
-    private QRListener listener;
+public final class QRAnalyzer implements ImageAnalysis.Analyzer {
+    private final QRListener listener;
 
     public QRAnalyzer(QRListener listener) {
         this.listener = listener;
