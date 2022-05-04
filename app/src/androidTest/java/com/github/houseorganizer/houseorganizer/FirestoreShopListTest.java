@@ -35,10 +35,11 @@ public class FirestoreShopListTest {
         FirebaseTestsHelper.startFirestoreEmulator();
         FirebaseTestsHelper.setUpFirebase();
         db = FirebaseFirestore.getInstance();
-        Task<QuerySnapshot> t = db.collection("shop_lists").get();
+        Task<QuerySnapshot> t = db.collection("shop_lists")
+                .whereEqualTo("name", FirebaseTestsHelper.TEST_HOUSEHOLD_NAMES[0]).get();
         Tasks.await(t);
         assertThat(t.getResult().getDocuments().size() > 0, is(true));
-        DocumentSnapshot snap = t.getResult().getDocuments().get(1);
+        DocumentSnapshot snap = t.getResult().getDocuments().get(0);
         List<Map<String, Object>> map = (List<Map<String, Object>>) snap.get("items");
         assertThat(map.isEmpty(), is(false));
         String name = (String) map.get(0).get("name");
