@@ -113,12 +113,10 @@ public class FirestoreShopListTest {
     }
 
     @After
-    public void removeItems(){
-        if(shopList.size() > 1){
-            for(int i = shopList.size()-1; i > 0; --i){
-                shopList.removeItem(i);
-            }
-            shopList.updateItems();
-        }
+    public void removeShopList() throws ExecutionException, InterruptedException {
+        Task<Void> task = db.collection("shop_lists")
+                .document(shopList.getOnlineReference().getPath())
+                .delete();
+        Tasks.await(task);
     }
 }
