@@ -57,35 +57,32 @@ public final class TaskListAdapter extends RecyclerView.Adapter<BiViewHolder<But
             DocumentReference taskDocRef =
                     ((FirestoreTask) (taskList.getTaskAt(position))).getTaskDocRef();
 
-            metadataDocRef.get().addOnCompleteListener(task -> {
-                if(task.isSuccessful()) {
-                    Map<String, Object> metadata = task.getResult().getData();
-                    assert metadata != null;
+            metadataDocRef.get().addOnSuccessListener(taskDocSnap -> {
+                Map<String, Object> metadata = taskDocSnap.getData();
+                assert metadata != null;
 
-                    List<DocumentReference> taskPtrs = (ArrayList<DocumentReference>)
-                            metadata.getOrDefault("task-ptrs", new ArrayList<>());
+                List<DocumentReference> taskPtrs = (ArrayList<DocumentReference>)
+                        metadata.getOrDefault("task-ptrs", new ArrayList<>());
 
-                    assert taskPtrs != null;
-                    taskPtrs.removeIf(docRef -> docRef.getId().equals(taskDocRef.getId()));
+                assert taskPtrs != null;
+                taskPtrs.removeIf(docRef -> docRef.getId().equals(taskDocRef.getId()));
 
-                    metadata.put("task-ptrs", taskPtrs);
+                metadata.put("task-ptrs", taskPtrs);
 
-                    task.getResult().getReference().set(metadata);
+                taskDocSnap.getReference().set(metadata);
 
-                    taskDocRef.delete().addOnCompleteListener(task2 -> {
-                        if (task2.isSuccessful()) {
+                taskDocRef.delete().addOnSuccessListener(res -> {
 
-                            new AlertDialog.Builder(v.getContext())
-                                    .setTitle(R.string.task_completion_title)
-                                    .setMessage(R.string.task_completion_desc)
-                                    .show();
+                    new AlertDialog.Builder(v.getContext())
+                            .setTitle(R.string.task_completion_title)
+                            .setMessage(R.string.task_completion_desc)
+                            .show();
 
-                            taskList.removeTask(position);
-                            notifyItemRemoved(position);
-                            notifyItemRangeChanged(0, getItemCount());
-                        }
-                    });
-                }
+                    taskList.removeTask(position);
+                    notifyItemRemoved(position);
+                    notifyItemRangeChanged(0, getItemCount());
+
+                });
             });
         };
     }
