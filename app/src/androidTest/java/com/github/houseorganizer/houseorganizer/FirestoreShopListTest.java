@@ -15,14 +15,10 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QuerySnapshot;
 
 import org.junit.After;
-import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
 import java.util.concurrent.ExecutionException;
 
 @RunWith(AndroidJUnit4.class)
@@ -51,24 +47,6 @@ public class FirestoreShopListTest {
         Task<DocumentReference> t1 = FirestoreShopList.storeNewShopList(db.collection("shop_lists"), shopList, household);
         Tasks.await(t1);
         shopList.setOnlineReference(t1.getResult());
-    }
-
-    @AfterClass
-    public static void removeShopList() throws ExecutionException, InterruptedException {
-        Task<Void> task = db.collection("shop_lists")
-                .document(FirebaseTestsHelper.TEST_HOUSEHOLD_NAMES[2])
-                .delete();
-        Tasks.await(task);
-    }
-
-    @After
-    public static void removeItems() {
-        if(shopList.size() > 1){
-            for(int i = shopList.size()-1; i > 0; --i){
-                shopList.removeItem(i);
-            }
-            shopList.updateItems();
-        }
     }
 
     @Test
@@ -118,18 +96,26 @@ public class FirestoreShopListTest {
 
     @Test
     public void refreshItemWorks() throws ExecutionException, InterruptedException {
-        Task<FirestoreShopList> t = FirestoreShopList
-                .retrieveShopList(db.collection("shop_lists"),
-                        shopList.getHousehold());
+        Task<FirestoreShopList> t = FirestoreShopList.retrieveShopList(
+                db.collection("shop_lists"), shopList.getHousehold());
         Tasks.await(t);
         FirestoreShopList listBis = t.getResult();
 
         ShopItem item = new ShopItem("Raclette", 2, "g");
         listBis.addItem(item);
-        Task<DocumentSnapshot> t1 = listBis.updateItems()
-                .continueWithTask(r -> shopList.refreshItems());
+        Task<DocumentSnapshot> t1 = listBis.updateItems().continueWithTask(r -> shopList.refreshItems());
         Tasks.await(t1);
         assertThat(shopList.size(), is(listBis.size()));
         assertThat(shopList.getItemAt(0).getName(), is(listBis.getItemAt(0).getName()));
+    }
+
+    @After
+    public void removeItems(){
+        if(shopList.size() > 1){
+            for(int i = shopList.size()-1; i > 0; --i){
+                shopList.removeItem(i);
+            }
+            shopList.updateItems();
+        }
     }
 }
