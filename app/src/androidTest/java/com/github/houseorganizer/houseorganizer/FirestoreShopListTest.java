@@ -115,7 +115,7 @@ public class FirestoreShopListTest {
     @After
     public void removeShopList() throws ExecutionException, InterruptedException {
         Task<Void> task = db.collection("shop_lists")
-                .document(shopList.getOnlineReference().getPath())
+                .document(FirebaseTestsHelper.TEST_HOUSEHOLD_NAMES[2])
                 .delete();
         Tasks.await(task);
     }
