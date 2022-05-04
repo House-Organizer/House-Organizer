@@ -100,19 +100,17 @@ public class QRCodeScanActivityTest {
         QRJoinRule.getScenario().onActivity(qrCodeScanActivity -> {
             qrCodeScanActivity.acceptInvite("not_a_valid_household_id");
             try {
-                Thread.sleep(1000);
+                Thread.sleep(2000);
                 Task<DocumentSnapshot> task = db.collection("households").document(TEST_HOUSEHOLD_NAMES[0]).get();
-                Thread.sleep(1000);
+                Thread.sleep(2000);
                 Map<String, Object> houseData_after = task.getResult().getData();
                 assertEquals(houseData_before, houseData_after);
                 Intents.intended(hasComponent(CreateHouseholdActivity.class.getName()));
+                qrCodeScanActivity.finish();
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
-            qrCodeScanActivity.finish();
-        }).getResult();
-
-
+        });
     }
 
     @Test
@@ -124,9 +122,9 @@ public class QRCodeScanActivityTest {
         QRJoinRule.getScenario().onActivity(qrCodeScanActivity -> {
             qrCodeScanActivity.acceptInvite(TEST_HOUSEHOLD_NAMES[0]);
             try {
-                Thread.sleep(1000);
+                Thread.sleep(2000);
                 Task<DocumentSnapshot> task = db.collection("households").document(TEST_HOUSEHOLD_NAMES[0]).get();
-                Thread.sleep(1000);
+                Thread.sleep(2000);
                 Map<String, Object> houseData_after = task.getResult().getData();
                 List<String> resident_after = (List<String>) houseData_after.get("residents");
                 Long num_residents_after = (Long) houseData_after.get("num_members");
@@ -142,7 +140,5 @@ public class QRCodeScanActivityTest {
                 e.printStackTrace();
             }
         });
-        
-
     }
 }
