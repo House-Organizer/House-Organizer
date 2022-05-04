@@ -204,11 +204,12 @@ public class TaskListActivityTest {
 
     /* Assignee tests don't use the DB for now */
     @Test /* DB: not used */
-    public void assigneeButtonWorks() {
+    public void assigneeButtonWorks() throws InterruptedException {
         onView(withText(FirebaseTestsHelper.TEST_TASK_TITLE)).perform(click());
         onView(withText(R.string.assignees_button)).perform(click());
 
         onView(hasSibling(withText("aindreias@houseorganizer.com"))).perform(click());
+        Thread.sleep(200); // time for the image to change
 
         /* UI check */
         onView(hasSibling(withText("aindreias@houseorganizer.com")))

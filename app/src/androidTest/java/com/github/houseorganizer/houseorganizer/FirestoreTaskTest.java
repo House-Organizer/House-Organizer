@@ -46,7 +46,7 @@ public class FirestoreTaskTest {
     private static FirebaseAuth auth;
 
     protected static DocumentReference metadataRef() {
-        return db.collection("task_lists").document(FirebaseTestsHelper.FIRST_TL_NAME);
+        return FirebaseFirestore.getInstance().collection("task_lists").document(FirebaseTestsHelper.FIRST_TL_NAME);
     }
 
     @BeforeClass
