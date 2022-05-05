@@ -145,7 +145,7 @@ public class EditHouseholdActivityTest {
     @Test
     public void showQRCodeDisplaysCorrectQRCode() throws WriterException {
         // Perform clicks
-        onView(withId(R.id.showQRCode)).perform(click());
+        onView(withId(R.id.showQRCode)).perform(FirebaseTestsHelper.CUSTOM_CLICK_ACTION);
         Bitmap expected = EditHouseholdActivity.createQRCodeBitmap(TEST_HOUSEHOLD_NAMES[0]);
         onView(withId(R.id.image_dialog)).check(matches(withBitmap(expected)));
     }
