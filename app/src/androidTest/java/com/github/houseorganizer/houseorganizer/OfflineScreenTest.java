@@ -16,11 +16,13 @@ import android.content.Context;
 import android.content.Intent;
 
 import androidx.annotation.IdRes;
+import androidx.test.core.app.ApplicationProvider;
 import androidx.test.ext.junit.rules.ActivityScenarioRule;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 import androidx.test.platform.app.InstrumentationRegistry;
 
 import com.github.houseorganizer.houseorganizer.calendar.Calendar;
+import com.github.houseorganizer.houseorganizer.panels.TaskListActivity;
 import com.github.houseorganizer.houseorganizer.panels.offline.OfflineScreenActivity;
 import com.github.houseorganizer.houseorganizer.shop.ShopItem;
 import com.github.houseorganizer.houseorganizer.storage.LocalStorage;
@@ -45,6 +47,7 @@ import java.util.concurrent.ExecutionException;
 @RunWith(AndroidJUnit4.class)
 public class OfflineScreenTest {
     private static FirebaseAuth auth;
+    private static Intent intentFromMainScreenActivity;
 
     private final static List<ShopItem> GROCERIES =
             Arrays.asList(new ShopItem("oranges", 1, "kg"),
@@ -61,7 +64,7 @@ public class OfflineScreenTest {
                             LocalDateTime.of(2022, Month.MAY, 25, 15, 30), 200, "0"));
     @Rule
     public ActivityScenarioRule<OfflineScreenActivity> offlineScreenRule =
-            new ActivityScenarioRule<>(OfflineScreenActivity.class);
+            new ActivityScenarioRule<>(intentFromMainScreenActivity);
 
     @BeforeClass
     public static void createMockFirebaseAndPushEverythingOffline() throws ExecutionException, InterruptedException {
@@ -81,6 +84,10 @@ public class OfflineScreenTest {
         LocalStorage.pushGroceriesOffline(ctx, currentHouse, GROCERIES);
         LocalStorage.pushTaskListOffline(ctx, currentHouse, TASKS);
         LocalStorage.pushEventsOffline(ctx, currentHouse, EVENTS);
+
+        Thread.sleep(500); // wait for everything to be written / updated?
+
+        intentFromMainScreenActivity = new Intent(ApplicationProvider.getApplicationContext(), OfflineScreenActivity.class);
     }
 
     @Before
