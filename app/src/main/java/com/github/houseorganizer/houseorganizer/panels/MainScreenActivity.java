@@ -49,6 +49,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 import java.util.OptionalInt;
+import java.util.stream.Collectors;
 
 // [!!!] the current house is now an attribute of NavBarActivity
 // please don't add it back here in your merges
@@ -163,10 +164,8 @@ public class MainScreenActivity extends NavBarActivity {
                     locationPermission = (ContextCompat.checkSelfPermission(this,
                             Manifest.permission.ACCESS_FINE_LOCATION)
                             == PackageManager.PERMISSION_GRANTED);
-                } else {
                     // permission denied
-                    locationPermission = false;
-                }
+                } else locationPermission = false;
                 loadData();
                 break;
         }
@@ -207,14 +206,14 @@ public class MainScreenActivity extends NavBarActivity {
     }
 
     private DocumentReference defaultHouseSelection(QuerySnapshot snap, String householdId){
-        ArrayList<String> households = new ArrayList<>();
-        for (QueryDocumentSnapshot document : snap) {
-            if (householdId.equals(document.getId())) {
-                currentHouse = db.collection("households").document(document.getId());
-                saveData(document.getId());
-                return currentHouse;
-            }
-            households.add(document.getId());
+        List<DocumentSnapshot> l = snap.getDocuments();
+        List<String> households = l.stream().map(DocumentSnapshot::getId).collect(Collectors.toList());
+        List<String> filtered = households.stream().filter(d -> d.equals(householdId)).collect(Collectors.toList());
+
+        if(!filtered.isEmpty()){
+            currentHouse = db.collection("households").document(householdId);
+            saveData(householdId);
+            return currentHouse;
         }
         if (currentHouse == null) {
             if (!households.isEmpty()) {
