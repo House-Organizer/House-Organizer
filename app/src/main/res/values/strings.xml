@@ -150,6 +150,5 @@
     <string name="title_location_permission">Location permissions</string>
     <string name="text_location_permission">We need access to your location in order to
         automatically select the house closest to you</string>
->>>>>>> 262364c2650dcbb4da7d8c430924919f2cbed129
 
 </resources>
