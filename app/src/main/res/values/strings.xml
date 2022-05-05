@@ -149,5 +149,6 @@
     <string name="title_location_permission">Location permissions</string>
     <string name="text_location_permission">We need access to your location in order to
         automatically select the house closest to you</string>
+    <string name="show_invite_qr_code">Show invite QR code</string>
 
 </resources>
