@@ -173,6 +173,10 @@ public class Billsharer {
         });
     }
 
+    public void refreshBalances() {
+        // TODO
+    }
+
     private static List<Map<String, Object>> convertExpensesListToFirebase(List<Expense> expenses){
         List<Map<String, Object>> result = new ArrayList<>();
         for(Expense expense : expenses){
