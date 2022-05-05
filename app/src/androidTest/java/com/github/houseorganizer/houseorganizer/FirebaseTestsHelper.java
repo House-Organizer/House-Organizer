@@ -1,5 +1,11 @@
 package com.github.houseorganizer.houseorganizer;
 
+import android.view.View;
+
+import androidx.test.espresso.UiController;
+import androidx.test.espresso.ViewAction;
+import androidx.test.espresso.matcher.ViewMatchers;
+
 import com.github.houseorganizer.houseorganizer.shop.FirestoreShopList;
 import com.github.houseorganizer.houseorganizer.shop.ShopItem;
 import com.github.houseorganizer.houseorganizer.task.FirestoreTask;
@@ -16,6 +22,8 @@ import com.google.firebase.firestore.FieldPath;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.storage.FirebaseStorage;
+
+import org.hamcrest.Matcher;
 
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
@@ -64,6 +72,28 @@ public class FirebaseTestsHelper {
     protected static final int EVENTS_TO_DISPLAY = 5;
     protected static final int EVENTS_NOT_TO_DISPLAY = 2;
     protected static LocalDateTime DELETED_EVENT_TIME;
+
+    /**
+     * This custom action disregards the visibility requirement (>90%)
+     * of clicking on a view
+     */
+    protected static final ViewAction CUSTOM_CLICK_ACTION = new ViewAction() {
+                @Override
+                public Matcher<View> getConstraints() {
+                    return ViewMatchers.isEnabled(); // no constraints, they are checked above
+                }
+
+                @Override
+                public String getDescription() {
+                    return "click plus button";
+                }
+
+                @Override
+                public void perform(UiController uiController, View view) {
+                    view.performClick();
+                }
+            }
+    );
 
     protected static void startAuthEmulator(){
         if(authEmulatorActivated) return;
