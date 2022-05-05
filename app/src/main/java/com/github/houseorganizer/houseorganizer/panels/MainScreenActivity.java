@@ -174,7 +174,18 @@ public class MainScreenActivity extends NavBarActivity {
         SharedPreferences sharedPreferences = getSharedPrefs(this);
         String householdId = sharedPreferences.getString(CURRENT_HOUSEHOLD, "");
 
-        loadHouseholdAndTaskList(householdId);
+        selectHouse(householdId).addOnCompleteListener(h -> {
+            if(h.isSuccessful()){
+                if(currentHouse == null){
+                    noHousehold();
+                    return;
+                }
+                calendarAdapter.refreshCalendarView(this, currentHouse, "refreshCalendar:failureToRefresh", false);
+                initializeTaskList();
+            }else{
+                logAndToast(this.toString(), "loadHousehold:failure", h.getException(), getApplicationContext(), "Could not get a house.");
+            }
+        });
     }
 
     @SuppressLint("MissingPermission")
@@ -222,21 +233,6 @@ public class MainScreenActivity extends NavBarActivity {
             } else noHousehold();
         }
         return null;
-    }
-
-    private void loadHouseholdAndTaskList(String householdId) {
-        selectHouse(householdId).addOnCompleteListener(h -> {
-            if(h.isSuccessful()){
-                if(currentHouse == null){
-                    noHousehold();
-                    return;
-                }
-                calendarAdapter.refreshCalendarView(this, currentHouse, "refreshCalendar:failureToRefresh", false);
-                initializeTaskList();
-            }else{
-                logAndToast(this.toString(), "loadHousehold:failure", h.getException(), getApplicationContext(), "Could not get a house.");
-            }
-        });
     }
 
     private void noHousehold() {
