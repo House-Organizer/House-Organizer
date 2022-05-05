@@ -44,7 +44,7 @@ public class BalanceActivity extends NavBarActivity {
                 .addOnCompleteListener(t -> {
                     if (t.isSuccessful()){
                         bs = t.getResult().getBillsharer();
-                        adapter = t.getResult();
+                        adapter = t.getResult();// TODO
                         bs.getOnlineReference().addSnapshotListener((d, e) -> {
                             bs = Billsharer.buildBillsharer(d);
                             adapter.setBillsharer(bs);
