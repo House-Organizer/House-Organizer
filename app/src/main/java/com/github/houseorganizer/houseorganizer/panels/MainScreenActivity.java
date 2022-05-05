@@ -89,7 +89,7 @@ public class MainScreenActivity extends NavBarActivity {
         loadHouse = getIntent().hasExtra("LoadHouse");
 
         if(!loadHouse) loadData();
-        if(loadHouse && LocationHelpers.checkLocationPermission(this, this)){ // TODO find a way for not having 2 "this"
+        if(loadHouse && LocationHelpers.checkLocationPermission(getApplicationContext(), this)){
             locationPermission = true;
             loadData();
         }
