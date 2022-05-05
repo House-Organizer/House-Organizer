@@ -13,6 +13,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.github.houseorganizer.houseorganizer.R;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.Task;
+import com.google.android.gms.tasks.Tasks;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.SignInMethodQueryResult;
 import com.google.firebase.firestore.DocumentReference;
@@ -24,6 +25,7 @@ import com.google.firebase.firestore.QueryDocumentSnapshot;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 public class EditHousehold extends AppCompatActivity {
     private FirebaseFirestore firestore;
@@ -236,9 +238,16 @@ public class EditHousehold extends AppCompatActivity {
                             metadataSnap.getData().getOrDefault("task-ptrs", new ArrayList<>());
 
                     assert taskPtrs != null;
-                    taskPtrs.forEach(taskDocRef -> taskDocRef.delete().addOnFailureListener(tlDeletionFailed));
-
-                    metadataSnap.getReference().delete().addOnFailureListener(tlDeletionFailed);
+                    Tasks.whenAllComplete(
+                            taskPtrs.stream()
+                            .map(DocumentReference::delete)
+                            .map(t -> t.addOnFailureListener(tlDeletionFailed))
+                            .collect(Collectors.toList())
+                    ).addOnCompleteListener(allTasks -> {
+                                if (allTasks.getResult().stream().allMatch(Task::isSuccessful)) {
+                                    metadataSnap.getReference().delete().addOnFailureListener(tlDeletionFailed);
+                                }
+                            });
                 })
                 .addOnFailureListener(tlDeletionFailed);
     }
