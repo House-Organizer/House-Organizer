@@ -106,8 +106,12 @@ public final class TaskView {
             return;
         }
 
+        Map<String, Object> taskData = new HashMap<>();
+        taskData.put("title", "Untitled task");
+        taskData.put("description", "No description");
+
         db.collection("task_dump")
-                .add(new HashMap<>())
+                .add(taskData)
                 .addOnCompleteListener(task -> {
                     if (task.isSuccessful()) {
                         DocumentReference taskDocRef = task.getResult();
