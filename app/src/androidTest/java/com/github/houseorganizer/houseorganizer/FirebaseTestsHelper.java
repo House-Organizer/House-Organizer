@@ -264,6 +264,7 @@ public class FirebaseTestsHelper {
     protected static void createTestShopList() throws ExecutionException, InterruptedException {
         FirebaseFirestore db = FirebaseFirestore.getInstance();
 
+        // Store new shop list with one item for TEST_HOUSEHOLD_NAMES[0] on Firebase
         DocumentReference household = db.collection("households").document(TEST_HOUSEHOLD_NAMES[0]);
         FirestoreShopList shopList = new FirestoreShopList(household);
         shopList.addItem(TEST_ITEM);
@@ -271,6 +272,7 @@ public class FirebaseTestsHelper {
         Tasks.await(t);
         shopList.setOnlineReference(t.getResult());
 
+        // Store new shop list with one item for TEST_HOUSEHOLD_NAMES[1] on Firebase
         household = db.collection("households").document(TEST_HOUSEHOLD_NAMES[1]);
         shopList = new FirestoreShopList(household);
         shopList.addItem(TEST_ITEM);

@@ -17,8 +17,10 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.github.houseorganizer.houseorganizer.R;
-import com.google.android.gms.tasks.OnFailureListener;
+import com.github.houseorganizer.houseorganizer.util.EspressoIdlingResource;
 import com.github.houseorganizer.houseorganizer.util.Util;
+
+import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.gms.tasks.Tasks;
 import com.google.firebase.auth.FirebaseAuth;
@@ -83,8 +85,11 @@ public class EditHouseholdActivity extends AppCompatActivity {
     }
 
     public void addUser(View view) {
+        EspressoIdlingResource.increment();
+
         TextView emailView = findViewById(R.id.editTextAddUser);
         if (!verifyEmailInput(findViewById(R.id.editTextAddUser), view)) {
+            EspressoIdlingResource.decrement();
             return;
         }
         String email = emailView.getText().toString();
@@ -96,6 +101,8 @@ public class EditHouseholdActivity extends AppCompatActivity {
 
                     if (signInMethods != null && signInMethods.size() > 0)
                         addUserIfNotPresent(email, view);
+                    else
+                        EspressoIdlingResource.decrement();
                 });
     }
 
@@ -117,12 +124,17 @@ public class EditHouseholdActivity extends AppCompatActivity {
                                     Toast.LENGTH_SHORT).show();
                         }
                     }
+
+                    EspressoIdlingResource.decrement();
                 });
     }
 
     public void transmitOwnership(View view) {
+        EspressoIdlingResource.increment();
+
         TextView emailView = findViewById(R.id.editTextChangeOwner);
         if (!verifyEmailInput(emailView, view)) {
+            EspressoIdlingResource.decrement();
             return;
         }
         String new_owner_email = emailView.getText().toString();
@@ -134,6 +146,8 @@ public class EditHouseholdActivity extends AppCompatActivity {
                     List<String> signInMethods = querySignIn.getSignInMethods();
                     if (signInMethods != null && signInMethods.size() > 0) {
                         changeOwner(new_owner_email, view);
+                    } else {
+                        EspressoIdlingResource.decrement();
                     }
                 });
     }
@@ -157,12 +171,17 @@ public class EditHouseholdActivity extends AppCompatActivity {
                             startActivity(intent);
                         }
                     }
+                    EspressoIdlingResource.decrement();
                 });
     }
 
     public void removeUser(View view) {
+
+        EspressoIdlingResource.increment();
+
         TextView emailView = findViewById(R.id.editTextRemoveUser);
         if (!verifyEmailInput(emailView, view)) {
+            EspressoIdlingResource.decrement();
             return;
         }
         String email = emailView.getText().toString();
@@ -171,6 +190,7 @@ public class EditHouseholdActivity extends AppCompatActivity {
             Toast.makeText(getApplicationContext(),
                     view.getContext().getString(R.string.cant_remove_yourself),
                     Toast.LENGTH_SHORT).show();
+            EspressoIdlingResource.decrement();
             return;
         }
 
@@ -181,6 +201,8 @@ public class EditHouseholdActivity extends AppCompatActivity {
             int sizeOfSignInMethods = task.getResult().getSignInMethods().size();
             if (sizeOfSignInMethods > 0) {
                 removeUserFromHousehold(email, view);
+            } else {
+                EspressoIdlingResource.decrement();
             }
         });
     }
@@ -226,6 +248,8 @@ public class EditHouseholdActivity extends AppCompatActivity {
                                     Toast.LENGTH_SHORT).show();
                         }
                     }
+
+                    EspressoIdlingResource.decrement();
                 });
     }
 
