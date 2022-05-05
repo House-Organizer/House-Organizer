@@ -92,8 +92,7 @@ public class FirebaseTestsHelper {
                 public void perform(UiController uiController, View view) {
                     view.performClick();
                 }
-            }
-    );
+    };
 
     protected static void startAuthEmulator(){
         if(authEmulatorActivated) return;
