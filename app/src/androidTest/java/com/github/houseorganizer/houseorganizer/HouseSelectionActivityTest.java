@@ -11,17 +11,24 @@ import static androidx.test.espresso.matcher.ViewMatchers.withText;
 import static com.github.houseorganizer.houseorganizer.FirebaseTestsHelper.TEST_HOUSEHOLD_NAMES;
 import static org.junit.Assert.assertEquals;
 
+import android.content.Context;
+import android.content.Intent;
+
+import androidx.test.espresso.IdlingRegistry;
 import androidx.test.espresso.intent.Intents;
 import androidx.test.ext.junit.rules.ActivityScenarioRule;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
+import androidx.test.platform.app.InstrumentationRegistry;
 import androidx.test.rule.GrantPermissionRule;
 
 import com.github.houseorganizer.houseorganizer.house.HouseSelectionActivity;
 import com.github.houseorganizer.houseorganizer.panels.MainScreenActivity;
+import com.github.houseorganizer.houseorganizer.util.EspressoIdlingResource;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import org.junit.AfterClass;
+import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.Test;
@@ -46,15 +53,24 @@ public class HouseSelectionActivityTest {
 
         db = FirebaseFirestore.getInstance();
         auth = FirebaseAuth.getInstance();
+
+        IdlingRegistry.getInstance().register(EspressoIdlingResource.countingIdlingResource);
     }
 
     @AfterClass
     public static void signOut(){
         auth.signOut();
+        IdlingRegistry.getInstance().unregister(EspressoIdlingResource.countingIdlingResource);
     }
 
     @Rule
     public ActivityScenarioRule<HouseSelectionActivity> testRule = new ActivityScenarioRule<>(HouseSelectionActivity.class);
+
+    @Before
+    public void dismissDialogs() {
+        Context context = InstrumentationRegistry.getInstrumentation().getTargetContext();
+        context.sendBroadcast(new Intent(Intent.ACTION_CLOSE_SYSTEM_DIALOGS));
+    }
 
     @Test
     public void seeHousesList() {
@@ -64,8 +80,13 @@ public class HouseSelectionActivityTest {
     @Test
     public void selectHouse() {
         Intents.init();
+
+        for (int i=0; i<2; i++)
+            EspressoIdlingResource.increment();
+
         onView(withText(FirebaseTestsHelper.TEST_HOUSEHOLD_NAMES[0])).perform(click());
         intended(hasComponent(MainScreenActivity.class.getName()));
+
         Intents.release();
     }
 

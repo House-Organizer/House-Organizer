@@ -5,6 +5,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import android.content.Context;
+import android.content.Intent;
 
 import androidx.test.ext.junit.rules.ActivityScenarioRule;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
@@ -20,6 +21,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import org.junit.AfterClass;
+import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.Test;
@@ -59,6 +61,12 @@ public class LocalStorageTest {
 
     @Rule
     public ActivityScenarioRule<InfoActivity> infoActivityRule = new ActivityScenarioRule<>(InfoActivity.class);
+
+    @Before
+    public void dismissDialogs() {
+        Context context = InstrumentationRegistry.getInstrumentation().getTargetContext();
+        context.sendBroadcast(new Intent(Intent.ACTION_CLOSE_SYSTEM_DIALOGS));
+    }
 
     @Test
     public void writeTxtToFileWorksOnValidText() {

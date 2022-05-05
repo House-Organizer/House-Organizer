@@ -3,7 +3,11 @@ package com.github.houseorganizer.houseorganizer;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 
+import android.content.Context;
+import android.content.Intent;
+
 import androidx.test.ext.junit.runners.AndroidJUnit4;
+import androidx.test.platform.app.InstrumentationRegistry;
 
 import com.github.houseorganizer.houseorganizer.shop.FirestoreShopList;
 import com.github.houseorganizer.houseorganizer.shop.ShopItem;
@@ -15,6 +19,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QuerySnapshot;
 
 import org.junit.After;
+import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -47,6 +52,12 @@ public class FirestoreShopListTest {
         Task<DocumentReference> t1 = FirestoreShopList.storeNewShopList(db.collection("shop_lists"), shopList, household);
         Tasks.await(t1);
         shopList.setOnlineReference(t1.getResult());
+    }
+
+    @Before
+    public void dismissDialogs() {
+        Context context = InstrumentationRegistry.getInstrumentation().getTargetContext();
+        context.sendBroadcast(new Intent(Intent.ACTION_CLOSE_SYSTEM_DIALOGS));
     }
 
     @Test

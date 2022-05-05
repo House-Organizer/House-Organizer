@@ -24,6 +24,7 @@ import static com.github.houseorganizer.houseorganizer.FirebaseTestsHelper.TEST_
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 
+import android.content.Context;
 import android.content.Intent;
 
 import androidx.test.espresso.contrib.RecyclerViewActions;
@@ -31,6 +32,7 @@ import androidx.test.espresso.intent.Intents;
 import androidx.test.espresso.matcher.ViewMatchers;
 import androidx.test.ext.junit.rules.ActivityScenarioRule;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
+import androidx.test.platform.app.InstrumentationRegistry;
 
 import com.github.houseorganizer.houseorganizer.panels.MainScreenActivity;
 import com.google.android.gms.tasks.Task;
@@ -91,6 +93,9 @@ public class CalendarViewTest {
 
     @Before
     public void prepareCalendar() throws InterruptedException {
+        Context context = InstrumentationRegistry.getInstrumentation().getTargetContext();
+        context.sendBroadcast(new Intent(Intent.ACTION_CLOSE_SYSTEM_DIALOGS));
+
         onView(withId(R.id.house_imageButton)).perform(click());
         Thread.sleep(1000);
         onView(withId(R.id.housesView)).perform(RecyclerViewActions.actionOnItemAtPosition(0, click()));

@@ -10,6 +10,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.github.houseorganizer.houseorganizer.R;
 import com.github.houseorganizer.houseorganizer.util.BiViewHolder;
+import com.github.houseorganizer.houseorganizer.util.EspressoIdlingResource;
 
 public final class SubTaskAdapter extends RecyclerView.Adapter<BiViewHolder<Button, EditText>>{
     private final FirestoreTask parentTask;
@@ -36,6 +37,8 @@ public final class SubTaskAdapter extends RecyclerView.Adapter<BiViewHolder<Butt
         /* Setup to mark subtask as done */
         doneButton.setOnClickListener(
                 v -> {
+                    EspressoIdlingResource.increment();
+
                     //parentTask.getSubTaskAt(position).markAsFinished();
                     parentTask.removeSubTask(position);
                     new AlertDialog.Builder(v.getContext())
@@ -45,6 +48,8 @@ public final class SubTaskAdapter extends RecyclerView.Adapter<BiViewHolder<Butt
 
                     notifyItemRemoved(position);
                     notifyItemRangeChanged(0, getItemCount());
+
+                    EspressoIdlingResource.decrement();
                 }
         );
     }
