@@ -14,6 +14,9 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.github.houseorganizer.houseorganizer.R;
 import com.github.houseorganizer.houseorganizer.panels.MainScreenActivity;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.ArrayList;
@@ -50,25 +53,30 @@ public class CreateHouseholdActivity extends AppCompatActivity {
         int lon = Integer.parseInt(longitudeView.getText().toString());
 
         Map<String, Object> houseHold = createHousehold(houseHoldName, lat, lon);
+        OnFailureListener taskFailedListener = exception -> signalFailure(exception, view);
 
-        db.collection("households").add(houseHold)
-                .addOnCompleteListener(this, task -> {
-                    if (task.isSuccessful()) {
-                        saveData(task.getResult().getId());
+        Task<DocumentReference> addHHTask = db.collection("households").add(houseHold);
+        addHHTask.addOnFailureListener(taskFailedListener)
+                 .addOnSuccessListener(hhDocRef -> {
+                    String hhID = hhDocRef.getId();
+                    Task<DocumentReference> addTLTask = attachTaskList(hhID);
+                    addTLTask.addOnFailureListener(taskFailedListener)
+                             .addOnSuccessListener(tlDocRef -> {
+                                saveData(hhID);
 
-                        Toast.makeText(view.getContext(), view.getContext().getString(R.string.add_household_success), Toast.LENGTH_SHORT).show();
+                                Toast.makeText(view.getContext(), view.getContext().getString(R.string.add_household_success), Toast.LENGTH_SHORT).show();
+                                Intent intent = new Intent(this, MainScreenActivity.class);
+                                startActivity(intent);
+                             });
+                 });
+    }
 
-                        Intent intent = new Intent(this, MainScreenActivity.class);
-                        startActivity(intent);
+    private void signalFailure(Exception exception, View v) {
+        logAndToast("CreateHouseHoldActivity", "submitHouseholdToFirestore:failure",
+                exception, v.getContext(), v.getContext().getString(R.string.add_household_failure));
 
-                    } else {
-                        logAndToast("CreateHouseHoldActivity", "submitHouseholdToFirestore:failure",
-                                task.getException(), view.getContext(), view.getContext().getString(R.string.add_household_failure));
-
-                        Intent intent = new Intent(this, MainScreenActivity.class);
-                        startActivity(intent);
-                    }
-                });
+        Intent intent = new Intent(this, MainScreenActivity.class);
+        startActivity(intent);
     }
 
     private Map<String, Object> createHousehold(CharSequence houseHoldName, int lat, int lon) {
@@ -85,6 +93,22 @@ public class CreateHouseholdActivity extends AppCompatActivity {
         houseHold.put("notes", "");
 
         return houseHold;
+    }
+
+    private Task<DocumentReference> attachTaskList(String hhID) {
+        return db.collection("task_lists")
+                .add(createTaskList(hhID));
+    }
+
+    private Map<String, Object> createTaskList(String hhID) {
+        Map<String, Object> tlMetadata = new HashMap<>();
+
+        tlMetadata.put("owner", "0"); // Ownership is redundant and will be removed
+        tlMetadata.put("title", String.format("Task list for %s", hhID)); // Title is redundant and will be removed
+        tlMetadata.put("task-ptrs", new ArrayList<>());
+        tlMetadata.put("hh-id", hhID);
+
+        return tlMetadata;
     }
 
     private void saveData(String addedHouse) {

@@ -17,8 +17,10 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.github.houseorganizer.houseorganizer.R;
+import com.google.android.gms.tasks.OnFailureListener;
 import com.github.houseorganizer.houseorganizer.util.Util;
 import com.google.android.gms.tasks.Task;
+import com.google.android.gms.tasks.Tasks;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.SignInMethodQueryResult;
 import com.google.firebase.firestore.DocumentReference;
@@ -31,8 +33,10 @@ import com.google.zxing.WriterException;
 import com.google.zxing.common.BitMatrix;
 import com.google.zxing.qrcode.QRCodeWriter;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 public class EditHouseholdActivity extends AppCompatActivity {
@@ -255,7 +259,34 @@ public class EditHouseholdActivity extends AppCompatActivity {
     }
 
     public void deleteTaskList(View view) {
-        // TODO : The task list is not linked to households yet
+        OnFailureListener tlDeletionFailed =
+                exception -> Toast.makeText(getApplicationContext(),
+                        "Cannot remove task list", Toast.LENGTH_SHORT).show();
+
+        firestore.collection("task_lists")
+                .whereEqualTo("hh-id", currentHousehold.getId())
+                .get()
+                .addOnSuccessListener(docRefList -> {
+                    assert docRefList.getDocuments().size() == 1;
+
+                    DocumentSnapshot metadataSnap = docRefList.getDocuments().get(0);
+
+                    List<DocumentReference> taskPtrs = (ArrayList<DocumentReference>)
+                            metadataSnap.getData().getOrDefault("task-ptrs", new ArrayList<>());
+
+                    assert taskPtrs != null;
+                    Tasks.whenAllComplete(
+                            taskPtrs.stream()
+                            .map(DocumentReference::delete)
+                            .map(t -> t.addOnFailureListener(tlDeletionFailed))
+                            .collect(Collectors.toList())
+                    ).addOnCompleteListener(allTasks -> {
+                                if (allTasks.getResult().stream().allMatch(Task::isSuccessful)) {
+                                    metadataSnap.getReference().delete().addOnFailureListener(tlDeletionFailed);
+                                }
+                            });
+                })
+                .addOnFailureListener(tlDeletionFailed);
     }
 
     public void deleteCalendar(View view) {
