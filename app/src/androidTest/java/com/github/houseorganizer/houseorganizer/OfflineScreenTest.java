@@ -78,7 +78,7 @@ public class OfflineScreenTest {
                 .collection("households")
                 .document(FirebaseTestsHelper.TEST_HOUSEHOLD_NAMES[0]);
 
-        Context ctx = getApplicationContext();
+        Context ctx = InstrumentationRegistry.getInstrumentation().getTargetContext();
         LocalStorage.clearOfflineStorage(ctx);
         LocalStorage.pushCurrentHouseOffline(ctx, currentHouse);
         LocalStorage.pushGroceriesOffline(ctx, currentHouse, GROCERIES);
