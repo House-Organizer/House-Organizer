@@ -1,6 +1,5 @@
 package com.github.houseorganizer.houseorganizer.task;
 
-import com.google.android.gms.tasks.Tasks;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FieldValue;
 
@@ -8,7 +7,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
 
 public final class FirestoreTask extends HTask {
@@ -33,11 +31,7 @@ public final class FirestoreTask extends HTask {
     public void changeTitle(String newTitle) {
         super.changeTitle(newTitle);
 
-        try {
-            Tasks.await(taskDocRef.update("title", newTitle));
-        } catch (ExecutionException | InterruptedException e) {
-            e.printStackTrace();
-        }
+        taskDocRef.update("title", newTitle);
     }
 
     @Override
@@ -94,7 +88,7 @@ public final class FirestoreTask extends HTask {
     public static HTask.SubTask recoverSubTask(Map<String, String> data) {
         SubTask st = new HTask.SubTask(data.get("title"));
 
-        if(data.get("status").equals("completed"))
+        if("completed".equals(data.get("status")))
             st.markAsFinished();
 
         return st;

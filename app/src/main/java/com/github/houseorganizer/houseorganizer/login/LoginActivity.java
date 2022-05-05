@@ -103,7 +103,9 @@ public class LoginActivity extends AppCompatActivity {
         if (task.isSuccessful()) {
             // If sign in succeeds launch MainScreenActivity
             Log.d(getString(R.string.tag_login_activity), func + ":success");
-            startActivity(new Intent(LoginActivity.this, MainScreenActivity.class));
+            Intent intent = new Intent(LoginActivity.this, MainScreenActivity.class);
+            intent.putExtra("LoadHouse", true);
+            startActivity(intent);
             finish();
         } else {
             // If sign in fails, display a message to the user.

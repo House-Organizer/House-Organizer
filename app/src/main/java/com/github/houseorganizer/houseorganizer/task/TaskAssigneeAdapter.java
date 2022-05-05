@@ -1,5 +1,6 @@
 package com.github.houseorganizer.houseorganizer.task;
 
+import android.util.Log;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.TextView;
@@ -9,14 +10,15 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.github.houseorganizer.houseorganizer.R;
 import com.github.houseorganizer.houseorganizer.util.BiViewHolder;
+import com.google.firebase.firestore.FieldValue;
 
 import java.util.List;
 
 public final class TaskAssigneeAdapter extends RecyclerView.Adapter<BiViewHolder<TextView, ImageButton>> {
-    private final HTask parentTask;
+    private final FirestoreTask parentTask;
     private final List<String> allHouseHoldMembers;
 
-    public TaskAssigneeAdapter(HTask parentTask, List<String> allHouseHoldMembers) {
+    public TaskAssigneeAdapter(FirestoreTask parentTask, List<String> allHouseHoldMembers) {
         this.parentTask = parentTask;
         this.allHouseHoldMembers = allHouseHoldMembers;
     }
@@ -53,7 +55,7 @@ public final class TaskAssigneeAdapter extends RecyclerView.Adapter<BiViewHolder
             } else {
                 addAssignee(assigneeEmail);
             }
-
+            updateFirebase(assigneeEmail, isAssigned);
             notifyItemChanged(position);
         });
     }
@@ -69,5 +71,16 @@ public final class TaskAssigneeAdapter extends RecyclerView.Adapter<BiViewHolder
 
     private void addAssignee(String userEmail) {
         parentTask.assignTo(userEmail);
+    }
+
+    private void updateFirebase(String userEmail, boolean isAssigned) {
+        FieldValue arrayUpdate = isAssigned
+                ? FieldValue.arrayRemove(userEmail)
+                : FieldValue.arrayUnion(userEmail);
+
+        parentTask.getTaskDocRef()
+                .update("assignees", arrayUpdate)
+                .addOnFailureListener(exception ->
+                        Log.i("Push assignee changes to DB failed", exception.getMessage()));
     }
 }

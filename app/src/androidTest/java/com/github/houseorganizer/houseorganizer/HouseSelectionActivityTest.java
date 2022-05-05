@@ -8,6 +8,8 @@ import static androidx.test.espresso.intent.matcher.IntentMatchers.hasComponent;
 import static androidx.test.espresso.matcher.ViewMatchers.hasDescendant;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
 import static androidx.test.espresso.matcher.ViewMatchers.withText;
+import static com.github.houseorganizer.houseorganizer.FirebaseTestsHelper.TEST_HOUSEHOLD_NAMES;
+import static org.junit.Assert.assertEquals;
 
 import android.content.Context;
 import android.content.Intent;
@@ -32,6 +34,7 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+import java.util.Map;
 import java.util.concurrent.ExecutionException;
 
 @RunWith(AndroidJUnit4.class)
@@ -85,5 +88,17 @@ public class HouseSelectionActivityTest {
         intended(hasComponent(MainScreenActivity.class.getName()));
 
         Intents.release();
+    }
+
+    @Test
+    public void cantLeaveAsOwner() throws InterruptedException, ExecutionException {
+        Map<String, Object> houseData_before = FirebaseTestsHelper.fetchHouseholdData(TEST_HOUSEHOLD_NAMES[0], db);
+
+        onView(withId(R.id.leaveButton)).perform(click());
+        Thread.sleep(100);
+
+        Map<String, Object> houseData_after = FirebaseTestsHelper.fetchHouseholdData(TEST_HOUSEHOLD_NAMES[0], db);
+
+        assertEquals(houseData_before, houseData_after);
     }
 }
