@@ -121,12 +121,13 @@
 
     <ImageButton
         android:id="@+id/showQRCode"
-        android:layout_width="49dp"
+        android:layout_width="48dp"
         android:layout_height="48dp"
         android:layout_marginTop="32dp"
         android:background="#00000000"
         android:contentDescription="@string/show_qr_code"
         android:minHeight="48dp"
+        android:minWidth="48dp"
         android:onClick="showInviteQR"
         app:layout_constraintEnd_toStartOf="@id/imageButtonAddUser"
         app:layout_constraintStart_toEndOf="@id/editTextChangeOwner"
