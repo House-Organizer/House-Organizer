@@ -112,8 +112,7 @@ public class TaskListActivityTest {
     public void assigneePopUpIsDisplayed() {
         onView(withText(FirebaseTestsHelper.TEST_TASK_TITLE)).perform(click());
         onView(withText(R.string.assignees_button)).perform(click());
-
-        // This line will be changed to the user of the household
+        
         onView(withText(FirebaseTestsHelper.TEST_USERS_EMAILS[0]))
                 .inRoot(isDialog())
                 .check(matches(isDisplayed()));
