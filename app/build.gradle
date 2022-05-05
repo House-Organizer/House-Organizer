@@ -43,6 +43,12 @@ android {
 }
 
 dependencies {
+    //QR code
+    implementation "androidx.camera:camera-camera2:1.1.0-beta03"
+    implementation "androidx.camera:camera-lifecycle:1.1.0-beta03"
+    implementation "androidx.camera:camera-view:1.1.0-beta03"
+    implementation 'com.google.zxing:core:3.3.0'
+
     // JSon library for local storage
     implementation 'com.google.code.gson:gson:2.9.0'
 
@@ -70,6 +76,9 @@ dependencies {
     implementation 'com.google.firebase:firebase-storage:'
     implementation 'androidx.preference:preference:1.2.0'
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
+
+    // QR code generation
+    implementation 'com.google.zxing:core:3.3.0'
 
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.1.3'
