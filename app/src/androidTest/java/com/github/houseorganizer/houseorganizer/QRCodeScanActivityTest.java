@@ -9,6 +9,8 @@ import static com.github.houseorganizer.houseorganizer.FirebaseTestsHelper.TEST_
 import static com.github.houseorganizer.houseorganizer.FirebaseTestsHelper.TEST_USERS_PWD;
 import static com.github.houseorganizer.houseorganizer.FirebaseTestsHelper.signInTestUserWithCredentials;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 import android.Manifest;
 
@@ -30,6 +32,7 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
 
@@ -88,10 +91,13 @@ public class QRCodeScanActivityTest {
         Map<String, Object> houseData_before = FirebaseTestsHelper.fetchHouseholdData(TEST_HOUSEHOLD_NAMES[0], db);
         QRJoinRule.getScenario().onActivity(qrCodeScanActivity -> {
             try {
-                qrCodeScanActivity.acceptInvite("not_a_valid_household_id");
-                Thread.sleep(2000);
+                int i = 0;
+                while (!qrCodeScanActivity.acceptInvite("not_a_valid_household_id").isComplete() && i < 5) {
+                    i++;
+                    Thread.sleep(5000);
+                }
                 Task<DocumentSnapshot> task = db.collection("households").document(TEST_HOUSEHOLD_NAMES[0]).get();
-                Thread.sleep(2000);
+                Thread.sleep(100);
                 Map<String, Object> houseData_after = task.getResult().getData();
                 assertEquals(houseData_before, houseData_after);
                 qrCodeScanActivity.finish();
@@ -100,7 +106,7 @@ public class QRCodeScanActivityTest {
             }
         });
     }
-    /*
+
     @Test
     public void acceptInviteWorksOnValidID() throws ExecutionException, InterruptedException {
 
@@ -110,10 +116,13 @@ public class QRCodeScanActivityTest {
         Long num_residents_before = (Long) houseData_before.get("num_members");
         QRJoinRule.getScenario().onActivity(qrCodeScanActivity -> {
             try {
-                qrCodeScanActivity.acceptInvite(TEST_HOUSEHOLD_NAMES[0]);
-                Thread.sleep(5000);
+                int i = 0;
+                while (!qrCodeScanActivity.acceptInvite(TEST_HOUSEHOLD_NAMES[0]).isComplete() && i < 5) {
+                    i++;
+                    Thread.sleep(5000);
+                }
                 Task<DocumentSnapshot> task = db.collection("households").document(TEST_HOUSEHOLD_NAMES[0]).get();
-                Thread.sleep(5000);
+                Thread.sleep(100);
                 Map<String, Object> houseData_after = task.getResult().getData();
                 List<String> resident_after = (List<String>) houseData_after.get("residents");
                 Long num_residents_after = (Long) houseData_after.get("num_members");
@@ -129,5 +138,4 @@ public class QRCodeScanActivityTest {
             }
         });
     }
-    */
 }
