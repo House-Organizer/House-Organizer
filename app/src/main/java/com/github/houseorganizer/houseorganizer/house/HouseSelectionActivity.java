@@ -1,5 +1,7 @@
 package com.github.houseorganizer.houseorganizer.house;
 
+import static com.github.houseorganizer.houseorganizer.panels.MainScreenActivity.CURRENT_HOUSEHOLD;
+import static com.github.houseorganizer.houseorganizer.util.Util.getSharedPrefs;
 import static com.github.houseorganizer.houseorganizer.util.Util.getSharedPrefsEditor;
 
 import android.Manifest;
@@ -7,7 +9,6 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.location.Location;
-import android.os.Build;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -25,16 +26,20 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter;
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
 import com.github.houseorganizer.houseorganizer.R;
+import com.github.houseorganizer.houseorganizer.location.LocationHelpers;
 import com.github.houseorganizer.houseorganizer.panels.MainScreenActivity;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
 
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
@@ -42,7 +47,6 @@ public class HouseSelectionActivity extends AppCompatActivity {
 
     public static final String HOUSEHOLD_TO_EDIT = "com.github.houseorganizer.houseorganizer.HOUSEHOLD_TO_EDIT";
     public static final int DEFAULT_UPDATE_INTERVAL = 30;
-    private static final int PERMISSIONS_FINE_LOCATION = 99;
 
     String emailUser;
     RecyclerView housesView;
@@ -78,7 +82,7 @@ public class HouseSelectionActivity extends AppCompatActivity {
 
     private void requestPermission() {
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            // Comment next line to pass the tests, GrantPermissionRule doesn't prevent the pop up from appearomment next line to pass the tests, GrantPermissionRule doesn't prevent the pop up from appear
+            // Comment next line to pass the tests, GrantPermissionRule doesn't prevent the pop up from appearing
             // TODO: Find alternative
             //requestPermissions(new String[] {Manifest.permission.ACCESS_FINE_LOCATION}, PERMISSIONS_FINE_LOCATION);
         }
@@ -136,7 +140,7 @@ public class HouseSelectionActivity extends AppCompatActivity {
     private void saveData(String selectedHouse) {
         SharedPreferences.Editor editor = getSharedPrefsEditor(this);
 
-        editor.putString(MainScreenActivity.CURRENT_HOUSEHOLD, selectedHouse);
+        editor.putString(CURRENT_HOUSEHOLD, selectedHouse);
         editor.apply();
     }
 
@@ -170,8 +174,36 @@ public class HouseSelectionActivity extends AppCompatActivity {
                 });
     }
 
+    public void leaveHouse(View view){
+        SharedPreferences sharedPreferences = getSharedPrefs(this);
+        String householdId = sharedPreferences.getString(CURRENT_HOUSEHOLD, "");
+        if(householdId != null){
+            DocumentReference currentHouse = firestore.collection("households").document(householdId);
+            currentHouse.get().addOnCompleteListener(task -> {
+                Map<String, Object> householdData = task.getResult().getData();
+                if (householdData != null) {
+                    List<String> residents = (List<String>) householdData.getOrDefault("residents", "[]");
+                    Long num_users = (Long) householdData.get("num_members");
+                    String owner = (String) householdData.get("owner");
+                    String currentEmail = FirebaseAuth.getInstance().getCurrentUser().getEmail();
+                    if (residents.contains(currentEmail) && !owner.equals(currentEmail)) {
+                        currentHouse.update("num_members", num_users - 1);
+                        currentHouse.update("residents", FieldValue.arrayRemove(currentEmail));
+                        SharedPreferences.Editor editor = getSharedPrefsEditor(this);
+                        editor.putString(CURRENT_HOUSEHOLD, "");
+                        editor.apply();
+                        Intent intent = new Intent(this, MainScreenActivity.class);
+                        startActivity(intent);
+                    } else {
+                        Toast.makeText(getApplicationContext(), this.getString(R.string.cant_remove_owner),Toast.LENGTH_SHORT).show();
+                    }
+                }
+            });
+        }
+    }
+
     public void sendToEditHouse(View view){
-        Intent intent = new Intent(this, EditHousehold.class);
+        Intent intent = new Intent(this, EditHouseholdActivity.class);
         intent.putExtra(HOUSEHOLD_TO_EDIT, view.getTag().toString());
         startActivity(intent);
     }
@@ -204,7 +236,7 @@ public class HouseSelectionActivity extends AppCompatActivity {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
 
         switch (requestCode) {
-            case PERMISSIONS_FINE_LOCATION:
+            case LocationHelpers.PERMISSION_FINE_LOCATION:
                 if (grantResults[0] != PackageManager.PERMISSION_GRANTED)
                     Toast.makeText(this, getString(R.string.permission_denied), Toast.LENGTH_SHORT).show();
                 break;
