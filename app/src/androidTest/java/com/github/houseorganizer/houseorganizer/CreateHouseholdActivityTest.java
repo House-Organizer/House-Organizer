@@ -8,8 +8,12 @@ import static androidx.test.espresso.matcher.ViewMatchers.withId;
 import static com.github.houseorganizer.houseorganizer.FirebaseTestsHelper.TEST_HOUSEHOLD_NAMES;
 import static org.junit.Assert.assertTrue;
 
+import android.content.Context;
+import android.content.Intent;
+
 import androidx.test.ext.junit.rules.ActivityScenarioRule;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
+import androidx.test.platform.app.InstrumentationRegistry;
 
 import com.github.houseorganizer.houseorganizer.house.CreateHouseholdActivity;
 import com.google.firebase.auth.FirebaseAuth;
@@ -52,6 +56,9 @@ public class CreateHouseholdActivityTest {
     @Before
     public void setupHouseholds() throws ExecutionException, InterruptedException {
         FirebaseTestsHelper.createHouseholds();
+
+        Context context = InstrumentationRegistry.getInstrumentation().getTargetContext();
+        context.sendBroadcast(new Intent(Intent.ACTION_CLOSE_SYSTEM_DIALOGS));
     }
 
     @Test

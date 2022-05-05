@@ -16,14 +16,19 @@ import static com.github.houseorganizer.houseorganizer.FirebaseTestsHelper.creat
 import static com.github.houseorganizer.houseorganizer.FirebaseTestsHelper.deleteTestUser;
 import static com.github.houseorganizer.houseorganizer.FirebaseTestsHelper.startAuthEmulator;
 
+import android.content.Context;
+import android.content.Intent;
+
 import androidx.test.espresso.intent.Intents;
 import androidx.test.ext.junit.rules.ActivityScenarioRule;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
+import androidx.test.platform.app.InstrumentationRegistry;
 
 import com.github.houseorganizer.houseorganizer.login.LoginEmail;
 import com.github.houseorganizer.houseorganizer.login.VerifyEmail;
 
 import org.junit.AfterClass;
+import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.Test;
@@ -48,6 +53,12 @@ public class LoginEmailTest {
 
     @AfterClass
     public static void end() {}
+
+    @Before
+    public void dismissDialogs() {
+        Context context = InstrumentationRegistry.getInstrumentation().getTargetContext();
+        context.sendBroadcast(new Intent(Intent.ACTION_CLOSE_SYSTEM_DIALOGS));
+    }
 
     @Test
     public void signInWithEmailWorksWithCorrectInputs() {
