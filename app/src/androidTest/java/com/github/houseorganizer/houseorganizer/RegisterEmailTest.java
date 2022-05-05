@@ -16,7 +16,6 @@ import static com.github.houseorganizer.houseorganizer.FirebaseTestsHelper.creat
 import static com.github.houseorganizer.houseorganizer.FirebaseTestsHelper.deleteTestUser;
 import static com.github.houseorganizer.houseorganizer.FirebaseTestsHelper.signInTestUserWithCredentials;
 import static com.github.houseorganizer.houseorganizer.FirebaseTestsHelper.startAuthEmulator;
-
 import static org.hamcrest.CoreMatchers.anyOf;
 
 import androidx.test.espresso.intent.Intents;
@@ -31,8 +30,6 @@ import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-
-import java.util.concurrent.ExecutionException;
 
 
 @RunWith(AndroidJUnit4.class)

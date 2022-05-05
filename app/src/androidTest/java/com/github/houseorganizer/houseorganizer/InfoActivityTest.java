@@ -15,13 +15,11 @@ import static org.junit.Assert.assertEquals;
 import android.view.View;
 
 import androidx.recyclerview.widget.RecyclerView;
-
 import androidx.test.espresso.matcher.BoundedMatcher;
 import androidx.test.ext.junit.rules.ActivityScenarioRule;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 
 import com.github.houseorganizer.houseorganizer.panels.MainScreenActivity;
-
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
 
