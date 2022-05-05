@@ -98,7 +98,7 @@
         android:layout_height="wrap_content"
         android:backgroundTint="#6F1C739A"
         android:onClick="goToOfflineScreen"
-        android:text="Go offline"
+        android:text="@string/go_offline_button"
         android:textColor="@color/white"
         app:layout_constraintBottom_toTopOf="@id/task_list"
         app:layout_constraintEnd_toStartOf="@id/new_task"

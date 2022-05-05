@@ -104,7 +104,7 @@
         android:layout_height="wrap_content"
         android:backgroundTint="#6F1C739A"
         android:onClick="goBackOnline"
-        android:text="Go back online"
+        android:text="@string/go_back_online_button"
         android:textColor="@color/white"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
