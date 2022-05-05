@@ -91,11 +91,13 @@ public class QRCodeScanActivityTest {
         Map<String, Object> houseData_before = FirebaseTestsHelper.fetchHouseholdData(TEST_HOUSEHOLD_NAMES[0], db);
         QRJoinRule.getScenario().onActivity(qrCodeScanActivity -> {
             try {
+                Task<DocumentSnapshot> invite = qrCodeScanActivity.acceptInvite("not_a_valid_household_id");
                 int i = 0;
-                while (!qrCodeScanActivity.acceptInvite("not_a_valid_household_id").isComplete() && i < 5) {
+                while (!invite.isComplete() && i < 5) {
                     i++;
                     Thread.sleep(5000);
                 }
+                assertTrue(invite.isComplete());
                 Task<DocumentSnapshot> task = db.collection("households").document(TEST_HOUSEHOLD_NAMES[0]).get();
                 Thread.sleep(100);
                 Map<String, Object> houseData_after = task.getResult().getData();
@@ -116,11 +118,13 @@ public class QRCodeScanActivityTest {
         Long num_residents_before = (Long) houseData_before.get("num_members");
         QRJoinRule.getScenario().onActivity(qrCodeScanActivity -> {
             try {
+                Task<DocumentSnapshot> invite = qrCodeScanActivity.acceptInvite(TEST_HOUSEHOLD_NAMES[0]);
                 int i = 0;
-                while (!qrCodeScanActivity.acceptInvite(TEST_HOUSEHOLD_NAMES[0]).isComplete() && i < 5) {
+                while (!invite.isComplete() && i < 5) {
                     i++;
                     Thread.sleep(5000);
                 }
+                assertTrue(invite.isComplete());
                 Task<DocumentSnapshot> task = db.collection("households").document(TEST_HOUSEHOLD_NAMES[0]).get();
                 Thread.sleep(100);
                 Map<String, Object> houseData_after = task.getResult().getData();
