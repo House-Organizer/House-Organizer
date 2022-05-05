@@ -27,7 +27,9 @@ public class MainActivity extends AppCompatActivity {
         (new Handler()).postDelayed(() -> {
             if (user != null) {
                 if (user.isEmailVerified() || user.isAnonymous()) {
-                    startActivity(new Intent(MainActivity.this, MainScreenActivity.class));
+                    Intent intent = new Intent(MainActivity.this, MainScreenActivity.class);
+                    intent.putExtra("LoadHouse", true);
+                    startActivity(intent);
                 } else {
                     startActivity(new Intent(MainActivity.this, LoginEmail.class));
                 }

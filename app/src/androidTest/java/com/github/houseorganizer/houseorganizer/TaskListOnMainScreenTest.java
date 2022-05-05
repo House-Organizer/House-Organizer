@@ -17,17 +17,22 @@ import static androidx.test.espresso.matcher.ViewMatchers.isEnabled;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
 import static androidx.test.espresso.matcher.ViewMatchers.withTagValue;
 import static androidx.test.espresso.matcher.ViewMatchers.withText;
-
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 import androidx.test.ext.junit.rules.ActivityScenarioRule;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 
 import com.github.houseorganizer.houseorganizer.panels.MainScreenActivity;
 import com.github.houseorganizer.houseorganizer.task.FirestoreTask;
+import com.google.android.gms.tasks.Task;
+import com.google.android.gms.tasks.Tasks;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
 
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -36,11 +41,10 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ExecutionException;
-
-/*
-* To add tests for: adding/removing tasks, changing task title [for now need bug fixes]
-*/
 
 @RunWith(AndroidJUnit4.class)
 public class TaskListOnMainScreenTest {
@@ -56,6 +60,7 @@ public class TaskListOnMainScreenTest {
         FirebaseTestsHelper.setUpFirebase();
 
         auth = FirebaseAuth.getInstance();
+        FirestoreTaskTest.createMockFirebase();
     }
 
     @AfterClass
@@ -64,8 +69,8 @@ public class TaskListOnMainScreenTest {
     }
 
     @Before
-    public void forceTaskView() {
-        onView(withId(R.id.list_view_change)).perform(click(), click());
+    public void forceTaskView() throws InterruptedException {
+        Thread.sleep(2000); // no longer necessary to perform clicks
     }
 
     @Rule
@@ -96,36 +101,52 @@ public class TaskListOnMainScreenTest {
         onView(withText(FirebaseTestsHelper.TEST_TASK_DESC)).inRoot(isDialog()).check(matches(isDisplayed()));
     }
 
-    @Test
+    @Test // For House 1, we have User0 & User1 as residents
     public void assigneePopUpIsDisplayed() {
         onView(withText(FirebaseTestsHelper.TEST_TASK_TITLE)).perform(click());
         onView(withText(R.string.assignees_button)).perform(click());
 
-        // This line will be changed to the user of the household
-        onView(withText("aindreias@houseorganizer.com")).inRoot(isDialog()).check(matches(isDisplayed()));
+        onView(withText(FirebaseTestsHelper.TEST_USERS_EMAILS[0]))
+                .inRoot(isDialog())
+                .check(matches(isDisplayed()));
+
+        onView(withText(FirebaseTestsHelper.TEST_USERS_EMAILS[1]))
+                .inRoot(isDialog())
+                .check(matches(isDisplayed()));
     }
 
-    /* Actions work [changing title [tbd], description, adding/removing subtasks, adding/removing assignees */
-    /* [!] BUG: changing the title crashes the app (Tasks::await call in FirestoreTask)
-    => not tested for now */
-
+    /* Actions work [changing title & description, adding/removing (sub)tasks, adding/removing assignees */
     @Test /* DB: unchanged */
     public void changingDescriptionWorks() throws ExecutionException, InterruptedException {
+        changeTitleOrDesc(false);
+    }
+
+    @Test /* DB: unchanged */
+    public void changingTitleWorks() throws ExecutionException, InterruptedException {
+        changeTitleOrDesc(true);
+    }
+
+    private void changeTitleOrDesc(boolean changeTitle) throws ExecutionException, InterruptedException {
+        int inputId = changeTitle ? R.id.task_title_input : R.id.task_description_input;
+
         onView(withText(FirebaseTestsHelper.TEST_TASK_TITLE)).perform(click());
 
         /* UI check */
-        onView(withId(R.id.task_description_input)).perform(clearText(),
+        onView(withId(inputId)).perform(clearText(),
                 typeText(NEW_TASK_TITLE), closeSoftKeyboard());
 
         onView(withText(NEW_TASK_TITLE)).inRoot(isDialog()).check(matches(isDisplayed()));
 
         /* DB check */
-        FirestoreTask ft = FirestoreTaskTest.recoverFirestoreTask();
-        assertEquals(NEW_TASK_TITLE, ft.getDescription());
+        FirestoreTask ft = FirestoreTaskTest.recoverFirestoreTask(0);
+        assertEquals(NEW_TASK_TITLE, changeTitle ? ft.getTitle() : ft.getDescription());
 
         // Undoing
-        onView(withId(R.id.task_description_input)).perform(clearText(),
-                typeText(FirebaseTestsHelper.TEST_TASK_DESC), closeSoftKeyboard());
+        onView(withId(inputId)).perform(clearText(),
+                typeText(changeTitle
+                        ? FirebaseTestsHelper.TEST_TASK_TITLE
+                        : FirebaseTestsHelper.TEST_TASK_DESC),
+                closeSoftKeyboard());
     }
 
     @Test /* DB: unchanged */
@@ -137,7 +158,7 @@ public class TaskListOnMainScreenTest {
         onView(withId(R.id.subtask_title_input)).inRoot(isDialog()).check(matches(isDisplayed()));
 
         /* DB check */
-        FirestoreTask ft = FirestoreTaskTest.recoverFirestoreTask();
+        FirestoreTask ft = FirestoreTaskTest.recoverFirestoreTask(0);
         assertEquals(1, ft.getSubTasks().size());
 
         // Undoing
@@ -157,7 +178,7 @@ public class TaskListOnMainScreenTest {
         onView(withId(R.id.subtask_list)).check(matches(hasChildCount(1)));
 
         /* DB check */
-        FirestoreTask ft = FirestoreTaskTest.recoverFirestoreTask();
+        FirestoreTask ft = FirestoreTaskTest.recoverFirestoreTask(0);
         assertEquals(NEW_SUBTASK_TITLE, ft.getSubTaskAt(0).getTitle());
 
         // Undoing
@@ -176,27 +197,72 @@ public class TaskListOnMainScreenTest {
         onView(withId(R.id.subtask_list)).check(matches(hasChildCount(0)));
 
         /* DB double-check */
-        assertFalse(FirestoreTaskTest.recoverFirestoreTask().hasSubTasks());
+        assertFalse(FirestoreTaskTest.recoverFirestoreTask(0).hasSubTasks());
     }
 
     /* Assignee tests don't use the DB for now */
     @Test /* DB: not used */
-    public void assigneeButtonWorks() {
+    public void assigneeButtonWorks() throws InterruptedException, ExecutionException {
         onView(withText(FirebaseTestsHelper.TEST_TASK_TITLE)).perform(click());
         onView(withText(R.string.assignees_button)).perform(click());
 
-        onView(hasSibling(withText("aindreias@houseorganizer.com"))).perform(click());
+        onView(hasSibling(withText(FirebaseTestsHelper.TEST_USERS_EMAILS[0]))).perform(click());
+        Thread.sleep(200); // time for image to change
 
-        /* UI check */
-        onView(hasSibling(withText("aindreias@houseorganizer.com")))
+        /* ADD: UI check */
+        onView(hasSibling(withText(FirebaseTestsHelper.TEST_USERS_EMAILS[0])))
                 .check(matches(withTagValue(equalTo(R.drawable.remove_person))));
 
-        // Undoing + UI check
-        onView(hasSibling(withText("aindreias@houseorganizer.com"))).perform(click());
-        onView(hasSibling(withText("aindreias@houseorganizer.com")))
+        /* ADD: DB check */
+        List<String> recoveredAssignees = FirestoreTaskTest.recoverFirestoreTask(0).getAssignees();
+        assertEquals(1, recoveredAssignees.size());
+        assertTrue(recoveredAssignees.contains(FirebaseTestsHelper.TEST_USERS_EMAILS[0]));
+
+        // Undoing + UI & DB checks
+        onView(hasSibling(withText(FirebaseTestsHelper.TEST_USERS_EMAILS[0]))).perform(click());
+        Thread.sleep(200);
+
+        onView(hasSibling(withText(FirebaseTestsHelper.TEST_USERS_EMAILS[0])))
                 .check(matches(withTagValue(equalTo(R.drawable.add_person))));
+
+        recoveredAssignees = FirestoreTaskTest.recoverFirestoreTask(0).getAssignees();
+        assertEquals(0, recoveredAssignees.size());
     }
 
-    /* Add / remove tasks test postponed
-    [BUG] removing a task doesn't delete the taskPtr in the task list metadata */
+    // ! Using a custom click action since Cirrus screens don't show
+    // the `done` buttons completely
+    @Test /* DB: unchanged */
+    public void canAddAndRemoveTasks() throws InterruptedException, ExecutionException {
+        onView(withId(R.id.new_task)).perform(click());
+        Thread.sleep(500); // time for new task to show up in the recyclerview
+
+        /* ADD: UI check */
+        onView(withId(R.id.task_list)).check(matches(hasChildCount(2)));
+
+        /* ADD: DB check: taskPtr size */
+        Task<DocumentSnapshot> t = FirestoreTaskTest.metadataRef().get();
+        Tasks.await(t);
+        assertTrue(t.isSuccessful());
+        Map<String, Object> metadata = t.getResult().getData();
+        assertNotNull(metadata);
+
+        List<DocumentReference> taskPtrs = (ArrayList<DocumentReference>) metadata.get("task-ptrs");
+        assertNotNull(taskPtrs);
+        assertEquals(2, taskPtrs.size());
+
+        /* REMOVE: UI check */
+        onView(hasSibling(withText("Untitled task"))).perform(FirebaseTestsHelper.CUSTOM_CLICK_ACTION);
+        Thread.sleep(200);
+
+        /* REMOVE: DB check: taskPtr size */
+        t = FirestoreTaskTest.metadataRef().get();
+        Tasks.await(t);
+        assertTrue(t.isSuccessful());
+        metadata = t.getResult().getData();
+        assertNotNull(metadata);
+
+        taskPtrs = (ArrayList<DocumentReference>) metadata.get("task-ptrs");
+        assertNotNull(taskPtrs);
+        assertEquals(1, taskPtrs.size());
+    }
 }

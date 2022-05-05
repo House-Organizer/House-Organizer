@@ -14,6 +14,9 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.github.houseorganizer.houseorganizer.R;
 import com.github.houseorganizer.houseorganizer.panels.MainScreenActivity;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.ArrayList;
@@ -35,10 +38,48 @@ public class CreateHouseholdActivity extends AppCompatActivity {
         mUserEmail = getIntent().getStringExtra("mUserEmail");
     }
 
+    public void goToQRScan(View view){
+        Intent intent = new Intent(this, QRCodeScanActivity.class);
+        startActivity(intent);
+    }
+
     public void submitHouseholdToFirestore(View view){
         TextView houseHoldNameView = findViewById(R.id.editTextHouseholdName);
-        CharSequence houseHoldName = houseHoldNameView.getText();
+        TextView latitudeView = findViewById(R.id.editTextLatitude);
+        TextView longitudeView = findViewById(R.id.editTextLongitude);
 
+        CharSequence houseHoldName = houseHoldNameView.getText();
+        int lat = Integer.parseInt(latitudeView.getText().toString());
+        int lon = Integer.parseInt(longitudeView.getText().toString());
+
+        Map<String, Object> houseHold = createHousehold(houseHoldName, lat, lon);
+        OnFailureListener taskFailedListener = exception -> signalFailure(exception, view);
+
+        Task<DocumentReference> addHHTask = db.collection("households").add(houseHold);
+        addHHTask.addOnFailureListener(taskFailedListener)
+                 .addOnSuccessListener(hhDocRef -> {
+                    String hhID = hhDocRef.getId();
+                    Task<DocumentReference> addTLTask = attachTaskList(hhID);
+                    addTLTask.addOnFailureListener(taskFailedListener)
+                             .addOnSuccessListener(tlDocRef -> {
+                                saveData(hhID);
+
+                                Toast.makeText(view.getContext(), view.getContext().getString(R.string.add_household_success), Toast.LENGTH_SHORT).show();
+                                Intent intent = new Intent(this, MainScreenActivity.class);
+                                startActivity(intent);
+                             });
+                 });
+    }
+
+    private void signalFailure(Exception exception, View v) {
+        logAndToast("CreateHouseHoldActivity", "submitHouseholdToFirestore:failure",
+                exception, v.getContext(), v.getContext().getString(R.string.add_household_failure));
+
+        Intent intent = new Intent(this, MainScreenActivity.class);
+        startActivity(intent);
+    }
+
+    private Map<String, Object> createHousehold(CharSequence houseHoldName, int lat, int lon) {
         Map<String, Object> houseHold = new HashMap<>();
         List<String> residents = new ArrayList<>();
         residents.add(mUserEmail);
@@ -47,27 +88,27 @@ public class CreateHouseholdActivity extends AppCompatActivity {
         houseHold.put("owner", mUserEmail);
         houseHold.put("num_members", 1);
         houseHold.put("residents", residents);
+        houseHold.put("latitude", lat);
+        houseHold.put("longitude", lon);
+        houseHold.put("notes", "");
 
-        db.collection("households").add(houseHold)
-                .addOnCompleteListener(this, task -> {
-                    if (task.isSuccessful()) {
-                        saveData(task.getResult().getId());
+        return houseHold;
+    }
 
-                        Toast.makeText(view.getContext(),
-                                view.getContext().getString(R.string.add_household_success),
-                                Toast.LENGTH_SHORT).show();
+    private Task<DocumentReference> attachTaskList(String hhID) {
+        return db.collection("task_lists")
+                .add(createTaskList(hhID));
+    }
 
-                        Intent intent = new Intent(this, MainScreenActivity.class);
-                        startActivity(intent);
+    private Map<String, Object> createTaskList(String hhID) {
+        Map<String, Object> tlMetadata = new HashMap<>();
 
-                    } else {
-                        logAndToast("CreateHouseHoldActivity", "submitHouseholdToFirestore:failure",
-                                task.getException(), view.getContext(), view.getContext().getString(R.string.add_household_failure));
+        tlMetadata.put("owner", "0"); // Ownership is redundant and will be removed
+        tlMetadata.put("title", String.format("Task list for %s", hhID)); // Title is redundant and will be removed
+        tlMetadata.put("task-ptrs", new ArrayList<>());
+        tlMetadata.put("hh-id", hhID);
 
-                        Intent intent = new Intent(this, MainScreenActivity.class);
-                        startActivity(intent);
-                    }
-                });
+        return tlMetadata;
     }
 
     private void saveData(String addedHouse) {

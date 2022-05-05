@@ -1,5 +1,6 @@
 package com.github.houseorganizer.houseorganizer.task;
 
+import android.annotation.SuppressLint;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
@@ -15,13 +16,10 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.github.houseorganizer.houseorganizer.R;
 import com.github.houseorganizer.houseorganizer.panels.MainScreenActivity;
 import com.github.houseorganizer.houseorganizer.util.BiViewHolder;
-
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
-
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -30,7 +28,7 @@ import java.util.Map;
 import java.util.function.Consumer;
 
 public final class TaskView {
-    public TaskView() {}
+    private TaskView() {} // s.t. it's non-instantiable
 
     public static <S extends View, T extends View> BiViewHolder<S, T>
     makeViewHolder(@NonNull ViewGroup parent, @LayoutRes int viewResId,
@@ -64,7 +62,9 @@ public final class TaskView {
     }
 
     /* Used in MainScreenActivity */
-    public static void recoverTaskList(AppCompatActivity parent, TaskList taskList, TaskListAdapter taskListAdapter, DocumentReference tlMetadata) {
+    @SuppressLint("NotifyDataSetChanged")
+    public static void recoverTaskList(AppCompatActivity parent, TaskList taskList, TaskListAdapter taskListAdapter,
+                                       DocumentReference tlMetadata, @IdRes int recyclerViewResId) {
         tlMetadata.get().addOnCompleteListener(task -> {
             if (task.isSuccessful()) {
                 Map<String, Object> metadata = task.getResult().getData();
@@ -84,16 +84,17 @@ public final class TaskView {
                     if (task2.isSuccessful()) {
                         Map<String, Object> taskData = task2.getResult().getData();
                         taskList.addTask(FirestoreTask.recoverTask(taskData, ptr));
+                        taskListAdapter.notifyDataSetChanged(); // patch s.t. they show up faster
                     }
                 }));
 
-                setUpTaskListView(parent, taskListAdapter);
+                setUpTaskListView(parent, taskListAdapter, recyclerViewResId);
             }
         });
     }
 
-    public static void setUpTaskListView(AppCompatActivity parent, TaskListAdapter taskListAdapter) {
-        RecyclerView taskListView = parent.findViewById(R.id.task_list);
+    public static void setUpTaskListView(AppCompatActivity parent, TaskListAdapter taskListAdapter, @IdRes int resId) {
+        RecyclerView taskListView = parent.findViewById(resId);
         taskListView.setAdapter(taskListAdapter);
         taskListView.setLayoutManager(new LinearLayoutManager(parent));
     }
@@ -105,8 +106,12 @@ public final class TaskView {
             return;
         }
 
+        Map<String, Object> taskData = new HashMap<>();
+        taskData.put("title", "Untitled task");
+        taskData.put("description", "No description");
+
         db.collection("task_dump")
-                .add(new HashMap<>())
+                .add(taskData)
                 .addOnCompleteListener(task -> {
                     if (task.isSuccessful()) {
                         DocumentReference taskDocRef = task.getResult();

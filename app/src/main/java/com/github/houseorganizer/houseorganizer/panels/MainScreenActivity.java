@@ -4,57 +4,65 @@ import static com.github.houseorganizer.houseorganizer.util.Util.getSharedPrefs;
 import static com.github.houseorganizer.houseorganizer.util.Util.getSharedPrefsEditor;
 import static com.github.houseorganizer.houseorganizer.util.Util.logAndToast;
 
+import android.Manifest;
+import android.annotation.SuppressLint;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 
 import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.github.houseorganizer.houseorganizer.R;
 import com.github.houseorganizer.houseorganizer.calendar.Calendar;
-import com.github.houseorganizer.houseorganizer.calendar.EventsAdapter;
+import com.github.houseorganizer.houseorganizer.calendar.UpcomingAdapter;
 import com.github.houseorganizer.houseorganizer.house.CreateHouseholdActivity;
 import com.github.houseorganizer.houseorganizer.house.HouseSelectionActivity;
 import com.github.houseorganizer.houseorganizer.panels.offline.OfflineScreenActivity;
+import com.github.houseorganizer.houseorganizer.location.LocationHelpers;
 import com.github.houseorganizer.houseorganizer.shop.FirestoreShopList;
-import com.github.houseorganizer.houseorganizer.shop.ShopList;
 import com.github.houseorganizer.houseorganizer.shop.ShopListAdapter;
 import com.github.houseorganizer.houseorganizer.storage.LocalStorage;
 import com.github.houseorganizer.houseorganizer.task.TaskList;
 import com.github.houseorganizer.houseorganizer.task.TaskListAdapter;
 import com.github.houseorganizer.houseorganizer.task.TaskView;
-import com.github.houseorganizer.houseorganizer.user.DummyUser;
-import com.github.houseorganizer.houseorganizer.user.User;
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.tasks.Task;
 import com.google.android.gms.tasks.Tasks;
-import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
+import java.util.OptionalInt;
+import java.util.stream.Collectors;
 
-public class MainScreenActivity extends AppCompatActivity {
+// [!!!] the current house is now an attribute of NavBarActivity
+// please don't add it back here in your merges
+public class MainScreenActivity extends NavBarActivity {
 
     public static final String CURRENT_HOUSEHOLD = "com.github.houseorganizer.houseorganizer.CURRENT_HOUSEHOLD";
 
     private final Calendar calendar = new Calendar();
     private FirebaseFirestore db;
     private FirebaseUser mUser;
-    private DocumentReference currentHouse;
-    private EventsAdapter calendarAdapter;
+
+    private UpcomingAdapter calendarAdapter;
     private RecyclerView calendarEvents;
 
     private TaskList taskList;
@@ -66,7 +74,10 @@ public class MainScreenActivity extends AppCompatActivity {
     public enum ListFragmentView { CHORES_LIST, GROCERY_LIST }
 
     /* for setting up the task owner. Not related to firebase */
-    private final User currentUser = new DummyUser("Test User", "0");
+    private final String currentUID = "0";
+    private boolean loadHouse = false;
+    private boolean locationPermission = false;
+    public FusedLocationProviderClient fusedLocationClient;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -75,72 +86,51 @@ public class MainScreenActivity extends AppCompatActivity {
 
         mUser = FirebaseAuth.getInstance().getCurrentUser();
         db = FirebaseFirestore.getInstance();
+        fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
 
-        loadData();
+        loadHouse = getIntent().hasExtra("LoadHouse");
+
+        if(!loadHouse) loadData();
+        if(loadHouse && LocationHelpers.checkLocationPermission(getApplicationContext(), this)){
+            locationPermission = true;
+            loadData();
+        }
+
 
         calendarEvents = findViewById(R.id.calendar);
-        calendarAdapter = new EventsAdapter(calendar,
+        calendarAdapter = new UpcomingAdapter(calendar,
                 registerForActivityResult(new ActivityResultContracts.GetContent(), uri -> calendarAdapter.pushAttachment(uri)));
         calendarEvents.setAdapter(calendarAdapter);
         calendarEvents.setLayoutManager(new GridLayoutManager(this, 1));
         findViewById(R.id.add_event).setOnClickListener(v -> calendarAdapter.showAddEventDialog( this, currentHouse, "addEvent:failureToAdd"));
-        initializeGroceriesList();
-        BottomNavigationView menu = findViewById(R.id.nav_bar);
-        menu.setOnItemSelectedListener(l -> changeActivity(l.getTitle().toString()));
+
+        // If you want to select the main button on the navBar,
+        // use `OptionalInt.of(R.id. ...)`
+        super.setUpNavBar(R.id.nav_bar, OptionalInt.empty());
     }
 
     private Task<ShopListAdapter> initializeGroceriesList() {
-        if (currentHouse == null) return Tasks.forCanceled();
-        CollectionReference root = db.collection("shop_lists");
-        return root.whereEqualTo("household", currentHouse).get()
-                .continueWithTask(r -> {
-                    // If empty -> create new house
-                    if (r.getResult().getDocuments().size() == 0) {
-                        shopList = new FirestoreShopList(currentHouse);
-                        return FirestoreShopList.storeNewShopList(root, new ShopList(), currentHouse)
-                                .continueWith(t -> {
-                                    shopList.setOnlineReference(t.getResult());
-                                    shopListAdapter = new ShopListAdapter(shopList);
-                                    return shopListAdapter;
-                                });
-                        // If not empty then retrieve the existing shopList
-                    } else {
-                        return FirestoreShopList.retrieveShopList(root, currentHouse).continueWith(t -> {
-                            shopList = t.getResult();
-                            shopListAdapter = new ShopListAdapter(shopList);
-                            return shopListAdapter;
+        return ShopListAdapter.initializeFirestoreShopList(currentHouse, db).continueWith(c -> {
+                    if(c.isSuccessful()){
+                        shopList = c.getResult().getFirestoreShopList();
+                        shopListAdapter = c.getResult();
+                        shopList.getOnlineReference().addSnapshotListener((doc, e) -> {
+                            shopList = FirestoreShopList.buildShopList(doc);
+                            shopListAdapter.setShopList(shopList);
                         });
+                        return shopListAdapter;
                     }
-                    // Setting up real time actualisation
-                }).addOnCompleteListener(c -> {
-                    shopList.getOnlineReference().addSnapshotListener((doc, e) -> {
-                        shopList = FirestoreShopList.buildShopList(doc);
-                        shopListAdapter.setShopList(shopList);
-                    });
+                    return null;
                 });
     }
-    private boolean changeActivity(String buttonText) {
-        // Using the title and non resource strings here
-        // otherwise there is a warning that ids inside a switch are non final
-        switch(buttonText){
-            case "Calendar":
-                Intent intent = new Intent(this, CalendarActivity.class);
-                intent.putExtra("house", currentHouse.getId());
-                startActivity(intent);
-                break;
-            case "Groceries":
-                break;
-            case "Tasks":
-                break;
-            default:
-                break;
-        }
-        return true;
+
+
+    @Override
+    protected CurrentActivity currentActivity() {
+        return CurrentActivity.MAIN;
     }
 
     private void initializeTaskList() {
-        List<String> memberEmails = Arrays.asList("aindreias@houseorganizer.com", "sansive@houseorganizer.com",
-                "shau@reds.com", "oxydeas@houseorganizer.com");
 
         db.collection("task_lists")
                 .whereEqualTo("hh-id", currentHouse.getId())
@@ -148,9 +138,9 @@ public class MainScreenActivity extends AppCompatActivity {
                     if (task.isSuccessful()) {
                         QueryDocumentSnapshot qds = task.getResult().iterator().next();
                         this.tlMetadata = db.collection("task_lists").document(qds.getId());
-                        this.taskList = new TaskList(currentUser.uid(), "My weekly todo", new ArrayList<>());
-                        this.taskListAdapter = new TaskListAdapter(taskList, memberEmails);
-                        TaskView.recoverTaskList(this, taskList, taskListAdapter, tlMetadata);
+                        this.taskList = new TaskList(currentUID, "My weekly todo", new ArrayList<>());
+                        this.taskListAdapter = new TaskListAdapter(taskList, tlMetadata, currentHouse);
+                        TaskView.recoverTaskList(this, taskList, taskListAdapter, tlMetadata, R.id.task_list);
                     }
         });
     }
@@ -158,7 +148,26 @@ public class MainScreenActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        calendarAdapter.refreshCalendarView(this, currentHouse, "refreshCalendar:failureToRefresh");
+        calendarAdapter.refreshCalendarView(this, currentHouse, "refreshCalendar:failureToRefresh", false);
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        switch (requestCode) {
+            case LocationHelpers.PERMISSION_FINE_LOCATION:
+                // If request is cancelled, the result arrays are empty.
+                if (grantResults.length > 0
+                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    // permission was granted
+                    locationPermission = (ContextCompat.checkSelfPermission(this,
+                            Manifest.permission.ACCESS_FINE_LOCATION)
+                            == PackageManager.PERMISSION_GRANTED);
+                    // permission denied
+                } else locationPermission = false;
+                loadData();
+                break;
+        }
     }
 
     private void loadData() {
@@ -168,32 +177,66 @@ public class MainScreenActivity extends AppCompatActivity {
         loadHouseholdAndTaskList(householdId);
     }
 
+    @SuppressLint("MissingPermission")
+    private Task<DocumentReference> selectHouse(String householdId){
+        return db.collection("households").whereArrayContains("residents", Objects.requireNonNull(mUser.getEmail()))
+                .get().continueWithTask(task -> {
+            if (task.isSuccessful()) {
+                if(locationPermission && loadHouse){
+                    loadHouse = false;
+                    // We have the permissions and the query, we can select the closest house
+                    return fusedLocationClient.getLastLocation().continueWith(loc -> {
+                        if(loc.isSuccessful() && loc.getResult() != null){
+                            // Get the closest house
+                            DocumentSnapshot house = LocationHelpers.getClosestHouse(task.getResult(), loc.getResult());
+                            currentHouse = house.getReference();
+                            saveData(house.getId());
+                            return house.getReference();
+                        }
+                        // Could not get last location
+                        return defaultHouseSelection(task.getResult(), householdId);
+                    });
+                    // No permission for localization
+                }else return Tasks.forResult(defaultHouseSelection(task.getResult(), householdId));
+            }
+            // Could not fetch the houses
+            return Tasks.forResult(null);
+        });
+    }
+
+    private DocumentReference defaultHouseSelection(QuerySnapshot snap, String householdId){
+        List<DocumentSnapshot> l = snap.getDocuments();
+        List<String> households = l.stream().map(DocumentSnapshot::getId).collect(Collectors.toList());
+        List<String> filtered = households.stream().filter(d -> d.equals(householdId)).collect(Collectors.toList());
+
+        if(!filtered.isEmpty()){
+            currentHouse = db.collection("households").document(householdId);
+            saveData(householdId);
+            return currentHouse;
+        }
+        if (currentHouse == null) {
+            if (!households.isEmpty()) {
+                currentHouse = db.collection("households").document(households.get(0));
+                saveData(households.get(0));
+                return currentHouse;
+            } else noHousehold();
+        }
+        return null;
+    }
+
     private void loadHouseholdAndTaskList(String householdId) {
-        db.collection("households").whereArrayContains("residents", Objects.requireNonNull(mUser.getEmail())).get().addOnCompleteListener(task -> {
-                    if (task.isSuccessful()) {
-                        ArrayList<String> households = new ArrayList<>();
-                        for (QueryDocumentSnapshot document : task.getResult()) {
-                            if (householdId.equals(document.getId())) {
-                                currentHouse = db.collection("households").document(document.getId());
-                                saveData(document.getId());
-                                break;
-                            }
-                            households.add(document.getId());
-                        }
-                        if (currentHouse == null) {
-                            if (!households.isEmpty()) {
-                                currentHouse = db.collection("households").document(households.get(0));
-                                saveData(households.get(0));
-                            } else {
-                                noHousehold();
-                                return;
-                            }
-                        }
-                        calendarAdapter.refreshCalendarView(this, currentHouse, "refreshCalendar:failureToRefresh");
-                        initializeTaskList();
-                    } else
-                        logAndToast(this.toString(), "loadHousehold:failure", task.getException(), getApplicationContext(), "Could not get a house.");
-                });
+        selectHouse(householdId).addOnCompleteListener(h -> {
+            if(h.isSuccessful()){
+                if(currentHouse == null){
+                    noHousehold();
+                    return;
+                }
+                calendarAdapter.refreshCalendarView(this, currentHouse, "refreshCalendar:failureToRefresh", false);
+                initializeTaskList();
+            }else{
+                logAndToast(this.toString(), "loadHousehold:failure", h.getException(), getApplicationContext(), "Could not get a house.");
+            }
+        });
     }
 
     private void noHousehold() {
@@ -266,12 +309,15 @@ public class MainScreenActivity extends AppCompatActivity {
 
         switch(listView) {
             case CHORES_LIST:
-                TaskView.setUpTaskListView(this, taskListAdapter);
+                TaskView.setUpTaskListView(this, taskListAdapter, R.id.task_list);
                 break;
             case GROCERY_LIST:
-                if(shopList == null) {
+                if(shopList == null || shopListAdapter == null) {
                     initializeGroceriesList()
-                            .addOnCompleteListener(t -> shopListAdapter.setUpShopListView(this));
+                            .addOnCompleteListener(t -> {
+                                if(t.isSuccessful() && shopListAdapter != null) shopListAdapter.setUpShopListView(this);
+                                else Log.e("Groceries", "Could not create groceries view");
+                            });
                     return;
                 }
                 shopListAdapter.setUpShopListView(this);
