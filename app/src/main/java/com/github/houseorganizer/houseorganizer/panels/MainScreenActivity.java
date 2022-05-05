@@ -252,6 +252,8 @@ public class MainScreenActivity extends NavBarActivity {
         builder.setPositiveButton("Add household", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int which) {
                 Intent intent = new Intent(getApplicationContext(), CreateHouseholdActivity.class);
+                intent.putExtra("mUserEmail", mUser.getEmail());
+                //TODO get rid of this globally, make createHousehold call getAuth to get the email of the user EVERYWHERE
                 startActivity(intent);
             }
         });
