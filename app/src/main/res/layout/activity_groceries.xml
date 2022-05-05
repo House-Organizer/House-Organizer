@@ -51,11 +51,11 @@
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/nav_bar"
         android:layout_width="match_parent"
-        android:layout_height="0dip"
+        android:layout_height="53dip"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/groceries_add"
-        app:menu="@menu/bottom_nav_menu"
         app:layout_constraintHeight_default="percent"
-        app:layout_constraintHeight_percent=".075"/>
+        app:layout_constraintHeight_percent=".075"
+        app:layout_constraintTop_toBottomOf="@id/groceries_add"
+        app:menu="@menu/bottom_nav_menu" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

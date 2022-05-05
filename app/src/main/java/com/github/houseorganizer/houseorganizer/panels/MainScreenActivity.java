@@ -249,11 +249,11 @@ public class MainScreenActivity extends NavBarActivity {
                 "Any administrator can add you to theirs or " +
                 "you can create your own house from the house selection menu.");
         builder.setCancelable(true);
-        builder.setPositiveButton("Add household", new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int which) {
-                Intent intent = new Intent(getApplicationContext(), CreateHouseholdActivity.class);
-                startActivity(intent);
-            }
+        builder.setPositiveButton("Add household", (dialog, which) -> {
+            Intent intent = new Intent(getApplicationContext(), CreateHouseholdActivity.class);
+            intent.putExtra("mUserEmail", mUser.getEmail());
+            //TODO get rid of this globally, make createHousehold call getAuth to get the email of the user EVERYWHERE
+            startActivity(intent);
         });
 
         AlertDialog alert = builder.create();
