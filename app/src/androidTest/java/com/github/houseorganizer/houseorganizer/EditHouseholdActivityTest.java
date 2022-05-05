@@ -144,7 +144,8 @@ public class EditHouseholdActivityTest {
 
     @Test
     public void showQRCodeDisplaysCorrectQRCode() throws WriterException {
-        // Perform clicks
+        // Perform clicks (custom click because the button is more than 10% transparent
+        // and click() needs 90% of non-transparent visible button.
         onView(withId(R.id.showQRCode)).perform(FirebaseTestsHelper.CUSTOM_CLICK_ACTION);
         Bitmap expected = EditHouseholdActivity.createQRCodeBitmap(TEST_HOUSEHOLD_NAMES[0]);
         onView(withId(R.id.image_dialog)).check(matches(withBitmap(expected)));
