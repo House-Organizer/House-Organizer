@@ -97,8 +97,10 @@ public class ExpenseAdapter extends RecyclerView.Adapter<ExpenseAdapter.ExpenseV
     @Override
     public void onBindViewHolder(@NonNull ExpenseViewHolder holder, int position) {
         Expense expense = billsharer.getExpenses().get(position);
-        holder.textView.setText(expense.toText());
-        holder.removeCheck.setOnClickListener(l ->
+        TextView text = holder.textView;
+        ImageButton check = holder.removeCheck;
+        if (text != null) text.setText(expense.toText());
+        if (check != null) check.setOnClickListener(l ->
                 removeExpense(l.getContext(), expense, position)
         );
     }
