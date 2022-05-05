@@ -145,4 +145,9 @@
     <string name="tl_screen_new_task">New task</string>
     <string name="show_qr_code">Show QR code</string>
 
+    <!-- Localization -->
+    <string name="title_location_permission">Location permissions</string>
+    <string name="text_location_permission">We need access to your location in order to
+        automatically select the house closest to you</string>
+
 </resources>
