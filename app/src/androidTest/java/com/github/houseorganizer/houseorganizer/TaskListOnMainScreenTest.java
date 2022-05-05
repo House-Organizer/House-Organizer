@@ -237,7 +237,7 @@ public class TaskListOnMainScreenTest {
         Thread.sleep(500); // time for new task to show up in the recyclerview
 
         /* ADD: UI check */
-        onView(withId(R.id.tl_screen_tasks)).check(matches(hasChildCount(2)));
+        onView(withId(R.id.task_list)).check(matches(hasChildCount(2)));
 
         /* ADD: DB check: taskPtr size */
         Task<DocumentSnapshot> t = FirestoreTaskTest.metadataRef().get();
