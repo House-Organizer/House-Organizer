@@ -17,6 +17,8 @@ import com.google.firebase.firestore.QuerySnapshot;
 public class LocationHelpers {
 
     public static final int PERMISSION_FINE_LOCATION = 99;
+    // in kilometers
+    public static final int EARTH_RADIUS = 6371;
 
     public static DocumentSnapshot getClosestHouse(QuerySnapshot households, Location location){
         // Get current coordinates
@@ -52,11 +54,8 @@ public class LocationHelpers {
 
         temp = 2 * Math.asin(Math.sqrt(temp));
 
-        // Radius of earth in kilometers
-        double r = 6371;
-
         // calculate the result
-        return(temp * r);
+        return(temp * EARTH_RADIUS);
     }
 
     public static boolean checkLocationPermission(Context context, Activity activity) {
