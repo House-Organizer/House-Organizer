@@ -15,16 +15,22 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.github.houseorganizer.houseorganizer.R;
 import com.github.houseorganizer.houseorganizer.util.BiViewHolder;
+import com.google.firebase.firestore.DocumentReference;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 public final class TaskListAdapter extends RecyclerView.Adapter<BiViewHolder<Button, Button>> {
     private final TaskList taskList;
-    private final List<String> memberEmails;
+    private final DocumentReference metadataDocRef;
+    private List<String> memberEmails = new ArrayList<>();
 
-    public TaskListAdapter(TaskList taskList, List<String> memberEmails) {
-        this.taskList     = taskList;
-        this.memberEmails = memberEmails;
+    public TaskListAdapter(TaskList taskList, DocumentReference metadataDocRef, DocumentReference currentHouse) {
+        this.taskList       = taskList;
+        this.metadataDocRef = metadataDocRef;
+
+        setMemberEmails(currentHouse);
     }
 
     @NonNull
@@ -45,22 +51,40 @@ public final class TaskListAdapter extends RecyclerView.Adapter<BiViewHolder<But
         doneButton.setOnClickListener(doneButtonListener(position));
     }
 
+    // TODO move somewhere else [code duplication w/ TaskView for adding a taskPtr
     private View.OnClickListener doneButtonListener(int position) {
-        return v -> ((FirestoreTask)(taskList.getTaskAt(position))).getTaskDocRef()
-                .delete()
-                .addOnCompleteListener(task -> {
-                    if (task.isSuccessful()) {
+        return v -> {
+            DocumentReference taskDocRef =
+                    ((FirestoreTask) (taskList.getTaskAt(position))).getTaskDocRef();
 
-                        new AlertDialog.Builder(v.getContext())
-                                .setTitle(R.string.task_completion_title)
-                                .setMessage(R.string.task_completion_desc)
-                                .show();
+            metadataDocRef.get().addOnSuccessListener(taskDocSnap -> {
+                Map<String, Object> metadata = taskDocSnap.getData();
+                assert metadata != null;
 
-                        taskList.removeTask(position);
-                        notifyItemRemoved(position);
-                        notifyItemRangeChanged(0, getItemCount());
-                    }
+                List<DocumentReference> taskPtrs = (ArrayList<DocumentReference>)
+                        metadata.getOrDefault("task-ptrs", new ArrayList<>());
+
+                assert taskPtrs != null;
+                taskPtrs.removeIf(docRef -> docRef.getId().equals(taskDocRef.getId()));
+
+                metadata.put("task-ptrs", taskPtrs);
+
+                taskDocSnap.getReference().set(metadata);
+
+                taskDocRef.delete().addOnSuccessListener(res -> {
+
+                    new AlertDialog.Builder(v.getContext())
+                            .setTitle(R.string.task_completion_title)
+                            .setMessage(R.string.task_completion_desc)
+                            .show();
+
+                    taskList.removeTask(position);
+                    notifyItemRemoved(position);
+                    notifyItemRangeChanged(0, getItemCount());
+
                 });
+            });
+        };
     }
 
     // todo: modify due date
@@ -118,7 +142,7 @@ public final class TaskListAdapter extends RecyclerView.Adapter<BiViewHolder<But
             RecyclerView assigneeView = assigneeEditor.findViewById(R.id.assignee_editor);
 
             TaskAssigneeAdapter assigneeAdapter =
-                    new TaskAssigneeAdapter(taskList.getTaskAt(position),memberEmails);
+                    new TaskAssigneeAdapter((FirestoreTask) taskList.getTaskAt(position),memberEmails);
 
             assigneeView.setAdapter(assigneeAdapter);
             assigneeView.setLayoutManager(new LinearLayoutManager(v.getContext()));
@@ -134,5 +158,14 @@ public final class TaskListAdapter extends RecyclerView.Adapter<BiViewHolder<But
     @Override
     public int getItemCount() {
         return taskList.getTasks().size();
+    }
+
+    private void setMemberEmails(DocumentReference currentHouse) {
+        if (currentHouse == null) return;
+
+        currentHouse.get().addOnSuccessListener(docSnap ->
+                memberEmails = (List<String>)
+                        docSnap.getData().getOrDefault("residents", new ArrayList<>())
+        );
     }
 }

@@ -1,5 +1,11 @@
 package com.github.houseorganizer.houseorganizer;
 
+import android.view.View;
+
+import androidx.test.espresso.UiController;
+import androidx.test.espresso.ViewAction;
+import androidx.test.espresso.matcher.ViewMatchers;
+
 import com.github.houseorganizer.houseorganizer.shop.FirestoreShopList;
 import com.github.houseorganizer.houseorganizer.shop.ShopItem;
 import com.github.houseorganizer.houseorganizer.task.FirestoreTask;
@@ -12,9 +18,12 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FieldPath;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.storage.FirebaseStorage;
+
+import org.hamcrest.Matcher;
 
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
@@ -61,8 +70,28 @@ public class FirebaseTestsHelper {
     protected static String WRONG_EMAIL = "user_1.com";
     protected static final String VALID_PASSWORD_FOR_APP = "A3@ef678!";
     protected static final int EVENTS_TO_DISPLAY = 5;
-    protected static final int EVENTS_NOT_TO_DISPLAY = 2;
     protected static LocalDateTime DELETED_EVENT_TIME;
+
+    /**
+     * This custom action disregards the visibility requirement (>90%)
+     * of clicking on a view
+     */
+    protected static final ViewAction CUSTOM_CLICK_ACTION = new ViewAction() {
+                @Override
+                public Matcher<View> getConstraints() {
+                    return ViewMatchers.isEnabled(); // no constraints, they are checked above
+                }
+
+                @Override
+                public String getDescription() {
+                    return "click plus button";
+                }
+
+                @Override
+                public void perform(UiController uiController, View view) {
+                    view.performClick();
+                }
+    };
 
     protected static void startAuthEmulator(){
         if(authEmulatorActivated) return;
@@ -235,6 +264,7 @@ public class FirebaseTestsHelper {
     protected static void createTestShopList() throws ExecutionException, InterruptedException {
         FirebaseFirestore db = FirebaseFirestore.getInstance();
 
+        // Store new shop list with one item for TEST_HOUSEHOLD_NAMES[0] on Firebase
         DocumentReference household = db.collection("households").document(TEST_HOUSEHOLD_NAMES[0]);
         FirestoreShopList shopList = new FirestoreShopList(household);
         shopList.addItem(TEST_ITEM);
@@ -242,6 +272,7 @@ public class FirebaseTestsHelper {
         Tasks.await(t);
         shopList.setOnlineReference(t.getResult());
 
+        // Store new shop list with one item for TEST_HOUSEHOLD_NAMES[1] on Firebase
         household = db.collection("households").document(TEST_HOUSEHOLD_NAMES[1]);
         shopList = new FirestoreShopList(household);
         shopList.addItem(TEST_ITEM);
@@ -325,12 +356,21 @@ public class FirebaseTestsHelper {
     protected static void setupNicknames() throws ExecutionException, InterruptedException {
         FirebaseFirestore db = FirebaseFirestore.getInstance();
 
+        FieldPath field = FieldPath.of("user_1@test.com");
+
         Map<String, String> nicknames = new HashMap<>();
-        nicknames.put("user_1@test.com", "user_1");
+        nicknames.put("test", "test");
+        //We have to give a sample input to set in the collection and then we can update with a
+        //field value
 
         Task<Void> task = db.collection("email-to-nickname")
                 .document("email-to-nickname-translations")
-                .set(nicknames);
+                .set(nicknames).continueWithTask(task1 -> {
+                    db.collection("email-to-nickname")
+                            .document("email-to-nickname-translations")
+                            .update(field, "user_1");
+                    return task1;
+                });
         Tasks.await(task);
     }
 

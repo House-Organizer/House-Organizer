@@ -16,23 +16,25 @@ import static com.github.houseorganizer.houseorganizer.FirebaseTestsHelper.creat
 import static com.github.houseorganizer.houseorganizer.FirebaseTestsHelper.deleteTestUser;
 import static com.github.houseorganizer.houseorganizer.FirebaseTestsHelper.signInTestUserWithCredentials;
 import static com.github.houseorganizer.houseorganizer.FirebaseTestsHelper.startAuthEmulator;
-
 import static org.hamcrest.CoreMatchers.anyOf;
+
+import android.content.Context;
+import android.content.Intent;
 
 import androidx.test.espresso.intent.Intents;
 import androidx.test.ext.junit.rules.ActivityScenarioRule;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
+import androidx.test.platform.app.InstrumentationRegistry;
 
 import com.github.houseorganizer.houseorganizer.login.RegisterEmail;
 import com.github.houseorganizer.houseorganizer.login.VerifyEmail;
 
 import org.junit.AfterClass;
+import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-
-import java.util.concurrent.ExecutionException;
 
 
 @RunWith(AndroidJUnit4.class)
@@ -45,6 +47,12 @@ public class RegisterEmailTest {
     @Rule
     public ActivityScenarioRule<RegisterEmail> regRule =
             new ActivityScenarioRule<>(RegisterEmail.class);
+
+    @Before
+    public void dismissDialogs() {
+        Context context = InstrumentationRegistry.getInstrumentation().getTargetContext();
+        context.sendBroadcast(new Intent(Intent.ACTION_CLOSE_SYSTEM_DIALOGS));
+    }
 
     @BeforeClass
     public static void start() {

@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".house.EditHousehold">
+    tools:context=".house.EditHouseholdActivity">
 
     <ImageButton
         android:id="@+id/imageButtonRemoveUser"
@@ -118,5 +118,33 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/edit_household_name"
         app:srcCompat="@drawable/add_person" />
+
+    <TextView
+        android:id="@+id/showQRCodeText"
+        android:layout_width="wrap_content"
+        android:layout_height="30dp"
+        android:layout_marginTop="76dp"
+        android:text="@string/show_invite_qr_code"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/editTextChangeOwner" />
+
+    <ImageButton
+        android:id="@+id/showQRCode"
+        android:layout_width="144dp"
+        android:layout_height="144dp"
+        android:layout_marginTop="8dp"
+        android:background="#00000000"
+        android:contentDescription="@string/show_qr_code"
+        android:minWidth="144dp"
+        android:minHeight="144dp"
+        android:onClick="showInviteQR"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.498"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/showQRCodeText"
+        app:srcCompat="@drawable/qrcode_big" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -56,7 +56,9 @@ public class LoginEmail extends AppCompatActivity {
                         // Sign in success, update UI with the signed-in user's information
                         Log.d(getString(R.string.tag_login_email), "signInWithEmail:success");
                         if (Objects.requireNonNull(mAuth.getCurrentUser()).isEmailVerified()) {
-                            startActivity(new Intent(LoginEmail.this, MainScreenActivity.class));
+                            Intent intent = new Intent(LoginEmail.this, MainScreenActivity.class);
+                            intent.putExtra("LoadHouse", true);
+                            startActivity(intent);
                         } else {
                             startActivity(new Intent(LoginEmail.this, VerifyEmail.class));
                         }
