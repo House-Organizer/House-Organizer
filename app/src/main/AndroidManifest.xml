@@ -20,6 +20,12 @@
             android:name=".house.QRCodeScanActivity"
             android:exported="false" />
         <activity
+            android:name=".panels.BalanceActivity"
+            android:exported="false" />
+        <activity
+            android:name=".panels.ExpenseActivity"
+            android:exported="false" />
+        <activity
             android:name=".panels.GroceriesActivity"
             android:exported="false" />
         <activity
