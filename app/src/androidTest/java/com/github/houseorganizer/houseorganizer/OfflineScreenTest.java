@@ -69,7 +69,7 @@ public class OfflineScreenTest {
         // Load the groceries
         onView(withId(R.id.list_view_change)).perform(click());
         Thread.sleep(1000); // wait before going offline
-        onView(withText(R.string.go_offline_button)).perform(click());
+        onView(withId(R.id.go_offline_button)).perform(FirebaseTestsHelper.CUSTOM_CLICK_ACTION);
         Thread.sleep(500);
     }
 
