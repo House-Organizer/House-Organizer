@@ -25,9 +25,11 @@ import com.github.houseorganizer.houseorganizer.image.QRAnalyzer;
 import com.github.houseorganizer.houseorganizer.image.QRListener;
 import com.github.houseorganizer.houseorganizer.panels.MainScreenActivity;
 import com.github.houseorganizer.houseorganizer.util.Util;
+import com.google.android.gms.tasks.Task;
 import com.google.common.util.concurrent.ListenableFuture;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 
@@ -116,14 +118,14 @@ public class QRCodeScanActivity extends AppCompatActivity {
         cameraProvider.bindToLifecycle(this, cameraSelector, imageAnalysis, preview);
     }
 
-    public void acceptInvite(String QRCode){
+    public Task<DocumentSnapshot> acceptInvite(String QRCode){
         String email = auth.getCurrentUser().getEmail();
         if(email == null || QRCode == null){
-            return;
+            return null;
         }
 
         DocumentReference targetHousehold = db.collection("households").document(QRCode);
-        targetHousehold.get().addOnCompleteListener(task -> {
+        return targetHousehold.get().addOnCompleteListener(task -> {
             Map<String, Object> householdData = task.getResult().getData();
             if (householdData != null) {
                 List<String> listOfUsers = (List<String>) householdData.getOrDefault("residents", "[]");
