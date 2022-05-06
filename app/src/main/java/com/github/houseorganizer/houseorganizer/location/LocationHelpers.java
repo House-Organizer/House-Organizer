@@ -17,45 +17,22 @@ import com.google.firebase.firestore.QuerySnapshot;
 public class LocationHelpers {
 
     public static final int PERMISSION_FINE_LOCATION = 99;
-    // in kilometers
-    public static final int EARTH_RADIUS = 6371;
 
     public static DocumentSnapshot getClosestHouse(QuerySnapshot households, Location location){
-        // Get current coordinates
-        double lon = location.getLongitude();
-        double lat = location.getLongitude();
+
         double closest = Double.MAX_VALUE;
         DocumentSnapshot closestHouse = null;
         for(DocumentSnapshot house : households){
-            double distance = calculateDistance(lon, lat,
-                    house.getDouble("longitude"), house.getDouble("latitude"));
+            Location houseLoc = new Location("");
+            houseLoc.setLatitude(house.getDouble("latitude"));
+            houseLoc.setLongitude(house.getDouble("longitude"));
+            double distance = houseLoc.distanceTo(location);
             if(distance < closest){
                 closest = distance;
                 closestHouse = house;
             }
         }
         return closestHouse;
-    }
-
-    public static double calculateDistance(double lon1, double lat1,
-                                        double lon2, double lat2){
-
-        lon1 = Math.toRadians(lon1);
-        lon2 = Math.toRadians(lon2);
-        lat1 = Math.toRadians(lat1);
-        lat2 = Math.toRadians(lat2);
-
-        // Haversine formula
-        double dlon = lon2 - lon1;
-        double dlat = lat2 - lat1;
-        double temp = Math.pow(Math.sin(dlat / 2), 2)
-                + Math.cos(lat1) * Math.cos(lat2)
-                * Math.pow(Math.sin(dlon / 2),2);
-
-        temp = 2 * Math.asin(Math.sqrt(temp));
-
-        // calculate the result
-        return(temp * EARTH_RADIUS);
     }
 
     public static boolean checkLocationPermission(Context context, Activity activity) {
