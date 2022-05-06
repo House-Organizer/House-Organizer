@@ -70,7 +70,6 @@ public class FirebaseTestsHelper {
     protected static String WRONG_EMAIL = "user_1.com";
     protected static final String VALID_PASSWORD_FOR_APP = "A3@ef678!";
     protected static final int EVENTS_TO_DISPLAY = 5;
-    protected static final int EVENTS_NOT_TO_DISPLAY = 2;
     protected static LocalDateTime DELETED_EVENT_TIME;
 
     /**
