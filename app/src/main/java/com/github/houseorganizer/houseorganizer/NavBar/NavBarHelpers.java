@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 
 import com.github.houseorganizer.houseorganizer.panels.CalendarActivity;
+import com.github.houseorganizer.houseorganizer.panels.ExpenseActivity;
 import com.github.houseorganizer.houseorganizer.panels.GroceriesActivity;
 import com.github.houseorganizer.houseorganizer.panels.MainScreenActivity;
 import com.google.firebase.firestore.DocumentReference;
@@ -27,6 +28,10 @@ public class NavBarHelpers {
                 Intent intentG = new Intent(context, GroceriesActivity.class);
                 intentG.putExtra("house", currentHouse.getId());
                 return intentG;
+            case "Billsharer":
+                Intent intentB = new Intent(context, ExpenseActivity.class);
+                intentB.putExtra("house", currentHouse.getId());
+                return intentB;
             case "Tasks":
                 break;
             default:
