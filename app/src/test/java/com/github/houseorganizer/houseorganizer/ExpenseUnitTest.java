@@ -16,7 +16,7 @@ import java.util.Objects;
 public class ExpenseUnitTest {
 
     HashMap<String, Float> map = new HashMap<>();
-    Expense expense = new Expense("title", 0, "payee", map);
+    Expense expense = new Expense("title", 0.0f, "payee", map);
 
     @Test
     public void constructorBuildsItem() {
@@ -26,15 +26,15 @@ public class ExpenseUnitTest {
     @Test
     public void constructorBuildsItemWithRightValues() {
         assertThat(expense.getTitle(), is("title"));
-        assertThat(expense.getCost(), is(0));
+        assertThat(expense.getCost(), is(0.0f));
         assertThat(expense.getPayee(), is("payee"));
         assertEquals(expense.getShares(), new HashMap<>());
     }
 
     @Test
     public void equalsWorks() {
-        Expense expense2 = new Expense("title", 0, "payee", map);
-        Expense expense3 = new Expense("t", 1, "pay", new HashMap<>());
+        Expense expense2 = new Expense("title", 0.0f, "payee", map);
+        Expense expense3 = new Expense("t", 1.0f, "pay", new HashMap<>());
         assertEquals(expense, expense2);
         assertNotEquals(expense, expense3);
     }
@@ -48,7 +48,7 @@ public class ExpenseUnitTest {
     @Test
     public void toTextWorks() {
         String str = expense.toText();
-        assertEquals("title by payee : 0 CHF", str);
+        assertEquals("title by payee : 0.0 CHF", str);
     }
 
     @Test
