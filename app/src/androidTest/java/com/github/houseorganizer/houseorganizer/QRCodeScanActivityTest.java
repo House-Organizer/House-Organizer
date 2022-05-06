@@ -89,24 +89,11 @@ public class QRCodeScanActivityTest {
     @Test
     public void acceptInviteFailsOnInvalidID() throws ExecutionException, InterruptedException {
         Map<String, Object> houseData_before = FirebaseTestsHelper.fetchHouseholdData(TEST_HOUSEHOLD_NAMES[0], db);
-        QRJoinRule.getScenario().onActivity(qrCodeScanActivity -> {
-            try {
-                Task<DocumentSnapshot> invite = qrCodeScanActivity.acceptInvite("not_a_valid_household_id");
-                int i = 0;
-                while (!invite.isComplete() && i < 5) {
-                    i++;
-                    Thread.sleep(5000);
-                }
-                assertTrue(invite.isComplete());
-                Task<DocumentSnapshot> task = db.collection("households").document(TEST_HOUSEHOLD_NAMES[0]).get();
-                Thread.sleep(100);
-                Map<String, Object> houseData_after = task.getResult().getData();
-                assertEquals(houseData_before, houseData_after);
-                qrCodeScanActivity.finish();
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        });
+        QRJoinRule.getScenario().onActivity(qrCodeScanActivity -> qrCodeScanActivity.acceptInvite("not_a_valid_household_id"));
+        Thread.sleep(1000);
+        Task<DocumentSnapshot> task = db.collection("households").document(TEST_HOUSEHOLD_NAMES[0]).get();
+        Map<String, Object> houseData_after = task.getResult().getData();
+        assertEquals(houseData_before, houseData_after);
     }
 
     @Test
@@ -116,30 +103,17 @@ public class QRCodeScanActivityTest {
         Map<String, Object> houseData_before = FirebaseTestsHelper.fetchHouseholdData(TEST_HOUSEHOLD_NAMES[0], db);
         List<String> resident_before = (List<String>) houseData_before.get("residents");
         Long num_residents_before = (Long) houseData_before.get("num_members");
-        QRJoinRule.getScenario().onActivity(qrCodeScanActivity -> {
-            try {
-                Task<DocumentSnapshot> invite = qrCodeScanActivity.acceptInvite(TEST_HOUSEHOLD_NAMES[0]);
-                int i = 0;
-                while (!invite.isComplete() && i < 5) {
-                    i++;
-                    Thread.sleep(5000);
-                }
-                assertTrue(invite.isComplete());
-                Task<DocumentSnapshot> task = db.collection("households").document(TEST_HOUSEHOLD_NAMES[0]).get();
-                Thread.sleep(100);
-                Map<String, Object> houseData_after = task.getResult().getData();
-                List<String> resident_after = (List<String>) houseData_after.get("residents");
-                Long num_residents_after = (Long) houseData_after.get("num_members");
+        QRJoinRule.getScenario().onActivity(qrCodeScanActivity -> qrCodeScanActivity.acceptInvite(TEST_HOUSEHOLD_NAMES[0]));
+        Thread.sleep(1000);
+        Task<DocumentSnapshot> task = db.collection("households").document(TEST_HOUSEHOLD_NAMES[0]).get();
+        Map<String, Object> houseData_after = task.getResult().getData();
+        List<String> resident_after = (List<String>) houseData_after.get("residents");
+        Long num_residents_after = (Long) houseData_after.get("num_members");
 
-                // Compare states
-                assertFalse(resident_before.contains(TEST_USERS_EMAILS[2]));
-                Long expected_num_residents = num_residents_before + 1;
-                assertEquals(expected_num_residents, num_residents_after);
-                assertTrue(resident_after.contains(TEST_USERS_EMAILS[2]));
-                qrCodeScanActivity.finish();
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        });
+        // Compare states
+        assertFalse(resident_before.contains(TEST_USERS_EMAILS[2]));
+        Long expected_num_residents = num_residents_before + 1;
+        assertEquals(expected_num_residents, num_residents_after);
+        assertTrue(resident_after.contains(TEST_USERS_EMAILS[2]));
     }
 }
