@@ -11,10 +11,13 @@ import static com.github.houseorganizer.houseorganizer.FirebaseTestsHelper.TEST_
 import static org.junit.Assert.assertTrue;
 
 import android.Manifest;
+import android.content.Context;
+import android.content.Intent;
 
 import androidx.test.espresso.intent.Intents;
 import androidx.test.ext.junit.rules.ActivityScenarioRule;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
+import androidx.test.platform.app.InstrumentationRegistry;
 import androidx.test.rule.GrantPermissionRule;
 
 import com.github.houseorganizer.houseorganizer.house.CreateHouseholdActivity;
@@ -63,6 +66,9 @@ public class CreateHouseholdActivityTest {
     @Before
     public void setupHouseholds() throws ExecutionException, InterruptedException {
         FirebaseTestsHelper.createHouseholds();
+
+        Context context = InstrumentationRegistry.getInstrumentation().getTargetContext();
+        context.sendBroadcast(new Intent(Intent.ACTION_CLOSE_SYSTEM_DIALOGS));
     }
 
     @Test

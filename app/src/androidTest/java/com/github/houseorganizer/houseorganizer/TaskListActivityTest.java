@@ -24,14 +24,18 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
+import android.content.Context;
 import android.content.Intent;
 
 import androidx.test.core.app.ApplicationProvider;
+import androidx.test.espresso.IdlingRegistry;
 import androidx.test.ext.junit.rules.ActivityScenarioRule;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
+import androidx.test.platform.app.InstrumentationRegistry;
 
 import com.github.houseorganizer.houseorganizer.panels.TaskListActivity;
 import com.github.houseorganizer.houseorganizer.task.FirestoreTask;
+import com.github.houseorganizer.houseorganizer.util.EspressoIdlingResource;
 import com.google.android.gms.tasks.Task;
 import com.google.android.gms.tasks.Tasks;
 import com.google.firebase.auth.FirebaseAuth;
@@ -66,16 +70,22 @@ public class TaskListActivityTest {
 
         auth = FirebaseAuth.getInstance();
         intentFromMainScreenActivity = new Intent(ApplicationProvider.getApplicationContext(), TaskListActivity.class).putExtra("house", TEST_HOUSEHOLD_NAMES[0]);
+
+        IdlingRegistry.getInstance().register(EspressoIdlingResource.countingIdlingResource);
     }
 
     @AfterClass
     public static void signOut() {
         auth.signOut();
+        IdlingRegistry.getInstance().unregister(EspressoIdlingResource.countingIdlingResource);
     }
 
     @Before
     public void forceTaskView() throws InterruptedException {
         Thread.sleep(2000); // no longer necessary to perform clicks
+
+        Context context = InstrumentationRegistry.getInstrumentation().getTargetContext();
+        context.sendBroadcast(new Intent(Intent.ACTION_CLOSE_SYSTEM_DIALOGS));
     }
 
     @Rule
@@ -199,6 +209,7 @@ public class TaskListActivityTest {
 
         /* UI check */
         onView(withText("Congratulations!")).inRoot(isDialog()).check(matches(isDisplayed())).perform(pressBack());
+        Thread.sleep(1000);
         onView(withId(R.id.subtask_list)).check(matches(hasChildCount(0)));
 
         /* DB double-check */

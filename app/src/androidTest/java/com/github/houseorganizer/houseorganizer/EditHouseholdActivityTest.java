@@ -21,16 +21,20 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 
 import androidx.test.core.app.ApplicationProvider;
+import androidx.test.espresso.IdlingRegistry;
 import androidx.test.espresso.intent.Intents;
 import androidx.test.ext.junit.rules.ActivityScenarioRule;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
+import androidx.test.platform.app.InstrumentationRegistry;
 
 import com.github.houseorganizer.houseorganizer.house.EditHouseholdActivity;
 import com.github.houseorganizer.houseorganizer.house.HouseSelectionActivity;
+import com.github.houseorganizer.houseorganizer.util.EspressoIdlingResource;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -61,13 +65,18 @@ public class EditHouseholdActivityTest {
 
         db = FirebaseFirestore.getInstance();
         auth = FirebaseAuth.getInstance();
+
         intentFromHouseSelection = new Intent(ApplicationProvider.getApplicationContext(), EditHouseholdActivity.class).putExtra(HouseSelectionActivity.HOUSEHOLD_TO_EDIT, TEST_HOUSEHOLD_NAMES[0]);
+
+        IdlingRegistry.getInstance().register(EspressoIdlingResource.countingIdlingResource);
     }
 
     @AfterClass
     public static void signOut() throws ExecutionException, InterruptedException {
         FirebaseTestsHelper.createHouseholds();
         auth.signOut();
+
+        IdlingRegistry.getInstance().unregister(EspressoIdlingResource.countingIdlingResource);
     }
 
     @Rule
@@ -76,6 +85,9 @@ public class EditHouseholdActivityTest {
     @Before
     public void setupHouseholds() throws ExecutionException, InterruptedException {
         FirebaseTestsHelper.createHouseholds();
+
+        Context context = InstrumentationRegistry.getInstrumentation().getTargetContext();
+        context.sendBroadcast(new Intent(Intent.ACTION_CLOSE_SYSTEM_DIALOGS));
     }
 
     @Test
@@ -333,6 +345,7 @@ public class EditHouseholdActivityTest {
     @Test
     public void changeOwnerWorksWithCorrectEmail() throws ExecutionException, InterruptedException {
         Intents.init();
+
         // Get state of house
         Map<String, Object> houseData_before = FirebaseTestsHelper.fetchHouseholdData(TEST_HOUSEHOLD_NAMES[0], db);
         String owner_before = (String) houseData_before.get("owner");
