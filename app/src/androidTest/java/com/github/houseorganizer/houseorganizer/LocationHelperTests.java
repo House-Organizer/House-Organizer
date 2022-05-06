@@ -23,18 +23,6 @@ import java.util.concurrent.ExecutionException;
 public class LocationHelperTests {
 
     @Test
-    public void calculateDistanceWorks(){
-        double lon1 = 10;
-        double lat1 = 5;
-        double lon2 = 20;
-        double lat2 = 9;
-        double result1 = 1189;
-        double out = LocationHelpers.calculateDistance(lon1, lat1,
-                lon2, lat2);
-        assertEquals(out, result1, 1.0d);
-    }
-
-    @Test
     public void getClosestHouseWorks() throws ExecutionException, InterruptedException {
         Location location = new Location("");
         location.setLongitude(0);
