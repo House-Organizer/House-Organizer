@@ -6,11 +6,11 @@ import java.util.Objects;
 public class Expense implements Cloneable {
 
     private final String title;
-    private final int cost;
+    private final float cost;
     private final String payee;
-    private final HashMap<String, Double> shares;
+    private final HashMap<String, Float> shares;
 
-    public Expense(String title, int cost, String payee, HashMap<String, Double> shares) {
+    public Expense(String title, float cost, String payee, HashMap<String, Float> shares) {
         this.title = title;
         this.cost = cost;
         this.payee = payee;
@@ -21,7 +21,7 @@ public class Expense implements Cloneable {
         return title;
     }
 
-    public int getCost() {
+    public float getCost() {
         return cost;
     }
 
@@ -29,7 +29,7 @@ public class Expense implements Cloneable {
         return payee;
     }
 
-    public HashMap<String, Double> getShares() {
+    public HashMap<String, Float> getShares() {
         return shares;
     }
 
@@ -49,7 +49,7 @@ public class Expense implements Cloneable {
     @Override
     public Object clone() {
         return new Expense(this.title, this.cost, this.payee,
-                (HashMap<String, Double>) this.shares.clone());
+                (HashMap<String, Float>) this.shares.clone());
     }
 
     public String toText() {

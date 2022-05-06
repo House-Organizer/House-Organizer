@@ -3,9 +3,9 @@ package com.github.houseorganizer.houseorganizer.billsharer;
 public class Debt {
 
     private String debtor, creditor;
-    private int amount;
+    private float amount;
 
-    public Debt(String debtor, String creditor, int amount) {
+    public Debt(String debtor, String creditor, float amount) {
         this.amount = amount;
         this.creditor = creditor;
         this.debtor = debtor;
@@ -27,7 +27,7 @@ public class Debt {
         this.creditor = creditor;
     }
 
-    public int getAmount() {
+    public float getAmount() {
         return amount;
     }
 

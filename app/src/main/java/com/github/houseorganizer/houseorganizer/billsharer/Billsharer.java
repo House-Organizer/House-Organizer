@@ -18,7 +18,7 @@ public class Billsharer {
 
     private List<Expense> expenses;
     private List<Debt> debts;
-    private Map<String, Integer> balances;
+    private Map<String, Float> balances;
     private final DocumentReference currentHouse;
     private DocumentReference onlineReference;
     private List<String> residents;
@@ -40,10 +40,11 @@ public class Billsharer {
     }
 
     private void startUpBillsharer() {
-        initResidents();
-        initBalances();
-        computeBalances();
-        computeDebts();
+        initResidents().addOnCompleteListener(l -> {
+            initBalances();
+            computeBalances();
+            computeDebts();
+        });
     }
 
     public List<Expense> getExpenses() {
@@ -70,11 +71,11 @@ public class Billsharer {
         this.debts = debts;
     }
 
-    public Map<String, Integer> getBalances() {
+    public Map<String, Float> getBalances() {
         return balances;
     }
 
-    public void setBalances(Map<String, Integer> balances) {
+    public void setBalances(Map<String, Float> balances) {
         this.balances = balances;
     }
 
@@ -86,9 +87,9 @@ public class Billsharer {
         this.residents = residents;
     }
 
-    public void initResidents() {
+    public Task<DocumentSnapshot> initResidents() {
         residents = new ArrayList<>();
-        currentHouse.get().addOnCompleteListener(t -> {
+        return currentHouse.get().addOnCompleteListener(t -> {
             if (t.isSuccessful()) {
                 DocumentSnapshot house = t.getResult();
                 setResidents((ArrayList<String>) house.get("residents"));
@@ -104,14 +105,14 @@ public class Billsharer {
         }
         balances = new HashMap<>();
         for (String resident : residents) {
-            balances.put(resident, 0);
+            balances.put(resident, 0.0f);
         }
     }
 
     public void computeDebts() {}
 
-    private int computeTotal(String resident, Expense expense) {
-        int total = 0;
+    private float computeTotal(String resident, Expense expense) {
+        float total = 0;
         if (balances.containsKey(resident)) {
             total = balances.get(resident);
         }
@@ -194,7 +195,7 @@ public class Billsharer {
         List<Expense> expenses = new ArrayList<>();
         for(Map<String, Object> m : list){
             expenses.add(new Expense((String)m.get("title"), new Long((long) m.get("cost")).intValue(), (String)m.get("payee"),
-                    (HashMap<String, Double>)m.get("shares")));
+                    (HashMap<String, Float>)m.get("shares")));
         }
         return expenses;
     }

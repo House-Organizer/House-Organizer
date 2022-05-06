@@ -55,16 +55,16 @@ public class ExpenseAdapter extends RecyclerView.Adapter<ExpenseAdapter.ExpenseH
     private void getExpenseFromDialog(View dialogView) {
         String title = ((EditText) dialogView.findViewById(R.id.expense_edit_title)).getText().toString();
         Spinner spinner = dialogView.findViewById(R.id.expense_edit_payee);
-        int cost = 0;
+        float cost = 0;
         try {
-            cost = Integer.parseInt(((EditText) dialogView.findViewById(R.id.expense_edit_cost)).getText().toString());
+            cost = Float.parseFloat(((EditText) dialogView.findViewById(R.id.expense_edit_cost)).getText().toString());
         }catch (Exception e){
             // Only possible bad input is empty field
         }
         List<String> residents = billsharer.getResidents();
-        HashMap<String, Double> shares = new HashMap<>();
+        HashMap<String, Float> shares = new HashMap<>();
         for (String resident : residents) {
-            shares.put(resident, ((double) cost)/residents.size());
+            shares.put(resident, cost/residents.size());
         }
         billsharer.addExpense(new Expense(title, cost, spinner.getSelectedItem().toString(), shares));
         this.notifyItemInserted(billsharer.getExpenses().size()-1);
