@@ -1,6 +1,5 @@
 package com.github.houseorganizer.houseorganizer;
 
-import static androidx.test.core.app.ApplicationProvider.getApplicationContext;
 import static androidx.test.espresso.Espresso.onView;
 import static androidx.test.espresso.action.ViewActions.click;
 import static androidx.test.espresso.assertion.ViewAssertions.matches;
@@ -12,24 +11,15 @@ import static androidx.test.espresso.matcher.ViewMatchers.isEnabled;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
 import static androidx.test.espresso.matcher.ViewMatchers.withText;
 
-import android.content.Context;
-import android.content.Intent;
-
 import androidx.annotation.IdRes;
-import androidx.test.core.app.ApplicationProvider;
 import androidx.test.ext.junit.rules.ActivityScenarioRule;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
-import androidx.test.platform.app.InstrumentationRegistry;
 
 import com.github.houseorganizer.houseorganizer.calendar.Calendar;
-import com.github.houseorganizer.houseorganizer.panels.TaskListActivity;
-import com.github.houseorganizer.houseorganizer.panels.offline.OfflineScreenActivity;
+import com.github.houseorganizer.houseorganizer.panels.MainScreenActivity;
 import com.github.houseorganizer.houseorganizer.shop.ShopItem;
-import com.github.houseorganizer.houseorganizer.storage.LocalStorage;
 import com.github.houseorganizer.houseorganizer.task.HTask;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.firestore.DocumentReference;
-import com.google.firebase.firestore.FirebaseFirestore;
 
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -47,7 +37,6 @@ import java.util.concurrent.ExecutionException;
 @RunWith(AndroidJUnit4.class)
 public class OfflineScreenTest {
     private static FirebaseAuth auth;
-    private static Intent intentFromMainScreenActivity;
 
     private final static List<ShopItem> GROCERIES =
             Arrays.asList(new ShopItem("oranges", 1, "kg"),
@@ -63,8 +52,8 @@ public class OfflineScreenTest {
                     new Calendar.Event("Celine's bday", "We should make cupcakes!",
                             LocalDateTime.of(2022, Month.MAY, 25, 15, 30), 200, "0"));
     @Rule
-    public ActivityScenarioRule<OfflineScreenActivity> offlineScreenRule =
-            new ActivityScenarioRule<>(intentFromMainScreenActivity);
+    public ActivityScenarioRule<MainScreenActivity> mainScreenRule =
+            new ActivityScenarioRule<>(MainScreenActivity.class);
 
     @BeforeClass
     public static void createMockFirebaseAndPushEverythingOffline() throws ExecutionException, InterruptedException {
@@ -73,27 +62,15 @@ public class OfflineScreenTest {
         FirebaseTestsHelper.setUpFirebase();
 
         auth = FirebaseAuth.getInstance();
-
-        DocumentReference currentHouse = FirebaseFirestore.getInstance()
-                .collection("households")
-                .document(FirebaseTestsHelper.TEST_HOUSEHOLD_NAMES[0]);
-
-        Context ctx = InstrumentationRegistry.getInstrumentation().getTargetContext();
-        LocalStorage.clearOfflineStorage(ctx);
-        LocalStorage.pushCurrentHouseOffline(ctx, currentHouse);
-        LocalStorage.pushGroceriesOffline(ctx, currentHouse, GROCERIES);
-        LocalStorage.pushTaskListOffline(ctx, currentHouse, TASKS);
-        LocalStorage.pushEventsOffline(ctx, currentHouse, EVENTS);
-
-        Thread.sleep(500); // wait for everything to be written / updated?
-
-        intentFromMainScreenActivity = new Intent(ApplicationProvider.getApplicationContext(), OfflineScreenActivity.class);
     }
 
     @Before
-    public void dismissDialogs() {
-        Context context = InstrumentationRegistry.getInstrumentation().getTargetContext();
-        context.sendBroadcast(new Intent(Intent.ACTION_CLOSE_SYSTEM_DIALOGS));
+    public void goToActivity() throws InterruptedException {
+        // Load the groceries
+        onView(withText(R.string.cycle_view)).perform(click());
+        Thread.sleep(1000); // wait before going offline
+        onView(withText(R.string.go_offline_button)).perform(click());
+        Thread.sleep(500);
     }
 
     @AfterClass
