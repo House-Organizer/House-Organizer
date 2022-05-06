@@ -53,7 +53,7 @@ public class Expense implements Cloneable {
     }
 
     public String toText() {
-        return title + " by " + payee + " : " + cost;
+        return title + " by " + payee + " : " + cost + " CHF";
     }
 
 }

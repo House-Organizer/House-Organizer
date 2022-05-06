@@ -5,8 +5,10 @@ import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.Spinner;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -19,7 +21,7 @@ import com.github.houseorganizer.houseorganizer.R;
 import java.util.HashMap;
 import java.util.List;
 
-public class ExpenseAdapter extends RecyclerView.Adapter<ExpenseAdapter.ExpenseViewHolder> {
+public class ExpenseAdapter extends RecyclerView.Adapter<ExpenseAdapter.ExpenseHolder> {
 
     private Billsharer billsharer;
 
@@ -38,6 +40,10 @@ public class ExpenseAdapter extends RecyclerView.Adapter<ExpenseAdapter.ExpenseV
     public void addExpense(AppCompatActivity parent) {
         LayoutInflater inflater = LayoutInflater.from(parent);
         final View dialogView = inflater.inflate(R.layout.activity_dialog_expense, null);
+        Spinner spinner = dialogView.findViewById(R.id.expense_edit_payee);
+        ArrayAdapter<String> aa = new ArrayAdapter<>(dialogView.getContext(),
+                android.R.layout.simple_spinner_dropdown_item, billsharer.getResidents());
+        spinner.setAdapter(aa);
         new AlertDialog.Builder(parent)
                 .setTitle("New Expense")
                 .setView(dialogView)
@@ -47,8 +53,8 @@ public class ExpenseAdapter extends RecyclerView.Adapter<ExpenseAdapter.ExpenseV
     }
 
     private void getExpenseFromDialog(View dialogView) {
-        final String title = ((EditText) dialogView.findViewById(R.id.expense_edit_title)).getText().toString();
-        final String payee = dialogView.findViewById(R.id.expense_edit_payee).toString();
+        String title = ((EditText) dialogView.findViewById(R.id.expense_edit_title)).getText().toString();
+        Spinner spinner = dialogView.findViewById(R.id.expense_edit_payee);
         int cost = 0;
         try {
             cost = Integer.parseInt(((EditText) dialogView.findViewById(R.id.expense_edit_cost)).getText().toString());
@@ -60,7 +66,7 @@ public class ExpenseAdapter extends RecyclerView.Adapter<ExpenseAdapter.ExpenseV
         for (String resident : residents) {
             shares.put(resident, ((double) cost)/residents.size());
         }
-        billsharer.addExpense(new Expense(title, cost, payee, shares));
+        billsharer.addExpense(new Expense(title, cost, spinner.getSelectedItem().toString(), shares));
         this.notifyItemInserted(billsharer.getExpenses().size()-1);
     }
 
@@ -88,14 +94,14 @@ public class ExpenseAdapter extends RecyclerView.Adapter<ExpenseAdapter.ExpenseV
 
     @NonNull
     @Override
-    public ExpenseAdapter.ExpenseViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        Context context = parent.getContext();
-        LayoutInflater inflater = LayoutInflater.from(context);
-        return new ExpenseViewHolder(inflater.inflate(R.layout.expense_cell, parent, false));
+    public ExpenseHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        LayoutInflater inflater = LayoutInflater.from(parent.getContext());
+        View view = inflater.inflate(R.layout.expense_row, parent, false);
+        return new ExpenseHolder(view);
     }
 
     @Override
-    public void onBindViewHolder(@NonNull ExpenseViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull ExpenseHolder holder, int position) {
         Expense expense = billsharer.getExpenses().get(position);
         holder.textView.setText(expense.toText());
         holder.removeCheck.setOnClickListener(l ->
@@ -108,11 +114,11 @@ public class ExpenseAdapter extends RecyclerView.Adapter<ExpenseAdapter.ExpenseV
         return billsharer.getExpenses().size();
     }
 
-    public static class ExpenseViewHolder extends RecyclerView.ViewHolder {
+    public static class ExpenseHolder extends RecyclerView.ViewHolder {
         public TextView textView;
         public ImageButton removeCheck;
 
-        public ExpenseViewHolder(View expenseView) {
+        public ExpenseHolder(@NonNull View expenseView) {
             super(expenseView);
             textView = expenseView.findViewById(R.id.expense_text);
             removeCheck = expenseView.findViewById(R.id.expense_remove_check);

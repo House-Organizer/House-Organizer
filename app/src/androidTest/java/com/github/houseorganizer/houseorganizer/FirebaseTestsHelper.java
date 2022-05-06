@@ -70,7 +70,6 @@ public class FirebaseTestsHelper {
     protected static String WRONG_EMAIL = "user_1.com";
     protected static final String VALID_PASSWORD_FOR_APP = "A3@ef678!";
     protected static final int EVENTS_TO_DISPLAY = 5;
-    protected static final int EVENTS_NOT_TO_DISPLAY = 2;
     protected static LocalDateTime DELETED_EVENT_TIME;
 
     /**
@@ -265,6 +264,7 @@ public class FirebaseTestsHelper {
     protected static void createTestShopList() throws ExecutionException, InterruptedException {
         FirebaseFirestore db = FirebaseFirestore.getInstance();
 
+        // Store new shop list with one item for TEST_HOUSEHOLD_NAMES[0] on Firebase
         DocumentReference household = db.collection("households").document(TEST_HOUSEHOLD_NAMES[0]);
         FirestoreShopList shopList = new FirestoreShopList(household);
         shopList.addItem(TEST_ITEM);
@@ -272,6 +272,7 @@ public class FirebaseTestsHelper {
         Tasks.await(t);
         shopList.setOnlineReference(t.getResult());
 
+        // Store new shop list with one item for TEST_HOUSEHOLD_NAMES[1] on Firebase
         household = db.collection("households").document(TEST_HOUSEHOLD_NAMES[1]);
         shopList = new FirestoreShopList(household);
         shopList.addItem(TEST_ITEM);

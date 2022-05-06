@@ -33,13 +33,15 @@ public class ExpenseActivity extends NavBarActivity {
         findViewById(R.id.expense_expenses).setOnClickListener(l -> bs.refreshExpenses()
                 .addOnCompleteListener(t -> {
            if (!t.isSuccessful()) {
-               Util.logAndToast("Expense Activity", "ExpenseActivity:refreshExpense:failure",
+               Util.logAndToast("ExpenseActivity", "ExpenseActivity:refreshExpense:failure",
                        t.getException(), getApplicationContext(), "Failure to refresh expenses");
            }
         }));
-        findViewById(R.id.expense_balances).setOnClickListener(l ->
-                startActivity(new Intent(ExpenseActivity.this, BalanceActivity.class))
-        );
+        findViewById(R.id.expense_balances).setOnClickListener(l -> {
+            Intent intent = new Intent(ExpenseActivity.this, BalanceActivity.class);
+            intent.putExtra("house", currentHouse.getId());
+            startActivity(intent);
+        });
 
         super.setUpNavBar(R.id.expense_nav_bar, OptionalInt.of(R.id.nav_bar_bs));
     }
@@ -58,7 +60,7 @@ public class ExpenseActivity extends NavBarActivity {
                         view.setLayoutManager(new LinearLayoutManager(this));
                         view.setAdapter(adapter);
                     } else {
-                        Util.logAndToast("Expense", "Could not initialize billsharer",
+                        Util.logAndToast("ExpenseActivity", "Could not initialize billsharer",
                                 t.getException(), this, "Could not load billsharer");
                     }
                 });
