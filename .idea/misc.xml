@@ -7,14 +7,15 @@
         <entry key="app/src/main/res/drawable-v24/ic_launcher_foreground.xml" value="0.2255" />
         <entry key="app/src/main/res/drawable/ic_launcher_background.xml" value="0.2255" />
         <entry key="app/src/main/res/layout/activity_add_expense.xml" value="0.35625" />
+        <entry key="app/src/main/res/layout/activity_balance.xml" value="0.1" />
         <entry key="app/src/main/res/layout/activity_balance.xml" value="0.1798780487804878" />
         <entry key="app/src/main/res/layout/activity_billsharer.xml" value="0.33" />
         <entry key="app/src/main/res/layout/activity_create_household.xml" value="0.1" />
         <entry key="app/src/main/res/layout/activity_dialog_expense.xml" value="0.33" />
         <entry key="app/src/main/res/layout/activity_edit_household.xml" value="0.1" />
-        <entry key="app/src/main/res/layout/activity_expense.xml" value="0.14705882352941177" />
+        <entry key="app/src/main/res/layout/activity_expense.xml" value="0.1" />
         <entry key="app/src/main/res/layout/activity_greeting.xml" value="0.25416666666666665" />
-        <entry key="app/src/main/res/layout/activity_groceries.xml" value="0.35625" />
+        <entry key="app/src/main/res/layout/activity_groceries.xml" value="0.15691489361702127" />
         <entry key="app/src/main/res/layout/activity_home_selection.xml" value="0.1796875" />
         <entry key="app/src/main/res/layout/activity_house_selection.xml" value="0.17552083333333332" />
         <entry key="app/src/main/res/layout/activity_info.xml" value="0.15925925925925927" />
@@ -34,12 +35,12 @@
         <entry key="app/src/main/res/layout/content_main_screen.xml" value="0.2210144927536232" />
         <entry key="app/src/main/res/layout/event_creation.xml" value="0.15070921985815602" />
         <entry key="app/src/main/res/layout/expense_cell.xml" value="0.17325227963525835" />
-        <entry key="app/src/main/res/layout/expense_row.xml" value="0.25" />
+        <entry key="app/src/main/res/layout/expense_row.xml" value="0.18" />
         <entry key="app/src/main/res/layout/fragment_first.xml" value="0.2210144927536232" />
         <entry key="app/src/main/res/layout/fragment_second.xml" value="0.2210144927536232" />
         <entry key="app/src/main/res/layout/house_row.xml" value="0.22" />
         <entry key="app/src/main/res/layout/shop_item_dialog.xml" value="0.17325227963525835" />
-        <entry key="app/src/main/res/layout/shoplist_row.xml" value="0.17325227963525835" />
+        <entry key="app/src/main/res/layout/shoplist_row.xml" value="0.1" />
         <entry key="app/src/main/res/layout/subtask_row.xml" value="0.25" />
         <entry key="app/src/main/res/layout/task_editor.xml" value="0.22" />
         <entry key="app/src/main/res/layout/task_list_screen.xml" value="0.20153985507246377" />

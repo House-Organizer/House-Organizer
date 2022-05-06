@@ -151,4 +151,12 @@
         automatically select the house closest to you</string>
     <string name="show_invite_qr_code">Show invite QR code</string>
 
+    <!-- Billsharer -->
+    <string name="bs_add_expense">Add expense</string>
+    <string name="billsharer">Billsharer</string>
+    <string name="expenses">Expenses</string>
+    <string name="balances">Balances</string>
+    <string name="amount">Amount</string>
+    <string name="payer">Payer</string>
+
 </resources>
