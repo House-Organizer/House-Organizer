@@ -1,33 +1,55 @@
 package com.github.houseorganizer.houseorganizer.house;
 
+import static android.app.PendingIntent.getActivity;
 import static com.github.houseorganizer.houseorganizer.util.Util.getSharedPrefsEditor;
 import static com.github.houseorganizer.houseorganizer.util.Util.logAndToast;
 
+import android.app.Dialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.location.Address;
+import android.location.Geocoder;
+import android.location.Location;
 import android.os.Bundle;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.Window;
+import android.widget.EditText;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.github.houseorganizer.houseorganizer.R;
 import com.github.houseorganizer.houseorganizer.panels.MainScreenActivity;
+import com.google.android.gms.maps.CameraUpdate;
+import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.MapView;
+import com.google.android.gms.maps.MapsInitializer;
+import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 public class CreateHouseholdActivity extends AppCompatActivity {
 
     private FirebaseFirestore db;
     private String mUserEmail;
+    private Geocoder geocoder;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,6 +58,92 @@ public class CreateHouseholdActivity extends AppCompatActivity {
 
         db = FirebaseFirestore.getInstance();
         mUserEmail = getIntent().getStringExtra("mUserEmail");
+
+        if(Geocoder.isPresent()){
+            geocoder = new Geocoder(this, Locale.getDefault());
+        }
+    }
+
+    private Location getCoordinatesFromAddress(String address) {
+        if(geocoder == null){
+            //TODO
+        }else{
+            try {
+                setLoadingBar(true);
+                Location location = new Location("");
+                Address addr = null;
+
+                List<Address> geoResults = geocoder.getFromLocationName(address, 1);
+                int count = 0;
+                while (geoResults.size()==0 && count < 10) {
+                    geoResults = geocoder.getFromLocationName(address, 1);
+                    ++count;
+                }
+                setLoadingBar(false);
+                if (geoResults.size()>0) {
+                    addr = geoResults.get(0);
+                    location.setLatitude(addr.getLatitude());
+                    location.setLongitude(addr.getLongitude());
+                    return location;
+                }else return null;
+
+            } catch (IOException e) {
+                Toast.makeText(this, "Could not connect to internet", Toast.LENGTH_LONG );
+                setLoadingBar(false);
+                return null;
+            }
+        }
+        return null;
+    }
+
+    private void setLoadingBar(boolean visible){
+        ProgressBar bar = findViewById(R.id.createHProgressBar);
+        bar.setVisibility(visible ? View.VISIBLE : View.INVISIBLE);
+        bar.setIndeterminate(true);
+    }
+
+    private void displayMapDialog(View view, Location position, String houseName){
+        final View dialogView = LayoutInflater.from(this).inflate(R.layout.map_dialog, null);
+        AlertDialog.Builder builder = new AlertDialog.Builder(this)
+                .setTitle(R.string.house_location_title)
+                .setView(dialogView)
+                .setPositiveButton(R.string.confirm, (dialog, id) -> submitHouseholdToFirestore(view, houseName, position))
+                .setNegativeButton(R.string.no, (dialog, id) -> {
+                    Toast.makeText(this, "Please enter a more precise address", Toast.LENGTH_LONG).show();
+                    dialog.dismiss();
+                });
+
+        AlertDialog dialog = builder.show();
+        GoogleMap gMap;
+
+        MapView mMapView;
+        MapsInitializer.initialize(this);
+
+        mMapView = dialog.findViewById(R.id.mapView);
+        assert mMapView != null;
+        mMapView.onCreate(dialog.onSaveInstanceState());
+        mMapView.onResume();// needed to get the map to display immediately
+        mMapView.getMapAsync(new OnMapReadyCallback() {
+            @Override
+            public void onMapReady(@NonNull GoogleMap googleMap) {
+                LatLng pos = new LatLng(position.getLatitude(), position.getLongitude());
+                googleMap.addMarker(new MarkerOptions().position(pos).title(houseName));
+                googleMap.getUiSettings().setZoomControlsEnabled(true);
+                googleMap.animateCamera(CameraUpdateFactory.zoomTo(15), getPositionCallback(googleMap, pos));
+            };
+        });
+    }
+
+    private GoogleMap.CancelableCallback getPositionCallback(GoogleMap map, LatLng pos){
+        return new GoogleMap.CancelableCallback() {
+            @Override
+            public void onCancel() {}
+
+            @Override
+            public void onFinish() {
+                map.animateCamera(CameraUpdateFactory.newLatLng(pos));
+            }
+        };
     }
 
     public void goToQRScan(View view){
@@ -43,16 +151,22 @@ public class CreateHouseholdActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
-    public void submitHouseholdToFirestore(View view){
+    public void createHouseholdButtonPressed(View view){
         TextView houseHoldNameView = findViewById(R.id.editTextHouseholdName);
-        TextView latitudeView = findViewById(R.id.editTextLatitude);
-        TextView longitudeView = findViewById(R.id.editTextLongitude);
+        TextView addressView = findViewById(R.id.editTextAddress);
+        String houseName = houseHoldNameView.getText().toString();
 
-        CharSequence houseHoldName = houseHoldNameView.getText();
-        int lat = Integer.parseInt(latitudeView.getText().toString());
-        int lon = Integer.parseInt(longitudeView.getText().toString());
+        Location loc = getCoordinatesFromAddress(addressView.getText().toString());
+        if(loc == null){
+            //TODO
+            Toast.makeText(this, "Could not find place", Toast.LENGTH_LONG).show();
+        }else displayMapDialog(view, loc, houseName);
+    }
 
-        Map<String, Object> houseHold = createHousehold(houseHoldName, lat, lon);
+    public void submitHouseholdToFirestore(View view, String houseName, Location location){
+
+        Map<String, Object> houseHold = createHousehold(houseName,
+                location.getLatitude(), location.getLongitude());
         OnFailureListener taskFailedListener = exception -> signalFailure(exception, view);
 
         Task<DocumentReference> addHHTask = db.collection("households").add(houseHold);
@@ -79,7 +193,7 @@ public class CreateHouseholdActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
-    private Map<String, Object> createHousehold(CharSequence houseHoldName, int lat, int lon) {
+    private Map<String, Object> createHousehold(CharSequence houseHoldName, double lat, double lon) {
         Map<String, Object> houseHold = new HashMap<>();
         List<String> residents = new ArrayList<>();
         residents.add(mUserEmail);

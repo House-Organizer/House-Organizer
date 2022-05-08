@@ -8,6 +8,8 @@ import android.Manifest;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.location.Address;
+import android.location.Geocoder;
 import android.location.Location;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -40,7 +42,9 @@ import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
 
+import java.io.IOException;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 
@@ -62,6 +66,7 @@ public class HouseSelectionActivity extends AppCompatActivity {
     LocationRequest locationRequest;
     // Google's API for location services
     FusedLocationProviderClient fusedLocationProviderClient;
+    Geocoder geocoder;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -71,46 +76,8 @@ public class HouseSelectionActivity extends AppCompatActivity {
         housesView = findViewById(R.id.housesView);
         emailUser = Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser()).getEmail();
         firestore = FirebaseFirestore.getInstance();
-        locationRequest = LocationRequest
-                .create()
-                .setInterval(1000 * DEFAULT_UPDATE_INTERVAL)
-                .setPriority(LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY);
 
-        requestPermission();
-        getCoordinates();
         setHousesView();
-    }
-
-    private void requestPermission() {
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            // Comment next line to pass the tests, GrantPermissionRule doesn't prevent the pop up from appearing
-            // TODO: Find alternative
-            //requestPermissions(new String[] {Manifest.permission.ACCESS_FINE_LOCATION}, PERMISSIONS_FINE_LOCATION);
-        }
-    }
-
-    private void getCoordinates() {
-        fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
-
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
-            // User provided the permission to track GPS
-            fusedLocationProviderClient.getLastLocation().addOnSuccessListener(this, new OnSuccessListener<Location>() {
-                @Override
-                public void onSuccess(Location location) {
-                    if (location != null) {
-                        lat = location.getLatitude();
-                        lon = location.getLongitude();
-                    } else {
-                        getCoordinates();
-                    }
-                }
-            });
-
-        } else {
-            // Permissions not granted. Default order
-            lat = null;
-            lon = null;
-        }
     }
 
     private void setHousesView() {
