@@ -243,6 +243,7 @@ public class EditHouseholdActivity extends AppCompatActivity {
                         if (residents.contains(email)) {
                             currentHousehold.update("num_members", num_users - 1);
                             currentHousehold.update("residents", FieldValue.arrayRemove(email));
+                            removeUserFromTaskAssignees(email);
                             Toast.makeText(getApplicationContext(),
                                     view.getContext().getString(R.string.remove_user_success),
                                     Toast.LENGTH_SHORT).show();
@@ -251,6 +252,25 @@ public class EditHouseholdActivity extends AppCompatActivity {
 
                     EspressoIdlingResource.decrement();
                 });
+    }
+
+    private void removeUserFromTaskAssignees(String email) {
+        firestore.collection("task_lists")
+                .whereEqualTo("hh-id", householdId)
+                .get()
+                .addOnSuccessListener(docSnaps -> {
+                    assert docSnaps.size() == 1;
+
+                    Map<String, Object> metadata = docSnaps.iterator().next().getData();
+                    List<DocumentReference> taskPtrs = (ArrayList<DocumentReference>)
+                            metadata.getOrDefault("task-ptrs", new ArrayList<>());
+
+                    assert taskPtrs != null;
+                    taskPtrs.forEach(taskPtr ->
+                            taskPtr.update("assignees", FieldValue.arrayRemove(email)));
+
+                })
+                .addOnFailureListener(toastExceptionFailureListener("Could not update task assignees"));
     }
 
     public void deleteDialog(View view) {
@@ -282,10 +302,13 @@ public class EditHouseholdActivity extends AppCompatActivity {
         // TODO : The grocery list is not linked to households yet
     }
 
+    private OnFailureListener toastExceptionFailureListener(String message) {
+        return exception -> Toast.makeText(getApplicationContext(),
+                "Cannot remove task list", Toast.LENGTH_SHORT).show();
+    }
+
     public void deleteTaskList(View view) {
-        OnFailureListener tlDeletionFailed =
-                exception -> Toast.makeText(getApplicationContext(),
-                        "Cannot remove task list", Toast.LENGTH_SHORT).show();
+        OnFailureListener tlDeletionFailed = toastExceptionFailureListener("Cannot remove task list");
 
         firestore.collection("task_lists")
                 .whereEqualTo("hh-id", currentHousehold.getId())
