@@ -67,6 +67,7 @@ public class LoginActivityTest {
 
     @Test
     public void backPressLeavesApp() {
+        // Closing the app throws NoActivityResumedException, so we make the test fail if nothing was thrown
         Intents.init();
         try {
             pressBack();
