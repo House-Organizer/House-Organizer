@@ -11,6 +11,8 @@ check_android_task:
     kvm: true
     cpu: 8
     memory: 10G
+  create_local_properties_script:
+    - touch local.properties
   create_device_script:
     echo no | avdmanager create avd --force --name test --abi "$TARGET/$ARCH" --package "system-images;android-$API_LEVEL;$TARGET;$ARCH"
   start_emulator_background_script:
