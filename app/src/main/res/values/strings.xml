@@ -15,12 +15,15 @@
     <string name="info_header">Residents</string>
 
     <!-- Create household -->
-    <string name="add_household">Add household</string>
+    <string name="add_household">Create household</string>
+    <string name="add_join_household">Join/Create household</string>
     <string name="add_household_success">Added household!</string>
     <string name="add_household_failure">Failed to add household!</string>
+    <string name="scanQRButton">Scan QR code to join</string>
     <string name="household_creation_hint">Household name</string>
     <string name="latitude_hint">Latitude</string>
     <string name="longitude_hint">Longitude</string>
+    <string name="leave_house">Leave</string>
 
     <!-- Household selection -->
     <string name="house_name">House name</string>>
@@ -40,8 +43,10 @@
     <string name="owner_change_success">Successfully changed owner</string>
     <string name="add_user_success">Successfully added user</string>
     <string name="remove_user_success">Successfully removed user</string>
+    <string name="QR_invalid">Not a valid household</string>
     <string name="remove_user">Remove user</string>
     <string name="cant_remove_yourself">You cannot remove yourself</string>
+    <string name="cant_remove_owner">You cannot leave as the owner</string>
     <string name="remove_calendar_failure">Cannot remove calendar</string>
     <string name="remove_household_success">Successfully removed household</string>
     <string name="remove_household_failure">Cannot remove household</string>
@@ -138,10 +143,22 @@
     <string name="add_an_event">Add an event</string>
     <string name="cycle_view">Cycle view</string>
     <string name="tl_screen_new_task">New task</string>
+    <string name="show_qr_code">Show QR code</string>
 
     <!-- Localization -->
     <string name="title_location_permission">Location permissions</string>
     <string name="text_location_permission">We need access to your location in order to
         automatically select the house closest to you</string>
+    <string name="show_invite_qr_code">Show invite QR code</string>
+    <string name="house_location_title">House location</string>
+    <string name="no">No</string>
+
+    <!-- Billsharer -->
+    <string name="bs_add_expense">Add expense</string>
+    <string name="billsharer">Billsharer</string>
+    <string name="expenses">Expenses</string>
+    <string name="balances">Balances</string>
+    <string name="amount">Amount</string>
+    <string name="payer">Payer</string>
 
 </resources>

@@ -36,7 +36,7 @@ public class Util {
     }
 
     public static void logAndToast(String tag, String log, Exception e, Context cx, String toastMsg) {
-        Log.w(tag, log, e);
+        Log.e(tag, log, e);
         Toast.makeText(cx, toastMsg, Toast.LENGTH_SHORT).show();
     }
 

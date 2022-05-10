@@ -45,7 +45,6 @@ import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 import java.util.OptionalInt;
@@ -90,7 +89,7 @@ public class MainScreenActivity extends NavBarActivity {
         loadHouse = getIntent().hasExtra("LoadHouse");
 
         if(!loadHouse) loadData();
-        if(loadHouse && LocationHelpers.checkLocationPermission(this, this)){ // TODO find a way for not having 2 "this"
+        if(loadHouse && LocationHelpers.checkLocationPermission(getApplicationContext(), this)){
             locationPermission = true;
             loadData();
         }
@@ -130,8 +129,6 @@ public class MainScreenActivity extends NavBarActivity {
     }
 
     private void initializeTaskList() {
-        List<String> memberEmails = Arrays.asList("aindreias@houseorganizer.com", "sansive@houseorganizer.com",
-                "shau@reds.com", "oxydeas@houseorganizer.com");
 
         db.collection("task_lists")
                 .whereEqualTo("hh-id", currentHouse.getId())
@@ -140,7 +137,7 @@ public class MainScreenActivity extends NavBarActivity {
                         QueryDocumentSnapshot qds = task.getResult().iterator().next();
                         this.tlMetadata = db.collection("task_lists").document(qds.getId());
                         this.taskList = new TaskList(currentUID, "My weekly todo", new ArrayList<>());
-                        this.taskListAdapter = new TaskListAdapter(taskList, memberEmails);
+                        this.taskListAdapter = new TaskListAdapter(taskList, tlMetadata, currentHouse);
                         TaskView.recoverTaskList(this, taskList, taskListAdapter, tlMetadata, R.id.task_list);
                     }
         });
@@ -252,11 +249,11 @@ public class MainScreenActivity extends NavBarActivity {
                 "Any administrator can add you to theirs or " +
                 "you can create your own house from the house selection menu.");
         builder.setCancelable(true);
-        builder.setPositiveButton("Add household", new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int which) {
-                Intent intent = new Intent(getApplicationContext(), CreateHouseholdActivity.class);
-                startActivity(intent);
-            }
+        builder.setPositiveButton("Add household", (dialog, which) -> {
+            Intent intent = new Intent(getApplicationContext(), CreateHouseholdActivity.class);
+            intent.putExtra("mUserEmail", mUser.getEmail());
+            //TODO get rid of this globally, make createHousehold call getAuth to get the email of the user EVERYWHERE
+            startActivity(intent);
         });
 
         AlertDialog alert = builder.create();
