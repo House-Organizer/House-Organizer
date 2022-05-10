@@ -2,7 +2,11 @@ package com.github.houseorganizer.houseorganizer;
 
 
 import static androidx.test.espresso.Espresso.onView;
+import static androidx.test.espresso.Espresso.pressBack;
 import static androidx.test.espresso.assertion.ViewAssertions.matches;
+import static androidx.test.espresso.intent.Intents.intended;
+import static androidx.test.espresso.intent.matcher.IntentMatchers.hasCategories;
+import static androidx.test.espresso.intent.matcher.IntentMatchers.hasFlag;
 import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static androidx.test.espresso.matcher.ViewMatchers.isEnabled;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
@@ -10,16 +14,19 @@ import static androidx.test.espresso.matcher.ViewMatchers.withId;
 import android.content.Context;
 import android.content.Intent;
 
+import androidx.test.espresso.intent.Intents;
 import androidx.test.ext.junit.rules.ActivityScenarioRule;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 import androidx.test.platform.app.InstrumentationRegistry;
 
-import com.github.houseorganizer.houseorganizer.login.LoginActivity;
+import com.github.houseorganizer.houseorganizer.panels.login.LoginActivity;
 
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+
+import java.util.Collections;
 
 @RunWith(AndroidJUnit4.class)
 public class LoginActivityTest {
@@ -55,4 +62,12 @@ public class LoginActivityTest {
         onView(withId(R.id.discoverButton)).check(matches(isEnabled()));
     }
 
+    @Test
+    public void backPressLeavesApp() {
+        Intents.init();
+        pressBack();
+        intended(hasCategories(Collections.singleton(Intent.CATEGORY_HOME)));
+        intended(hasFlag(Intent.FLAG_ACTIVITY_CLEAR_TOP));
+        Intents.release();
+    }
 }

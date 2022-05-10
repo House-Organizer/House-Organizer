@@ -1,4 +1,4 @@
-package com.github.houseorganizer.houseorganizer.house;
+package com.github.houseorganizer.houseorganizer.panels.household;
 
 import android.annotation.SuppressLint;
 import android.app.Dialog;
@@ -17,9 +17,9 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.github.houseorganizer.houseorganizer.R;
+import com.github.houseorganizer.houseorganizer.house.Verifications;
 import com.github.houseorganizer.houseorganizer.util.EspressoIdlingResource;
 import com.github.houseorganizer.houseorganizer.util.Util;
-
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.gms.tasks.Tasks;
@@ -209,7 +209,6 @@ public class EditHouseholdActivity extends AppCompatActivity {
 
     public void showInviteQR(View view) {
         Dialog qrDialog = new Dialog(this);
-        int length = 800;
         try {
             @SuppressLint("InflateParams") View qrDialogView = LayoutInflater.from(this).inflate(R.layout.image_dialog, null);
             ImageView qrView = qrDialogView.findViewById(R.id.image_dialog);
@@ -348,5 +347,11 @@ public class EditHouseholdActivity extends AppCompatActivity {
                         Toast.makeText(getApplicationContext(), view.getContext().getString(R.string.remove_household_failure), Toast.LENGTH_SHORT).show();
                     }
                 });
+    }
+
+    @Override
+    public void onBackPressed() {
+        Intent intent = new Intent(getApplicationContext(), HouseSelectionActivity.class);
+        startActivity(intent);
     }
 }

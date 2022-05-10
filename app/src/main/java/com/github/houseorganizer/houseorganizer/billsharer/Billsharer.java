@@ -119,6 +119,7 @@ public class Billsharer {
         if (expense.getPayee().equals(resident)) {
             total += expense.getCost() - expense.getShares().get(resident);
         } else {
+
             total -= expense.getShares().get(resident);
         }
 

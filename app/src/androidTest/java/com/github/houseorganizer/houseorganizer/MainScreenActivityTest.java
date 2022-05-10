@@ -1,10 +1,13 @@
 package com.github.houseorganizer.houseorganizer;
 
 import static androidx.test.espresso.Espresso.onView;
+import static androidx.test.espresso.Espresso.pressBack;
 import static androidx.test.espresso.action.ViewActions.click;
 import static androidx.test.espresso.assertion.ViewAssertions.matches;
 import static androidx.test.espresso.intent.Intents.intended;
+import static androidx.test.espresso.intent.matcher.IntentMatchers.hasCategories;
 import static androidx.test.espresso.intent.matcher.IntentMatchers.hasComponent;
+import static androidx.test.espresso.intent.matcher.IntentMatchers.hasFlag;
 import static androidx.test.espresso.matcher.ViewMatchers.isClickable;
 import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static androidx.test.espresso.matcher.ViewMatchers.isEnabled;
@@ -18,10 +21,10 @@ import androidx.test.ext.junit.rules.ActivityScenarioRule;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 import androidx.test.platform.app.InstrumentationRegistry;
 
-import com.github.houseorganizer.houseorganizer.house.HouseSelectionActivity;
-import com.github.houseorganizer.houseorganizer.panels.CalendarActivity;
-import com.github.houseorganizer.houseorganizer.panels.MainScreenActivity;
-import com.github.houseorganizer.houseorganizer.panels.SettingsActivity;
+import com.github.houseorganizer.houseorganizer.panels.household.HouseSelectionActivity;
+import com.github.houseorganizer.houseorganizer.panels.main_activities.CalendarActivity;
+import com.github.houseorganizer.houseorganizer.panels.main_activities.MainScreenActivity;
+import com.github.houseorganizer.houseorganizer.panels.settings.SettingsActivity;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
 
@@ -34,6 +37,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.MethodSorters;
 
+import java.util.Collections;
 import java.util.concurrent.ExecutionException;
 
 @RunWith(AndroidJUnit4.class)
@@ -148,6 +152,16 @@ public class MainScreenActivityTest {
         Intents.init();
         onView(withId(R.id.nav_bar_calendar)).perform(click());
         intended(hasComponent(CalendarActivity.class.getName()));
+        Intents.release();
+    }
+
+
+    @Test
+    public void backPressLeavesApp() {
+        Intents.init();
+        pressBack();
+        intended(hasCategories(Collections.singleton(Intent.CATEGORY_HOME)));
+        intended(hasFlag(Intent.FLAG_ACTIVITY_CLEAR_TOP));
         Intents.release();
     }
     /* TODO: Move sign-out button tests in rightful test class; This button is no longer on MainScreen

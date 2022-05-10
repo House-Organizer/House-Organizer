@@ -1,6 +1,5 @@
-package com.github.houseorganizer.houseorganizer.panels;
+package com.github.houseorganizer.houseorganizer.panels.billsharer;
 
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 
@@ -10,12 +9,14 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.github.houseorganizer.houseorganizer.R;
 import com.github.houseorganizer.houseorganizer.billsharer.Billsharer;
 import com.github.houseorganizer.houseorganizer.billsharer.ExpenseAdapter;
+import com.github.houseorganizer.houseorganizer.panels.main_activities.ExpenseActivity;
+import com.github.houseorganizer.houseorganizer.panels.main_activities.NavBarActivity;
 import com.github.houseorganizer.houseorganizer.util.Util;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.OptionalInt;
 
-public class ExpenseActivity extends NavBarActivity {
+public class BalanceActivity extends NavBarActivity {
 
     private Billsharer bs;
     private ExpenseAdapter adapter;
@@ -23,36 +24,29 @@ public class ExpenseActivity extends NavBarActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_expense);
+        setContentView(R.layout.activity_balance);
 
         currentHouse = FirebaseFirestore.getInstance().collection("households")
                 .document(getIntent().getStringExtra("house"));
         initializeData();
 
-        findViewById(R.id.expense_add_item).setOnClickListener(l -> adapter.addExpense(this));
-        findViewById(R.id.expense_expenses).setOnClickListener(l -> bs.refreshExpenses()
-                .addOnCompleteListener(t -> {
-           if (!t.isSuccessful()) {
-               Util.logAndToast("ExpenseActivity", "ExpenseActivity:refreshExpense:failure",
-                       t.getException(), getApplicationContext(), "Failure to refresh expenses");
-           }
-        }));
-        findViewById(R.id.expense_balances).setOnClickListener(l -> {
-            Intent intent = new Intent(ExpenseActivity.this, BalanceActivity.class);
+        findViewById(R.id.balance_balances).setOnClickListener(l -> bs.refreshBalances());
+        findViewById(R.id.balance_expenses).setOnClickListener(l -> {
+            Intent intent = new Intent(BalanceActivity.this, ExpenseActivity.class);
             intent.putExtra("house", currentHouse.getId());
             startActivity(intent);
         });
 
-        super.setUpNavBar(R.id.expense_nav_bar, OptionalInt.of(R.id.nav_bar_bs));
+        super.setUpNavBar(R.id.balance_nav_bar, OptionalInt.of(R.id.nav_bar_bs));
     }
 
     private void initializeData(){
-        RecyclerView view = findViewById(R.id.expense_recycler);
+        RecyclerView view = findViewById(R.id.balance_recycler);
         Billsharer.initializeBillsharer(currentHouse, FirebaseFirestore.getInstance())
                 .addOnCompleteListener(t -> {
                     if (t.isSuccessful()){
                         bs = t.getResult().getBillsharer();
-                        adapter = t.getResult();
+                        adapter = t.getResult();// TODO
                         bs.getOnlineReference().addSnapshotListener((d, e) -> {
                             bs = Billsharer.buildBillsharer(d);
                             adapter.setBillsharer(bs);
@@ -60,15 +54,16 @@ public class ExpenseActivity extends NavBarActivity {
                         view.setLayoutManager(new LinearLayoutManager(this));
                         view.setAdapter(adapter);
                     } else {
-                        Util.logAndToast("ExpenseActivity", "Could not initialize billsharer",
+                        Util.logAndToast("BalanceActivity", "Could not initialize billsharer",
                                 t.getException(), this, "Could not load billsharer");
                     }
                 });
     }
 
-
     @Override
     protected CurrentActivity currentActivity() {
         return CurrentActivity.BILLSHARER;
     }
+
+
 }
