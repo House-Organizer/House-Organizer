@@ -13,7 +13,7 @@ check_android_task:
     memory: 10G
   create_local_properties_script:
     - touch local.properties
-    - echo "${MAPS_API_KEY}" > local.properties
+    - echo "MAPS_API_KEY=${MAPS_API_KEY}" > local.properties
   create_device_script:
     echo no | avdmanager create avd --force --name test --abi "$TARGET/$ARCH" --package "system-images;android-$API_LEVEL;$TARGET;$ARCH"
   start_emulator_background_script:
