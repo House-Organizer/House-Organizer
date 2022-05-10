@@ -13,9 +13,12 @@ import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static androidx.test.espresso.matcher.ViewMatchers.isEnabled;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
 
+import static org.junit.Assert.fail;
+
 import android.content.Context;
 import android.content.Intent;
 
+import androidx.test.espresso.NoActivityResumedException;
 import androidx.test.espresso.intent.Intents;
 import androidx.test.ext.junit.rules.ActivityScenarioRule;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
@@ -159,9 +162,10 @@ public class MainScreenActivityTest {
     @Test
     public void backPressLeavesApp() {
         Intents.init();
-        pressBack();
-        intended(hasCategories(Collections.singleton(Intent.CATEGORY_HOME)));
-        intended(hasFlag(Intent.FLAG_ACTIVITY_CLEAR_TOP));
+        try {
+            pressBack();
+            fail("Should have thrown NoActivityResumedException");
+        } catch (NoActivityResumedException expected) { }
         Intents.release();
     }
     /* TODO: Move sign-out button tests in rightful test class; This button is no longer on MainScreen
