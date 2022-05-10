@@ -40,11 +40,10 @@ public class Billsharer {
     }
 
     private void startUpBillsharer() {
-        initResidents().addOnCompleteListener(l -> {
-            initBalances();
-            computeBalances();
-            computeDebts();
-        });
+        initResidents();
+        initBalances();
+        computeBalances();
+        computeDebts();
     }
 
     public List<Expense> getExpenses() {
@@ -87,9 +86,9 @@ public class Billsharer {
         this.residents = residents;
     }
 
-    public Task<DocumentSnapshot> initResidents() {
+    public void initResidents() {
         residents = new ArrayList<>();
-        return currentHouse.get().addOnCompleteListener(t -> {
+        currentHouse.get().addOnCompleteListener(t -> {
             if (t.isSuccessful()) {
                 DocumentSnapshot house = t.getResult();
                 setResidents((ArrayList<String>) house.get("residents"));

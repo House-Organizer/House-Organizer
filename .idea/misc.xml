@@ -4,10 +4,12 @@
     <option name="filePathToZoomLevelMap">
       <map>
         <entry key="../../../../../layout/custom_preview.xml" value="0.384375" />
+        <entry key="..\:/Users/thiba/Documents/GitHub/House-Organizer/app/src/main/res/layout/activity_balance.xml" value="0.1816123188405797" />
+        <entry key="..\:/Users/thiba/Documents/GitHub/House-Organizer/app/src/main/res/layout/activity_edit_household.xml" value="0.1816123188405797" />
+        <entry key="..\:/Users/thiba/Documents/GitHub/House-Organizer/app/src/main/res/layout/activity_expense.xml" value="0.1816123188405797" />
         <entry key="app/src/main/res/drawable-v24/ic_launcher_foreground.xml" value="0.2255" />
         <entry key="app/src/main/res/drawable/ic_launcher_background.xml" value="0.2255" />
         <entry key="app/src/main/res/layout/activity_add_expense.xml" value="0.35625" />
-        <entry key="app/src/main/res/layout/activity_balance.xml" value="0.1" />
         <entry key="app/src/main/res/layout/activity_balance.xml" value="0.1798780487804878" />
         <entry key="app/src/main/res/layout/activity_billsharer.xml" value="0.33" />
         <entry key="app/src/main/res/layout/activity_create_household.xml" value="0.1" />
