@@ -22,10 +22,9 @@ public class Billsharer {
     private final DocumentReference currentHouse;
     private DocumentReference onlineReference;
     private List<String> residents;
-    private final FirebaseFirestore db = FirebaseFirestore.getInstance();
 
     public Billsharer(DocumentReference currentHouse) {
-        this.expenses = new ArrayList<>();
+        expenses = new ArrayList<>();
         debts = new ArrayList<>();
         this.currentHouse = currentHouse;
         startUpBillsharer();
@@ -40,11 +39,11 @@ public class Billsharer {
     }
 
     private void startUpBillsharer() {
-        initResidents().addOnCompleteListener(l -> {
-            initBalances();
-            computeBalances();
-            computeDebts();
-        });
+        initResidents();
+        initBalances();
+        computeBalances();
+        computeDebts();
+
     }
 
     public List<Expense> getExpenses() {
@@ -87,9 +86,9 @@ public class Billsharer {
         this.residents = residents;
     }
 
-    public Task<DocumentSnapshot> initResidents() {
+    public void initResidents() {
         residents = new ArrayList<>();
-        return currentHouse.get().addOnCompleteListener(t -> {
+        currentHouse.get().addOnCompleteListener(t -> {
             if (t.isSuccessful()) {
                 DocumentSnapshot house = t.getResult();
                 setResidents((ArrayList<String>) house.get("residents"));
@@ -105,21 +104,21 @@ public class Billsharer {
         }
         balances = new HashMap<>();
         for (String resident : residents) {
-            balances.put(resident, 0.0f);
+            balances.put(resident, 0f);
         }
     }
 
     public void computeDebts() {}
 
     private float computeTotal(String resident, Expense expense) {
-        float total = 0;
+        float total = 0f;
         if (balances.containsKey(resident)) {
             total = balances.get(resident);
         }
-        if (expense.getPayee().equals(resident)) {
-            total += expense.getCost() - expense.getShares().get(resident);
+        if (resident.equals(expense.getPayee())) {
+            total = total + expense.getCost() - expense.getShares().get(resident);
         } else {
-            total -= expense.getShares().get(resident);
+            total = total - expense.getShares().get(resident);
         }
 
         return total;

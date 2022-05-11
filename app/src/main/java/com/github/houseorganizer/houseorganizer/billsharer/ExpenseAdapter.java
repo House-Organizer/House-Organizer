@@ -55,7 +55,7 @@ public class ExpenseAdapter extends RecyclerView.Adapter<ExpenseAdapter.ExpenseH
     private void getExpenseFromDialog(View dialogView) {
         String title = ((EditText) dialogView.findViewById(R.id.expense_edit_title)).getText().toString();
         Spinner spinner = dialogView.findViewById(R.id.expense_edit_payee);
-        float cost = 0;
+        float cost = 0f;
         try {
             cost = Float.parseFloat(((EditText) dialogView.findViewById(R.id.expense_edit_cost)).getText().toString());
         }catch (Exception e){
