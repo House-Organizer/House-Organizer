@@ -85,8 +85,8 @@ public class CalendarViewTest {
         // it will still create the popup just it wont display anything
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         baos.write(1);
-        UploadTask task1 = storage.getReference().child("has_attachment.jpg").putBytes(baos.toByteArray());
-        UploadTask task2 = storage.getReference().child("to_delete_attachment.jpg").putBytes(baos.toByteArray());
+        UploadTask task1 = storage.getReference().child("event_has_attachment").putBytes(baos.toByteArray());
+        UploadTask task2 = storage.getReference().child("event_to_delete_attachment").putBytes(baos.toByteArray());
         Tasks.await(task1);
         Tasks.await(task2);
     }
@@ -121,7 +121,7 @@ public class CalendarViewTest {
                         db.collection("events").document(document.getId()).delete();
                     }
                 });
-        Task<Void> task4 = storage.getReference().child("has_attachment.jpg").delete();
+        Task<Void> task4 = storage.getReference().child("event_has_attachment").delete();
         Tasks.await(task1);
         Tasks.await(task2);
         Tasks.await(task3);
@@ -163,7 +163,7 @@ public class CalendarViewTest {
         onView(withId(R.id.calendar_screen_calendar))
                 .perform(RecyclerViewActions.actionOnItemAtPosition(getRealPosition(2), RecyclerViewHelper.clickChildViewWithId(R.id.event_upcoming_attach)));
         onView(withText("Remove")).perform(click());
-        storage.getReference().child("to_delete_attachment.jpg").getDownloadUrl().addOnCompleteListener(
+        storage.getReference().child("event_to_delete_attachment").getDownloadUrl().addOnCompleteListener(
                 task -> assertThat(task.isSuccessful(), is(false))
         );
     }
