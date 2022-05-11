@@ -15,6 +15,7 @@ import static androidx.test.espresso.matcher.ViewMatchers.withText;
 import static com.github.houseorganizer.houseorganizer.FirebaseTestsHelper.TEST_HOUSEHOLD_NAMES;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 import android.Manifest;
@@ -40,6 +41,7 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+import java.util.Map;
 import java.util.concurrent.ExecutionException;
 
 @RunWith(AndroidJUnit4.class)
@@ -93,23 +95,33 @@ public class CreateHouseholdActivityTest {
         onView(withText(R.string.confirm)).perform(click());
 
         assertTrue(FirebaseTestsHelper.householdExists("MyHouse", db));
+    }
 
-        /*
-        onView(withId(R.id.editTextLatitude)).perform(click(),
-                typeText("45"), closeSoftKeyboard());
-        onView(withId(R.id.editTextLongitude)).perform(click(),
-                typeText("45"), closeSoftKeyboard());
+    public void houseCreatedWithRightCoordinates() throws ExecutionException, InterruptedException {
+        onView(withId(R.id.editTextHouseholdName)).perform(click(),
+                typeText("MyHouse"), closeSoftKeyboard());
+        onView(withId(R.id.editTextAddress)).perform(
+                typeText("EPFL, Lausanne"), closeSoftKeyboard());
+        onView(withId(R.id.submitHouseholdButton)).perform(click());
+        Map<String, Object> house = FirebaseTestsHelper.fetchHouseholdData("MyHouse", db);
+        assertEquals((Double)house.get("latitude"), 46.5, 0.1);
+        assertEquals((Double)house.get("longitude"), 6.5, 0.1);
+    }
 
-
-        */
+    private void checkToastEmptyField(){
+        onView(withText(R.string.address_fill_fields))
+                .inRoot(withDecorView(not(decorView)))
+                .check(matches(isDisplayed()));
     }
 
     @Test
     public void emptyFieldsDoesNotCreateHouse(){
         onView(withId(R.id.submitHouseholdButton)).perform(click());
-        onView(withText(R.string.address_fill_fields))
-                .inRoot(withDecorView(not(decorView)))
-                .check(matches(isDisplayed()));
+        checkToastEmptyField();
+
+        onView(withId(R.id.editTextAddress)).perform(typeText("address"));
+        onView(withId(R.id.submitHouseholdButton)).perform(click());
+        checkToastEmptyField();
     }
 
     @Test
