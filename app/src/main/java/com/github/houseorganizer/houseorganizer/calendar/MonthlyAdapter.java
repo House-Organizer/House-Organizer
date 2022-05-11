@@ -1,11 +1,13 @@
 package com.github.houseorganizer.houseorganizer.calendar;
 
+import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.TextView;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.annotation.NonNull;
@@ -15,6 +17,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.github.houseorganizer.houseorganizer.R;
 
 import java.time.YearMonth;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -22,6 +25,7 @@ import java.util.Locale;
 public class MonthlyAdapter extends CalendarAdapter {
 
     private ArrayList<ArrayList<Calendar.Event>> items;
+    private YearMonth month;
 
     public MonthlyAdapter(Calendar calendar, ActivityResultLauncher<String> getPicture) {
         super(calendar, getPicture);
@@ -34,13 +38,18 @@ public class MonthlyAdapter extends CalendarAdapter {
 
     @Override
     void generateItems(List<Calendar.Event> events) {
+        // This is here instead of in the constructor because
+        // generateItems is called in super(calendar, getPicture)
+        if (month == null) {
+            month = YearMonth.now();
+        }
         ArrayList<ArrayList<Calendar.Event>> ret = new ArrayList<>();
-        for (int i = 0; i < YearMonth.now().lengthOfMonth(); i++) {
+        for (int i = 0; i < month.lengthOfMonth(); i++) {
             ret.add(new ArrayList<>());
         }
         for (int i = 0; i < events.size(); i++) {
-            if (!(events.get(i).getStart().toLocalDate().getMonthValue() == YearMonth.now().getMonthValue()
-                && events.get(i).getStart().toLocalDate().getYear() == YearMonth.now().getYear())) {
+            if (!(events.get(i).getStart().toLocalDate().getMonthValue() == month.getMonthValue()
+                && events.get(i).getStart().toLocalDate().getYear() == month.getYear())) {
                 continue;
             }
             ret.get(events.get(i).getStart().getDayOfMonth()-1).add(events.get(i));
@@ -91,6 +100,19 @@ public class MonthlyAdapter extends CalendarAdapter {
                         .show();
             });
         }
+    }
+
+    @SuppressLint("NotifyDataSetChanged")
+    public void moveMonth(int monthsDifference, TextView yearMonthText) {
+        if (monthsDifference < 0) {
+            month = month.minusMonths(-monthsDifference);
+        }
+        else {
+            month = month.plusMonths(monthsDifference);
+        }
+        generateItems(calendar.getEvents());
+        this.notifyDataSetChanged();
+        yearMonthText.setText(month.format(DateTimeFormatter.ofPattern("LLLL uuuu")));
     }
 
     @Override

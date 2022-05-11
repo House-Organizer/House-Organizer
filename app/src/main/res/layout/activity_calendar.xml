@@ -8,15 +8,48 @@
 
     <TextView
         android:id="@+id/calendar_screen_year_month"
-        android:layout_width="match_parent"
-        android:layout_height="0dip"
+        android:layout_width="wrap_content"
+        android:layout_height="38dp"
+        android:minWidth="200dp"
+        android:textAlignment="center"
         android:textSize="23sp"
         android:textStyle="bold"
-        android:textAlignment="center"
-        android:paddingTop="5dp"
+        app:layout_constraintEnd_toStartOf="@id/calendar_screen_month_right"
         app:layout_constraintHeight_default="percent"
         app:layout_constraintHeight_percent=".05"
-        app:layout_constraintTop_toTopOf="parent"/>
+        app:layout_constraintStart_toEndOf="@id/calendar_screen_month_left"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <Button
+        android:id="@+id/calendar_screen_month_left"
+        android:layout_width="42dp"
+        android:layout_height="38dp"
+        android:background="@android:color/transparent"
+        android:insetTop="0dp"
+        android:insetBottom="0dp"
+        android:text="@string/left_arrow"
+        android:textColor="#939393"
+        android:textSize="22sp"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toStartOf="@id/calendar_screen_year_month"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <Button
+        android:id="@+id/calendar_screen_month_right"
+        android:layout_width="42dp"
+        android:layout_height="38dp"
+        android:background="@android:color/transparent"
+        android:textSize="22sp"
+        android:textStyle="bold"
+        android:insetTop="0dp"
+        android:insetBottom="0dp"
+        android:text="@string/right_arrow"
+        android:textColor="#939393"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toEndOf="@id/calendar_screen_year_month" />
+
 
 
     <androidx.recyclerview.widget.RecyclerView
