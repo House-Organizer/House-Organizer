@@ -94,7 +94,7 @@ public class CreateHouseholdActivityTest {
         onView(withId(R.id.editTextAddress)).perform(
                 typeText("EPFL, Lausanne"), closeSoftKeyboard());
         onView(withId(R.id.submitHouseholdButton)).perform(click());
-        Thread.sleep(2000);
+        Thread.sleep(4000);
         onView(withText(R.string.confirm)).perform(click());
         Thread.sleep(1000);
 
