@@ -4,10 +4,8 @@ import static androidx.test.espresso.Espresso.onView;
 import static androidx.test.espresso.action.ViewActions.click;
 import static androidx.test.espresso.action.ViewActions.closeSoftKeyboard;
 import static androidx.test.espresso.action.ViewActions.typeText;
-import static androidx.test.espresso.assertion.ViewAssertions.matches;
 import static androidx.test.espresso.intent.Intents.intended;
 import static androidx.test.espresso.intent.matcher.IntentMatchers.hasComponent;
-import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
 import static androidx.test.espresso.matcher.ViewMatchers.withText;
 import static org.hamcrest.Matchers.not;
@@ -20,7 +18,6 @@ import android.content.Intent;
 import android.view.View;
 
 import androidx.test.espresso.intent.Intents;
-import androidx.test.espresso.matcher.RootMatchers;
 import androidx.test.ext.junit.rules.ActivityScenarioRule;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 import androidx.test.platform.app.InstrumentationRegistry;
@@ -28,8 +25,11 @@ import androidx.test.rule.GrantPermissionRule;
 
 import com.github.houseorganizer.houseorganizer.house.CreateHouseholdActivity;
 import com.github.houseorganizer.houseorganizer.house.QRCodeScanActivity;
+import com.google.android.gms.tasks.Task;
+import com.google.android.gms.tasks.Tasks;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QuerySnapshot;
 
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -38,6 +38,8 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
 
@@ -105,22 +107,29 @@ public class CreateHouseholdActivityTest {
         assertEquals((Double)house.get("longitude"), 6.5, 0.1);
     }
 
-    private void checkToastEmptyField(){
-        onView(withText(R.string.address_fill_fields))
-                .inRoot(RootMatchers.withDecorView(not(decorView)))
-                .check(matches(isDisplayed()));
-    }
-
     @Test
-    public void emptyFieldsDoesNotCreateHouse() throws InterruptedException {
+    public void emptyFieldsDoesNotCreateHouse() throws InterruptedException, ExecutionException {
+
+
+        Task<QuerySnapshot> t0 = db.collection("households").get();
         onView(withId(R.id.submitHouseholdButton)).perform(click());
-        Thread.sleep(1000);
-        checkToastEmptyField();
+
+        Task<QuerySnapshot> t1 = db.collection("households").get();
 
         onView(withId(R.id.editTextAddress)).perform(typeText("address"));
         onView(withId(R.id.submitHouseholdButton)).perform(click());
-        Thread.sleep(1000);
-        checkToastEmptyField();
+
+        Task<QuerySnapshot> t2 = db.collection("households").get();
+
+        List<Task<QuerySnapshot>> list = new ArrayList<>();
+        list.add(t0);
+        list.add(t1);
+        list.add(t2);
+
+        Task<List<Task<?>>> r = Tasks.whenAllComplete(list);
+        Tasks.await(r);
+        assertEquals(t0.getResult().size(), t1.getResult().size());
+        assertEquals(t0.getResult().size(), t2.getResult().size());
     }
 
     @Test
