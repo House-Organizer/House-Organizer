@@ -7,6 +7,7 @@ import static androidx.test.espresso.intent.Intents.intended;
 import static androidx.test.espresso.intent.matcher.IntentMatchers.hasComponent;
 import static androidx.test.espresso.matcher.ViewMatchers.hasDescendant;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
+import static androidx.test.espresso.matcher.ViewMatchers.withTagValue;
 import static androidx.test.espresso.matcher.ViewMatchers.withText;
 import static com.github.houseorganizer.houseorganizer.FirebaseTestsHelper.TEST_HOUSEHOLD_NAMES;
 import static org.junit.Assert.assertEquals;
@@ -24,9 +25,14 @@ import androidx.test.rule.GrantPermissionRule;
 import com.github.houseorganizer.houseorganizer.house.HouseSelectionActivity;
 import com.github.houseorganizer.houseorganizer.panels.MainScreenActivity;
 import com.github.houseorganizer.houseorganizer.util.EspressoIdlingResource;
+import com.google.android.gms.tasks.Task;
+import com.google.android.gms.tasks.Tasks;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.UploadTask;
 
+import org.hamcrest.CoreMatchers;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -34,6 +40,7 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+import java.io.ByteArrayOutputStream;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
 
@@ -41,6 +48,7 @@ import java.util.concurrent.ExecutionException;
 public class HouseSelectionActivityTest {
     private static FirebaseFirestore db;
     private static FirebaseAuth auth;
+    private static FirebaseStorage storage;
 
     @Rule
     public GrantPermissionRule permissionRules = GrantPermissionRule.grant(android.Manifest.permission.ACCESS_FINE_LOCATION);
@@ -53,12 +61,21 @@ public class HouseSelectionActivityTest {
 
         db = FirebaseFirestore.getInstance();
         auth = FirebaseAuth.getInstance();
+        storage = FirebaseStorage.getInstance();
+
+        //Fake image for home_1
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        baos.write(1);
+        UploadTask task1 = storage.getReference().child("house_home_1").putBytes(baos.toByteArray());
+        Tasks.await(task1);
 
         IdlingRegistry.getInstance().register(EspressoIdlingResource.countingIdlingResource);
     }
 
     @AfterClass
-    public static void signOut(){
+    public static void signOut() throws ExecutionException, InterruptedException {
+        Task<Void> task1 = storage.getReference().child("house_home_1").delete();
+        Tasks.await(task1);
         auth.signOut();
         IdlingRegistry.getInstance().unregister(EspressoIdlingResource.countingIdlingResource);
     }
@@ -70,6 +87,13 @@ public class HouseSelectionActivityTest {
     public void dismissDialogs() {
         Context context = InstrumentationRegistry.getInstrumentation().getTargetContext();
         context.sendBroadcast(new Intent(Intent.ACTION_CLOSE_SYSTEM_DIALOGS));
+    }
+
+    @Test
+    public void houseImagesContainOneDefaultAndOneCustom() throws InterruptedException {
+        Thread.sleep(200); //Images have to load
+        onView(withId(R.id.housesView)).check(matches(hasDescendant(withTagValue(CoreMatchers.equalTo("home_1")))));
+        onView(withId(R.id.housesView)).check(matches(hasDescendant(withTagValue(CoreMatchers.equalTo(R.drawable.home_icon)))));
     }
 
     @Test

@@ -138,11 +138,12 @@ public class HouseSelectionActivity extends AppCompatActivity {
             @Override
             protected void onBindViewHolder(@NonNull HouseViewHolder holder, int position, @NonNull HouseModel model) {
                 holder.houseName.setText(model.getName());
+                holder.houseImage.setTag(R.drawable.home_icon);
                 fetchImageForHousehold(holder.houseImage, adapter.getSnapshots().getSnapshot(position).getId());
 
                 holder.houseName.setTag(adapter.getSnapshots().getSnapshot(position).getId());
                 holder.editButton.setTag(adapter.getSnapshots().getSnapshot(position).getId());
-                holder.houseImage.setTag(adapter.getSnapshots().getSnapshot(position).getId());
+
 
                 EspressoIdlingResource.decrement();
             }
@@ -157,6 +158,7 @@ public class HouseSelectionActivity extends AppCompatActivity {
         StorageReference imageHouse = storage.getReference().child("house_" + houseId);
             imageHouse.getDownloadUrl()
                 .addOnSuccessListener(uri -> {
+                    imageViewToSet.setTag(houseId);
                     Glide.with(getApplicationContext()).load(uri.toString()).into(imageViewToSet);
                 })
                 .addOnFailureListener(exception -> {
