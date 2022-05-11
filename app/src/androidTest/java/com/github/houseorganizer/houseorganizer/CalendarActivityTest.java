@@ -40,7 +40,7 @@ import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
-import org.junit.Rule;
+import org.junit.ClassRule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -54,7 +54,7 @@ public class CalendarActivityTest {
     private static FirebaseAuth auth;
     private static RecyclerViewLayoutCompleteIdlingResource idlingResource;
 
-    @Rule
+    @ClassRule
     public static ActivityScenarioRule<MainScreenActivity> mainScreenActivityActivityScenarioRule =
             new ActivityScenarioRule<>(MainScreenActivity.class);
 
