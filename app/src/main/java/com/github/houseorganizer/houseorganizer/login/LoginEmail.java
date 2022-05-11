@@ -14,6 +14,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.github.houseorganizer.houseorganizer.R;
 import com.github.houseorganizer.houseorganizer.panels.MainScreenActivity;
+import com.github.houseorganizer.houseorganizer.util.EspressoIdlingResource;
 import com.github.houseorganizer.houseorganizer.util.Util;
 import com.google.firebase.auth.FirebaseAuth;
 
@@ -32,6 +33,8 @@ public class LoginEmail extends AppCompatActivity {
 
         findViewById(R.id.log_email_signin_button).setOnClickListener(
                 v -> {
+                    EspressoIdlingResource.increment();
+
                     String email = ((EditText) findViewById(R.id.log_enter_email)).getText().toString();
                     String password = ((EditText) findViewById(R.id.log_enter_password)).getText().toString();
                     TextView error_message = findViewById(R.id.log_email_error_message);
@@ -40,6 +43,8 @@ public class LoginEmail extends AppCompatActivity {
                     } else {
                         displayErrorMessage(Util.ErrorType.INPUTS_EMPTY, error_message);
                     }
+
+                    EspressoIdlingResource.decrement();
                 }
         );
 
