@@ -28,6 +28,7 @@ import com.github.houseorganizer.houseorganizer.house.QRCodeScanActivity;
 import com.google.android.gms.tasks.Task;
 import com.google.android.gms.tasks.Tasks;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QuerySnapshot;
 
@@ -42,6 +43,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
+import java.util.stream.Collectors;
 
 @RunWith(AndroidJUnit4.class)
 public class CreateHouseholdActivityTest {
@@ -85,15 +87,22 @@ public class CreateHouseholdActivityTest {
     @Test
     public void createHouseholdWorks() throws ExecutionException, InterruptedException {
 
+        final String houseName = "MyHouse";
+
         onView(withId(R.id.editTextHouseholdName)).perform(click(),
-                typeText("MyHouse"), closeSoftKeyboard());
+                typeText(houseName), closeSoftKeyboard());
         onView(withId(R.id.editTextAddress)).perform(
                 typeText("EPFL, Lausanne"), closeSoftKeyboard());
         onView(withId(R.id.submitHouseholdButton)).perform(click());
         Thread.sleep(2000);
         onView(withText(R.string.confirm)).perform(click());
         Thread.sleep(1000);
-        assertTrue(FirebaseTestsHelper.householdExists("MyHouse", db));
+
+        Task<QuerySnapshot> t = db.collection("households").get();
+        Tasks.await(t);
+        List<DocumentSnapshot> house = t.getResult().getDocuments().stream()
+                .filter(doc -> doc.getString("name").equals(houseName)).collect(Collectors.toList());
+        assertEquals(house.size(), 1);
     }
 
     public void houseCreatedWithRightCoordinates() throws ExecutionException, InterruptedException {
