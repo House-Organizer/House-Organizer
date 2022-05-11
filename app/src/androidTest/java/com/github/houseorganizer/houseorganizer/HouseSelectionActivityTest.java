@@ -81,9 +81,6 @@ public class HouseSelectionActivityTest {
     public void selectHouse() {
         Intents.init();
 
-        for (int i=0; i<2; i++)
-            EspressoIdlingResource.increment();
-
         onView(withText(FirebaseTestsHelper.TEST_HOUSEHOLD_NAMES[0])).perform(click());
         intended(hasComponent(MainScreenActivity.class.getName()));
 
@@ -95,10 +92,7 @@ public class HouseSelectionActivityTest {
         Map<String, Object> houseData_before = FirebaseTestsHelper.fetchHouseholdData(TEST_HOUSEHOLD_NAMES[0], db);
 
         onView(withId(R.id.leaveButton)).perform(click());
-        Thread.sleep(100);
-
         Map<String, Object> houseData_after = FirebaseTestsHelper.fetchHouseholdData(TEST_HOUSEHOLD_NAMES[0], db);
-
         assertEquals(houseData_before, houseData_after);
     }
 }

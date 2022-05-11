@@ -143,8 +143,6 @@ public class HouseSelectionActivity extends AppCompatActivity implements
                 holder.houseName.setText(model.getName());
                 holder.houseName.setTag(adapter.getSnapshots().getSnapshot(position).getId());
                 holder.editButton.setTag(adapter.getSnapshots().getSnapshot(position).getId());
-
-                EspressoIdlingResource.decrement();
             }
         };
 
@@ -194,6 +192,8 @@ public class HouseSelectionActivity extends AppCompatActivity implements
     }
 
     public void leaveHouse(View view){
+        EspressoIdlingResource.increment();
+
         SharedPreferences sharedPreferences = getSharedPrefs(this);
         String householdId = sharedPreferences.getString(CURRENT_HOUSEHOLD, "");
         if(householdId != null){
@@ -217,8 +217,12 @@ public class HouseSelectionActivity extends AppCompatActivity implements
                         Toast.makeText(getApplicationContext(), this.getString(R.string.cant_remove_owner),Toast.LENGTH_SHORT).show();
                     }
                 }
+
+                EspressoIdlingResource.decrement();
             });
         }
+
+        EspressoIdlingResource.decrement();
     }
 
     public void sendToEditHouse(View view){
