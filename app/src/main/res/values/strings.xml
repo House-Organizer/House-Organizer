@@ -151,7 +151,12 @@
         automatically select the house closest to you</string>
     <string name="show_invite_qr_code">Show invite QR code</string>
     <string name="house_location_title">House location</string>
+    <string name="address_field">Enter address</string>
     <string name="no">No</string>
+    <string name="warning_address">Please enter a more precise address</string>
+    <string name="address_error">Impossible to find coordinates</string>
+    <string name="address_fill_fields">Please fill in both fields</string>
+    <string name="address_network_error">Could not connect to the network</string>
 
     <!-- Billsharer -->
     <string name="bs_add_expense">Add expense</string>

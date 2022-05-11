@@ -1,10 +1,8 @@
 package com.github.houseorganizer.houseorganizer.house;
 
-import static android.app.PendingIntent.getActivity;
 import static com.github.houseorganizer.houseorganizer.util.Util.getSharedPrefsEditor;
 import static com.github.houseorganizer.houseorganizer.util.Util.logAndToast;
 
-import android.app.Dialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.location.Address;
@@ -13,24 +11,18 @@ import android.location.Location;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.Window;
-import android.widget.EditText;
-import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.github.houseorganizer.houseorganizer.R;
 import com.github.houseorganizer.houseorganizer.panels.MainScreenActivity;
-import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.MapsInitializer;
-import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -66,12 +58,11 @@ public class CreateHouseholdActivity extends AppCompatActivity {
 
     private Location getCoordinatesFromAddress(String address) {
         if(geocoder == null){
-            //TODO
+            geocoder = new Geocoder(this, Locale.getDefault());
+            return null;
         }else{
             try {
-                setLoadingBar(true);
                 Location location = new Location("");
-                Address addr = null;
 
                 List<Address> geoResults = geocoder.getFromLocationName(address, 1);
                 int count = 0;
@@ -79,27 +70,18 @@ public class CreateHouseholdActivity extends AppCompatActivity {
                     geoResults = geocoder.getFromLocationName(address, 1);
                     ++count;
                 }
-                setLoadingBar(false);
                 if (geoResults.size()>0) {
-                    addr = geoResults.get(0);
+                    Address addr = geoResults.get(0);
                     location.setLatitude(addr.getLatitude());
                     location.setLongitude(addr.getLongitude());
                     return location;
                 }else return null;
 
             } catch (IOException e) {
-                Toast.makeText(this, "Could not connect to internet", Toast.LENGTH_LONG );
-                setLoadingBar(false);
+                Toast.makeText(this, R.string.address_network_error, Toast.LENGTH_LONG ).show();
                 return null;
             }
         }
-        return null;
-    }
-
-    private void setLoadingBar(boolean visible){
-        ProgressBar bar = findViewById(R.id.createHProgressBar);
-        bar.setVisibility(visible ? View.VISIBLE : View.INVISIBLE);
-        bar.setIndeterminate(true);
     }
 
     private void displayMapDialog(View view, Location position, String houseName){
@@ -109,12 +91,11 @@ public class CreateHouseholdActivity extends AppCompatActivity {
                 .setView(dialogView)
                 .setPositiveButton(R.string.confirm, (dialog, id) -> submitHouseholdToFirestore(view, houseName, position))
                 .setNegativeButton(R.string.no, (dialog, id) -> {
-                    Toast.makeText(this, "Please enter a more precise address", Toast.LENGTH_LONG).show();
+                    Toast.makeText(this, R.string.warning_address, Toast.LENGTH_LONG).show();
                     dialog.dismiss();
                 });
 
         AlertDialog dialog = builder.show();
-        GoogleMap gMap;
 
         MapView mMapView;
         MapsInitializer.initialize(this);
@@ -123,14 +104,11 @@ public class CreateHouseholdActivity extends AppCompatActivity {
         assert mMapView != null;
         mMapView.onCreate(dialog.onSaveInstanceState());
         mMapView.onResume();// needed to get the map to display immediately
-        mMapView.getMapAsync(new OnMapReadyCallback() {
-            @Override
-            public void onMapReady(@NonNull GoogleMap googleMap) {
-                LatLng pos = new LatLng(position.getLatitude(), position.getLongitude());
-                googleMap.addMarker(new MarkerOptions().position(pos).title(houseName));
-                googleMap.getUiSettings().setZoomControlsEnabled(true);
-                googleMap.animateCamera(CameraUpdateFactory.zoomTo(15), getPositionCallback(googleMap, pos));
-            };
+        mMapView.getMapAsync(googleMap -> {
+            LatLng pos = new LatLng(position.getLatitude(), position.getLongitude());
+            googleMap.addMarker(new MarkerOptions().position(pos).title(houseName));
+            googleMap.getUiSettings().setZoomControlsEnabled(true);
+            googleMap.animateCamera(CameraUpdateFactory.zoomTo(15), getPositionCallback(googleMap, pos));
         });
     }
 
@@ -154,12 +132,18 @@ public class CreateHouseholdActivity extends AppCompatActivity {
     public void createHouseholdButtonPressed(View view){
         TextView houseHoldNameView = findViewById(R.id.editTextHouseholdName);
         TextView addressView = findViewById(R.id.editTextAddress);
-        String houseName = houseHoldNameView.getText().toString();
 
-        Location loc = getCoordinatesFromAddress(addressView.getText().toString());
+        if(houseHoldNameView.getText().toString().equals("") || addressView.getText().toString().equals("")){
+            Toast.makeText(this, R.string.address_fill_fields, Toast.LENGTH_LONG).show();
+            return;
+        }
+
+        String houseName = houseHoldNameView.getText().toString();
+        String address = addressView.getText().toString();
+
+        Location loc = getCoordinatesFromAddress(address);
         if(loc == null){
-            //TODO
-            Toast.makeText(this, "Could not find place", Toast.LENGTH_LONG).show();
+            Toast.makeText(this, R.string.address_error, Toast.LENGTH_LONG).show();
         }else displayMapDialog(view, loc, houseName);
     }
 
