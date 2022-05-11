@@ -158,5 +158,6 @@
     <string name="balances">Balances</string>
     <string name="amount">Amount</string>
     <string name="payer">Payer</string>
+    <string name="debt">Debt</string>
 
 </resources>

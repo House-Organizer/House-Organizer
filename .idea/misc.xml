@@ -7,7 +7,6 @@
         <entry key="app/src/main/res/drawable-v24/ic_launcher_foreground.xml" value="0.2255" />
         <entry key="app/src/main/res/drawable/ic_launcher_background.xml" value="0.2255" />
         <entry key="app/src/main/res/layout/activity_add_expense.xml" value="0.35625" />
-        <entry key="app/src/main/res/layout/activity_balance.xml" value="0.1" />
         <entry key="app/src/main/res/layout/activity_balance.xml" value="0.1798780487804878" />
         <entry key="app/src/main/res/layout/activity_billsharer.xml" value="0.33" />
         <entry key="app/src/main/res/layout/activity_create_household.xml" value="0.1" />
@@ -33,6 +32,7 @@
         <entry key="app/src/main/res/layout/calendar_upcoming_row.xml" value="0.20260416666666667" />
         <entry key="app/src/main/res/layout/calendar_weekly_row.xml" value="0.1890625" />
         <entry key="app/src/main/res/layout/content_main_screen.xml" value="0.2210144927536232" />
+        <entry key="app/src/main/res/layout/debt_row.xml" value="0.25" />
         <entry key="app/src/main/res/layout/event_creation.xml" value="0.15070921985815602" />
         <entry key="app/src/main/res/layout/expense_cell.xml" value="0.17325227963525835" />
         <entry key="app/src/main/res/layout/expense_row.xml" value="0.18" />

@@ -1,5 +1,7 @@
 package com.github.houseorganizer.houseorganizer.billsharer;
 
+import static java.lang.Math.abs;
+
 import android.util.Log;
 
 import com.google.android.gms.tasks.Task;
@@ -18,7 +20,7 @@ public class Billsharer {
 
     private List<Expense> expenses;
     private List<Debt> debts;
-    private Map<String, Float> balances;
+    private Map<String, Double> balances;
     private final DocumentReference currentHouse;
     private DocumentReference onlineReference;
     private List<String> residents;
@@ -39,11 +41,11 @@ public class Billsharer {
     }
 
     private void startUpBillsharer() {
-        initResidents();
-        initBalances();
-        computeBalances();
-        computeDebts();
-
+        initResidents().addOnCompleteListener(l -> {
+            initBalances();
+            computeBalances();
+            computeDebts();
+        });
     }
 
     public List<Expense> getExpenses() {
@@ -70,11 +72,11 @@ public class Billsharer {
         this.debts = debts;
     }
 
-    public Map<String, Float> getBalances() {
+    public Map<String, Double> getBalances() {
         return balances;
     }
 
-    public void setBalances(Map<String, Float> balances) {
+    public void setBalances(Map<String, Double> balances) {
         this.balances = balances;
     }
 
@@ -86,9 +88,9 @@ public class Billsharer {
         this.residents = residents;
     }
 
-    public void initResidents() {
+    private Task<DocumentSnapshot> initResidents() {
         residents = new ArrayList<>();
-        currentHouse.get().addOnCompleteListener(t -> {
+        return currentHouse.get().addOnCompleteListener(t -> {
             if (t.isSuccessful()) {
                 DocumentSnapshot house = t.getResult();
                 setResidents((ArrayList<String>) house.get("residents"));
@@ -98,33 +100,32 @@ public class Billsharer {
         });
     }
 
-    public void initBalances() {
+    private void initBalances() {
         if (residents == null) {
             Log.e("Billsharer", "initResidents:could not fetch users.");
         }
         balances = new HashMap<>();
         for (String resident : residents) {
-            balances.put(resident, 0f);
+            balances.put(resident, 0.0);
         }
     }
 
-    public void computeDebts() {}
-
-    private float computeTotal(String resident, Expense expense) {
-        float total = 0f;
+    private double computeTotal(String resident, Expense expense) {
+        double total = 0f;
         if (balances.containsKey(resident)) {
             total = balances.get(resident);
         }
+        double val = expense.getShares().get(resident);
         if (resident.equals(expense.getPayee())) {
-            total = total + expense.getCost() - expense.getShares().get(resident);
+            total = total + expense.getCost() - val;
         } else {
-            total = total - expense.getShares().get(resident);
+            total = total - val;
         }
 
         return total;
     }
 
-    public void computeBalances() {
+    private void computeBalances() {
         for (Expense expense : expenses) {
             for (String resident : residents) {
                 if (expense.getShares().containsKey(resident)) {
@@ -134,6 +135,58 @@ public class Billsharer {
                 }
             }
         }
+    }
+
+    private void computeDebts() {
+        debts = new ArrayList<>();
+        Map<String, Double> temp_balances = new HashMap<>(balances);
+        while (!temp_balances.isEmpty()) {
+            computeNextDebt(temp_balances);
+        }
+    }
+
+    private void computeNextDebt(Map<String, Double> temp_balances) {
+        String max = findMaxBalance(temp_balances);
+        double max_val = temp_balances.get(max);
+        String closest = findClosestNegBalance(temp_balances, max_val);
+        double closest_val = temp_balances.get(closest);
+        if (max_val + closest_val == 0) {
+            temp_balances.remove(max);
+            temp_balances.remove(closest);
+            debts.add(new Debt(max, closest, max_val));
+        } else if (max_val + closest_val < 0) {
+            temp_balances.remove(max);
+            temp_balances.put(closest, max_val+closest_val);
+            debts.add(new Debt(max, closest, max_val));
+        } else { // max_val + closest_val > 0
+            temp_balances.remove(closest);
+            temp_balances.put(max, max_val+closest_val);
+            debts.add(new Debt(max, closest, abs(closest_val)));
+        }
+    }
+
+    private String findMaxBalance(Map<String, Double> balances) {
+        double max = Double.MIN_VALUE;
+        String max_key = "";
+        for (String bal : balances.keySet()) {
+            if (balances.get(bal) > max) {
+                max = balances.get(bal);
+                max_key = bal;
+            }
+        }
+        return max_key;
+    }
+
+    private String findClosestNegBalance(Map<String, Double> balances, double val) {
+        double min_dist = Double.MAX_VALUE;
+        String min_key = "";
+        for (String bal : balances.keySet()) {
+            if (abs(val + balances.get(bal)) < min_dist && balances.get(bal) < 0) {
+                min_dist = balances.get(bal);
+                min_key = bal;
+            }
+        }
+        return min_key;
     }
 
     public void addExpense(Expense expense) {
@@ -150,6 +203,10 @@ public class Billsharer {
     public void removeExpense(Expense expense) {
         expenses.remove(expense);
         updateExpenses();
+    }
+
+    public void removeDebt(Debt debt) {
+        // TODO
     }
 
     public Task<Void> updateExpenses() {
@@ -193,13 +250,18 @@ public class Billsharer {
     private static List<Expense> convertFirebaseListToExpenses(List<Map<String, Object>> list){
         List<Expense> expenses = new ArrayList<>();
         for(Map<String, Object> m : list){
-            expenses.add(new Expense((String)m.get("title"), new Long((long) m.get("cost")).intValue(), (String)m.get("payee"),
-                    (HashMap<String, Float>)m.get("shares")));
+            if (m.get("cost") instanceof Double) {
+                expenses.add(new Expense((String) m.get("title"), new Double((double) m.get("cost")), (String) m.get("payee"),
+                        (HashMap<String, Double>) m.get("shares")));
+            } else if (m.get("cost") instanceof Long) {
+                expenses.add(new Expense((String) m.get("title"), new Long((long) m.get("cost")), (String) m.get("payee"),
+                        (HashMap<String, Double>) m.get("shares")));
+            }
         }
         return expenses;
     }
 
-    public static Task<DocumentReference> storeNewBillsharer(CollectionReference billsharerRoot, List<Expense> list, DocumentReference household){
+    private static Task<DocumentReference> storeNewBillsharer(CollectionReference billsharerRoot, List<Expense> list, DocumentReference household){
         Map<String, Object> map = new HashMap<>();
         map.put("household", household);
         List<Map<String, Object>> expenses = convertExpensesListToFirebase(list);
@@ -207,7 +269,7 @@ public class Billsharer {
         return billsharerRoot.add(map);
     }
 
-    public static Task<Billsharer> retrieveBillsharer(CollectionReference billsharerRoot, DocumentReference household){
+    private static Task<Billsharer> retrieveBillsharer(CollectionReference billsharerRoot, DocumentReference household){
         return billsharerRoot.whereEqualTo("household", household).get().continueWith( t -> {
             List<DocumentSnapshot> res = t.getResult().getDocuments();
             if(res.isEmpty())return null;
@@ -243,6 +305,16 @@ public class Billsharer {
                         });
                     }
                 });
+    }
+
+    public static Task<DebtAdapter> getBillsharerForDebt(DocumentReference currentHouse, FirebaseFirestore db) {
+        if (currentHouse == null) return Tasks.forCanceled();
+        CollectionReference root = db.collection("billsharers");
+        return root.whereEqualTo("household", currentHouse).get()
+                .continueWithTask(r -> Billsharer.retrieveBillsharer(root, currentHouse).continueWith(t -> {
+                    Billsharer bs = t.getResult();
+                    return new DebtAdapter(bs);
+                }));
     }
 
     public static Task<Void> deleteBillsharer(DocumentReference onlineReference) {

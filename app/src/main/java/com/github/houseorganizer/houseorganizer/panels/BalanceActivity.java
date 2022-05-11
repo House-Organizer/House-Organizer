@@ -8,6 +8,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.github.houseorganizer.houseorganizer.R;
 import com.github.houseorganizer.houseorganizer.billsharer.Billsharer;
+import com.github.houseorganizer.houseorganizer.billsharer.DebtAdapter;
 import com.github.houseorganizer.houseorganizer.billsharer.ExpenseAdapter;
 import com.github.houseorganizer.houseorganizer.util.Util;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -17,7 +18,7 @@ import java.util.OptionalInt;
 public class BalanceActivity extends NavBarActivity {
 
     private Billsharer bs;
-    private ExpenseAdapter adapter;
+    private DebtAdapter adapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,11 +41,11 @@ public class BalanceActivity extends NavBarActivity {
 
     private void initializeData(){
         RecyclerView view = findViewById(R.id.balance_recycler);
-        Billsharer.initializeBillsharer(currentHouse, FirebaseFirestore.getInstance())
+        Billsharer.getBillsharerForDebt(currentHouse, FirebaseFirestore.getInstance())
                 .addOnCompleteListener(t -> {
                     if (t.isSuccessful()){
                         bs = t.getResult().getBillsharer();
-                        adapter = t.getResult();// TODO
+                        adapter = t.getResult();
                         bs.getOnlineReference().addSnapshotListener((d, e) -> {
                             bs = Billsharer.buildBillsharer(d);
                             adapter.setBillsharer(bs);

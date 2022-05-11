@@ -15,7 +15,7 @@ import java.util.Objects;
 
 public class ExpenseUnitTest {
 
-    HashMap<String, Float> map = new HashMap<>();
+    HashMap<String, Double> map = new HashMap<>();
     Expense expense = new Expense("title", 0.0f, "payee", map);
 
     @Test
