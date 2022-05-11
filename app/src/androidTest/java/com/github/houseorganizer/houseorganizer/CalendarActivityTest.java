@@ -140,10 +140,8 @@ public class CalendarActivityTest {
         // The waits are here in order to wait for the refreshing of the calendar
         onView(withId(R.id.calendar_screen_calendar)).check(matches(hasChildCount(2*EVENTS_TO_DISPLAY)));
         onView(withId(R.id.calendar_screen_view_change)).perform(click());
-        Thread.sleep(1000);
         onView(withId(R.id.calendar_screen_calendar)).check(matches(hasChildCount(MONTHLY_CHILDREN)));
         onView(withId(R.id.calendar_screen_view_change)).perform(click());
-        Thread.sleep(1000);
         onView(withId(R.id.calendar_screen_calendar)).check(matches(hasChildCount(2*EVENTS_TO_DISPLAY)));
     }
 
@@ -151,7 +149,6 @@ public class CalendarActivityTest {
     public void monthlyViewShowsBusyDays() throws InterruptedException {
         // The wait is here in order to wait for the refreshing of the calendar
         onView(withId(R.id.calendar_screen_view_change)).perform(click());
-        Thread.sleep(1000);
         if (LocalDate.now().getDayOfMonth() == YearMonth.now().lengthOfMonth()) {
             onView(withId(R.id.calendar_screen_calendar)).check(matches(atPosition(LocalDate.now().getDayOfMonth() - 2, hasDescendant(withText(containsString("!"))))));
         }
@@ -165,7 +162,6 @@ public class CalendarActivityTest {
     public void monthlyViewOpensPopup() throws InterruptedException {
         // The wait is here in order to wait for the refreshing of the calendar
         onView(withId(R.id.calendar_screen_view_change)).perform(click());
-        Thread.sleep(1000);
         onView(withId(R.id.calendar_screen_calendar)).perform(RecyclerViewActions.actionOnItemAtPosition(LocalDate.now().getDayOfMonth() - 1, click()));
         onView(withText(R.string.no_events)).inRoot(isDialog()).check(matches(isDisplayed()));
     }
@@ -174,7 +170,6 @@ public class CalendarActivityTest {
     public void monthlyViewOpensRecyclerView() throws InterruptedException {
         // The wait is here in order to wait for the refreshing of the calendar
         onView(withId(R.id.calendar_screen_view_change)).perform(click());
-        Thread.sleep(1000);
         if (LocalDate.now().getDayOfMonth() == YearMonth.now().lengthOfMonth()) {
             onView(withId(R.id.calendar_screen_calendar)).perform(RecyclerViewActions.actionOnItemAtPosition(LocalDate.now().getDayOfMonth() - 2, click()));
         }

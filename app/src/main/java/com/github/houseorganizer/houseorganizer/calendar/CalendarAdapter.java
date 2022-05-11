@@ -14,6 +14,7 @@ import androidx.activity.result.ActivityResultLauncher;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.github.houseorganizer.houseorganizer.R;
+import com.github.houseorganizer.houseorganizer.util.EspressoIdlingResource;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -57,11 +58,15 @@ public abstract class CalendarAdapter extends RecyclerView.Adapter<RecyclerView.
                 .setTitle(R.string.event_creation_title)
                 .setView(dialogView)
                 .setPositiveButton(R.string.add, (dialog, id) -> {
+                    EspressoIdlingResource.increment();
+
                     Task<DocumentReference> pushTask = pushEventFromDialog(dialogView, currentHouse);
                     if (pushTask != null) {
                             pushTask.addOnSuccessListener(documentReference -> refreshCalendarView(ctx, currentHouse, errMessage, calendar.getView() == Calendar.CalendarView.MONTHLY));
                     }
                     dialog.dismiss();
+
+                    EspressoIdlingResource.decrement();
                 })
                 .setNegativeButton(R.string.cancel, (dialog, id) -> dialog.dismiss())
                 .show();
@@ -87,6 +92,8 @@ public abstract class CalendarAdapter extends RecyclerView.Adapter<RecyclerView.
 
     @SuppressLint("NotifyDataSetChanged")
     public void refreshCalendarView(Context ctx, DocumentReference currentHouse, String errMessage, boolean withPast) {
+        EspressoIdlingResource.increment();
+
         long timeThreshold = withPast ? LocalDateTime.MIN.toEpochSecond(ZoneOffset.UTC) : LocalDateTime.now().toEpochSecond(ZoneOffset.UTC);
         db.collection("events")
                 .whereEqualTo("household", currentHouse)
@@ -108,9 +115,12 @@ public abstract class CalendarAdapter extends RecyclerView.Adapter<RecyclerView.
                         notifyDataSetChanged();
                         calendar.setEvents(newEvents);
                         generateItems(newEvents);
+                        EspressoIdlingResource.decrement();
+
                     } else {
                         logAndToast(ctx.toString(), errMessage, task.getException(),
                                 ctx, ctx.getString(R.string.refresh_calendar_fail));
+                        EspressoIdlingResource.decrement();
                     }
                 });
     }
