@@ -90,7 +90,7 @@ public class CreateHouseholdActivityTest {
         onView(withId(R.id.submitHouseholdButton)).perform(click());
         Thread.sleep(2000);
         onView(withText(R.string.confirm)).perform(click());
-
+        Thread.sleep(1000);
         assertTrue(FirebaseTestsHelper.householdExists("MyHouse", db));
     }
 
@@ -114,12 +114,12 @@ public class CreateHouseholdActivityTest {
     @Test
     public void emptyFieldsDoesNotCreateHouse() throws InterruptedException {
         onView(withId(R.id.submitHouseholdButton)).perform(click());
-        Thread.sleep(200);
+        Thread.sleep(1000);
         checkToastEmptyField();
 
         onView(withId(R.id.editTextAddress)).perform(typeText("address"));
         onView(withId(R.id.submitHouseholdButton)).perform(click());
-        Thread.sleep(200);
+        Thread.sleep(1000);
         checkToastEmptyField();
     }
 
