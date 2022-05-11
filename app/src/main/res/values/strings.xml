@@ -126,14 +126,12 @@
 
     <!-- ShopItem -->
     <string name="name">Name</string>
-    <string name="quantity">Quantity</string>
     <string name="unit">Unit</string>
     <string name="add_item_title">Adding an item to the list</string>
     <string name="item_delete_button_description">Delete the corresponding shop list item</string>
     <string name="add_item_button">Add item</string>
     <string name="remove_picked_up">Remove checked items</string>
     <string name="number_empty">0</string>
-    <string name="shop_loading_error">Could not load the shop list</string>
 
     <!-- Bottom features menu -->
     <string name="main_screen">Main Screen</string>
