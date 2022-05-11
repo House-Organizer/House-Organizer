@@ -126,6 +126,7 @@ public class CreateHouseholdActivityTest {
         Task<QuerySnapshot> t1 = db.collection("households").get();
 
         onView(withId(R.id.editTextAddress)).perform(typeText("address"));
+        Thread.sleep(500);
         onView(withId(R.id.submitHouseholdButton)).perform(click());
 
         Task<QuerySnapshot> t2 = db.collection("households").get();
