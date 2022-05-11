@@ -10,15 +10,21 @@ import static androidx.test.espresso.matcher.ViewMatchers.hasChildCount;
 import static androidx.test.espresso.matcher.ViewMatchers.hasDescendant;
 import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static androidx.test.espresso.matcher.ViewMatchers.isEnabled;
+import static androidx.test.espresso.matcher.ViewMatchers.isRoot;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
 import static androidx.test.espresso.matcher.ViewMatchers.withText;
 import static com.github.houseorganizer.houseorganizer.FirebaseTestsHelper.EVENTS_TO_DISPLAY;
 import static com.github.houseorganizer.houseorganizer.RecyclerViewHelper.atPosition;
 import static org.hamcrest.Matchers.containsString;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.view.View;
 
+import androidx.test.espresso.IdlingRegistry;
+import androidx.test.espresso.NoMatchingViewException;
+import androidx.test.espresso.ViewAssertion;
 import androidx.test.espresso.contrib.RecyclerViewActions;
 import androidx.test.espresso.intent.Intents;
 import androidx.test.ext.junit.rules.ActivityScenarioRule;
@@ -26,8 +32,11 @@ import androidx.test.ext.junit.runners.AndroidJUnit4;
 import androidx.test.platform.app.InstrumentationRegistry;
 
 import com.github.houseorganizer.houseorganizer.panels.MainScreenActivity;
+import com.github.houseorganizer.houseorganizer.util.RecyclerViewIdlingCallback;
+import com.github.houseorganizer.houseorganizer.util.RecyclerViewLayoutCompleteIdlingResource;
 import com.google.firebase.auth.FirebaseAuth;
 
+import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -43,9 +52,10 @@ import java.util.concurrent.ExecutionException;
 public class CalendarActivityTest {
 
     private static FirebaseAuth auth;
+    private static RecyclerViewLayoutCompleteIdlingResource idlingResource;
 
     @Rule
-    public ActivityScenarioRule<MainScreenActivity> mainScreenActivityActivityScenarioRule =
+    public static ActivityScenarioRule<MainScreenActivity> mainScreenActivityActivityScenarioRule =
             new ActivityScenarioRule<>(MainScreenActivity.class);
 
     @BeforeClass
@@ -58,19 +68,38 @@ public class CalendarActivityTest {
     }
 
     @AfterClass
-    public static void signOut(){
+    public static void signOut() {
         auth.signOut();
     }
 
     @Before
-    public void openActivity() throws InterruptedException {
+    public void openActivity() {
         Context context = InstrumentationRegistry.getInstrumentation().getTargetContext();
         context.sendBroadcast(new Intent(Intent.ACTION_CLOSE_SYSTEM_DIALOGS));
 
         onView(withId(R.id.house_imageButton)).perform(click());
-        Thread.sleep(1000);
+
+        idlingResource = new RecyclerViewLayoutCompleteIdlingResource((RecyclerViewIdlingCallback) getCurrentActivity());
+        IdlingRegistry.getInstance().register(idlingResource);
+
         onView(withId(R.id.housesView)).perform(RecyclerViewActions.actionOnItemAtPosition(0, click()));
         onView(withId(R.id.nav_bar_calendar)).perform(click());
+    }
+
+    private Activity getCurrentActivity() {
+        final Activity[] activity = new Activity[1];
+        onView(isRoot()).check(new ViewAssertion() {
+            @Override
+            public void check(View view, NoMatchingViewException noViewFoundException) {
+                activity[0] = (Activity) view.getContext();
+            }
+        });
+        return activity[0];
+    }
+
+    @After
+    public void unregisterIdlingResource() {
+        IdlingRegistry.getInstance().unregister(idlingResource);
     }
 
     @Test
