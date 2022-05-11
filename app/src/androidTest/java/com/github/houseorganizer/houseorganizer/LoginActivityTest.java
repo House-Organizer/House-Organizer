@@ -4,13 +4,9 @@ package com.github.houseorganizer.houseorganizer;
 import static androidx.test.espresso.Espresso.onView;
 import static androidx.test.espresso.Espresso.pressBack;
 import static androidx.test.espresso.assertion.ViewAssertions.matches;
-import static androidx.test.espresso.intent.Intents.intended;
-import static androidx.test.espresso.intent.matcher.IntentMatchers.hasCategories;
-import static androidx.test.espresso.intent.matcher.IntentMatchers.hasFlag;
 import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static androidx.test.espresso.matcher.ViewMatchers.isEnabled;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
-
 import static org.junit.Assert.fail;
 
 import android.content.Context;
@@ -24,12 +20,11 @@ import androidx.test.platform.app.InstrumentationRegistry;
 
 import com.github.houseorganizer.houseorganizer.panels.login.LoginActivity;
 
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-
-import java.util.Collections;
 
 @RunWith(AndroidJUnit4.class)
 public class LoginActivityTest {
@@ -41,6 +36,12 @@ public class LoginActivityTest {
     public void dismissDialogs() {
         Context context = InstrumentationRegistry.getInstrumentation().getTargetContext();
         context.sendBroadcast(new Intent(Intent.ACTION_CLOSE_SYSTEM_DIALOGS));
+        Intents.init();
+    }
+
+    @After
+    public void closeIntents() {
+        Intents.release();
     }
 
     /* Sign-in button */
@@ -68,11 +69,9 @@ public class LoginActivityTest {
     @Test
     public void backPressLeavesApp() {
         // Closing the app throws NoActivityResumedException, so we make the test fail if nothing was thrown
-        Intents.init();
         try {
             pressBack();
             fail("Should have thrown NoActivityResumedException");
         } catch (NoActivityResumedException expected) { }
-        Intents.release();
     }
 }

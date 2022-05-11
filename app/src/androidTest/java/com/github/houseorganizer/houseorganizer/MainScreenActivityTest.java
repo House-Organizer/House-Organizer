@@ -5,14 +5,11 @@ import static androidx.test.espresso.Espresso.pressBack;
 import static androidx.test.espresso.action.ViewActions.click;
 import static androidx.test.espresso.assertion.ViewAssertions.matches;
 import static androidx.test.espresso.intent.Intents.intended;
-import static androidx.test.espresso.intent.matcher.IntentMatchers.hasCategories;
 import static androidx.test.espresso.intent.matcher.IntentMatchers.hasComponent;
-import static androidx.test.espresso.intent.matcher.IntentMatchers.hasFlag;
 import static androidx.test.espresso.matcher.ViewMatchers.isClickable;
 import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static androidx.test.espresso.matcher.ViewMatchers.isEnabled;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
-
 import static org.junit.Assert.fail;
 
 import android.content.Context;
@@ -31,6 +28,7 @@ import com.github.houseorganizer.houseorganizer.panels.settings.SettingsActivity
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
 
+import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -40,7 +38,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.MethodSorters;
 
-import java.util.Collections;
 import java.util.concurrent.ExecutionException;
 
 @RunWith(AndroidJUnit4.class)
@@ -73,6 +70,12 @@ public class MainScreenActivityTest {
     public void dismissDialogs() {
         Context context = InstrumentationRegistry.getInstrumentation().getTargetContext();
         context.sendBroadcast(new Intent(Intent.ACTION_CLOSE_SYSTEM_DIALOGS));
+        Intents.init();
+    }
+
+    @After
+    public void closeIntents() {
+        Intents.release();
     }
 
     // House selection button
@@ -93,10 +96,8 @@ public class MainScreenActivityTest {
 
     @Test
     public void houseSelectionButtonSendsIntent() {
-        Intents.init();
         onView(withId(R.id.house_imageButton)).perform(click());
         intended(hasComponent(HouseSelectionActivity.class.getName()));
-        Intents.release();
     }
 
     // Settings button
@@ -117,10 +118,8 @@ public class MainScreenActivityTest {
 
     @Test
     public void settingsButtonSendsIntent() {
-        Intents.init();
         onView(withId(R.id.settings_imageButton)).perform(click());
         intended(hasComponent(SettingsActivity.class.getName()));
-        Intents.release();
     }
 
     // Info button
@@ -152,22 +151,18 @@ public class MainScreenActivityTest {
 
     @Test
     public void calendarMenuFiresIntent() {
-        Intents.init();
         onView(withId(R.id.nav_bar_calendar)).perform(click());
         intended(hasComponent(CalendarActivity.class.getName()));
-        Intents.release();
     }
 
 
     @Test
     public void backPressLeavesApp() {
         // Closing the app throws NoActivityResumedException, so we make the test fail if nothing was thrown
-        Intents.init();
         try {
             pressBack();
             fail("Should have thrown NoActivityResumedException");
         } catch (NoActivityResumedException expected) { }
-        Intents.release();
     }
     /* TODO: Move sign-out button tests in rightful test class; This button is no longer on MainScreen
     @Test
@@ -183,11 +178,9 @@ public class MainScreenActivityTest {
 
     @Test
     public void zSignOutButtonFiresRightIntent(){
-        Intents.init();
         onView(withId(R.id.sign_out_button)).perform(click());
         intended(hasComponent(LoginActivity.class.getName()));
         intended(hasExtra(ApplicationProvider.getApplicationContext().getString(R.string.signout_intent), true));
-        Intents.release();
     }
      */
 }
