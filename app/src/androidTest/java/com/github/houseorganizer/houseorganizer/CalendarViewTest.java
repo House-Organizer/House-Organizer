@@ -83,7 +83,7 @@ public class CalendarViewTest {
     private static RecyclerViewLayoutCompleteIdlingResource idlingResource;
 
     @BeforeClass
-    public void createMockFirebase() throws ExecutionException, InterruptedException {
+    public static void createMockFirebase() throws ExecutionException, InterruptedException {
         FirebaseTestsHelper.startAuthEmulator();
         FirebaseTestsHelper.startFirestoreEmulator();
         FirebaseTestsHelper.startStorageEmulator();
@@ -147,7 +147,7 @@ public class CalendarViewTest {
         IdlingRegistry.getInstance().unregister(EspressoIdlingResource.countingIdlingResource);
     }
 
-    private Activity getCurrentActivity(){
+    private static Activity getCurrentActivity(){
         final Activity[] currentActivity = {null};
 
         getInstrumentation().runOnMainSync(new Runnable(){
