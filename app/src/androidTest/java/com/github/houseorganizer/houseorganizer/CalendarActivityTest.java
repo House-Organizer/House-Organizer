@@ -10,9 +10,9 @@ import static androidx.test.espresso.matcher.ViewMatchers.hasChildCount;
 import static androidx.test.espresso.matcher.ViewMatchers.hasDescendant;
 import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static androidx.test.espresso.matcher.ViewMatchers.isEnabled;
-import static androidx.test.espresso.matcher.ViewMatchers.isRoot;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
 import static androidx.test.espresso.matcher.ViewMatchers.withText;
+import static androidx.test.platform.app.InstrumentationRegistry.getInstrumentation;
 import static com.github.houseorganizer.houseorganizer.FirebaseTestsHelper.EVENTS_TO_DISPLAY;
 import static com.github.houseorganizer.houseorganizer.RecyclerViewHelper.atPosition;
 import static org.hamcrest.Matchers.containsString;
@@ -20,16 +20,14 @@ import static org.hamcrest.Matchers.containsString;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.view.View;
 
 import androidx.test.espresso.IdlingRegistry;
-import androidx.test.espresso.NoMatchingViewException;
-import androidx.test.espresso.ViewAssertion;
 import androidx.test.espresso.contrib.RecyclerViewActions;
 import androidx.test.espresso.intent.Intents;
 import androidx.test.ext.junit.rules.ActivityScenarioRule;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
-import androidx.test.platform.app.InstrumentationRegistry;
+import androidx.test.runner.lifecycle.ActivityLifecycleMonitorRegistry;
+import androidx.test.runner.lifecycle.Stage;
 
 import com.github.houseorganizer.houseorganizer.panels.MainScreenActivity;
 import com.github.houseorganizer.houseorganizer.util.RecyclerViewIdlingCallback;
@@ -46,6 +44,8 @@ import org.junit.runner.RunWith;
 
 import java.time.LocalDate;
 import java.time.YearMonth;
+import java.util.Collection;
+import java.util.Iterator;
 import java.util.concurrent.ExecutionException;
 
 @RunWith(AndroidJUnit4.class)
@@ -74,7 +74,7 @@ public class CalendarActivityTest {
 
     @Before
     public void openActivity() {
-        Context context = InstrumentationRegistry.getInstrumentation().getTargetContext();
+        Context context = getInstrumentation().getTargetContext();
         context.sendBroadcast(new Intent(Intent.ACTION_CLOSE_SYSTEM_DIALOGS));
 
         onView(withId(R.id.house_imageButton)).perform(click());
@@ -86,15 +86,18 @@ public class CalendarActivityTest {
         onView(withId(R.id.nav_bar_calendar)).perform(click());
     }
 
-    private Activity getCurrentActivity() {
-        final Activity[] activity = new Activity[1];
-        onView(isRoot()).check(new ViewAssertion() {
-            @Override
-            public void check(View view, NoMatchingViewException noViewFoundException) {
-                activity[0] = (Activity) view.getContext();
+    private Activity getCurrentActivity(){
+        final Activity[] currentActivity = {null};
+
+        getInstrumentation().runOnMainSync(new Runnable(){
+            public void run(){
+                Collection<Activity> resumedActivity = ActivityLifecycleMonitorRegistry.getInstance().getActivitiesInStage(Stage.RESUMED);
+                Iterator<Activity> it = resumedActivity.iterator();
+                currentActivity[0] = it.next();
             }
         });
-        return activity[0];
+
+        return currentActivity[0];
     }
 
     @After
