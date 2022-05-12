@@ -1,0 +1,15 @@
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <!-- Base application theme. -->
+    <style name="Theme1.HouseOrganizer" parent="Theme.MaterialComponents.DayNight.DarkActionBar">
+        <!-- Primary brand color. -->
+        <item name="colorPrimary">@color/t1_light_purple</item>
+        <item name="colorPrimaryVariant">#774F63</item>
+        <item name="colorOnPrimary">@color/t1_beige</item>
+        <!-- Secondary brand color. -->
+        <item name="colorSecondary">@color/t1_purple</item>
+        <item name="colorSecondaryVariant">@color/t1_light_purple</item>
+        <item name="colorOnSecondary">@color/t1_dark_purple</item>
+        <!-- Status bar color. -->
+        <item name="android:statusBarColor" tools:targetApi="l">?attr/colorPrimaryVariant</item>
+    </style>
+</resources>

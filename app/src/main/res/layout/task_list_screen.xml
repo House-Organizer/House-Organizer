@@ -24,11 +24,9 @@
 
     <Button
         android:id="@+id/tl_screen_new_task"
-        style="?android:attr/buttonBarButtonStyle"
         android:layout_width="wrap_content"
         android:layout_height="0dip"
         android:layout_marginEnd="16dp"
-        android:backgroundTint="#5C0B8E81"
         android:gravity="center"
         android:orientation="horizontal"
         android:text="@string/tl_screen_new_task"
