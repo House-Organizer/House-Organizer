@@ -151,7 +151,7 @@ public class LocalStorage {
         return mapHouseholdIdToTasks;
     }
 
-    public static boolean pushEventsOffline(Context context, DocumentReference currentHouse, List<Calendar.Event> events) {
+    public static boolean pushEventsOffline(Context context, String currentHouseId, List<Calendar.Event> events) {
         ArrayList<OfflineEvent> offlineEvents = new ArrayList<>();
         for (Calendar.Event event : events) {
             offlineEvents.add(new OfflineEvent(
@@ -162,15 +162,13 @@ public class LocalStorage {
                     event.getId()
             ));
         }
-        String house_id = "temp";
-        if (currentHouse != null) {
-            house_id = currentHouse.getId();
-        }
+        String house_id = currentHouseId == null ? "temp" : currentHouseId;
+
         return writeTxtToFile(context, OFFLINE_STORAGE_CALENDAR + house_id + OFFLINE_STORAGE_EXTENSION,
                 new Gson().toJson(offlineEvents));
     }
 
-    public static boolean pushGroceriesOffline(Context context, DocumentReference currentHouse, List<ShopItem> items) {
+    public static boolean pushGroceriesOffline(Context context, String currentHouseId, List<ShopItem> items) {
         ArrayList<OfflineShopItem> offlineShopItems = new ArrayList<>();
         for (ShopItem item : items) {
             offlineShopItems.add(new OfflineShopItem(
@@ -180,15 +178,14 @@ public class LocalStorage {
                     item.isPickedUp()
             ));
         }
-        String house_id = "temp";
-        if (currentHouse != null) {
-            house_id = currentHouse.getId();
-        }
+
+        String house_id = currentHouseId == null ? "temp" : currentHouseId;
+
         return writeTxtToFile(context, OFFLINE_STORAGE_GROCERIES + house_id + OFFLINE_STORAGE_EXTENSION,
                 new Gson().toJson(offlineShopItems));
     }
 
-    public static boolean pushTaskListOffline(Context context, DocumentReference currentHouse, List<HTask> tasks) {
+    public static boolean pushTaskListOffline(Context context, String currentHouseId, List<HTask> tasks) {
         ArrayList<OfflineTask> offlineTasks = new ArrayList<>();
         for (HTask task : tasks) {
             offlineTasks.add(new OfflineTask(
@@ -196,10 +193,9 @@ public class LocalStorage {
                     task.getDescription(),
                     task.getAssignees()));
         }
-        String house_id = "temp";
-        if (currentHouse != null) {
-            house_id = currentHouse.getId();
-        }
+
+        String house_id = currentHouseId == null ? "temp" : currentHouseId;
+
         return writeTxtToFile(context, OFFLINE_STORAGE_TASKS + house_id + OFFLINE_STORAGE_EXTENSION,
                 new Gson().toJson(offlineTasks));
     }

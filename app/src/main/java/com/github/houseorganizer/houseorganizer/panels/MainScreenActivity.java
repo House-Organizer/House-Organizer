@@ -6,9 +6,12 @@ import static com.github.houseorganizer.houseorganizer.util.Util.logAndToast;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -101,7 +104,10 @@ public class MainScreenActivity extends NavBarActivity {
                 registerForActivityResult(new ActivityResultContracts.GetContent(), uri -> calendarAdapter.pushAttachment(uri)));
         calendarEvents.setAdapter(calendarAdapter);
         calendarEvents.setLayoutManager(new GridLayoutManager(this, 1));
-        findViewById(R.id.add_event).setOnClickListener(v -> calendarAdapter.showAddEventDialog( this, currentHouse, "addEvent:failureToAdd"));
+        findViewById(R.id.add_event).setOnClickListener(v -> {
+            goToOfflineScreenIfNeeded();
+            calendarAdapter.showAddEventDialog(this, currentHouse, "addEvent:failureToAdd");
+        });
 
         // If you want to select the main button on the navBar,
         // use `OptionalInt.of(R.id. ...)`
@@ -113,10 +119,14 @@ public class MainScreenActivity extends NavBarActivity {
                     if(c.isSuccessful()){
                         shopList = c.getResult().getFirestoreShopList();
                         shopListAdapter = c.getResult();
+
+                        LocalStorage.pushGroceriesOffline(this, currentHouse.getId(), shopList.getItems());
+
                         shopList.getOnlineReference().addSnapshotListener((doc, e) -> {
                             shopList = FirestoreShopList.buildShopList(doc);
                             shopListAdapter.setShopList(shopList);
                         });
+
                         return shopListAdapter;
                     }
                     return null;
@@ -179,6 +189,8 @@ public class MainScreenActivity extends NavBarActivity {
                     noHousehold();
                     return;
                 }
+                LocalStorage.pushCurrentHouseOffline(this, currentHouse);
+
                 calendarAdapter.refreshCalendarView(this, currentHouse, "refreshCalendar:failureToRefresh", false);
                 initializeTaskList();
             }else{
@@ -274,21 +286,25 @@ public class MainScreenActivity extends NavBarActivity {
     }
 
     public void houseButtonPressed(View view) {
+        goToOfflineScreenIfNeeded();
         Intent intent = new Intent(this, HouseSelectionActivity.class);
         startActivity(intent);
     }
 
     public void settingsButtonPressed(View view) {
+        goToOfflineScreenIfNeeded();
         Intent intent = new Intent(this, SettingsActivity.class);
         startActivity(intent);
     }
 
     public void infoButtonPressed(View view) {
+        goToOfflineScreenIfNeeded();
         Intent intent = new Intent(this, InfoActivity.class);
         startActivity(intent);
     }
 
     public void bottomAddButtonPressed(View view){
+        goToOfflineScreenIfNeeded();
         if(listView == ListFragmentView.CHORES_LIST){
             TaskView.addTask(db, taskList, taskListAdapter, listView, tlMetadata);
         }
@@ -300,6 +316,7 @@ public class MainScreenActivity extends NavBarActivity {
     }
 
     public void rotateLists(View view) {
+        goToOfflineScreenIfNeeded();
         listView = ListFragmentView.values()[1 - listView.ordinal()];
 
         switch(listView) {
@@ -327,12 +344,14 @@ public class MainScreenActivity extends NavBarActivity {
         }
     }
 
-    public void goToOfflineScreen(View v) {
-        LocalStorage.clearOfflineStorage(this);
-        LocalStorage.pushCurrentHouseOffline(this, currentHouse);
-        LocalStorage.pushTaskListOffline(this, currentHouse, taskList.getTasks());
-        LocalStorage.pushEventsOffline(this, currentHouse, calendar.getEvents());
-        LocalStorage.pushGroceriesOffline(this, currentHouse, shopList.getItems());
-        startActivity(new Intent(this, OfflineScreenActivity.class));
+    public void goToOfflineScreenIfNeeded() {
+        ConnectivityManager connectivityManager = (ConnectivityManager)getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetInfo = connectivityManager.getActiveNetworkInfo();
+
+        boolean isConnected = (activeNetInfo != null) && activeNetInfo.isConnectedOrConnecting();
+
+        if (! isConnected) {
+            startActivity(new Intent(this, OfflineScreenActivity.class));
+        }
     }
 }

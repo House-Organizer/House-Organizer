@@ -1,3 +1,14 @@
 <resources>
     <!-- Store array choices here -->
+    <string-array name="colorThemes">
+        <item>Original theme</item>
+        <item>Sugar plum</item>
+        <item>Theme#2 TBD</item>
+    </string-array>
+
+    <string-array name="colorThemesAlias">
+        <item>Original theme</item>
+        <item>Sugar plum</item>
+        <item>Theme#2 TBD</item>
+    </string-array>
 </resources>

@@ -8,6 +8,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import androidx.annotation.IdRes;
 import androidx.annotation.LayoutRes;
@@ -17,6 +18,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.github.houseorganizer.houseorganizer.panels.MainScreenActivity;
+import com.github.houseorganizer.houseorganizer.storage.LocalStorage;
 import com.github.houseorganizer.houseorganizer.util.BiViewHolder;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -85,6 +87,7 @@ public final class TaskView {
                         Map<String, Object> taskData = task2.getResult().getData();
                         taskList.addTask(FirestoreTask.recoverTask(taskData, ptr));
                         taskListAdapter.notifyDataSetChanged(); // patch s.t. they show up faster
+                        LocalStorage.pushTaskListOffline(parent, (String) metadata.get("hh-id"), taskList.getTasks());
                     }
                 }));
 

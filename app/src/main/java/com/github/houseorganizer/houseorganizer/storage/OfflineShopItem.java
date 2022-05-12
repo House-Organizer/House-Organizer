@@ -53,7 +53,7 @@ public final class OfflineShopItem extends OfflineItem {
 
     @NonNull
     public String info() {
-        return String.format(Locale.ROOT, "%s [%d %s][%s]", name, quantity, unit, isPickedUp ? "x" : " ");
+        return String.format(Locale.ROOT, "%s [%d %s][%s]", name, quantity, unit, isPickedUp ? "x" : "\t");
     }
 
     @Override

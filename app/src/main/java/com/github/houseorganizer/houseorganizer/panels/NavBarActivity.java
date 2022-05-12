@@ -1,6 +1,9 @@
 package com.github.houseorganizer.houseorganizer.panels;
 
+import android.content.Context;
 import android.content.Intent;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 
 import androidx.annotation.IdRes;
 import androidx.appcompat.app.AppCompatActivity;
@@ -56,5 +59,12 @@ public abstract class NavBarActivity extends AppCompatActivity {
             menu.setSelectedItemId(navBarButtonId.getAsInt());
         }
         menu.setOnItemSelectedListener(l -> changeActivity(l.getTitle().toString()));
+    }
+
+    public boolean isConnected() {
+        ConnectivityManager connectivityManager = (ConnectivityManager)getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetInfo = connectivityManager.getActiveNetworkInfo();
+
+        return (activeNetInfo != null) && activeNetInfo.isConnectedOrConnecting();
     }
 }

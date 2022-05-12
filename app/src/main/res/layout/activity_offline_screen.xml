@@ -48,8 +48,8 @@
         android:layout_marginStart="5dp"
         android:layout_marginTop="92dp"
         android:layout_marginEnd="5dp"
-        android:background="#BAEA1111"
-        android:textColor="@color/white"
+        android:background="?attr/colorSecondary"
+        android:textColor="?attr/colorOnPrimary"
         android:text="@string/offline_warning"
         android:textAlignment="center"
         android:textSize="15sp"
@@ -62,8 +62,8 @@
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/offline_calendar"
-        android:layout_width="329dp"
-        android:layout_height="229dp"
+        android:layout_width="325dp"
+        android:layout_height="150dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -71,47 +71,24 @@
         app:layout_constraintVertical_bias="0.21" />
 
     <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/offline_groceries"
+        android:layout_width="325dp"
+        android:layout_height="150dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/offline_calendar"
+        app:layout_constraintVertical_bias="0.123" />
+
+    <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/offline_task_list"
         android:layout_width="325dp"
-        android:layout_height="140dp"
+        android:layout_height="150dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.523"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/offline_calendar"
-        app:layout_constraintVertical_bias="0.262" />
-
-    <Button
-        android:id="@+id/offline_list_view_change"
-        style="?android:attr/buttonBarButtonStyle"
-        android:layout_width="48dp"
-        android:layout_height="wrap_content"
-        android:backgroundTint="#6F1C739A"
-        android:onClick="rotateLists"
-        android:text="@string/cycle_calendar_views"
-        android:textColor="@color/white"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.881"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/offline_calendar"
-        app:layout_constraintVertical_bias="0.775" />
-
-    <Button
-        android:id="@+id/offline_go_back_online_button"
-        style="?android:attr/buttonBarButtonStyle"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:backgroundTint="#6F1C739A"
-        android:onClick="goBackOnline"
-        android:text="@string/go_back_online_button"
-        android:textColor="@color/white"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.569"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/offline_calendar"
-        app:layout_constraintVertical_bias="0.775" />
+        app:layout_constraintTop_toBottomOf="@id/offline_groceries"
+        app:layout_constraintVertical_bias="0.419" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -12,6 +12,7 @@
         android:layout_width="122dp"
         android:layout_height="117dp"
         android:contentDescription="@string/home_logo"
+        android:background="#00420420"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
