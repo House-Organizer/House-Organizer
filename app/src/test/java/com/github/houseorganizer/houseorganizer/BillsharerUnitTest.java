@@ -13,10 +13,10 @@ import org.junit.Test;
 import java.util.HashMap;
 import java.util.Objects;
 
-public class ExpenseUnitTest {
+public class BillsharerUnitTest {
 
     HashMap<String, Double> map = new HashMap<>();
-    Expense expense = new Expense("title", 0.0f, "payee", map);
+    Expense expense = new Expense("title", 0, "payee", map);
 
     @Test
     public void constructorBuildsItem() {
@@ -33,8 +33,8 @@ public class ExpenseUnitTest {
 
     @Test
     public void equalsWorks() {
-        Expense expense2 = new Expense("title", 0.0f, "payee", map);
-        Expense expense3 = new Expense("t", 1.0f, "pay", new HashMap<>());
+        Expense expense2 = new Expense("title", 0, "payee", map);
+        Expense expense3 = new Expense("t", 1, "pay", new HashMap<>());
         assertEquals(expense, expense2);
         assertNotEquals(expense, expense3);
     }
