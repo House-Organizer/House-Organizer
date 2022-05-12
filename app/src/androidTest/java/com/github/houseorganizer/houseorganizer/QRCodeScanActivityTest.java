@@ -121,6 +121,15 @@ public class QRCodeScanActivityTest {
         QRJoinRule.getScenario().onActivity(qrCodeScanActivity -> {
             qrCodeScanActivity.acceptInvite(TEST_HOUSEHOLD_NAMES[0]);
             Task<DocumentSnapshot> task = db.collection("households").document(TEST_HOUSEHOLD_NAMES[0]).get();
+            Task<List<Task<?>>> allTasks = Tasks.whenAllComplete(task);
+            try {
+                Tasks.await(allTasks);
+            } catch (ExecutionException e) {
+                e.printStackTrace();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+
             Map<String, Object> houseData_after = task.getResult().getData();
             List<String> resident_after = (List<String>) houseData_after.get("residents");
             Long num_residents_after = (Long) houseData_after.get("num_members");
