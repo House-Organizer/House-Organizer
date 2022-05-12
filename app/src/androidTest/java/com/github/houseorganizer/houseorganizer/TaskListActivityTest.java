@@ -82,8 +82,6 @@ public class TaskListActivityTest {
 
     @Before
     public void forceTaskView() throws InterruptedException {
-        Thread.sleep(2000); // no longer necessary to perform clicks
-
         Context context = InstrumentationRegistry.getInstrumentation().getTargetContext();
         context.sendBroadcast(new Intent(Intent.ACTION_CLOSE_SYSTEM_DIALOGS));
     }
