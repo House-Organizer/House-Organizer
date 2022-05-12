@@ -39,10 +39,7 @@ public class Billsharer {
     }
 
     public Task<DocumentSnapshot> startUpBillsharer() {
-        return initResidents().addOnCompleteListener(l -> {
-            initBalances();
-            refreshBalances();
-        });
+        return initResidents().addOnCompleteListener(l -> refreshBalances());
     }
 
     public List<Expense> getExpenses() {
@@ -137,6 +134,7 @@ public class Billsharer {
     private void computeDebts() {
         debts = new ArrayList<>();
         Map<String, Double> temp_balances = new HashMap<>(balances);
+        temp_balances.values().removeIf(v -> v == 0);
         while (!temp_balances.isEmpty()) {
             computeNextDebt(temp_balances);
         }
@@ -236,6 +234,7 @@ public class Billsharer {
     }
 
     public void refreshBalances() {
+        initBalances();
         computeBalances();
         computeDebts();
     }
