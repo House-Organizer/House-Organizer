@@ -127,14 +127,13 @@ public class FirestoreTaskTest {
 
     @Test /* reverts its changes | DB: unchanged */
     public void recoverTaskWorks() throws ExecutionException, InterruptedException {
-        HTask task = new HTask("0", BASIC_TASK_TITLE, BASIC_TASK_NAME);
+        HTask task = new HTask(BASIC_TASK_TITLE, BASIC_TASK_NAME);
         Map<String, Object> taskData = makeTaskData(task);
         DocumentReference fakeDocRef = db.document("/task_dump/RT_TEST");
 
         FirestoreTask recoveredTask = FirestoreTask.recoverTask(taskData, fakeDocRef);
 
         assertEquals(task.getTitle(), recoveredTask.getTitle());
-        assertEquals(task.getOwner(), recoveredTask.getOwner());
         assertEquals(task.getDescription(), recoveredTask.getDescription());
         assertEquals(fakeDocRef, recoveredTask.getTaskDocRef());
 
@@ -197,7 +196,6 @@ public class FirestoreTaskTest {
         data.put("title", task.getTitle());
         data.put("description", task.getDescription());
         data.put("status", task.isFinished() ? STATUS_COMPLETED : STATUS_ONGOING);
-        data.put("owner", task.getOwner());
 
         List<Map<String, String>> subTaskListData = new ArrayList<>();
 

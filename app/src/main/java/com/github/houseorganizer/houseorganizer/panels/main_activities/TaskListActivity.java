@@ -56,7 +56,7 @@ public final class TaskListActivity extends NavBarActivity {
             if (task.isSuccessful()) {
                 QueryDocumentSnapshot qds = task.getResult().iterator().next();
                 this.tlMetadata = db.collection("task_lists").document(qds.getId());
-                this.taskList = new TaskList("0", "My weekly todo", new ArrayList<>());
+                this.taskList = new TaskList(new ArrayList<>());
                 this.taskListAdapter = new TaskListAdapter(taskList, tlMetadata, currentHouse);
                 TaskView.recoverTaskList(this, taskList, taskListAdapter, tlMetadata, R.id.tl_screen_tasks);
             }

@@ -4,21 +4,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 public final class TaskList {
-    private final String owner; /* UID */
     private final List<HTask> tasks;
-    private String title;
 
-    public TaskList(String owner, String title, List<HTask> initialTasks) {
-        this.owner = owner;
-        this.title = title;
+    public TaskList(List<HTask> initialTasks) {
         this.tasks = new ArrayList<>(initialTasks);
     }
 
     // Setters
-    public void changeTitle(String newTitle) {
-        this.title = newTitle;
-    }
-
     public void addTask(HTask newTask) {
         tasks.add(newTask);
     }
@@ -40,15 +32,6 @@ public final class TaskList {
             tasks.forEach(HTask::removeFinishedSubTasks);
         }
         tasks.removeIf(HTask::isFinished);
-    }
-
-    // Getters
-    public String getOwner() {
-        return owner;
-    }
-
-    public String getTitle() {
-        return title;
     }
 
     public boolean hasTasks() {

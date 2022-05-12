@@ -8,7 +8,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.Toast;
 
 import androidx.annotation.IdRes;
 import androidx.annotation.LayoutRes;
@@ -73,8 +72,6 @@ public final class TaskView {
 
                 if(metadata == null) return;
 
-                taskList.changeTitle((String)metadata.get("title"));
-
                 List<DocumentReference> taskPtrs = (ArrayList<DocumentReference>)
                         metadata.getOrDefault("task-ptrs", new ArrayList<>());
 
@@ -119,7 +116,7 @@ public final class TaskView {
                     if (task.isSuccessful()) {
                         DocumentReference taskDocRef = task.getResult();
 
-                        taskList.addTask(new FirestoreTask(taskList.getOwner(), "Untitled task", "", new ArrayList<>(), taskDocRef));
+                        taskList.addTask(new FirestoreTask( "Untitled task", "", new ArrayList<>(), taskDocRef));
                         taskListAdapter.notifyItemInserted(taskListAdapter.getItemCount()-1);
 
                         addTaskPtrToMetadata(taskListDocRef, taskDocRef);

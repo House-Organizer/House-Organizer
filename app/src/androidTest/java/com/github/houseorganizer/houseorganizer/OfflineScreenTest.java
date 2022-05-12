@@ -27,7 +27,6 @@ import com.github.houseorganizer.houseorganizer.storage.LocalStorage;
 import com.github.houseorganizer.houseorganizer.task.HTask;
 
 import org.junit.AfterClass;
-import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.Test;
@@ -45,8 +44,8 @@ public class OfflineScreenTest {
                     new ShopItem("apples", 2, "units"));
 
     private final static List<HTask> TASKS =
-            Arrays.asList(new HTask("0", "Clean the kitchen", "scrub the floor and countertops"),
-                    new HTask("0", "Clean the bathroom", "wipe down the floor and clean the toilet bowl :/"));
+            Arrays.asList(new HTask("Clean the kitchen", "scrub the floor and countertops"),
+                    new HTask("Clean the bathroom", "wipe down the floor and clean the toilet bowl :/"));
 
     private final static List<Calendar.Event> EVENTS =
             Arrays.asList(new Calendar.Event("Movie night", "This week sometime",
