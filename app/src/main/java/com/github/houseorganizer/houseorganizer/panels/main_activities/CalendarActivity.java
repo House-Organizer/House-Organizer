@@ -1,4 +1,4 @@
-package com.github.houseorganizer.houseorganizer.panels;
+package com.github.houseorganizer.houseorganizer.panels.main_activities;
 
 import android.annotation.SuppressLint;
 import android.os.Bundle;
@@ -33,7 +33,7 @@ public final class CalendarActivity extends NavBarActivity {
 
         currentHouse = FirebaseFirestore.getInstance().collection("households").document(getIntent().getStringExtra("house"));
 
-        TextView yearMonth = (TextView) findViewById(R.id.calendar_screen_year_month);
+        TextView yearMonth = findViewById(R.id.calendar_screen_year_month);
         yearMonth.setText(YearMonth.now().format(DateTimeFormatter.ofPattern("LLLL uuuu")));
         yearMonth.setVisibility(View.GONE);
 
@@ -50,6 +50,12 @@ public final class CalendarActivity extends NavBarActivity {
         });
         findViewById(R.id.calendar_screen_add_event).setOnClickListener(v -> calendarAdapter.showAddEventDialog(this, currentHouse, "addEvent:failure"));
 
+        super.setUpNavBar(R.id.nav_bar, OptionalInt.of(R.id.nav_bar_calendar));
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
         super.setUpNavBar(R.id.nav_bar, OptionalInt.of(R.id.nav_bar_calendar));
     }
 

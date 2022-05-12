@@ -1,6 +1,7 @@
 package com.github.houseorganizer.houseorganizer;
 
 import static androidx.test.espresso.Espresso.onView;
+import static androidx.test.espresso.Espresso.pressBack;
 import static androidx.test.espresso.action.ViewActions.click;
 import static androidx.test.espresso.action.ViewActions.closeSoftKeyboard;
 import static androidx.test.espresso.action.ViewActions.typeText;
@@ -20,10 +21,12 @@ import androidx.test.ext.junit.runners.AndroidJUnit4;
 import androidx.test.platform.app.InstrumentationRegistry;
 import androidx.test.rule.GrantPermissionRule;
 
-import com.github.houseorganizer.houseorganizer.house.CreateHouseholdActivity;
-import com.github.houseorganizer.houseorganizer.house.QRCodeScanActivity;
+import com.github.houseorganizer.houseorganizer.panels.household.CreateHouseholdActivity;
+import com.github.houseorganizer.houseorganizer.panels.household.HouseSelectionActivity;
+import com.github.houseorganizer.houseorganizer.panels.household.QRCodeScanActivity;
 import com.google.android.gms.tasks.Task;
 import com.google.android.gms.tasks.Tasks;
+
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -140,6 +143,14 @@ public class CreateHouseholdActivityTest {
         Intents.init();
         onView(withId(R.id.ScanQRCodeButton)).perform(click());
         intended(hasComponent(QRCodeScanActivity.class.getName()));
+        Intents.release();
+    }
+
+    @Test
+    public void backButtonGoesToHouseSelection() {
+        Intents.init();
+        pressBack();
+        intended(hasComponent(HouseSelectionActivity.class.getName()));
         Intents.release();
     }
 }

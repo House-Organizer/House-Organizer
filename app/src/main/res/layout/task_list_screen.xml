@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".panels.TaskListActivity">
+    tools:context=".panels.main_activities.TaskListActivity">
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/tl_screen_tasks"
