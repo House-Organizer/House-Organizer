@@ -95,7 +95,7 @@ public class QRCodeScanActivityTest {
         QRJoinRule.getScenario().onActivity(qrCodeScanActivity -> {
             qrCodeScanActivity.acceptInvite("not_a_valid_household_id");
             Task<DocumentSnapshot> task = db.collection("households").document(TEST_HOUSEHOLD_NAMES[0]).get();
-            Tasks.whenAllComplete();
+            Tasks.await(task);
             Map<String, Object> houseData_after = task.getResult().getData();
             assertEquals(houseData_before, houseData_after);
             qrCodeScanActivity.finish();
