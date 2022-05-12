@@ -83,6 +83,8 @@ public final class FirestoreTask extends HTask {
     }
 
     public void changeSubTaskTitle(int index, String newTitle) {
+        EspressoIdlingResource.increment();
+
         SubTask subTask = super.getSubTaskAt(index);
 
         // Firestore
@@ -92,6 +94,8 @@ public final class FirestoreTask extends HTask {
         taskDocRef.update("sub tasks", FieldValue.arrayRemove(subTaskData));
         subTaskData.replace("title", newTitle);
         taskDocRef.update("sub tasks", FieldValue.arrayUnion(subTaskData));
+
+        EspressoIdlingResource.decrement();
     }
 
     /* Static API */
