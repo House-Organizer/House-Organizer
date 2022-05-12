@@ -32,6 +32,7 @@
         <entry key="app/src/main/res/layout/calendar_upcoming_row.xml" value="0.20260416666666667" />
         <entry key="app/src/main/res/layout/calendar_weekly_row.xml" value="0.1890625" />
         <entry key="app/src/main/res/layout/content_main_screen.xml" value="0.2210144927536232" />
+        <entry key="app/src/main/res/layout/debt_row.xml" value="0.25" />
         <entry key="app/src/main/res/layout/event_creation.xml" value="0.15070921985815602" />
         <entry key="app/src/main/res/layout/expense_cell.xml" value="0.17325227963525835" />
         <entry key="app/src/main/res/layout/expense_row.xml" value="0.18" />
