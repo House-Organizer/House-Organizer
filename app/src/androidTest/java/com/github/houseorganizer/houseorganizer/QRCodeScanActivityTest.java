@@ -95,22 +95,20 @@ public class QRCodeScanActivityTest {
     @Test
     public void acceptInviteFailsOnInvalidID() throws ExecutionException, InterruptedException {
         Map<String, Object> houseData_before = FirebaseTestsHelper.fetchHouseholdData(TEST_HOUSEHOLD_NAMES[0], db);
-        QRJoinRule.getScenario().onActivity(qrCodeScanActivity -> {
-            qrCodeScanActivity.acceptInvite("not_a_valid_household_id");
-            Task<DocumentSnapshot> task = db.collection("households").document(TEST_HOUSEHOLD_NAMES[0]).get();
-            Task<List<Task<?>>> allTasks = Tasks.whenAllComplete(task);
-            try {
-                Tasks.await(allTasks);
-            } catch (ExecutionException e) {
-                e.printStackTrace();
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
+        QRJoinRule.getScenario().onActivity(qrCodeScanActivity -> qrCodeScanActivity.acceptInvite("not_a_valid_household_id"));
 
-            Map<String, Object> houseData_after = task.getResult().getData();
-            assertEquals(houseData_before, houseData_after);
-            qrCodeScanActivity.finish();
-        });
+        Task<DocumentSnapshot> task = db.collection("households").document(TEST_HOUSEHOLD_NAMES[0]).get();
+        Task<List<Task<?>>> allTasks = Tasks.whenAllComplete(task);
+        try {
+            Tasks.await(allTasks);
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        Map<String, Object> houseData_after = task.getResult().getData();
+        assertEquals(houseData_before, houseData_after);
     }
     /*
     @Test
