@@ -304,7 +304,7 @@ public class EditHouseholdActivity extends AppCompatActivity {
 
     private OnFailureListener toastExceptionFailureListener(String message) {
         return exception -> Toast.makeText(getApplicationContext(),
-                "Cannot remove task list", Toast.LENGTH_SHORT).show();
+                message, Toast.LENGTH_SHORT).show();
     }
 
     public void deleteTaskList(View view) {
