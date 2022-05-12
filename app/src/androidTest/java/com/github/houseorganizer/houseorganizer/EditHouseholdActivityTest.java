@@ -7,6 +7,7 @@ import static androidx.test.espresso.action.ViewActions.closeSoftKeyboard;
 import static androidx.test.espresso.action.ViewActions.typeText;
 import static androidx.test.espresso.assertion.ViewAssertions.matches;
 import static androidx.test.espresso.intent.Intents.intended;
+import static androidx.test.espresso.intent.matcher.IntentMatchers.hasAction;
 import static androidx.test.espresso.intent.matcher.IntentMatchers.hasComponent;
 import static androidx.test.espresso.matcher.ViewMatchers.isClickable;
 import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
@@ -90,6 +91,25 @@ public class EditHouseholdActivityTest {
         Context context = InstrumentationRegistry.getInstrumentation().getTargetContext();
         context.sendBroadcast(new Intent(Intent.ACTION_CLOSE_SYSTEM_DIALOGS));
     }
+
+    @Test
+    public void clickOnImageIsClickable() throws ExecutionException, InterruptedException {
+        onView(withId(R.id.changeImageOfHousehold)).check(matches(isClickable()));
+    }
+
+    @Test
+    public void clickOnImageIsDisplayed() {
+        onView(withId(R.id.changeImageOfHousehold)).check(matches(isDisplayed()));
+    }
+
+    @Test
+    public void clickOnImageFiresIntent() {
+        Intents.init();
+        onView(withId(R.id.changeImageOfHousehold)).perform(click());
+        intended(hasAction(Intent.ACTION_GET_CONTENT));
+        Intents.release();
+    }
+
 
     @Test
     public void addUserIsDisplayed() {

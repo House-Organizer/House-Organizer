@@ -30,6 +30,8 @@
     <string name="permission_denied">This app requires permission to be granted in order to work properly</string>
 
     <!-- Edit Household -->
+    <string name="changed_picture">Image uploaded!</string>
+    <string name="change_picture_speakable_text">Change image</string>
     <string name="user_name">User name</string>
     <string name="edit_button_description">Press to edit the household</string>
     <string name="delete_button">Delete household</string>

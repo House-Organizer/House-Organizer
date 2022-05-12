@@ -5,15 +5,18 @@ import static com.github.houseorganizer.houseorganizer.util.Util.getSharedPrefs;
 import static com.github.houseorganizer.houseorganizer.util.Util.getSharedPrefsEditor;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.graphics.drawable.Drawable;
 import android.location.Location;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -23,10 +26,12 @@ import androidx.core.app.ActivityCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter;
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
 import com.github.houseorganizer.houseorganizer.R;
 import com.github.houseorganizer.houseorganizer.house.HouseModel;
+import com.github.houseorganizer.houseorganizer.image.ImageHelper;
 import com.github.houseorganizer.houseorganizer.location.LocationHelpers;
 import com.github.houseorganizer.houseorganizer.panels.main_activities.MainScreenActivity;
 import com.github.houseorganizer.houseorganizer.util.EspressoIdlingResource;
@@ -40,6 +45,8 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 
 import java.util.List;
 import java.util.Map;
@@ -54,6 +61,7 @@ public class HouseSelectionActivity extends AppCompatActivity {
     RecyclerView housesView;
     FirestoreRecyclerAdapter<HouseModel, HouseViewHolder> adapter;
     FirebaseFirestore firestore;
+    FirebaseStorage storage;
 
     // Coordinates
     Double lat;
@@ -72,6 +80,7 @@ public class HouseSelectionActivity extends AppCompatActivity {
         housesView = findViewById(R.id.housesView);
         emailUser = Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser()).getEmail();
         firestore = FirebaseFirestore.getInstance();
+        storage = FirebaseStorage.getInstance();
         locationRequest = LocationRequest
                 .create()
                 .setInterval(1000 * DEFAULT_UPDATE_INTERVAL)
@@ -90,6 +99,7 @@ public class HouseSelectionActivity extends AppCompatActivity {
         }
     }
 
+    @SuppressLint("MissingPermission")
     private void getCoordinates() {
         fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
 
@@ -129,8 +139,12 @@ public class HouseSelectionActivity extends AppCompatActivity {
             @Override
             protected void onBindViewHolder(@NonNull HouseViewHolder holder, int position, @NonNull HouseModel model) {
                 holder.houseName.setText(model.getName());
+                holder.houseImage.setTag(R.drawable.home_icon);
+                fetchImageForHousehold(holder.houseImage, adapter.getSnapshots().getSnapshot(position).getId());
+
                 holder.houseName.setTag(adapter.getSnapshots().getSnapshot(position).getId());
                 holder.editButton.setTag(adapter.getSnapshots().getSnapshot(position).getId());
+
 
                 EspressoIdlingResource.decrement();
             }
@@ -139,6 +153,22 @@ public class HouseSelectionActivity extends AppCompatActivity {
         housesView.setHasFixedSize(true);
         housesView.setLayoutManager(new LinearLayoutManager(this));
         housesView.setAdapter(adapter);
+    }
+
+    private void fetchImageForHousehold(ImageView imageViewToSet, String houseId){
+        StorageReference imageHouse = storage.getReference().child("house_" + houseId);
+            imageHouse.getDownloadUrl()
+                .addOnSuccessListener(uri -> {
+                    imageViewToSet.setTag(houseId);
+                    Glide.with(getApplicationContext()).load(uri.toString()).into(imageViewToSet);
+                })
+                .addOnFailureListener(exception -> {
+                    setDefaultImageHouse(imageViewToSet);
+                });
+    }
+
+    private void setDefaultImageHouse(ImageView imageViewToSet){
+        imageViewToSet.setImageResource(R.drawable.home_icon);
     }
 
     private void saveData(String selectedHouse) {
@@ -221,11 +251,13 @@ public class HouseSelectionActivity extends AppCompatActivity {
     private static class HouseViewHolder extends RecyclerView.ViewHolder {
         TextView houseName;
         ImageButton editButton;
+        ImageView houseImage;
 
         public HouseViewHolder(@NonNull View itemView) {
             super(itemView);
             houseName = itemView.findViewById(R.id.houseName);
             editButton = itemView.findViewById(R.id.editButton);
+            houseImage = itemView.findViewById(R.id.houseImage);
         }
     }
 
