@@ -72,6 +72,12 @@ public class MainScreenActivity extends TaskFragmentNavBarActivity {
     private FirestoreShopList shopList;
     private ShopListAdapter shopListAdapter;
     private ListFragmentView listView = ListFragmentView.CHORES_LIST;
+
+    @Override
+    protected int taskListAdapterId() {
+        return R.id.task_list;
+    }
+
     public enum ListFragmentView { CHORES_LIST, GROCERY_LIST }
 
     /* for setting up the task owner. Not related to firebase */

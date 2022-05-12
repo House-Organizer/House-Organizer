@@ -10,6 +10,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import java.util.OptionalInt;
 
 public final class TaskListActivity extends TaskFragmentNavBarActivity {
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -41,5 +42,10 @@ public final class TaskListActivity extends TaskFragmentNavBarActivity {
     protected void onResume() {
         super.onResume();
         super.setUpNavBar(R.id.nav_bar, OptionalInt.of(R.id.nav_bar_task));
+    }
+
+    @Override
+    protected int taskListAdapterId() {
+        return R.id.tl_screen_tasks;
     }
 }
