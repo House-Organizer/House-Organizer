@@ -26,7 +26,7 @@ public class ExpenseUnitTest {
     @Test
     public void constructorBuildsItemWithRightValues() {
         assertThat(expense.getTitle(), is("title"));
-        assertThat(expense.getCost(), is(0.0f));
+        assertThat(expense.getCost(), is(0.0));
         assertThat(expense.getPayee(), is("payee"));
         assertEquals(expense.getShares(), new HashMap<>());
     }

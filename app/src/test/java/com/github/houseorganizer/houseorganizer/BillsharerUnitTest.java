@@ -26,7 +26,7 @@ public class BillsharerUnitTest {
     @Test
     public void constructorBuildsItemWithRightValues() {
         assertThat(expense.getTitle(), is("title"));
-        assertThat(expense.getCost(), is(0));
+        assertThat(expense.getCost(), is(0.0));
         assertThat(expense.getPayee(), is("payee"));
         assertEquals(expense.getShares(), new HashMap<>());
     }
@@ -48,7 +48,7 @@ public class BillsharerUnitTest {
     @Test
     public void toTextWorks() {
         String str = expense.toText();
-        assertEquals("title by payee : 0 CHF", str);
+        assertEquals("title by payee : 0.0 CHF", str);
     }
 
     @Test
