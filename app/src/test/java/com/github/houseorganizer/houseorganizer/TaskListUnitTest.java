@@ -17,47 +17,34 @@ public class TaskListUnitTest {
 
     @Test
     public void taskListConstructorWorksWithNoTasks() {
-        TaskList tl = new TaskList(HTaskUnitTest.NOBODY, "TaskList 1", new ArrayList<>());
+        TaskList tl = new TaskList(new ArrayList<>());
 
         assertFalse(tl.hasTasks());
-        assertEquals(HTaskUnitTest.NOBODY, tl.getOwner());
-        assertEquals("TaskList 1", tl.getTitle());
     }
 
     @Test
     public void taskListConstructorWorksWithTasks() {
-        HTask t  = new HTask(HTaskUnitTest.NOBODY, "Task 1", "description 1");
-        HTask t2 = new HTask(HTaskUnitTest.NOBODY, "Task 2", "description 2");
+        HTask t  = new HTask("Task 1", "description 1");
+        HTask t2 = new HTask("Task 2", "description 2");
 
         List<HTask> tasks = new ArrayList<>();
         tasks.add(t);
         tasks.add(t2);
 
-        TaskList tl = new TaskList(HTaskUnitTest.NOBODY, "TaskList 1", tasks);
+        TaskList tl = new TaskList(tasks);
 
         assertTrue(tl.hasTasks());
-        assertEquals(HTaskUnitTest.NOBODY, tl.getOwner());
-        assertEquals("TaskList 1", tl.getTitle());
 
         assertEquals(t, tl.getTaskAt(0));
         assertEquals(t2, tl.getTaskAt(1));
     }
 
     @Test
-    public void taskListCanChangeTitle() {
-        TaskList tl = new TaskList(HTaskUnitTest.NOBODY, "TaskList 1", new ArrayList<>());
-
-        tl.changeTitle("A better title");
-
-        assertEquals("A better title", tl.getTitle());
-    }
-
-    @Test
     public void taskListCanAddTasks() {
-        HTask t  = new HTask(HTaskUnitTest.NOBODY, "Task 1", "description 1");
-        HTask t2 = new HTask(HTaskUnitTest.NOBODY, "Task 2", "description 2");
+        HTask t  = new HTask("Task 1", "description 1");
+        HTask t2 = new HTask("Task 2", "description 2");
 
-        TaskList tl = new TaskList(HTaskUnitTest.NOBODY, "TaskList 1", new ArrayList<>());
+        TaskList tl = new TaskList(new ArrayList<>());
 
         tl.addTask(t);
         tl.addTask(t2);
@@ -69,10 +56,10 @@ public class TaskListUnitTest {
 
     @Test
     public void taskListCanAddTasksAtGivenIndex() {
-        HTask t  = new HTask(HTaskUnitTest.NOBODY, "Task 1", "description 1");
-        HTask t2 = new HTask(HTaskUnitTest.NOBODY, "Task 2", "description 2");
+        HTask t  = new HTask("Task 1", "description 1");
+        HTask t2 = new HTask("Task 2", "description 2");
 
-        TaskList tl = new TaskList(HTaskUnitTest.NOBODY, "TaskList 1", new ArrayList<>());
+        TaskList tl = new TaskList(new ArrayList<>());
 
         tl.addTask(t);
         tl.addTask(0, t2);
@@ -84,11 +71,11 @@ public class TaskListUnitTest {
 
     @Test
     public void taskListCanRemoveTasks() {
-        HTask t  = new HTask(HTaskUnitTest.NOBODY, "Task 1", "description 1");
-        HTask t2 = new HTask(HTaskUnitTest.NOBODY, "Task 2", "description 2");
-        HTask t3 = new HTask(HTaskUnitTest.NOBODY, "Task 3", "description 3");
+        HTask t  = new HTask("Task 1", "description 1");
+        HTask t2 = new HTask("Task 2", "description 2");
+        HTask t3 = new HTask("Task 3", "description 3");
 
-        TaskList tl = new TaskList(HTaskUnitTest.NOBODY, "TaskList 1", new ArrayList<>());
+        TaskList tl = new TaskList(new ArrayList<>());
 
         tl.addTask(t);
         tl.addTask(t2);
@@ -101,11 +88,11 @@ public class TaskListUnitTest {
 
     @Test
     public void taskListCanRemoveFinishedTasks() {
-        HTask t  = new HTask(HTaskUnitTest.NOBODY, "Task 1", "description 1");
-        HTask t2 = new HTask(HTaskUnitTest.NOBODY, "Task 2", "description 2");
-        HTask t3 = new HTask(HTaskUnitTest.NOBODY, "Task 3", "description 3");
+        HTask t  = new HTask("Task 1", "description 1");
+        HTask t2 = new HTask("Task 2", "description 2");
+        HTask t3 = new HTask("Task 3", "description 3");
 
-        TaskList tl = new TaskList(HTaskUnitTest.NOBODY, "TaskList 1", new ArrayList<>());
+        TaskList tl = new TaskList(new ArrayList<>());
 
         tl.addTask(t);
         tl.addTask(t2);
@@ -125,10 +112,10 @@ public class TaskListUnitTest {
 
     @Test
     public void taskListCanRemoveFinishedTasksAndSubTasks() {
-        HTask t  = new HTask(HTaskUnitTest.NOBODY, "Task 1", "description 1");
-        HTask t2 = new HTask(HTaskUnitTest.NOBODY, "Task 2", "description 2");
+        HTask t  = new HTask("Task 1", "description 1");
+        HTask t2 = new HTask("Task 2", "description 2");
 
-        TaskList tl = new TaskList(HTaskUnitTest.NOBODY, "TaskList 1", new ArrayList<>());
+        TaskList tl = new TaskList(new ArrayList<>());
         tl.addTask(t);
         tl.addTask(t2);
 
@@ -150,11 +137,11 @@ public class TaskListUnitTest {
 
     @Test
     public void taskListReturnsCorrectTasks() {
-        HTask t  = new HTask(HTaskUnitTest.NOBODY, "Task 1", "description 1");
-        HTask t2 = new HTask(HTaskUnitTest.NOBODY, "Task 2", "description 2");
+        HTask t  = new HTask("Task 1", "description 1");
+        HTask t2 = new HTask("Task 2", "description 2");
 
         List<HTask> expected = new ArrayList<>(Arrays.asList(t, t2));
-        TaskList tl = new TaskList(HTaskUnitTest.NOBODY, "TaskList 1", expected);
+        TaskList tl = new TaskList(expected);
 
         List<HTask> actual = tl.getTasks();
         assertEquals(2, expected.size());

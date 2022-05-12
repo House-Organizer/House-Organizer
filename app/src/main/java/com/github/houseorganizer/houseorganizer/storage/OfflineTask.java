@@ -1,9 +1,15 @@
 package com.github.houseorganizer.houseorganizer.storage;
 
+import androidx.annotation.AttrRes;
+import androidx.annotation.IdRes;
+import androidx.annotation.NonNull;
+
+import com.github.houseorganizer.houseorganizer.R;
+
 import java.util.List;
 import java.util.Objects;
 
-public class OfflineTask{
+public final class OfflineTask extends OfflineItem {
     private final String name;
     private final String description;
     private final List<String> assignees;
@@ -15,6 +21,7 @@ public class OfflineTask{
     }
 
     @Override
+    @NonNull
     public String toString() {
         return "OfflineTask{" +
                 "name='" + name + '\'' +
@@ -48,5 +55,16 @@ public class OfflineTask{
     @Override
     public int hashCode() {
         return Objects.hash(name, description, assignees);
+    }
+
+    @NonNull
+    @Override
+    public String title() {
+        return name;
+    }
+
+    @NonNull
+    public String info() {
+        return description;
     }
 }

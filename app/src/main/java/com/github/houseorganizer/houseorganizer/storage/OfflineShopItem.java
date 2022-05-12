@@ -2,9 +2,10 @@ package com.github.houseorganizer.houseorganizer.storage;
 
 import androidx.annotation.NonNull;
 
+import java.util.Locale;
 import java.util.Objects;
 
-public class OfflineShopItem{
+public final class OfflineShopItem extends OfflineItem {
     private final String name;
     private final int quantity;
     private final String unit;
@@ -42,6 +43,17 @@ public class OfflineShopItem{
 
     public boolean isPickedUp() {
         return isPickedUp;
+    }
+
+    @NonNull
+    @Override
+    public String title() {
+        return name;
+    }
+
+    @NonNull
+    public String info() {
+        return String.format(Locale.ROOT, "%s [%d %s][%s]", name, quantity, unit, isPickedUp ? "x" : "\t");
     }
 
     @Override

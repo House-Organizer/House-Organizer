@@ -16,6 +16,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.github.houseorganizer.houseorganizer.storage.LocalStorage;
 import com.github.houseorganizer.houseorganizer.panels.main_activities.MainScreenActivity;
 import com.github.houseorganizer.houseorganizer.util.BiViewHolder;
 import com.google.firebase.firestore.DocumentReference;
@@ -71,8 +72,6 @@ public final class TaskView {
 
                 if(metadata == null) return;
 
-                taskList.changeTitle((String)metadata.get("title"));
-
                 List<DocumentReference> taskPtrs = (ArrayList<DocumentReference>)
                         metadata.getOrDefault("task-ptrs", new ArrayList<>());
 
@@ -85,6 +84,7 @@ public final class TaskView {
                         Map<String, Object> taskData = task2.getResult().getData();
                         taskList.addTask(FirestoreTask.recoverTask(taskData, ptr));
                         taskListAdapter.notifyDataSetChanged(); // patch s.t. they show up faster
+                        LocalStorage.pushTaskListOffline(parent, (String) metadata.get("hh-id"), taskList.getTasks());
                     }
                 }));
 
@@ -116,7 +116,7 @@ public final class TaskView {
                     if (task.isSuccessful()) {
                         DocumentReference taskDocRef = task.getResult();
 
-                        taskList.addTask(new FirestoreTask(taskList.getOwner(), "Untitled task", "", new ArrayList<>(), taskDocRef));
+                        taskList.addTask(new FirestoreTask( "Untitled task", "", new ArrayList<>(), taskDocRef));
                         taskListAdapter.notifyItemInserted(taskListAdapter.getItemCount()-1);
 
                         addTaskPtrToMetadata(taskListDocRef, taskDocRef);

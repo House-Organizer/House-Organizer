@@ -19,6 +19,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.github.houseorganizer.houseorganizer.R;
 import com.github.houseorganizer.houseorganizer.panels.main_activities.MainScreenActivity;
+import com.github.houseorganizer.houseorganizer.panels.settings.ThemedAppCompatActivity;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
@@ -37,7 +38,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
-public class CreateHouseholdActivity extends AppCompatActivity {
+public class CreateHouseholdActivity extends ThemedAppCompatActivity {
 
     private FirebaseFirestore db;
     private String mUserEmail;
