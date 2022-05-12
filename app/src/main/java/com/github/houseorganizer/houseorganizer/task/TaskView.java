@@ -92,9 +92,10 @@ public final class TaskView {
                 }));
 
                 setUpTaskListView(parent, taskListAdapter, recyclerViewResId);
-            }
 
-            EspressoIdlingResource.decrement();
+            } else {
+                EspressoIdlingResource.decrement();
+            }
         });
     }
 
@@ -102,6 +103,8 @@ public final class TaskView {
         RecyclerView taskListView = parent.findViewById(resId);
         taskListView.setAdapter(taskListAdapter);
         taskListView.setLayoutManager(new LinearLayoutManager(parent));
+
+        EspressoIdlingResource.decrement();
     }
 
     // Adds a task iff. the task list is in view
