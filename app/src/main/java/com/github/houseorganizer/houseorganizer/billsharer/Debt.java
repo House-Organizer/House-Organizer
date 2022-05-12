@@ -14,4 +14,16 @@ public class Debt {
     public String toText() {
         return debtor + " owes " + creditor + " " + amount + " CHF";
     }
+
+    public String getCreditor() {
+        return creditor;
+    }
+
+    public String getDebtor() {
+        return debtor;
+    }
+
+    public double getAmount() {
+        return amount;
+    }
 }

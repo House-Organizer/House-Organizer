@@ -204,7 +204,15 @@ public class Billsharer {
     }
 
     public void removeDebt(Debt debt) {
-        // TODO
+        HashMap<String, Double> shares = new HashMap<>();
+        for (String resident : residents) {
+            if (resident.equals(debt.getCreditor())) {
+                shares.put(resident, debt.getAmount());
+            } else {
+                shares.put(resident, 0.0);
+            }
+        }
+        addExpense(new Expense("Reimbursement", debt.getAmount(), debt.getDebtor(), shares));
     }
 
     public Task<Void> updateExpenses() {
@@ -252,7 +260,7 @@ public class Billsharer {
                 expenses.add(new Expense((String) m.get("title"), new Double((double) m.get("cost")), (String) m.get("payee"),
                         (HashMap<String, Double>) m.get("shares")));
             } else if (m.get("cost") instanceof Long) {
-                expenses.add(new Expense((String) m.get("title"), new Long((long) m.get("cost")), (String) m.get("payee"),
+                expenses.add(new Expense((String) m.get("title"), new Long((long) m.get("cost")).doubleValue(), (String) m.get("payee"),
                         (HashMap<String, Double>) m.get("shares")));
             }
         }

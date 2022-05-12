@@ -40,17 +40,6 @@ public class DebtAdapter extends RecyclerView.Adapter<DebtAdapter.DebtHolder> {
                 .show();
     }
 
-    public static class DebtHolder extends RecyclerView.ViewHolder {
-        public TextView textView;
-        public ImageButton removeCheck;
-
-        public DebtHolder(@NonNull View debtView) {
-            super(debtView);
-            textView = debtView.findViewById(R.id.debt_text);
-            removeCheck = debtView.findViewById(R.id.debt_remove_check);
-        }
-    }
-
     @NonNull
     @Override
     public DebtHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -73,6 +62,14 @@ public class DebtAdapter extends RecyclerView.Adapter<DebtAdapter.DebtHolder> {
         return billsharer.getDebts().size();
     }
 
+    public static class DebtHolder extends RecyclerView.ViewHolder {
+        public TextView textView;
+        public ImageButton removeCheck;
 
-
+        public DebtHolder(@NonNull View debtView) {
+            super(debtView);
+            textView = debtView.findViewById(R.id.debt_text);
+            removeCheck = debtView.findViewById(R.id.debt_remove_check);
+        }
+    }
 }
