@@ -163,8 +163,9 @@ public class LocalStorage {
         }
         String house_id = currentHouseId == null ? "temp" : currentHouseId;
 
+        Type type = TypeToken.getParameterized(ArrayList.class, OfflineEvent.class).getType();
         return writeTxtToFile(context, OFFLINE_STORAGE_CALENDAR + house_id + OFFLINE_STORAGE_EXTENSION,
-                new Gson().toJson(offlineEvents));
+                new Gson().toJson(offlineEvents, type));
     }
 
     public static boolean pushGroceriesOffline(Context context, String currentHouseId, List<ShopItem> items) {
@@ -180,8 +181,9 @@ public class LocalStorage {
 
         String house_id = currentHouseId == null ? "temp" : currentHouseId;
 
+        Type type = TypeToken.getParameterized(ArrayList.class, OfflineShopItem.class).getType();
         return writeTxtToFile(context, OFFLINE_STORAGE_GROCERIES + house_id + OFFLINE_STORAGE_EXTENSION,
-                new Gson().toJson(offlineShopItems));
+                new Gson().toJson(offlineShopItems, type));
     }
 
     public static boolean pushTaskListOffline(Context context, String currentHouseId, List<HTask> tasks) {
@@ -195,7 +197,8 @@ public class LocalStorage {
 
         String house_id = currentHouseId == null ? "temp" : currentHouseId;
 
+        Type type = TypeToken.getParameterized(ArrayList.class, OfflineTask.class).getType();
         return writeTxtToFile(context, OFFLINE_STORAGE_TASKS + house_id + OFFLINE_STORAGE_EXTENSION,
-                new Gson().toJson(offlineTasks));
+                new Gson().toJson(offlineTasks, type));
     }
 }

@@ -60,7 +60,6 @@ public class OfflineScreenTest {
     @BeforeClass
     public static void pushEverythingOffline() throws InterruptedException {
         Context context = InstrumentationRegistry.getInstrumentation().getTargetContext();
-        LocalStorage.clearOfflineStorage(context);
 
         String currentHouseId =  FirebaseTestsHelper.TEST_HOUSEHOLD_NAMES[0];
         LocalStorage.pushCurrentHouseOffline(context, currentHouseId);
