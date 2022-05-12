@@ -158,5 +158,7 @@
     <string name="balances">Balances</string>
     <string name="amount">Amount</string>
     <string name="payer">Payer</string>
+    <string name="left_arrow"><![CDATA[<]]></string>
+    <string name="right_arrow"><![CDATA[>]]></string>
 
 </resources>
