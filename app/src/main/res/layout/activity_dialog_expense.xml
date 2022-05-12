@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:paddingTop="0dp"
+    android:paddingBottom="0dp">
+
+    <EditText
+        android:id="@+id/expense_edit_title"
+        android:layout_width="210dp"
+        android:layout_height="48dp"
+        android:ems="10"
+        android:hint="@string/title"
+        android:importantForAutofill="no"
+        android:inputType="textPersonName"
+        android:textColorHint="#757575" />
+
+    <EditText
+        android:id="@+id/expense_edit_cost"
+        android:layout_width="210dp"
+        android:layout_height="48dp"
+        android:ems="10"
+        android:hint="@string/amount"
+        android:importantForAutofill="no"
+        android:inputType="number"
+        android:textColorHint="#757575" />
+
+    <Spinner
+        android:id="@+id/expense_edit_payee"
+        android:layout_width="210dp"
+        android:layout_height="48dp"
+        android:contentDescription="@string/payer" />
+</LinearLayout>

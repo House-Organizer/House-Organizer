@@ -1,4 +1,4 @@
-package com.github.houseorganizer.houseorganizer.login;
+package com.github.houseorganizer.houseorganizer.panels.login;
 
 import static com.github.houseorganizer.houseorganizer.util.LoginHelpers.inputsEmpty;
 import static com.github.houseorganizer.houseorganizer.util.Util.displayErrorMessage;
@@ -13,8 +13,8 @@ import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.github.houseorganizer.houseorganizer.R;
-import com.github.houseorganizer.houseorganizer.panels.MainScreenActivity;
 import com.github.houseorganizer.houseorganizer.util.EspressoIdlingResource;
+import com.github.houseorganizer.houseorganizer.panels.main_activities.MainScreenActivity;
 import com.github.houseorganizer.houseorganizer.util.Util;
 import com.google.firebase.auth.FirebaseAuth;
 

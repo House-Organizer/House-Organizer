@@ -1,4 +1,4 @@
-package com.github.houseorganizer.houseorganizer.house;
+package com.github.houseorganizer.houseorganizer.panels.household;
 
 import android.annotation.SuppressLint;
 import android.app.Dialog;
@@ -6,6 +6,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Color;
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,13 +14,15 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.github.houseorganizer.houseorganizer.R;
+import com.github.houseorganizer.houseorganizer.house.Verifications;
 import com.github.houseorganizer.houseorganizer.util.EspressoIdlingResource;
 import com.github.houseorganizer.houseorganizer.util.Util;
-
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.gms.tasks.Tasks;
@@ -30,6 +33,8 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.WriterException;
 import com.google.zxing.common.BitMatrix;
@@ -46,6 +51,8 @@ public class EditHouseholdActivity extends AppCompatActivity {
     private FirebaseAuth mAuth;
     private String householdId;
     private DocumentReference currentHousehold;
+    private ActivityResultLauncher<String> galleryLauncher;
+    private FirebaseStorage storage;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,6 +61,8 @@ public class EditHouseholdActivity extends AppCompatActivity {
 
         mAuth = FirebaseAuth.getInstance();
         firestore = FirebaseFirestore.getInstance();
+        storage = FirebaseStorage.getInstance();
+        galleryLauncher = registerForActivityResult(new ActivityResultContracts.GetContent(), this::pushImageToHousehold);
 
         Intent intent = getIntent();
         this.householdId = intent.getStringExtra(HouseSelectionActivity.HOUSEHOLD_TO_EDIT);
@@ -69,6 +78,16 @@ public class EditHouseholdActivity extends AppCompatActivity {
                         tv.setText(householdData.getOrDefault("name", "No house name").toString());
                     }
                 });
+    }
+
+    public void pickImageForHousehold(View view){
+        galleryLauncher.launch("image/*");
+    }
+
+    public void pushImageToHousehold(Uri uri){
+        StorageReference imageRef = storage.getReference().child("house_" + householdId);
+        imageRef.putFile(uri);
+        Toast.makeText(getApplicationContext(), getApplicationContext().getString(R.string.changed_picture), Toast.LENGTH_SHORT).show();
     }
 
     private boolean verifyEmail(String email, View view) {
@@ -208,7 +227,6 @@ public class EditHouseholdActivity extends AppCompatActivity {
 
     public void showInviteQR(View view) {
         Dialog qrDialog = new Dialog(this);
-        int length = 800;
         try {
             @SuppressLint("InflateParams") View qrDialogView = LayoutInflater.from(this).inflate(R.layout.image_dialog, null);
             ImageView qrView = qrDialogView.findViewById(R.id.image_dialog);
@@ -242,6 +260,7 @@ public class EditHouseholdActivity extends AppCompatActivity {
                         if (residents.contains(email)) {
                             currentHousehold.update("num_members", num_users - 1);
                             currentHousehold.update("residents", FieldValue.arrayRemove(email));
+                            removeUserFromTaskAssignees(email);
                             Toast.makeText(getApplicationContext(),
                                     view.getContext().getString(R.string.remove_user_success),
                                     Toast.LENGTH_SHORT).show();
@@ -250,6 +269,25 @@ public class EditHouseholdActivity extends AppCompatActivity {
 
                     EspressoIdlingResource.decrement();
                 });
+    }
+
+    private void removeUserFromTaskAssignees(String email) {
+        firestore.collection("task_lists")
+                .whereEqualTo("hh-id", householdId)
+                .get()
+                .addOnSuccessListener(docSnaps -> {
+                    assert docSnaps.size() == 1;
+
+                    Map<String, Object> metadata = docSnaps.iterator().next().getData();
+                    List<DocumentReference> taskPtrs = (ArrayList<DocumentReference>)
+                            metadata.getOrDefault("task-ptrs", new ArrayList<>());
+
+                    assert taskPtrs != null;
+                    taskPtrs.forEach(taskPtr ->
+                            taskPtr.update("assignees", FieldValue.arrayRemove(email)));
+
+                })
+                .addOnFailureListener(toastExceptionFailureListener("Could not update task assignees"));
     }
 
     public void deleteDialog(View view) {
@@ -281,10 +319,13 @@ public class EditHouseholdActivity extends AppCompatActivity {
         // TODO : The grocery list is not linked to households yet
     }
 
+    private OnFailureListener toastExceptionFailureListener(String message) {
+        return exception -> Toast.makeText(getApplicationContext(),
+                message, Toast.LENGTH_SHORT).show();
+    }
+
     public void deleteTaskList(View view) {
-        OnFailureListener tlDeletionFailed =
-                exception -> Toast.makeText(getApplicationContext(),
-                        "Cannot remove task list", Toast.LENGTH_SHORT).show();
+        OnFailureListener tlDeletionFailed = toastExceptionFailureListener("Cannot remove task list");
 
         firestore.collection("task_lists")
                 .whereEqualTo("hh-id", currentHousehold.getId())
@@ -347,5 +388,11 @@ public class EditHouseholdActivity extends AppCompatActivity {
                         Toast.makeText(getApplicationContext(), view.getContext().getString(R.string.remove_household_failure), Toast.LENGTH_SHORT).show();
                     }
                 });
+    }
+
+    @Override
+    public void onBackPressed() {
+        Intent intent = new Intent(getApplicationContext(), HouseSelectionActivity.class);
+        startActivity(intent);
     }
 }

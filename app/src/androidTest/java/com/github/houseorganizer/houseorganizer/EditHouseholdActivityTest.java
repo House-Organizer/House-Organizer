@@ -1,11 +1,13 @@
 package com.github.houseorganizer.houseorganizer;
 
 import static androidx.test.espresso.Espresso.onView;
+import static androidx.test.espresso.Espresso.pressBack;
 import static androidx.test.espresso.action.ViewActions.click;
 import static androidx.test.espresso.action.ViewActions.closeSoftKeyboard;
 import static androidx.test.espresso.action.ViewActions.typeText;
 import static androidx.test.espresso.assertion.ViewAssertions.matches;
 import static androidx.test.espresso.intent.Intents.intended;
+import static androidx.test.espresso.intent.matcher.IntentMatchers.hasAction;
 import static androidx.test.espresso.intent.matcher.IntentMatchers.hasComponent;
 import static androidx.test.espresso.matcher.ViewMatchers.isClickable;
 import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
@@ -32,8 +34,8 @@ import androidx.test.ext.junit.rules.ActivityScenarioRule;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 import androidx.test.platform.app.InstrumentationRegistry;
 
-import com.github.houseorganizer.houseorganizer.house.EditHouseholdActivity;
-import com.github.houseorganizer.houseorganizer.house.HouseSelectionActivity;
+import com.github.houseorganizer.houseorganizer.panels.household.EditHouseholdActivity;
+import com.github.houseorganizer.houseorganizer.panels.household.HouseSelectionActivity;
 import com.github.houseorganizer.houseorganizer.util.EspressoIdlingResource;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentSnapshot;
@@ -89,6 +91,25 @@ public class EditHouseholdActivityTest {
         Context context = InstrumentationRegistry.getInstrumentation().getTargetContext();
         context.sendBroadcast(new Intent(Intent.ACTION_CLOSE_SYSTEM_DIALOGS));
     }
+
+    @Test
+    public void clickOnImageIsClickable() throws ExecutionException, InterruptedException {
+        onView(withId(R.id.changeImageOfHousehold)).check(matches(isClickable()));
+    }
+
+    @Test
+    public void clickOnImageIsDisplayed() {
+        onView(withId(R.id.changeImageOfHousehold)).check(matches(isDisplayed()));
+    }
+
+    @Test
+    public void clickOnImageFiresIntent() {
+        Intents.init();
+        onView(withId(R.id.changeImageOfHousehold)).perform(click());
+        intended(hasAction(Intent.ACTION_GET_CONTENT));
+        Intents.release();
+    }
+
 
     @Test
     public void addUserIsDisplayed() {
@@ -155,8 +176,9 @@ public class EditHouseholdActivityTest {
 
     @Test
     public void showQRCodeDisplaysCorrectQRCode() throws WriterException {
-        // Perform clicks
-        onView(withId(R.id.showQRCode)).perform(click());
+        // Perform clicks (custom click because the button is more than 10% transparent
+        // and click() needs 90% of non-transparent visible button.
+        onView(withId(R.id.showQRCode)).perform(FirebaseTestsHelper.CUSTOM_CLICK_ACTION);
         Bitmap expected = EditHouseholdActivity.createQRCodeBitmap(TEST_HOUSEHOLD_NAMES[0]);
         onView(withId(R.id.image_dialog)).check(matches(withBitmap(expected)));
     }
@@ -452,5 +474,13 @@ public class EditHouseholdActivityTest {
         }
 
         FirebaseTestsHelper.createTestEvents();
+    }
+
+    @Test
+    public void backButtonGoesToHouseSelection() {
+        Intents.init();
+        pressBack();
+        intended(hasComponent(HouseSelectionActivity.class.getName()));
+        Intents.release();
     }
 }

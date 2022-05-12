@@ -1,4 +1,4 @@
-package com.github.houseorganizer.houseorganizer.panels;
+package com.github.houseorganizer.houseorganizer.panels.settings;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -10,13 +10,12 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.preference.PreferenceFragmentCompat;
 
 import com.github.houseorganizer.houseorganizer.R;
-import com.github.houseorganizer.houseorganizer.login.LoginActivity;
+import com.github.houseorganizer.houseorganizer.panels.login.LoginActivity;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FieldPath;
 import com.google.firebase.firestore.FirebaseFirestore;
 
-import java.lang.reflect.Field;
 import java.util.HashMap;
 import java.util.Map;
 

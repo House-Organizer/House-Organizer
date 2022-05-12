@@ -29,9 +29,9 @@ import androidx.test.ext.junit.runners.AndroidJUnit4;
 import androidx.test.runner.lifecycle.ActivityLifecycleMonitorRegistry;
 import androidx.test.runner.lifecycle.Stage;
 
-import com.github.houseorganizer.houseorganizer.panels.MainScreenActivity;
 import com.github.houseorganizer.houseorganizer.util.RecyclerViewIdlingCallback;
 import com.github.houseorganizer.houseorganizer.util.RecyclerViewLayoutCompleteIdlingResource;
+import com.github.houseorganizer.houseorganizer.panels.main_activities.MainScreenActivity;
 import com.google.firebase.auth.FirebaseAuth;
 
 import org.junit.After;
@@ -46,6 +46,7 @@ import java.time.LocalDate;
 import java.time.YearMonth;
 import java.util.Collection;
 import java.util.Iterator;
+import java.time.format.DateTimeFormatter;
 import java.util.concurrent.ExecutionException;
 
 @RunWith(AndroidJUnit4.class)
@@ -177,5 +178,21 @@ public class CalendarActivityTest {
             onView(withId(R.id.calendar_screen_calendar)).perform(RecyclerViewActions.actionOnItemAtPosition(LocalDate.now().getDayOfMonth(), click()));
         }
         onView(withText("title")).inRoot(isDialog()).check(matches(isDisplayed()));
+    }
+
+    @Test
+    public void monthNavigationWorks() throws InterruptedException {
+        String yearMonthText = YearMonth.now().plusMonths(1).format(DateTimeFormatter.ofPattern("LLLL uuuu"));
+        String yearMonthText2 = YearMonth.now().format(DateTimeFormatter.ofPattern("LLLL uuuu"));
+        // The wait is here in order to wait for the refreshing of the calendar
+        onView(withId(R.id.calendar_screen_view_change)).perform(click());
+        Thread.sleep(1000);
+
+        onView(withId(R.id.calendar_screen_month_right)).perform(click());
+        onView(withId(R.id.calendar_screen_year_month)).check(matches(withText(yearMonthText)));
+        onView(withId(R.id.calendar_screen_calendar)).check(matches(hasChildCount(YearMonth.now().plusMonths(1).lengthOfMonth())));
+
+        onView(withId(R.id.calendar_screen_month_left)).perform(click());
+        onView(withId(R.id.calendar_screen_year_month)).check(matches(withText(yearMonthText2)));
     }
 }

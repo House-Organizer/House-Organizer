@@ -12,7 +12,7 @@ import androidx.test.ext.junit.rules.ActivityScenarioRule;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 import androidx.test.platform.app.InstrumentationRegistry;
 
-import com.github.houseorganizer.houseorganizer.panels.MainActivity;
+import com.github.houseorganizer.houseorganizer.panels.entry.EntryActivity;
 
 import org.junit.Before;
 import org.junit.FixMethodOrder;
@@ -23,10 +23,10 @@ import org.junit.runners.MethodSorters;
 
 @RunWith(AndroidJUnit4.class)
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
-public class MainActivityTest {
+public class EntryActivityTest {
 
     @Rule
-    public ActivityScenarioRule<MainActivity> testRule = new ActivityScenarioRule<>(MainActivity.class);
+    public ActivityScenarioRule<EntryActivity> testRule = new ActivityScenarioRule<>(EntryActivity.class);
 
     @Before
     public void dismissDialogs() {

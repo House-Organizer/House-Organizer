@@ -1,4 +1,4 @@
-package com.github.houseorganizer.houseorganizer.panels;
+package com.github.houseorganizer.houseorganizer.panels.main_activities;
 
 import android.content.Intent;
 
@@ -15,7 +15,8 @@ public abstract class NavBarActivity extends AppCompatActivity {
         MAIN("Main Screen", MainScreenActivity.class),
         CALENDAR("Calendar", CalendarActivity.class),
         GROCERIES("Groceries", GroceriesActivity.class),
-        TASKS("Tasks", TaskListActivity.class);
+        TASKS("Tasks", TaskListActivity.class),
+        BILLSHARER("Billsharer", ExpenseActivity.class);
 
         protected final String name;
         protected final Class<? extends AppCompatActivity> panelActivity;

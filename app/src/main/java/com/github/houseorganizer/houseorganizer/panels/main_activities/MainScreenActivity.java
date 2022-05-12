@@ -1,4 +1,4 @@
-package com.github.houseorganizer.houseorganizer.panels;
+package com.github.houseorganizer.houseorganizer.panels.main_activities;
 
 import static com.github.houseorganizer.houseorganizer.util.Util.getSharedPrefs;
 import static com.github.houseorganizer.houseorganizer.util.Util.getSharedPrefsEditor;
@@ -6,7 +6,6 @@ import static com.github.houseorganizer.houseorganizer.util.Util.logAndToast;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
@@ -24,9 +23,11 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.github.houseorganizer.houseorganizer.R;
 import com.github.houseorganizer.houseorganizer.calendar.Calendar;
 import com.github.houseorganizer.houseorganizer.calendar.UpcomingAdapter;
-import com.github.houseorganizer.houseorganizer.house.CreateHouseholdActivity;
-import com.github.houseorganizer.houseorganizer.house.HouseSelectionActivity;
 import com.github.houseorganizer.houseorganizer.location.LocationHelpers;
+import com.github.houseorganizer.houseorganizer.panels.household.CreateHouseholdActivity;
+import com.github.houseorganizer.houseorganizer.panels.household.HouseSelectionActivity;
+import com.github.houseorganizer.houseorganizer.panels.info.InfoActivity;
+import com.github.houseorganizer.houseorganizer.panels.settings.SettingsActivity;
 import com.github.houseorganizer.houseorganizer.shop.FirestoreShopList;
 import com.github.houseorganizer.houseorganizer.shop.ShopListAdapter;
 import com.github.houseorganizer.houseorganizer.task.TaskList;
@@ -94,7 +95,6 @@ public class MainScreenActivity extends NavBarActivity {
             loadData();
         }
 
-
         calendarEvents = findViewById(R.id.calendar);
         calendarAdapter = new UpcomingAdapter(calendar,
                 registerForActivityResult(new ActivityResultContracts.GetContent(), uri -> calendarAdapter.pushAttachment(uri)));
@@ -122,7 +122,6 @@ public class MainScreenActivity extends NavBarActivity {
                 });
     }
 
-
     @Override
     protected CurrentActivity currentActivity() {
         return CurrentActivity.MAIN;
@@ -141,12 +140,6 @@ public class MainScreenActivity extends NavBarActivity {
                         TaskView.recoverTaskList(this, taskList, taskListAdapter, tlMetadata, R.id.task_list);
                     }
         });
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        calendarAdapter.refreshCalendarView(this, currentHouse, "refreshCalendar:failureToRefresh", false);
     }
 
     @Override
@@ -249,11 +242,11 @@ public class MainScreenActivity extends NavBarActivity {
                 "Any administrator can add you to theirs or " +
                 "you can create your own house from the house selection menu.");
         builder.setCancelable(true);
-        builder.setPositiveButton("Add household", new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int which) {
-                Intent intent = new Intent(getApplicationContext(), CreateHouseholdActivity.class);
-                startActivity(intent);
-            }
+        builder.setPositiveButton("Add household", (dialog, which) -> {
+            Intent intent = new Intent(getApplicationContext(), CreateHouseholdActivity.class);
+            intent.putExtra("mUserEmail", mUser.getEmail());
+            //TODO get rid of this globally, make createHousehold call getAuth to get the email of the user EVERYWHERE
+            startActivity(intent);
         });
 
         AlertDialog alert = builder.create();
@@ -328,5 +321,21 @@ public class MainScreenActivity extends NavBarActivity {
                 });
                 break;
         }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        calendarAdapter.refreshCalendarView(this, currentHouse, "refreshCalendar:failureToRefresh", false);
+        super.setUpNavBar(R.id.nav_bar, OptionalInt.of(R.id.nav_bar_menu));
+    }
+
+    @Override
+    public void onBackPressed() {
+        // Leave the app instead of going to MainActivity
+        Intent homeIntent = new Intent(Intent.ACTION_MAIN);
+        homeIntent.addCategory(Intent.CATEGORY_HOME);
+        homeIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        startActivity(homeIntent);
     }
 }

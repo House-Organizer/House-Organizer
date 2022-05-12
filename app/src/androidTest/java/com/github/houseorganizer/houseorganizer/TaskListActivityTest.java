@@ -33,7 +33,7 @@ import androidx.test.ext.junit.rules.ActivityScenarioRule;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 import androidx.test.platform.app.InstrumentationRegistry;
 
-import com.github.houseorganizer.houseorganizer.panels.TaskListActivity;
+import com.github.houseorganizer.houseorganizer.panels.main_activities.TaskListActivity;
 import com.github.houseorganizer.houseorganizer.task.FirestoreTask;
 import com.github.houseorganizer.houseorganizer.util.EspressoIdlingResource;
 import com.google.android.gms.tasks.Task;

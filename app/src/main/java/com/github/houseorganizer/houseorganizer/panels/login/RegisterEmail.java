@@ -1,4 +1,4 @@
-package com.github.houseorganizer.houseorganizer.login;
+package com.github.houseorganizer.houseorganizer.panels.login;
 
 import static com.github.houseorganizer.houseorganizer.util.LoginHelpers.inputsEmpty;
 import static com.github.houseorganizer.houseorganizer.util.LoginHelpers.isValidEmail;

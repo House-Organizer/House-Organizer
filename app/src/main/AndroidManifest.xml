@@ -17,13 +17,20 @@
         android:usesCleartextTraffic="true"
         android:theme="@style/Theme.HouseOrganizer">
         <activity
-            android:name=".house.QRCodeScanActivity"
+            android:name=".panels.household.QRCodeScanActivity"
+            android:exported="false"
+            android:parentActivityName=".panels.household.CreateHouseholdActivity" />
+        <activity
+            android:name=".panels.billsharer.BalanceActivity"
             android:exported="false" />
         <activity
-            android:name=".panels.GroceriesActivity"
+            android:name=".panels.main_activities.ExpenseActivity"
             android:exported="false" />
         <activity
-            android:name=".panels.MainActivity"
+            android:name=".panels.main_activities.GroceriesActivity"
+            android:exported="false" />
+        <activity
+            android:name=".panels.entry.EntryActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -32,55 +39,57 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".panels.CalendarActivity"
+            android:name=".panels.main_activities.CalendarActivity"
             android:exported="false" />
         <activity
-            android:name=".panels.TaskListActivity"
+            android:name=".panels.main_activities.TaskListActivity"
             android:exported="false" />
         <activity
-            android:name=".login.LoginActivity"
+            android:name=".panels.login.LoginActivity"
             android:exported="false" />
         <activity
-            android:name=".login.LoginEmail"
+            android:name=".panels.login.LoginEmail"
             android:exported="false"
-            android:parentActivityName=".login.LoginActivity" />
+            android:parentActivityName=".panels.login.LoginActivity" />
         <activity
-            android:name=".login.RegisterEmail"
+            android:name=".panels.login.RegisterEmail"
             android:exported="false"
-            android:parentActivityName=".login.LoginEmail" />
+            android:parentActivityName=".panels.login.LoginEmail" />
         <activity
-            android:name=".login.VerifyEmail"
+            android:name=".panels.login.VerifyEmail"
             android:exported="false"
-            android:parentActivityName=".login.LoginEmail" />
+            android:parentActivityName=".panels.login.LoginEmail" />
         <activity
-            android:name=".panels.MainScreenActivity"
+            android:name=".panels.main_activities.MainScreenActivity"
             android:exported="false" />
         <activity
-            android:name=".panels.InfoActivity"
+            android:name=".panels.info.InfoActivity"
             android:exported="false"
-            android:parentActivityName=".panels.MainScreenActivity" />
+            android:parentActivityName=".panels.main_activities.MainScreenActivity" />
         <activity
-            android:name=".panels.SettingsActivity"
+            android:name=".panels.settings.SettingsActivity"
             android:exported="false"
             android:label="@string/title_activity_settings"
-            android:parentActivityName=".panels.MainScreenActivity" />
+            android:parentActivityName=".panels.main_activities.MainScreenActivity" />
         <activity
-            android:name=".house.HouseSelectionActivity"
+            android:name=".panels.household.HouseSelectionActivity"
             android:exported="false"
-            android:parentActivityName=".panels.MainScreenActivity" />
+            android:parentActivityName=".panels.main_activities.MainScreenActivity" />
         <activity
-            android:name=".house.CreateHouseholdActivity"
+            android:name=".panels.household.CreateHouseholdActivity"
             android:exported="false"
-            android:parentActivityName=".house.HouseSelectionActivity" />
+            android:parentActivityName=".panels.household.HouseSelectionActivity" />
         <activity
-            android:name=".house.EditHouseholdActivity"
+            android:name=".panels.household.EditHouseholdActivity"
             android:exported="false"
-            android:parentActivityName=".house.HouseSelectionActivity" />
+            android:parentActivityName=".panels.household.HouseSelectionActivity" />
 
         <meta-data
             android:name="preloaded_fonts"
-            android:resource="@array/preloaded_fonts" />
-        <meta-data android:name="com.google.android.geo.API_KEY" android:value="${MAPS_API_KEY}"/>
+            android:resource="@array/preloaded_fonts"/>
+        <meta-data
+            android:name="com.google.android.geo.API_KEY"
+            android:value="${MAPS_API_KEY}"/>
     </application>
 
 </manifest>

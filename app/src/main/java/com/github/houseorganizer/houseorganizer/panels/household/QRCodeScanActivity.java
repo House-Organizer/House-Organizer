@@ -1,6 +1,6 @@
-package com.github.houseorganizer.houseorganizer.house;
+package com.github.houseorganizer.houseorganizer.panels.household;
 
-import static com.github.houseorganizer.houseorganizer.panels.MainScreenActivity.CURRENT_HOUSEHOLD;
+import static com.github.houseorganizer.houseorganizer.panels.main_activities.MainScreenActivity.CURRENT_HOUSEHOLD;
 import static com.github.houseorganizer.houseorganizer.util.Util.getSharedPrefsEditor;
 
 import android.Manifest;
@@ -23,8 +23,8 @@ import androidx.core.content.ContextCompat;
 import com.github.houseorganizer.houseorganizer.R;
 import com.github.houseorganizer.houseorganizer.image.QRAnalyzer;
 import com.github.houseorganizer.houseorganizer.image.QRListener;
-import com.github.houseorganizer.houseorganizer.panels.MainScreenActivity;
 import com.github.houseorganizer.houseorganizer.util.EspressoIdlingResource;
+import com.github.houseorganizer.houseorganizer.panels.main_activities.MainScreenActivity;
 import com.github.houseorganizer.houseorganizer.util.Util;
 import com.google.common.util.concurrent.ListenableFuture;
 import com.google.firebase.auth.FirebaseAuth;
@@ -140,12 +140,12 @@ public class QRCodeScanActivity extends AppCompatActivity {
                 getSharedPrefsEditor(this).putString(CURRENT_HOUSEHOLD, QRCode).apply();
 
                 Intent intent = new Intent(this, MainScreenActivity.class);
-                Toast.makeText(getApplicationContext(), this.getString(R.string.add_user_success),Toast.LENGTH_SHORT).show();
+                Toast.makeText(getApplicationContext(), this.getString(R.string.add_user_success), Toast.LENGTH_SHORT).show();
                 startActivity(intent);
             } else {
                 Intent intent = new Intent(this, CreateHouseholdActivity.class);
                 intent.putExtra("mUserEmail", email);
-                Toast.makeText(getApplicationContext(), this.getString(R.string.QR_invalid),Toast.LENGTH_SHORT).show();
+                Toast.makeText(getApplicationContext(), this.getString(R.string.QR_invalid), Toast.LENGTH_SHORT).show();
                 startActivity(intent);
             }
 

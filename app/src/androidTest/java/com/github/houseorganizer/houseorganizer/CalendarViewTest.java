@@ -1,6 +1,5 @@
 package com.github.houseorganizer.houseorganizer;
 
-
 import static androidx.test.espresso.Espresso.onView;
 import static androidx.test.espresso.action.ViewActions.clearText;
 import static androidx.test.espresso.action.ViewActions.click;
@@ -39,10 +38,11 @@ import androidx.test.platform.app.InstrumentationRegistry;
 import androidx.test.runner.lifecycle.ActivityLifecycleMonitorRegistry;
 import androidx.test.runner.lifecycle.Stage;
 
-import com.github.houseorganizer.houseorganizer.panels.MainScreenActivity;
 import com.github.houseorganizer.houseorganizer.util.EspressoIdlingResource;
 import com.github.houseorganizer.houseorganizer.util.RecyclerViewIdlingCallback;
 import com.github.houseorganizer.houseorganizer.util.RecyclerViewLayoutCompleteIdlingResource;
+import com.github.houseorganizer.houseorganizer.panels.main_activities.MainScreenActivity;
+
 import com.google.android.gms.tasks.Task;
 import com.google.android.gms.tasks.Tasks;
 import com.google.firebase.auth.FirebaseAuth;
@@ -97,8 +97,8 @@ public class CalendarViewTest {
         // it will still create the popup just it wont display anything
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         baos.write(1);
-        UploadTask task1 = storage.getReference().child("has_attachment.jpg").putBytes(baos.toByteArray());
-        UploadTask task2 = storage.getReference().child("to_delete_attachment.jpg").putBytes(baos.toByteArray());
+        UploadTask task1 = storage.getReference().child("event_has_attachment").putBytes(baos.toByteArray());
+        UploadTask task2 = storage.getReference().child("event_to_delete_attachment").putBytes(baos.toByteArray());
         Tasks.await(task1);
         Tasks.await(task2);
 
@@ -136,7 +136,7 @@ public class CalendarViewTest {
                         db.collection("events").document(document.getId()).delete();
                     }
                 });
-        Task<Void> task4 = storage.getReference().child("has_attachment.jpg").delete();
+        Task<Void> task4 = storage.getReference().child("event_has_attachment").delete();
         Tasks.await(task1);
         Tasks.await(task2);
         Tasks.await(task3);
@@ -195,7 +195,7 @@ public class CalendarViewTest {
         onView(withId(R.id.calendar_screen_calendar))
                 .perform(RecyclerViewActions.actionOnItemAtPosition(getRealPosition(2), RecyclerViewHelper.clickChildViewWithId(R.id.event_upcoming_attach)));
         onView(withText("Remove")).perform(click());
-        storage.getReference().child("to_delete_attachment.jpg").getDownloadUrl().addOnCompleteListener(
+        storage.getReference().child("event_to_delete_attachment").getDownloadUrl().addOnCompleteListener(
                 task -> assertThat(task.isSuccessful(), is(false))
         );
     }
