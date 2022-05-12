@@ -1,4 +1,4 @@
-package com.github.houseorganizer.houseorganizer.login;
+package com.github.houseorganizer.houseorganizer.panels.login;
 
 import android.annotation.SuppressLint;
 import android.os.Bundle;

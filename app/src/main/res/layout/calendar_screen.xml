@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".panels.CalendarActivity">
+    tools:context=".panels.main_activities.CalendarActivity">
 
     <TextView
         android:id="@+id/calendar_screen_year_month"
