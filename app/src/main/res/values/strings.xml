@@ -84,6 +84,8 @@
     <string name="no_events">No events on this day.</string>
     <string name="refresh_calendar_fail">Could not refresh.</string>
     <string name="calendar_upcoming_date">On the %1$s.</string>
+    <string name="left_arrow"><![CDATA[<]]></string>
+    <string name="right_arrow"><![CDATA[>]]></string>
 
     <!-- Event creation and information popups -->
     <string name="event_creation_title">Add an event</string>
@@ -161,7 +163,6 @@
     <string name="balances">Balances</string>
     <string name="amount">Amount</string>
     <string name="payer">Payer</string>
-    <string name="left_arrow"><![CDATA[<]]></string>
-    <string name="right_arrow"><![CDATA[>]]></string>
+    <string name="debt">Debt</string>
 
 </resources>
