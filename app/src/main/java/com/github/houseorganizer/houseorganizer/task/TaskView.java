@@ -18,6 +18,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.github.houseorganizer.houseorganizer.panels.MainScreenActivity;
 import com.github.houseorganizer.houseorganizer.util.BiViewHolder;
+import com.github.houseorganizer.houseorganizer.util.EspressoIdlingResource;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 
@@ -65,6 +66,8 @@ public final class TaskView {
     @SuppressLint("NotifyDataSetChanged")
     public static void recoverTaskList(AppCompatActivity parent, TaskList taskList, TaskListAdapter taskListAdapter,
                                        DocumentReference tlMetadata, @IdRes int recyclerViewResId) {
+        EspressoIdlingResource.increment();
+
         tlMetadata.get().addOnCompleteListener(task -> {
             if (task.isSuccessful()) {
                 Map<String, Object> metadata = task.getResult().getData();
@@ -90,6 +93,8 @@ public final class TaskView {
 
                 setUpTaskListView(parent, taskListAdapter, recyclerViewResId);
             }
+
+            EspressoIdlingResource.decrement();
         });
     }
 
@@ -102,7 +107,10 @@ public final class TaskView {
     // Adds a task iff. the task list is in view
     public static void addTask(FirebaseFirestore db, TaskList taskList, TaskListAdapter taskListAdapter,
                                MainScreenActivity.ListFragmentView listView, DocumentReference taskListDocRef) {
+        EspressoIdlingResource.increment();
+
         if (listView != MainScreenActivity.ListFragmentView.CHORES_LIST) {
+            EspressoIdlingResource.decrement();
             return;
         }
 
@@ -121,6 +129,8 @@ public final class TaskView {
 
                         addTaskPtrToMetadata(taskListDocRef, taskDocRef);
                     }
+
+                    EspressoIdlingResource.decrement();
                 });
     }
 
