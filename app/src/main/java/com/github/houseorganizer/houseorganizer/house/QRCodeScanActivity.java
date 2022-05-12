@@ -24,6 +24,7 @@ import com.github.houseorganizer.houseorganizer.R;
 import com.github.houseorganizer.houseorganizer.image.QRAnalyzer;
 import com.github.houseorganizer.houseorganizer.image.QRListener;
 import com.github.houseorganizer.houseorganizer.panels.MainScreenActivity;
+import com.github.houseorganizer.houseorganizer.util.EspressoIdlingResource;
 import com.github.houseorganizer.houseorganizer.util.Util;
 import com.google.common.util.concurrent.ListenableFuture;
 import com.google.firebase.auth.FirebaseAuth;
@@ -117,8 +118,11 @@ public class QRCodeScanActivity extends AppCompatActivity {
     }
 
     public void acceptInvite(String QRCode){
+        EspressoIdlingResource.increment();
+
         String email = auth.getCurrentUser().getEmail();
         if(email == null || QRCode == null){
+            EspressoIdlingResource.decrement();
             return;
         }
 
@@ -144,6 +148,8 @@ public class QRCodeScanActivity extends AppCompatActivity {
                 Toast.makeText(getApplicationContext(), this.getString(R.string.QR_invalid),Toast.LENGTH_SHORT).show();
                 startActivity(intent);
             }
+
+            EspressoIdlingResource.decrement();
         });
     }
 }
