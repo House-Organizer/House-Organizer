@@ -111,8 +111,7 @@ public abstract class CalendarAdapter extends RecyclerView.Adapter<RecyclerView.
                         if(currentHouse != null) LocalStorage.pushEventsOffline(ctx, currentHouse.getId(), newEvents);
                         generateItems(newEvents);
                     } else {
-                        logAndToast(ctx.toString(), errMessage, task.getException(),
-                                ctx, ctx.getString(R.string.refresh_calendar_fail));
+                        logAndToast(ctx.toString(), errMessage, task.getException(), ctx, ctx.getString(R.string.refresh_calendar_fail));
                     }
                 });
     }
