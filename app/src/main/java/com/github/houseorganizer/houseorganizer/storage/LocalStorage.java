@@ -105,8 +105,8 @@ public class LocalStorage {
     }
 
     // Temporary
-    public static void pushCurrentHouseOffline(Context context, DocumentReference currentHouse) {
-        setOfHouseholds.put(currentHouse.getId(), "Dummy house name");
+    public static void pushCurrentHouseOffline(Context context, String currentHouseId) {
+        setOfHouseholds.put(currentHouseId, "Dummy house name");
         writeTxtToFile(context, OFFLINE_STORAGE_HOUSEHOLDS + OFFLINE_STORAGE_EXTENSION,
                 new Gson().toJson(setOfHouseholds));
     }

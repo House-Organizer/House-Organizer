@@ -189,7 +189,7 @@ public class MainScreenActivity extends NavBarActivity {
                     noHousehold();
                     return;
                 }
-                LocalStorage.pushCurrentHouseOffline(this, currentHouse);
+                LocalStorage.pushCurrentHouseOffline(this, currentHouse.getId());
 
                 calendarAdapter.refreshCalendarView(this, currentHouse, "refreshCalendar:failureToRefresh", false);
                 initializeTaskList();

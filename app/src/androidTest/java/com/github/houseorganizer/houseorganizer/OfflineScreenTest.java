@@ -11,15 +11,18 @@ import static androidx.test.espresso.matcher.ViewMatchers.isEnabled;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
 import static androidx.test.espresso.matcher.ViewMatchers.withText;
 
+import android.content.Context;
+
 import androidx.annotation.IdRes;
 import androidx.test.ext.junit.rules.ActivityScenarioRule;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
+import androidx.test.platform.app.InstrumentationRegistry;
 
 import com.github.houseorganizer.houseorganizer.calendar.Calendar;
-import com.github.houseorganizer.houseorganizer.panels.MainScreenActivity;
+import com.github.houseorganizer.houseorganizer.panels.offline.OfflineScreenActivity;
 import com.github.houseorganizer.houseorganizer.shop.ShopItem;
+import com.github.houseorganizer.houseorganizer.storage.LocalStorage;
 import com.github.houseorganizer.houseorganizer.task.HTask;
-import com.google.firebase.auth.FirebaseAuth;
 
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -32,12 +35,9 @@ import java.time.LocalDateTime;
 import java.time.Month;
 import java.util.Arrays;
 import java.util.List;
-import java.util.concurrent.ExecutionException;
 
 @RunWith(AndroidJUnit4.class)
 public class OfflineScreenTest {
-    private static FirebaseAuth auth;
-
     private final static List<ShopItem> GROCERIES =
             Arrays.asList(new ShopItem("oranges", 1, "kg"),
                     new ShopItem("apples", 2, "units"));
@@ -52,40 +52,25 @@ public class OfflineScreenTest {
                     new Calendar.Event("Celine's bday", "We should make cupcakes!",
                             LocalDateTime.of(2022, Month.MAY, 25, 15, 30), 200, "0"));
     @Rule
-    public ActivityScenarioRule<MainScreenActivity> mainScreenRule =
-            new ActivityScenarioRule<>(MainScreenActivity.class);
+    public ActivityScenarioRule<OfflineScreenActivity> offlineScreenRule =
+            new ActivityScenarioRule<>(OfflineScreenActivity.class);
 
     @BeforeClass
-    public static void createMockFirebaseAndPushEverythingOffline() throws ExecutionException, InterruptedException {
-        FirebaseTestsHelper.startAuthEmulator();
-        FirebaseTestsHelper.startFirestoreEmulator();
-        FirebaseTestsHelper.setUpFirebase();
+    public static void pushEverythingOffline() {
+        Context context = InstrumentationRegistry.getInstrumentation().getTargetContext();
+        LocalStorage.clearOfflineStorage(context);
 
-        auth = FirebaseAuth.getInstance();
-    }
-
-    @Before
-    public void goToActivity() throws InterruptedException {
-        // Load the groceries
-        onView(withId(R.id.list_view_change)).perform(click());
-        Thread.sleep(1000); // wait before going offline
-        onView(withId(R.id.go_offline_button)).perform(FirebaseTestsHelper.CUSTOM_CLICK_ACTION);
-        Thread.sleep(500);
+        String currentHouseId =  FirebaseTestsHelper.TEST_HOUSEHOLD_NAMES[0];
+        LocalStorage.pushCurrentHouseOffline(context, currentHouseId);
+        LocalStorage.pushEventsOffline(context, currentHouseId, EVENTS);
+        LocalStorage.pushGroceriesOffline(context, currentHouseId, GROCERIES);
+        LocalStorage.pushTaskListOffline(context, currentHouseId, TASKS);
     }
 
     @AfterClass
-    public static void signOut(){
-        auth.signOut();
-    }
-
-    @Test
-    public void goBackOnlineButtonUIWorks() {
-        buttonUIWorks(R.id.offline_go_back_online_button);
-    }
-
-    @Test
-    public void cycleViewButtonUIWorks() {
-        buttonUIWorks(R.id.offline_list_view_change);
+    public static void clearStorage(){
+        Context context = InstrumentationRegistry.getInstrumentation().getTargetContext();
+        LocalStorage.clearOfflineStorage(context);
     }
 
     @Test
@@ -119,11 +104,6 @@ public class OfflineScreenTest {
         unimplementedButtonShowsAlertDialog(R.id.offline_settings_imageButton);
     }
 
-    @Test
-    public void listViewChangeButtonShowsAlertDialog() {
-        unimplementedButtonShowsAlertDialog(R.id.offline_list_view_change);
-    }
-
     private void unimplementedButtonShowsAlertDialog(@IdRes int resId) {
         onView(withId(resId)).perform(click());
 
@@ -148,6 +128,14 @@ public class OfflineScreenTest {
     }
 
     @Test
+    public void groceriesDisplayProperly() {
+        onView(withId(R.id.offline_groceries)).check(matches(hasChildCount(GROCERIES.size())));
+
+        for (int i = 0; i < GROCERIES.size(); ++i)
+            onView(withText(GROCERIES.get(i).getName())).check(matches(isDisplayed()));
+    }
+
+    @Test
     public void eventInformationIsDisplayedProperly() {
         onView(withText(EVENTS.get(0).getTitle())).perform(click());
 
@@ -165,4 +153,6 @@ public class OfflineScreenTest {
         onView(withText(TASKS.get(0).getTitle())).inRoot(isDialog()).check(matches(isDisplayed()));
         onView(withText(TASKS.get(0).getDescription())).inRoot(isDialog()).check(matches(isDisplayed()));
     }
+
+    // TODO grocery format check
 }
