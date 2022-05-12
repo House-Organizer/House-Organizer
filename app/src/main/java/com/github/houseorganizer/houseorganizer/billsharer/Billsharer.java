@@ -29,7 +29,6 @@ public class Billsharer {
         expenses = new ArrayList<>();
         debts = new ArrayList<>();
         this.currentHouse = currentHouse;
-        startUpBillsharer();
     }
 
     public Billsharer(DocumentReference currentHouse, DocumentReference onlineReference, List<Expense> expenses) {
@@ -37,11 +36,10 @@ public class Billsharer {
         debts = new ArrayList<>();
         this.currentHouse = currentHouse;
         this.onlineReference = onlineReference;
-        startUpBillsharer();
     }
 
-    private void startUpBillsharer() {
-        initResidents().addOnCompleteListener(l -> {
+    public Task<DocumentSnapshot> startUpBillsharer() {
+        return initResidents().addOnCompleteListener(l -> {
             initBalances();
             computeBalances();
             computeDebts();
@@ -269,7 +267,7 @@ public class Billsharer {
         return billsharerRoot.add(map);
     }
 
-    private static Task<Billsharer> retrieveBillsharer(CollectionReference billsharerRoot, DocumentReference household){
+    public static Task<Billsharer> retrieveBillsharer(CollectionReference billsharerRoot, DocumentReference household){
         return billsharerRoot.whereEqualTo("household", household).get().continueWith( t -> {
             List<DocumentSnapshot> res = t.getResult().getDocuments();
             if(res.isEmpty())return null;

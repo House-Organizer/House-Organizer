@@ -57,8 +57,10 @@ public class ExpenseActivity extends NavBarActivity {
                             bs = Billsharer.buildBillsharer(d);
                             adapter.setBillsharer(bs);
                         });
-                        view.setLayoutManager(new LinearLayoutManager(this));
-                        view.setAdapter(adapter);
+                        bs.startUpBillsharer().addOnCompleteListener(t1 -> {
+                            view.setLayoutManager(new LinearLayoutManager(this));
+                            view.setAdapter(adapter);
+                        });
                     } else {
                         Util.logAndToast("ExpenseActivity", "Could not initialize billsharer",
                                 t.getException(), this, "Could not load billsharer");

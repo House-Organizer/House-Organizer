@@ -19,6 +19,7 @@ public class BalanceActivity extends NavBarActivity {
 
     private Billsharer bs;
     private DebtAdapter adapter;
+    private FirebaseFirestore db = FirebaseFirestore.getInstance();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,17 +42,15 @@ public class BalanceActivity extends NavBarActivity {
 
     private void initializeData(){
         RecyclerView view = findViewById(R.id.balance_recycler);
-        Billsharer.getBillsharerForDebt(currentHouse, FirebaseFirestore.getInstance())
+        Billsharer.retrieveBillsharer(db.collection("billsharers"), currentHouse)
                 .addOnCompleteListener(t -> {
                     if (t.isSuccessful()){
-                        bs = t.getResult().getBillsharer();
-                        adapter = t.getResult();
-                        bs.getOnlineReference().addSnapshotListener((d, e) -> {
-                            bs = Billsharer.buildBillsharer(d);
-                            adapter.setBillsharer(bs);
+                        bs = t.getResult();
+                        adapter = new DebtAdapter(bs);
+                        bs.startUpBillsharer().addOnCompleteListener(t1 -> {
+                            view.setLayoutManager(new LinearLayoutManager(this));
+                            view.setAdapter(adapter);
                         });
-                        view.setLayoutManager(new LinearLayoutManager(this));
-                        view.setAdapter(adapter);
                     } else {
                         Util.logAndToast("BalanceActivity", "Could not initialize billsharer",
                                 t.getException(), this, "Could not load billsharer");
