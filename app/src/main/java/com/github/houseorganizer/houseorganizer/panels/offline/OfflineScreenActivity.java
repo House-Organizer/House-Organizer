@@ -51,6 +51,7 @@ public final class OfflineScreenActivity extends ThemedAppCompatActivity {
 
     private <T extends OfflineItem> void setUpItemCollection(List<T> itemCollection, @IdRes int recyclerViewResId,
                                                              @LayoutRes int itemRowLayoutId, @IdRes int itemButtonResId) {
+        if (itemCollection == null) itemCollection = new ArrayList<>();
         RecyclerView itemRV = findViewById(recyclerViewResId);
         itemRV.setLayoutManager(new LinearLayoutManager(this));
         itemRV.setAdapter(new OfflineAdapter<>(itemCollection, itemRowLayoutId, itemButtonResId));

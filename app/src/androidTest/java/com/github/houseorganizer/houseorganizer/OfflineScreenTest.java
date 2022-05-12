@@ -67,8 +67,6 @@ public class OfflineScreenTest {
         assertTrue(LocalStorage.pushEventsOffline(context, currentHouseId, EVENTS));
         assertTrue(LocalStorage.pushGroceriesOffline(context, currentHouseId, GROCERIES));
         assertTrue(LocalStorage.pushTaskListOffline(context, currentHouseId, TASKS));
-
-        Thread.sleep(2000); // wait for retrieval ???
     }
 
     @AfterClass
