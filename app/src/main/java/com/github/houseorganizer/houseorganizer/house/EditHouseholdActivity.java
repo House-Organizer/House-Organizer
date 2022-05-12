@@ -6,6 +6,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Color;
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,6 +14,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -30,6 +33,8 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.WriterException;
 import com.google.zxing.common.BitMatrix;
@@ -46,6 +51,8 @@ public class EditHouseholdActivity extends AppCompatActivity {
     private FirebaseAuth mAuth;
     private String householdId;
     private DocumentReference currentHousehold;
+    private ActivityResultLauncher<String> galleryLauncher;
+    private FirebaseStorage storage;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,6 +61,8 @@ public class EditHouseholdActivity extends AppCompatActivity {
 
         mAuth = FirebaseAuth.getInstance();
         firestore = FirebaseFirestore.getInstance();
+        storage = FirebaseStorage.getInstance();
+        galleryLauncher = registerForActivityResult(new ActivityResultContracts.GetContent(), this::pushImageToHousehold);
 
         Intent intent = getIntent();
         this.householdId = intent.getStringExtra(HouseSelectionActivity.HOUSEHOLD_TO_EDIT);
@@ -69,6 +78,16 @@ public class EditHouseholdActivity extends AppCompatActivity {
                         tv.setText(householdData.getOrDefault("name", "No house name").toString());
                     }
                 });
+    }
+
+    public void pickImageForHousehold(View view){
+        galleryLauncher.launch("image/*");
+    }
+
+    public void pushImageToHousehold(Uri uri){
+        StorageReference imageRef = storage.getReference().child("house_" + householdId);
+        imageRef.putFile(uri);
+        Toast.makeText(getApplicationContext(), getApplicationContext().getString(R.string.changed_picture), Toast.LENGTH_SHORT).show();
     }
 
     private boolean verifyEmail(String email, View view) {
