@@ -8,6 +8,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.github.houseorganizer.houseorganizer.R;
 import com.github.houseorganizer.houseorganizer.billsharer.Billsharer;
+import com.github.houseorganizer.houseorganizer.billsharer.DebtAdapter;
 import com.github.houseorganizer.houseorganizer.billsharer.ExpenseAdapter;
 import com.github.houseorganizer.houseorganizer.panels.main_activities.ExpenseActivity;
 import com.github.houseorganizer.houseorganizer.panels.main_activities.NavBarActivity;
@@ -19,7 +20,8 @@ import java.util.OptionalInt;
 public class BalanceActivity extends NavBarActivity {
 
     private Billsharer bs;
-    private ExpenseAdapter adapter;
+    private DebtAdapter adapter;
+    private FirebaseFirestore db = FirebaseFirestore.getInstance();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,17 +44,18 @@ public class BalanceActivity extends NavBarActivity {
 
     private void initializeData(){
         RecyclerView view = findViewById(R.id.balance_recycler);
-        Billsharer.initializeBillsharer(currentHouse, FirebaseFirestore.getInstance())
+        Billsharer.retrieveBillsharer(db.collection("billsharers"), currentHouse)
                 .addOnCompleteListener(t -> {
                     if (t.isSuccessful()){
-                        bs = t.getResult().getBillsharer();
-                        adapter = t.getResult();// TODO
-                        bs.getOnlineReference().addSnapshotListener((d, e) -> {
-                            bs = Billsharer.buildBillsharer(d);
-                            adapter.setBillsharer(bs);
+                        bs = t.getResult();
+                        adapter = new DebtAdapter(bs);
+                        bs.startUpBillsharer().addOnCompleteListener(t1 -> {
+                            LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
+                            linearLayoutManager.setReverseLayout(true);
+                            linearLayoutManager.setStackFromEnd(true);
+                            view.setLayoutManager(linearLayoutManager);
+                            view.setAdapter(adapter);
                         });
-                        view.setLayoutManager(new LinearLayoutManager(this));
-                        view.setAdapter(adapter);
                     } else {
                         Util.logAndToast("BalanceActivity", "Could not initialize billsharer",
                                 t.getException(), this, "Could not load billsharer");
