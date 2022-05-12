@@ -22,6 +22,7 @@ import com.github.houseorganizer.houseorganizer.util.EspressoIdlingResource;
 import com.google.android.gms.tasks.Task;
 import com.google.android.gms.tasks.Tasks;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
@@ -35,6 +36,7 @@ import org.junit.runner.RunWith;
 
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
+import java.util.stream.Collectors;
 
 @RunWith(AndroidJUnit4.class)
 public class QRCodeScanActivityTest {
@@ -95,13 +97,15 @@ public class QRCodeScanActivityTest {
         QRJoinRule.getScenario().onActivity(qrCodeScanActivity -> {
             qrCodeScanActivity.acceptInvite("not_a_valid_household_id");
             Task<DocumentSnapshot> task = db.collection("households").document(TEST_HOUSEHOLD_NAMES[0]).get();
+            Task allTasks = Tasks.whenAllComplete(task);
             try {
-                Tasks.await(task);
+                Tasks.await(allTasks);
             } catch (ExecutionException e) {
                 e.printStackTrace();
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
+
             Map<String, Object> houseData_after = task.getResult().getData();
             assertEquals(houseData_before, houseData_after);
             qrCodeScanActivity.finish();
