@@ -93,17 +93,12 @@ public abstract class CalendarAdapter extends RecyclerView.Adapter<RecyclerView.
     @SuppressLint("NotifyDataSetChanged")
     public void refreshCalendarView(Context ctx, DocumentReference currentHouse, String errMessage, boolean withPast) {
         EspressoIdlingResource.increment();
-
         long timeThreshold = withPast ? LocalDateTime.MIN.toEpochSecond(ZoneOffset.UTC) : LocalDateTime.now().toEpochSecond(ZoneOffset.UTC);
-        db.collection("events")
-                .whereEqualTo("household", currentHouse)
-                .whereGreaterThan("start", timeThreshold)
-                .get()
-                .addOnCompleteListener(task -> {
+        db.collection("events").whereEqualTo("household", currentHouse)
+                .whereGreaterThan("start", timeThreshold).get().addOnCompleteListener(task -> {
                     if (task.isSuccessful()) {
                         ArrayList<Calendar.Event> newEvents = new ArrayList<>();
                         for (QueryDocumentSnapshot document : task.getResult()) {
-                            // We assume the stored data is well behaved since it got added in a well behaved manner.
                             Calendar.Event event = new Calendar.Event(
                                     document.getString("title"),
                                     document.getString("description"),
@@ -116,7 +111,6 @@ public abstract class CalendarAdapter extends RecyclerView.Adapter<RecyclerView.
                         calendar.setEvents(newEvents);
                         generateItems(newEvents);
                         EspressoIdlingResource.decrement();
-
                     } else {
                         logAndToast(ctx.toString(), errMessage, task.getException(),
                                 ctx, ctx.getString(R.string.refresh_calendar_fail));

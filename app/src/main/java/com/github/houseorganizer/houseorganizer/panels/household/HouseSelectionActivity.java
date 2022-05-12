@@ -223,10 +223,9 @@ public class HouseSelectionActivity extends AppCompatActivity implements
 
     public void leaveHouse(View view){
         EspressoIdlingResource.increment();
-
         SharedPreferences sharedPreferences = getSharedPrefs(this);
         String householdId = sharedPreferences.getString(CURRENT_HOUSEHOLD, "");
-        if(householdId != null){
+        if(householdId != null) {
             DocumentReference currentHouse = firestore.collection("households").document(householdId);
             currentHouse.get().addOnCompleteListener(task -> {
                 Map<String, Object> householdData = task.getResult().getData();
@@ -243,15 +242,12 @@ public class HouseSelectionActivity extends AppCompatActivity implements
                         editor.apply();
                         Intent intent = new Intent(this, MainScreenActivity.class);
                         startActivity(intent);
-                    } else {
+                    } else
                         Toast.makeText(getApplicationContext(), this.getString(R.string.cant_remove_owner),Toast.LENGTH_SHORT).show();
-                    }
                 }
-
                 EspressoIdlingResource.decrement();
             });
         }
-
         EspressoIdlingResource.decrement();
     }
 

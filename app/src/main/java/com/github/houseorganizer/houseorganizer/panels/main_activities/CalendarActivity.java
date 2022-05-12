@@ -48,7 +48,6 @@ public final class CalendarActivity extends NavBarActivity implements
         setContentView(R.layout.activity_calendar);
 
         currentHouse = FirebaseFirestore.getInstance().collection("households").document(getIntent().getStringExtra("house"));
-
         TextView yearMonth = findViewById(R.id.calendar_screen_year_month);
         Button navigateMonthLeft = findViewById(R.id.calendar_screen_month_left);
         Button navigateMonthRight = findViewById(R.id.calendar_screen_month_right);
@@ -74,7 +73,6 @@ public final class CalendarActivity extends NavBarActivity implements
         });
 
         findViewById(R.id.calendar_screen_add_event).setOnClickListener(v -> calendarAdapter.showAddEventDialog(this, currentHouse, "addEvent:failure"));
-
         super.setUpNavBar(R.id.nav_bar, OptionalInt.of(R.id.nav_bar_calendar));
     }
 

@@ -119,13 +119,11 @@ public class QRCodeScanActivity extends AppCompatActivity {
 
     public void acceptInvite(String QRCode){
         EspressoIdlingResource.increment();
-
         String email = auth.getCurrentUser().getEmail();
         if(email == null || QRCode == null){
             EspressoIdlingResource.decrement();
             return;
         }
-
         DocumentReference targetHousehold = db.collection("households").document(QRCode);
         targetHousehold.get().addOnCompleteListener(task -> {
             Map<String, Object> householdData = task.getResult().getData();
@@ -136,9 +134,7 @@ public class QRCodeScanActivity extends AppCompatActivity {
                     targetHousehold.update("residents", FieldValue.arrayUnion(email));
                     targetHousehold.update("num_members", num_users + 1);
                 }
-
                 getSharedPrefsEditor(this).putString(CURRENT_HOUSEHOLD, QRCode).apply();
-
                 Intent intent = new Intent(this, MainScreenActivity.class);
                 Toast.makeText(getApplicationContext(), this.getString(R.string.add_user_success), Toast.LENGTH_SHORT).show();
                 startActivity(intent);
@@ -148,7 +144,6 @@ public class QRCodeScanActivity extends AppCompatActivity {
                 Toast.makeText(getApplicationContext(), this.getString(R.string.QR_invalid), Toast.LENGTH_SHORT).show();
                 startActivity(intent);
             }
-
             EspressoIdlingResource.decrement();
         });
     }

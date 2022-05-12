@@ -3,6 +3,7 @@ package com.github.houseorganizer.houseorganizer.task;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 
 public class HTask {
     private boolean isFinished;
@@ -36,7 +37,7 @@ public class HTask {
         this.title = newTitle;
     }
 
-    public void changeDescription(String newDescription) {
+    public void changeDescription(String newDescription) throws ExecutionException, InterruptedException {
         this.description = newDescription;
     }
 
