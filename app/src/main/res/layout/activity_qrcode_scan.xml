@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".house.QRCodeScanActivity">
+    tools:context=".panels.household.QRCodeScanActivity">
 
     <androidx.camera.view.PreviewView
         android:id="@+id/cameraPreview"

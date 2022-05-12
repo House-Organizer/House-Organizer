@@ -119,7 +119,7 @@ public abstract class CalendarAdapter extends RecyclerView.Adapter<RecyclerView.
         // Store the image on firebase storage
         FirebaseStorage storage = FirebaseStorage.getInstance();
         // this creates the reference to the picture
-        StorageReference imageRef = storage.getReference().child(eventToAttach + ".jpg");
+        StorageReference imageRef = storage.getReference().child("event_" + eventToAttach);
         imageRef.putFile(uri);
     }
 }

@@ -138,7 +138,7 @@ public class UpcomingAdapter extends CalendarAdapter {
 
         attachmentMenu.getMenuInflater().inflate(R.menu.event_attachment_menu, attachmentMenu.getMenu());
         attachmentMenu.setOnMenuItemClickListener(menuItem -> {
-            StorageReference attachment = storage.getReference().child(eventId + ".jpg");
+            StorageReference attachment = storage.getReference().child("event_" + eventId);
             switch(menuItem.getTitle().toString()) {
                 case "Attach":
                     eventToAttach = eventId;
@@ -171,6 +171,7 @@ public class UpcomingAdapter extends CalendarAdapter {
                     .setPositiveButton(R.string.ok, (dialog, id) -> dialog.dismiss())
                     .setNegativeButton(R.string.delete, (dialog, id) -> {
                         removeEventFirestoreAndAdapter(event, position);
+                        storage.getReference().child("event_" + event.getId()).delete();
                         dialog.dismiss();
                     })
                     .setNeutralButton(R.string.edit, (dialog, id) -> {

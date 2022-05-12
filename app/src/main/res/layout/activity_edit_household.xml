@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".house.EditHouseholdActivity">
+    tools:context=".panels.household.EditHouseholdActivity">
 
     <ImageButton
         android:id="@+id/imageButtonRemoveUser"
@@ -68,14 +68,15 @@
 
     <TextView
         android:id="@+id/edit_household_name"
-        android:layout_width="412dp"
-        android:layout_height="38dp"
-        android:layout_marginTop="48dp"
+        android:layout_width="253dp"
+        android:layout_height="41dp"
+        android:layout_marginStart="32dp"
+        android:layout_marginTop="32dp"
+        android:gravity="center"
         android:text="@string/edit_title"
         android:textAlignment="center"
         android:textSize="24sp"
         android:textStyle="bold"
-        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -145,5 +146,18 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:srcCompat="@drawable/qrcode_big" />
+
+    <ImageButton
+        android:id="@+id/changeImageOfHousehold"
+        android:layout_width="49dp"
+        android:layout_height="48dp"
+        android:layout_marginTop="32dp"
+        android:layout_marginEnd="32dp"
+        android:background="#00000000"
+        android:contentDescription="@string/change_picture_speakable_text"
+        android:onClick="pickImageForHousehold"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/picture_house" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

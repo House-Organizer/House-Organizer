@@ -1,6 +1,5 @@
-package com.github.houseorganizer.houseorganizer.panels;
+package com.github.houseorganizer.houseorganizer.panels.main_activities;
 
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 
@@ -10,6 +9,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.github.houseorganizer.houseorganizer.R;
 import com.github.houseorganizer.houseorganizer.billsharer.Billsharer;
 import com.github.houseorganizer.houseorganizer.billsharer.ExpenseAdapter;
+import com.github.houseorganizer.houseorganizer.panels.billsharer.BalanceActivity;
 import com.github.houseorganizer.houseorganizer.util.Util;
 import com.google.firebase.firestore.FirebaseFirestore;
 
@@ -43,7 +43,7 @@ public class ExpenseActivity extends NavBarActivity {
             startActivity(intent);
         });
 
-        super.setUpNavBar(R.id.expense_nav_bar, OptionalInt.of(R.id.nav_bar_bs));
+        super.setUpNavBar(R.id.nav_bar, OptionalInt.of(R.id.nav_bar_bs));
     }
 
     private void initializeData(){
@@ -53,12 +53,14 @@ public class ExpenseActivity extends NavBarActivity {
                     if (t.isSuccessful()){
                         bs = t.getResult().getBillsharer();
                         adapter = t.getResult();
-                        bs.getOnlineReference().addSnapshotListener((d, e) -> {
-                            bs = Billsharer.buildBillsharer(d);
-                            adapter.setBillsharer(bs);
+                        bs.getOnlineReference().addSnapshotListener((d, e) -> bs.refreshExpenses());
+                        bs.startUpBillsharer().addOnCompleteListener(t1 -> {
+                            LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
+                            linearLayoutManager.setReverseLayout(true);
+                            linearLayoutManager.setStackFromEnd(true);
+                            view.setLayoutManager(linearLayoutManager);
+                            view.setAdapter(adapter);
                         });
-                        view.setLayoutManager(new LinearLayoutManager(this));
-                        view.setAdapter(adapter);
                     } else {
                         Util.logAndToast("ExpenseActivity", "Could not initialize billsharer",
                                 t.getException(), this, "Could not load billsharer");
@@ -66,9 +68,15 @@ public class ExpenseActivity extends NavBarActivity {
                 });
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        super.setUpNavBar(R.id.nav_bar, OptionalInt.of(R.id.nav_bar_bs));
+    }
 
     @Override
     protected CurrentActivity currentActivity() {
         return CurrentActivity.BILLSHARER;
     }
+
 }
