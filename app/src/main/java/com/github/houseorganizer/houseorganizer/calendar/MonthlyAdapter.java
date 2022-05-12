@@ -104,12 +104,7 @@ public class MonthlyAdapter extends CalendarAdapter {
 
     @SuppressLint("NotifyDataSetChanged")
     public void moveMonth(int monthsDifference, TextView yearMonthText) {
-        if (monthsDifference < 0) {
-            month = month.minusMonths(-monthsDifference);
-        }
-        else {
-            month = month.plusMonths(monthsDifference);
-        }
+        month = month.plusMonths(monthsDifference);
         generateItems(calendar.getEvents());
         this.notifyDataSetChanged();
         yearMonthText.setText(month.format(DateTimeFormatter.ofPattern("LLLL uuuu")));
