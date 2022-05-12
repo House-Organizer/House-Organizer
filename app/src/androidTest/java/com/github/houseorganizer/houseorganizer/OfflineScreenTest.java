@@ -63,6 +63,7 @@ public class OfflineScreenTest {
         LocalStorage.clearOfflineStorage(context);
 
         String currentHouseId =  FirebaseTestsHelper.TEST_HOUSEHOLD_NAMES[0];
+        LocalStorage.pushCurrentHouseOffline(context, currentHouseId);
         assertTrue(LocalStorage.pushEventsOffline(context, currentHouseId, EVENTS));
         assertTrue(LocalStorage.pushGroceriesOffline(context, currentHouseId, GROCERIES));
         assertTrue(LocalStorage.pushTaskListOffline(context, currentHouseId, TASKS));
