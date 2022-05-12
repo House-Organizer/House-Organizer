@@ -34,6 +34,7 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
@@ -97,7 +98,7 @@ public class QRCodeScanActivityTest {
         QRJoinRule.getScenario().onActivity(qrCodeScanActivity -> {
             qrCodeScanActivity.acceptInvite("not_a_valid_household_id");
             Task<DocumentSnapshot> task = db.collection("households").document(TEST_HOUSEHOLD_NAMES[0]).get();
-            Task allTasks = Tasks.whenAllComplete(task);
+            Task<List<Task<?>>> allTasks = Tasks.whenAllComplete(task);
             try {
                 Tasks.await(allTasks);
             } catch (ExecutionException e) {
