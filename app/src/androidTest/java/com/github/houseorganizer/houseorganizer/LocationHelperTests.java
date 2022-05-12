@@ -3,11 +3,9 @@ package com.github.houseorganizer.houseorganizer;
 import static com.github.houseorganizer.houseorganizer.location.LocationHelpers.getClosestHouse;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.Assert.assertEquals;
 
 import android.location.Location;
 
-import com.github.houseorganizer.houseorganizer.location.LocationHelpers;
 import com.google.android.gms.tasks.Task;
 import com.google.android.gms.tasks.Tasks;
 import com.google.firebase.firestore.FirebaseFirestore;

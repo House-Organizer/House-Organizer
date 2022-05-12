@@ -1,4 +1,4 @@
-package com.github.houseorganizer.houseorganizer.login;
+package com.github.houseorganizer.houseorganizer.panels.login;
 
 
 import static com.github.houseorganizer.houseorganizer.util.Util.logAndToast;
@@ -13,7 +13,7 @@ import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.github.houseorganizer.houseorganizer.R;
-import com.github.houseorganizer.houseorganizer.panels.MainScreenActivity;
+import com.github.houseorganizer.houseorganizer.panels.main_activities.MainScreenActivity;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
@@ -125,5 +125,14 @@ public class LoginActivity extends AppCompatActivity {
         mAuth.signInWithCredential(credential).addOnCompleteListener(this,
                 task -> manageTask(task, "firebaseAuthWithGoogle")
         );
+    }
+
+    @Override
+    public void onBackPressed() {
+        // Leave the app instead of going to MainActivity
+        Intent homeIntent = new Intent(Intent.ACTION_MAIN);
+        homeIntent.addCategory(Intent.CATEGORY_HOME);
+        homeIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        startActivity(homeIntent);
     }
 }

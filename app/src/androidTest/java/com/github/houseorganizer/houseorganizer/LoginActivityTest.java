@@ -2,20 +2,25 @@ package com.github.houseorganizer.houseorganizer;
 
 
 import static androidx.test.espresso.Espresso.onView;
+import static androidx.test.espresso.Espresso.pressBack;
 import static androidx.test.espresso.assertion.ViewAssertions.matches;
 import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static androidx.test.espresso.matcher.ViewMatchers.isEnabled;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
+import static org.junit.Assert.fail;
 
 import android.content.Context;
 import android.content.Intent;
 
+import androidx.test.espresso.NoActivityResumedException;
+import androidx.test.espresso.intent.Intents;
 import androidx.test.ext.junit.rules.ActivityScenarioRule;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 import androidx.test.platform.app.InstrumentationRegistry;
 
-import com.github.houseorganizer.houseorganizer.login.LoginActivity;
+import com.github.houseorganizer.houseorganizer.panels.login.LoginActivity;
 
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -31,6 +36,12 @@ public class LoginActivityTest {
     public void dismissDialogs() {
         Context context = InstrumentationRegistry.getInstrumentation().getTargetContext();
         context.sendBroadcast(new Intent(Intent.ACTION_CLOSE_SYSTEM_DIALOGS));
+        Intents.init();
+    }
+
+    @After
+    public void closeIntents() {
+        Intents.release();
     }
 
     /* Sign-in button */
@@ -55,4 +66,12 @@ public class LoginActivityTest {
         onView(withId(R.id.discoverButton)).check(matches(isEnabled()));
     }
 
+    @Test
+    public void backPressLeavesApp() {
+        // Closing the app throws NoActivityResumedException, so we make the test fail if nothing was thrown
+        try {
+            pressBack();
+            fail("Should have thrown NoActivityResumedException");
+        } catch (NoActivityResumedException expected) { }
+    }
 }
