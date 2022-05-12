@@ -88,7 +88,7 @@ public class LocalStorage {
     public static HashMap<String, String> retrieveHouseholdsOffline(Context context) {
         String householdsString = retrieveTxtFromFile(context, OFFLINE_STORAGE_HOUSEHOLDS + OFFLINE_STORAGE_EXTENSION);
         Type type = TypeToken.getParameterized(HashMap.class, String.class, String.class).getType();
-        return Objects.requireNonNull(new Gson().fromJson(householdsString, type));
+        return new Gson().fromJson(householdsString, type);
     }
 
     public static void pushHouseholdsOffline(Context context, FirebaseFirestore db, FirebaseUser mUser) throws ExecutionException, InterruptedException {
@@ -118,8 +118,7 @@ public class LocalStorage {
             String householdsEventsString = retrieveTxtFromFile(context,
                     OFFLINE_STORAGE_CALENDAR + household + OFFLINE_STORAGE_EXTENSION);
             Type type = TypeToken.getParameterized(ArrayList.class, OfflineEvent.class).getType();
-            ArrayList<OfflineEvent> householdsEvents =
-                    Objects.requireNonNull(new Gson().fromJson(householdsEventsString, type));
+            ArrayList<OfflineEvent> householdsEvents = new Gson().fromJson(householdsEventsString, type);
             mapHouseholdIdToEvents.put(household, householdsEvents);
         }
         return mapHouseholdIdToEvents;
@@ -133,8 +132,7 @@ public class LocalStorage {
             String householdsGroceriesString = retrieveTxtFromFile(context,
                     OFFLINE_STORAGE_GROCERIES + household + OFFLINE_STORAGE_EXTENSION);
             Type type = TypeToken.getParameterized(ArrayList.class, OfflineShopItem.class).getType();
-            ArrayList<OfflineShopItem> householdsGroceries =
-                    Objects.requireNonNull(new Gson().fromJson(householdsGroceriesString, type));
+            ArrayList<OfflineShopItem> householdsGroceries = new Gson().fromJson(householdsGroceriesString, type);
             mapHouseholdIdToGroceries.put(household, householdsGroceries);
         }
         return mapHouseholdIdToGroceries;
@@ -146,8 +144,7 @@ public class LocalStorage {
             String householdsTasksString = retrieveTxtFromFile(context,
                     OFFLINE_STORAGE_TASKS + household + OFFLINE_STORAGE_EXTENSION);
             Type type = TypeToken.getParameterized(ArrayList.class, OfflineTask.class).getType();
-            ArrayList<OfflineTask> householdsTasks =
-                    Objects.requireNonNull(new Gson().fromJson(householdsTasksString, type));
+            ArrayList<OfflineTask> householdsTasks = new Gson().fromJson(householdsTasksString, type);
             mapHouseholdIdToTasks.put(household, householdsTasks);
         }
         return mapHouseholdIdToTasks;

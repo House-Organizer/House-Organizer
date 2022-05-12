@@ -58,7 +58,7 @@ public class OfflineScreenTest {
             new ActivityScenarioRule<>(OfflineScreenActivity.class);
 
     @BeforeClass
-    public static void pushEverythingOffline() {
+    public static void pushEverythingOffline() throws InterruptedException {
         Context context = InstrumentationRegistry.getInstrumentation().getTargetContext();
         LocalStorage.clearOfflineStorage(context);
 
@@ -67,6 +67,8 @@ public class OfflineScreenTest {
         assertTrue(LocalStorage.pushEventsOffline(context, currentHouseId, EVENTS));
         assertTrue(LocalStorage.pushGroceriesOffline(context, currentHouseId, GROCERIES));
         assertTrue(LocalStorage.pushTaskListOffline(context, currentHouseId, TASKS));
+
+        Thread.sleep(2000); // wait for retrieval ???
     }
 
     @AfterClass
