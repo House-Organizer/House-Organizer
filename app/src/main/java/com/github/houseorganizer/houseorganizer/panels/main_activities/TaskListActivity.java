@@ -1,4 +1,4 @@
-package com.github.houseorganizer.houseorganizer.panels;
+package com.github.houseorganizer.houseorganizer.panels.main_activities;
 
 import android.os.Bundle;
 import android.widget.Button;
@@ -61,5 +61,11 @@ public final class TaskListActivity extends NavBarActivity {
                 TaskView.recoverTaskList(this, taskList, taskListAdapter, tlMetadata, R.id.tl_screen_tasks);
             }
         });
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        super.setUpNavBar(R.id.nav_bar, OptionalInt.of(R.id.nav_bar_task));
     }
 }

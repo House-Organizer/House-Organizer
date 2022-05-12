@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".login.VerifyEmail">
+    tools:context=".panels.login.VerifyEmail">
 
     <TextView
         android:id="@+id/verif_email_text"

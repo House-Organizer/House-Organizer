@@ -18,7 +18,7 @@ import androidx.test.ext.junit.rules.ActivityScenarioRule;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 import androidx.test.rule.GrantPermissionRule;
 
-import com.github.houseorganizer.houseorganizer.house.QRCodeScanActivity;
+import com.github.houseorganizer.houseorganizer.panels.household.QRCodeScanActivity;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentSnapshot;

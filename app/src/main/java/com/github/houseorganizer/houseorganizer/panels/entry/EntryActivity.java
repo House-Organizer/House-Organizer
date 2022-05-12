@@ -1,4 +1,4 @@
-package com.github.houseorganizer.houseorganizer.panels;
+package com.github.houseorganizer.houseorganizer.panels.entry;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -7,12 +7,13 @@ import android.os.Handler;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.github.houseorganizer.houseorganizer.R;
-import com.github.houseorganizer.houseorganizer.login.LoginActivity;
-import com.github.houseorganizer.houseorganizer.login.LoginEmail;
+import com.github.houseorganizer.houseorganizer.panels.login.LoginActivity;
+import com.github.houseorganizer.houseorganizer.panels.login.LoginEmail;
+import com.github.houseorganizer.houseorganizer.panels.main_activities.MainScreenActivity;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
-public class MainActivity extends AppCompatActivity {
+public class EntryActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -27,11 +28,11 @@ public class MainActivity extends AppCompatActivity {
         (new Handler()).postDelayed(() -> {
             if (user != null) {
                 if (user.isEmailVerified() || user.isAnonymous()) {
-                    Intent intent = new Intent(MainActivity.this, MainScreenActivity.class);
+                    Intent intent = new Intent(EntryActivity.this, MainScreenActivity.class);
                     intent.putExtra("LoadHouse", true);
                     startActivity(intent);
                 } else {
-                    startActivity(new Intent(MainActivity.this, LoginEmail.class));
+                    startActivity(new Intent(EntryActivity.this, LoginEmail.class));
                 }
             } else {
                 Intent signInIntent = new Intent(this, LoginActivity.class);
