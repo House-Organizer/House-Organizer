@@ -6,7 +6,6 @@ import static com.github.houseorganizer.houseorganizer.util.Util.logAndToast;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
