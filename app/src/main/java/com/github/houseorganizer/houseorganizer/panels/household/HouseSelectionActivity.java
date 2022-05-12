@@ -34,6 +34,7 @@ import com.github.houseorganizer.houseorganizer.house.HouseModel;
 import com.github.houseorganizer.houseorganizer.image.ImageHelper;
 import com.github.houseorganizer.houseorganizer.location.LocationHelpers;
 import com.github.houseorganizer.houseorganizer.panels.main_activities.MainScreenActivity;
+import com.github.houseorganizer.houseorganizer.panels.settings.ThemedAppCompatActivity;
 import com.github.houseorganizer.houseorganizer.util.EspressoIdlingResource;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationRequest;
@@ -52,7 +53,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
-public class HouseSelectionActivity extends AppCompatActivity {
+public class HouseSelectionActivity extends ThemedAppCompatActivity {
 
     public static final String HOUSEHOLD_TO_EDIT = "com.github.houseorganizer.houseorganizer.HOUSEHOLD_TO_EDIT";
     public static final int DEFAULT_UPDATE_INTERVAL = 30;

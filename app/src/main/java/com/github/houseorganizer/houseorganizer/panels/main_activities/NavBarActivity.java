@@ -8,12 +8,13 @@ import android.net.NetworkInfo;
 import androidx.annotation.IdRes;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.github.houseorganizer.houseorganizer.panels.settings.ThemedAppCompatActivity;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.firestore.DocumentReference;
 
 import java.util.OptionalInt;
 
-public abstract class NavBarActivity extends AppCompatActivity {
+public abstract class NavBarActivity extends ThemedAppCompatActivity {
     protected enum CurrentActivity{
         MAIN("Main Screen", MainScreenActivity.class),
         CALENDAR("Calendar", CalendarActivity.class),
@@ -59,12 +60,5 @@ public abstract class NavBarActivity extends AppCompatActivity {
             menu.setSelectedItemId(navBarButtonId.getAsInt());
         }
         menu.setOnItemSelectedListener(l -> changeActivity(l.getTitle().toString()));
-    }
-
-    public boolean isConnected() {
-        ConnectivityManager connectivityManager = (ConnectivityManager)getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo activeNetInfo = connectivityManager.getActiveNetworkInfo();
-
-        return (activeNetInfo != null) && activeNetInfo.isConnectedOrConnecting();
     }
 }

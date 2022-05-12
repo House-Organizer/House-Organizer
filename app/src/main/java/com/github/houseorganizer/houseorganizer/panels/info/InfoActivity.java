@@ -12,6 +12,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.github.houseorganizer.houseorganizer.R;
 import com.github.houseorganizer.houseorganizer.panels.main_activities.MainScreenActivity;
+import com.github.houseorganizer.houseorganizer.panels.settings.ThemedAppCompatActivity;
 import com.github.houseorganizer.houseorganizer.user.UserAdapter;
 import com.github.houseorganizer.houseorganizer.util.Util;
 import com.google.firebase.firestore.DocumentReference;
@@ -21,7 +22,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class InfoActivity extends AppCompatActivity {
+public class InfoActivity extends ThemedAppCompatActivity {
 
     private FirebaseFirestore firestore;
     private DocumentReference currentHouse;

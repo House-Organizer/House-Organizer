@@ -11,6 +11,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.github.houseorganizer.houseorganizer.R;
+import com.github.houseorganizer.houseorganizer.panels.settings.ThemedAppCompatActivity;
 import com.github.houseorganizer.houseorganizer.storage.LocalStorage;
 import com.github.houseorganizer.houseorganizer.storage.OfflineAdapter;
 import com.github.houseorganizer.houseorganizer.storage.OfflineEvent;
@@ -23,7 +24,7 @@ import java.util.List;
 import java.util.Map;
 
 // TODO: Fetch list of member emails [sprint 9 task]
-public final class OfflineScreenActivity extends AppCompatActivity{
+public final class OfflineScreenActivity extends ThemedAppCompatActivity {
     private String currentHouseId;
 
     /* All of these have HouseIds as keys */

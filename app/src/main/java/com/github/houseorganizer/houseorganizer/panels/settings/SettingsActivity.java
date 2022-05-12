@@ -20,7 +20,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 
-public class SettingsActivity extends AppCompatActivity {
+public class SettingsActivity extends ThemedAppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -55,7 +55,7 @@ public class SettingsActivity extends AppCompatActivity {
 
         @Override
         public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String s) {
-            if(s.equals("nickname")){
+            if (s.equals("nickname")){
                 Map<String, Object> user_nickname = new HashMap<>();
 
                 FirebaseUser Uid = FirebaseAuth.getInstance().getCurrentUser();

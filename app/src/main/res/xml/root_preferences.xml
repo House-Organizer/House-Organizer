@@ -19,7 +19,7 @@
             android:key="theme"
             android:title="Color theme"
             android:entries="@array/colorThemes"
-            android:entryValues="@array/colorThemesAlias"/>
+            android:entryValues="@array/colorThemesIds"/>
 
     </PreferenceCategory>
 
