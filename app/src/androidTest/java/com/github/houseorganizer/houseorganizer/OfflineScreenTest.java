@@ -11,6 +11,8 @@ import static androidx.test.espresso.matcher.ViewMatchers.isEnabled;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
 import static androidx.test.espresso.matcher.ViewMatchers.withText;
 
+import static org.junit.Assert.assertTrue;
+
 import android.content.Context;
 
 import androidx.annotation.IdRes;
@@ -61,10 +63,9 @@ public class OfflineScreenTest {
         LocalStorage.clearOfflineStorage(context);
 
         String currentHouseId =  FirebaseTestsHelper.TEST_HOUSEHOLD_NAMES[0];
-        LocalStorage.pushCurrentHouseOffline(context, currentHouseId);
-        LocalStorage.pushEventsOffline(context, currentHouseId, EVENTS);
-        LocalStorage.pushGroceriesOffline(context, currentHouseId, GROCERIES);
-        LocalStorage.pushTaskListOffline(context, currentHouseId, TASKS);
+        assertTrue(LocalStorage.pushEventsOffline(context, currentHouseId, EVENTS));
+        assertTrue(LocalStorage.pushGroceriesOffline(context, currentHouseId, GROCERIES));
+        assertTrue(LocalStorage.pushTaskListOffline(context, currentHouseId, TASKS));
     }
 
     @AfterClass
