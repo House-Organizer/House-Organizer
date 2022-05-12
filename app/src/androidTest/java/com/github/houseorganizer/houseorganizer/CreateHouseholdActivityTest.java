@@ -8,14 +8,11 @@ import static androidx.test.espresso.intent.Intents.intended;
 import static androidx.test.espresso.intent.matcher.IntentMatchers.hasComponent;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
 import static androidx.test.espresso.matcher.ViewMatchers.withText;
-import static org.hamcrest.Matchers.not;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 
 import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
-import android.view.View;
 
 import androidx.test.espresso.intent.Intents;
 import androidx.test.ext.junit.rules.ActivityScenarioRule;
@@ -49,7 +46,7 @@ import java.util.stream.Collectors;
 public class CreateHouseholdActivityTest {
     private static FirebaseFirestore db;
     private static FirebaseAuth auth;
-    private View decorView;
+    private final String houseName = "MyHouse";
 
     @BeforeClass
     public static void createMockFirebase() throws ExecutionException, InterruptedException {
@@ -81,13 +78,10 @@ public class CreateHouseholdActivityTest {
 
         Context context = InstrumentationRegistry.getInstrumentation().getTargetContext();
         context.sendBroadcast(new Intent(Intent.ACTION_CLOSE_SYSTEM_DIALOGS));
-        createHouseholdRule.getScenario().onActivity(a -> decorView = a.getWindow().getDecorView());
     }
 
     @Test
     public void createHouseholdWorks() throws ExecutionException, InterruptedException {
-
-        final String houseName = "MyHouse";
 
         onView(withId(R.id.editTextHouseholdName)).perform(click(),
                 typeText(houseName), closeSoftKeyboard());
@@ -107,11 +101,11 @@ public class CreateHouseholdActivityTest {
 
     public void houseCreatedWithRightCoordinates() throws ExecutionException, InterruptedException {
         onView(withId(R.id.editTextHouseholdName)).perform(click(),
-                typeText("MyHouse"), closeSoftKeyboard());
+                typeText(houseName), closeSoftKeyboard());
         onView(withId(R.id.editTextAddress)).perform(
                 typeText("EPFL, Lausanne"), closeSoftKeyboard());
         onView(withId(R.id.submitHouseholdButton)).perform(click());
-        Map<String, Object> house = FirebaseTestsHelper.fetchHouseholdData("MyHouse", db);
+        Map<String, Object> house = FirebaseTestsHelper.fetchHouseholdData(houseName, db);
         assertEquals((Double)house.get("latitude"), 46.5, 0.1);
         assertEquals((Double)house.get("longitude"), 6.5, 0.1);
     }
