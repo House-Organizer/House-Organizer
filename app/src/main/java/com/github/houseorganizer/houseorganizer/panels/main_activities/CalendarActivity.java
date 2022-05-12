@@ -1,4 +1,4 @@
-package com.github.houseorganizer.houseorganizer.panels;
+package com.github.houseorganizer.houseorganizer.panels.main_activities;
 
 import android.annotation.SuppressLint;
 import android.os.Bundle;
@@ -67,6 +67,12 @@ public final class CalendarActivity extends NavBarActivity {
         yearMonth.setVisibility(View.GONE);
         navigateMonthLeft.setVisibility(View.GONE);
         navigateMonthRight.setVisibility(View.GONE);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        super.setUpNavBar(R.id.nav_bar, OptionalInt.of(R.id.nav_bar_calendar));
     }
 
     @Override
