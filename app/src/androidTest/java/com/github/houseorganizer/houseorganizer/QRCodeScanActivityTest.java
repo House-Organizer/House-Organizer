@@ -118,28 +118,25 @@ public class QRCodeScanActivityTest {
         Map<String, Object> houseData_before = FirebaseTestsHelper.fetchHouseholdData(TEST_HOUSEHOLD_NAMES[0], db);
         List<String> resident_before = (List<String>) houseData_before.get("residents");
         Long num_residents_before = (Long) houseData_before.get("num_members");
-        QRJoinRule.getScenario().onActivity(qrCodeScanActivity -> {
-            qrCodeScanActivity.acceptInvite(TEST_HOUSEHOLD_NAMES[0]);
-            Task<DocumentSnapshot> task = db.collection("households").document(TEST_HOUSEHOLD_NAMES[0]).get();
-            Task<List<Task<?>>> allTasks = Tasks.whenAllComplete(task);
-            try {
-                Tasks.await(allTasks);
-            } catch (ExecutionException e) {
-                e.printStackTrace();
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
+        QRJoinRule.getScenario().onActivity(qrCodeScanActivity -> qrCodeScanActivity.acceptInvite(TEST_HOUSEHOLD_NAMES[0]));
+        Task<DocumentSnapshot> task = db.collection("households").document(TEST_HOUSEHOLD_NAMES[0]).get();
+        Task<List<Task<?>>> allTasks = Tasks.whenAllComplete(task);
+        try {
+            Tasks.await(allTasks);
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
 
-            Map<String, Object> houseData_after = task.getResult().getData();
-            List<String> resident_after = (List<String>) houseData_after.get("residents");
-            Long num_residents_after = (Long) houseData_after.get("num_members");
+        Map<String, Object> houseData_after = task.getResult().getData();
+        List<String> resident_after = (List<String>) houseData_after.get("residents");
+        Long num_residents_after = (Long) houseData_after.get("num_members");
 
-            // Compare states
-            assertFalse(resident_before.contains(TEST_USERS_EMAILS[2]));
-            Long expected_num_residents = num_residents_before + 1;
-            assertEquals(expected_num_residents, num_residents_after);
-            assertTrue(resident_after.contains(TEST_USERS_EMAILS[2]));
-            qrCodeScanActivity.finish();
-        });
+        // Compare states
+        assertFalse(resident_before.contains(TEST_USERS_EMAILS[2]));
+        Long expected_num_residents = num_residents_before + 1;
+        assertEquals(expected_num_residents, num_residents_after);
+        assertTrue(resident_after.contains(TEST_USERS_EMAILS[2]));
     }
 }
