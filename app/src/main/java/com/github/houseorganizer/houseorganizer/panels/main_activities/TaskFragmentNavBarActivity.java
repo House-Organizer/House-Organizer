@@ -28,7 +28,7 @@ public abstract class TaskFragmentNavBarActivity extends NavBarActivity {
                 tlMetadata = db.collection("task_lists").document(qds.getId());
                 taskList = new TaskList(new ArrayList<>());
                 taskListAdapter = new TaskListAdapter(taskList, tlMetadata, currentHouse);
-                TaskView.recoverTaskList(this, taskList, taskListAdapter, tlMetadata, R.id.task_list);
+                TaskView.recoverTaskList(this, taskList, taskListAdapter, tlMetadata, taskListAdapterId());
             }
         });
     }
