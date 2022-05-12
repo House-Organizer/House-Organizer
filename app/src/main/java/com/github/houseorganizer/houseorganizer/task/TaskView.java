@@ -52,7 +52,7 @@ public final class TaskView {
                     titleButton.setText(newTitle);
         }));
 
-        descEditor.addTextChangedListener( new TextChangeListener(descEditor,  task::changeDescription));
+        descEditor.addTextChangedListener( new TextChangeListener(descEditor, task::changeDescription));
     }
 
     public static void setUpSubTaskView(FirestoreTask parentTask, int index, EditText titleEditor) {

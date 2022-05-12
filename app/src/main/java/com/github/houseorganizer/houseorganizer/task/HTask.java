@@ -37,7 +37,7 @@ public class HTask {
         this.title = newTitle;
     }
 
-    public void changeDescription(String newDescription) throws ExecutionException, InterruptedException {
+    public void changeDescription(String newDescription) {
         this.description = newDescription;
     }
 

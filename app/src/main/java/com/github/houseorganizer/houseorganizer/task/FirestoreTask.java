@@ -36,20 +36,14 @@ public final class FirestoreTask extends HTask {
         EspressoIdlingResource.increment();
         super.changeTitle(newTitle);
         Task<Void> task = taskDocRef.update("title", newTitle);
-        try {
-            Tasks.await(task);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
         EspressoIdlingResource.decrement();
     }
 
     @Override
-    public void changeDescription(String newDescription) throws ExecutionException, InterruptedException {
+    public void changeDescription(String newDescription) {
         EspressoIdlingResource.increment();
         super.changeDescription(newDescription);
-        Task<Void> task = taskDocRef.update("description", newDescription);
-        Tasks.await(task);
+        Task<Void> descriptionTask = taskDocRef.update("description", newDescription);
         EspressoIdlingResource.decrement();
     }
 
