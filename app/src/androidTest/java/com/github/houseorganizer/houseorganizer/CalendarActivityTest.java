@@ -181,12 +181,11 @@ public class CalendarActivityTest {
     }
 
     @Test
-    public void monthNavigationWorks() throws InterruptedException {
+    public void monthNavigationWorks() {
         String yearMonthText = YearMonth.now().plusMonths(1).format(DateTimeFormatter.ofPattern("LLLL uuuu"));
         String yearMonthText2 = YearMonth.now().format(DateTimeFormatter.ofPattern("LLLL uuuu"));
         // The wait is here in order to wait for the refreshing of the calendar
         onView(withId(R.id.calendar_screen_view_change)).perform(click());
-        Thread.sleep(1000);
 
         onView(withId(R.id.calendar_screen_month_right)).perform(click());
         onView(withId(R.id.calendar_screen_year_month)).check(matches(withText(yearMonthText)));

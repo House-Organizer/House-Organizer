@@ -10,9 +10,11 @@ import static androidx.test.espresso.matcher.ViewMatchers.hasDescendant;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
 import static androidx.test.espresso.matcher.ViewMatchers.withTagValue;
 import static androidx.test.espresso.matcher.ViewMatchers.withText;
+import static androidx.test.platform.app.InstrumentationRegistry.getInstrumentation;
 import static com.github.houseorganizer.houseorganizer.FirebaseTestsHelper.TEST_HOUSEHOLD_NAMES;
 import static org.junit.Assert.assertEquals;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 
@@ -22,10 +24,14 @@ import androidx.test.ext.junit.rules.ActivityScenarioRule;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 import androidx.test.platform.app.InstrumentationRegistry;
 import androidx.test.rule.GrantPermissionRule;
+import androidx.test.runner.lifecycle.ActivityLifecycleMonitorRegistry;
+import androidx.test.runner.lifecycle.Stage;
 
 import com.github.houseorganizer.houseorganizer.panels.household.HouseSelectionActivity;
 import com.github.houseorganizer.houseorganizer.panels.main_activities.MainScreenActivity;
 import com.github.houseorganizer.houseorganizer.util.EspressoIdlingResource;
+import com.github.houseorganizer.houseorganizer.util.RecyclerViewIdlingCallback;
+import com.github.houseorganizer.houseorganizer.util.RecyclerViewLayoutCompleteIdlingResource;
 import com.google.android.gms.tasks.Task;
 import com.google.android.gms.tasks.Tasks;
 import com.google.firebase.auth.FirebaseAuth;
@@ -42,6 +48,8 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import java.io.ByteArrayOutputStream;
+import java.util.Collection;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
 
@@ -50,6 +58,8 @@ public class HouseSelectionActivityTest {
     private static FirebaseFirestore db;
     private static FirebaseAuth auth;
     private static FirebaseStorage storage;
+
+    private static RecyclerViewLayoutCompleteIdlingResource idlingResource;
 
     @Rule
     public GrantPermissionRule permissionRules = GrantPermissionRule.grant(android.Manifest.permission.ACCESS_FINE_LOCATION);
@@ -71,6 +81,22 @@ public class HouseSelectionActivityTest {
         Tasks.await(task1);
 
         IdlingRegistry.getInstance().register(EspressoIdlingResource.countingIdlingResource);
+        idlingResource = new RecyclerViewLayoutCompleteIdlingResource((RecyclerViewIdlingCallback) getCurrentActivity());
+        IdlingRegistry.getInstance().register(idlingResource);
+    }
+
+    private static Activity getCurrentActivity(){
+        final Activity[] currentActivity = {null};
+
+        getInstrumentation().runOnMainSync(new Runnable(){
+            public void run(){
+                Collection<Activity> resumedActivity = ActivityLifecycleMonitorRegistry.getInstance().getActivitiesInStage(Stage.RESUMED);
+                Iterator<Activity> it = resumedActivity.iterator();
+                currentActivity[0] = it.next();
+            }
+        });
+
+        return currentActivity[0];
     }
 
     @AfterClass
@@ -78,7 +104,9 @@ public class HouseSelectionActivityTest {
         Task<Void> task1 = storage.getReference().child("house_home_1").delete();
         Tasks.await(task1);
         auth.signOut();
+
         IdlingRegistry.getInstance().unregister(EspressoIdlingResource.countingIdlingResource);
+        IdlingRegistry.getInstance().unregister(idlingResource);
     }
 
     @Rule
@@ -91,8 +119,7 @@ public class HouseSelectionActivityTest {
     }
 
     @Test
-    public void houseImagesContainOneDefaultAndOneCustom() throws InterruptedException {
-        Thread.sleep(200); //Images have to load
+    public void houseImagesContainOneDefaultAndOneCustom() {
         onView(withId(R.id.housesView)).check(matches(hasDescendant(withTagValue(CoreMatchers.equalTo("home_1")))));
         onView(withId(R.id.housesView)).check(matches(hasDescendant(withTagValue(CoreMatchers.equalTo(R.drawable.home_icon)))));
     }
