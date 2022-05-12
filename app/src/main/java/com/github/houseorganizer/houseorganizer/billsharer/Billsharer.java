@@ -210,6 +210,7 @@ public class Billsharer {
             }
         }
         addExpense(new Expense("Reimbursement", debt.getAmount(), debt.getDebtor(), shares));
+        refreshBalances();
     }
 
     public Task<Void> updateExpenses() {
