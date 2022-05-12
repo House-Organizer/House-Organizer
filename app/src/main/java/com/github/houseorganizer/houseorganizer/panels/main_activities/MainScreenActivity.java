@@ -1,4 +1,4 @@
-package com.github.houseorganizer.houseorganizer.panels;
+package com.github.houseorganizer.houseorganizer.panels.main_activities;
 
 import static com.github.houseorganizer.houseorganizer.util.Util.getSharedPrefs;
 import static com.github.houseorganizer.houseorganizer.util.Util.getSharedPrefsEditor;
@@ -26,10 +26,12 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.github.houseorganizer.houseorganizer.R;
 import com.github.houseorganizer.houseorganizer.calendar.Calendar;
 import com.github.houseorganizer.houseorganizer.calendar.UpcomingAdapter;
-import com.github.houseorganizer.houseorganizer.house.CreateHouseholdActivity;
-import com.github.houseorganizer.houseorganizer.house.HouseSelectionActivity;
 import com.github.houseorganizer.houseorganizer.panels.offline.OfflineScreenActivity;
 import com.github.houseorganizer.houseorganizer.location.LocationHelpers;
+import com.github.houseorganizer.houseorganizer.panels.household.CreateHouseholdActivity;
+import com.github.houseorganizer.houseorganizer.panels.household.HouseSelectionActivity;
+import com.github.houseorganizer.houseorganizer.panels.info.InfoActivity;
+import com.github.houseorganizer.houseorganizer.panels.settings.SettingsActivity;
 import com.github.houseorganizer.houseorganizer.shop.FirestoreShopList;
 import com.github.houseorganizer.houseorganizer.shop.ShopListAdapter;
 import com.github.houseorganizer.houseorganizer.storage.LocalStorage;
@@ -98,7 +100,6 @@ public class MainScreenActivity extends NavBarActivity {
             loadData();
         }
 
-
         calendarEvents = findViewById(R.id.calendar);
         calendarAdapter = new UpcomingAdapter(calendar,
                 registerForActivityResult(new ActivityResultContracts.GetContent(), uri -> calendarAdapter.pushAttachment(uri)));
@@ -133,7 +134,6 @@ public class MainScreenActivity extends NavBarActivity {
                 });
     }
 
-
     @Override
     protected CurrentActivity currentActivity() {
         return CurrentActivity.MAIN;
@@ -152,12 +152,6 @@ public class MainScreenActivity extends NavBarActivity {
                         TaskView.recoverTaskList(this, taskList, taskListAdapter, tlMetadata, R.id.task_list);
                     }
         });
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        calendarAdapter.refreshCalendarView(this, currentHouse, "refreshCalendar:failureToRefresh", false);
     }
 
     @Override
@@ -345,13 +339,29 @@ public class MainScreenActivity extends NavBarActivity {
     }
 
     public void goToOfflineScreenIfNeeded() {
-        ConnectivityManager connectivityManager = (ConnectivityManager)getSystemService(Context.CONNECTIVITY_SERVICE);
+        ConnectivityManager connectivityManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo activeNetInfo = connectivityManager.getActiveNetworkInfo();
 
         boolean isConnected = (activeNetInfo != null) && activeNetInfo.isConnectedOrConnecting();
 
-        if (! isConnected) {
+        if (!isConnected) {
             startActivity(new Intent(this, OfflineScreenActivity.class));
         }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        calendarAdapter.refreshCalendarView(this, currentHouse, "refreshCalendar:failureToRefresh", false);
+        super.setUpNavBar(R.id.nav_bar, OptionalInt.of(R.id.nav_bar_menu));
+    }
+
+    @Override
+    public void onBackPressed() {
+        // Leave the app instead of going to MainActivity
+        Intent homeIntent = new Intent(Intent.ACTION_MAIN);
+        homeIntent.addCategory(Intent.CATEGORY_HOME);
+        homeIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        startActivity(homeIntent);
     }
 }

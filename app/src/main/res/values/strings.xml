@@ -30,6 +30,8 @@
     <string name="permission_denied">This app requires permission to be granted in order to work properly</string>
 
     <!-- Edit Household -->
+    <string name="changed_picture">Image uploaded!</string>
+    <string name="change_picture_speakable_text">Change image</string>
     <string name="user_name">User name</string>
     <string name="edit_button_description">Press to edit the household</string>
     <string name="delete_button">Delete household</string>
@@ -126,14 +128,12 @@
 
     <!-- ShopItem -->
     <string name="name">Name</string>
-    <string name="quantity">Quantity</string>
     <string name="unit">Unit</string>
     <string name="add_item_title">Adding an item to the list</string>
     <string name="item_delete_button_description">Delete the corresponding shop list item</string>
     <string name="add_item_button">Add item</string>
     <string name="remove_picked_up">Remove checked items</string>
     <string name="number_empty">0</string>
-    <string name="shop_loading_error">Could not load the shop list</string>
 
     <!-- Bottom features menu -->
     <string name="main_screen">Main Screen</string>
@@ -161,5 +161,7 @@
     <string name="balances">Balances</string>
     <string name="amount">Amount</string>
     <string name="payer">Payer</string>
+    <string name="left_arrow"><![CDATA[<]]></string>
+    <string name="right_arrow"><![CDATA[>]]></string>
 
 </resources>
