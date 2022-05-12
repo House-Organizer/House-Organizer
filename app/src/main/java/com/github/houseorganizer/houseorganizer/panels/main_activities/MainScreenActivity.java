@@ -58,7 +58,7 @@ import java.util.stream.Collectors;
 
 // [!!!] the current house is now an attribute of NavBarActivity
 // please don't add it back here in your merges
-public class MainScreenActivity extends NavBarActivity {
+public class MainScreenActivity extends TaskFragmentNavBarActivity {
 
     public static final String CURRENT_HOUSEHOLD = "com.github.houseorganizer.houseorganizer.CURRENT_HOUSEHOLD";
 
@@ -69,9 +69,6 @@ public class MainScreenActivity extends NavBarActivity {
     private UpcomingAdapter calendarAdapter;
     private RecyclerView calendarEvents;
 
-    private TaskList taskList;
-    private DocumentReference tlMetadata;
-    private TaskListAdapter taskListAdapter;
     private FirestoreShopList shopList;
     private ShopListAdapter shopListAdapter;
     private ListFragmentView listView = ListFragmentView.CHORES_LIST;
@@ -139,20 +136,7 @@ public class MainScreenActivity extends NavBarActivity {
         return CurrentActivity.MAIN;
     }
 
-    private void initializeTaskList() {
 
-        db.collection("task_lists")
-                .whereEqualTo("hh-id", currentHouse.getId())
-                .get().addOnCompleteListener(task -> {
-                    if (task.isSuccessful()) {
-                        QueryDocumentSnapshot qds = task.getResult().iterator().next();
-                        this.tlMetadata = db.collection("task_lists").document(qds.getId());
-                        this.taskList = new TaskList(new ArrayList<>());
-                        this.taskListAdapter = new TaskListAdapter(taskList, tlMetadata, currentHouse);
-                        TaskView.recoverTaskList(this, taskList, taskListAdapter, tlMetadata, R.id.task_list);
-                    }
-        });
-    }
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
