@@ -41,8 +41,7 @@ public class Billsharer {
     public Task<DocumentSnapshot> startUpBillsharer() {
         return initResidents().addOnCompleteListener(l -> {
             initBalances();
-            computeBalances();
-            computeDebts();
+            refreshBalances();
         });
     }
 
@@ -237,7 +236,8 @@ public class Billsharer {
     }
 
     public void refreshBalances() {
-        // TODO
+        computeBalances();
+        computeDebts();
     }
 
     private static List<Map<String, Object>> convertExpensesListToFirebase(List<Expense> expenses){
