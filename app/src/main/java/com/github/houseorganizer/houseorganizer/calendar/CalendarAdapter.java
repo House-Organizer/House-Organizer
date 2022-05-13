@@ -15,6 +15,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.github.houseorganizer.houseorganizer.R;
 import com.github.houseorganizer.houseorganizer.util.EspressoIdlingResource;
+import com.github.houseorganizer.houseorganizer.storage.LocalStorage;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -109,6 +110,7 @@ public abstract class CalendarAdapter extends RecyclerView.Adapter<RecyclerView.
                         }
                         notifyDataSetChanged();
                         calendar.setEvents(newEvents);
+                        if(currentHouse != null) LocalStorage.pushEventsOffline(ctx, currentHouse.getId(), newEvents);
                         generateItems(newEvents);
                     } else {
                         logAndToast(ctx.toString(), errMessage, task.getException(),

@@ -9,7 +9,6 @@ import com.github.houseorganizer.houseorganizer.shop.ShopItem;
 import com.github.houseorganizer.houseorganizer.task.HTask;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QuerySnapshot;
@@ -24,7 +23,6 @@ import java.io.InputStreamReader;
 import java.lang.reflect.Type;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -105,6 +103,13 @@ public class LocalStorage {
                 new Gson().toJson(setOfHouseholds));
     }
 
+    // Temporary
+    public static void pushCurrentHouseOffline(Context context, String currentHouseId) {
+        setOfHouseholds.put(currentHouseId, "Dummy house name");
+        writeTxtToFile(context, OFFLINE_STORAGE_HOUSEHOLDS + OFFLINE_STORAGE_EXTENSION,
+                new Gson().toJson(setOfHouseholds));
+    }
+
     public static Map<String, ArrayList<OfflineEvent>> retrieveEventsOffline(Context context) {
         HashMap<String, String> households = retrieveHouseholdsOffline(context);
 
@@ -145,7 +150,7 @@ public class LocalStorage {
         return mapHouseholdIdToTasks;
     }
 
-    public static boolean pushEventsOffline(Context context, DocumentReference currentHouse, List<Calendar.Event> events) {
+    public static boolean pushEventsOffline(Context context, String currentHouseId, List<Calendar.Event> events) {
         ArrayList<OfflineEvent> offlineEvents = new ArrayList<>();
         for (Calendar.Event event : events) {
             offlineEvents.add(new OfflineEvent(
@@ -156,15 +161,14 @@ public class LocalStorage {
                     event.getId()
             ));
         }
-        String house_id = "temp";
-        if (currentHouse != null) {
-            house_id = currentHouse.getId();
-        }
+        String house_id = currentHouseId == null ? "temp" : currentHouseId;
+
+        Type type = TypeToken.getParameterized(ArrayList.class, OfflineEvent.class).getType();
         return writeTxtToFile(context, OFFLINE_STORAGE_CALENDAR + house_id + OFFLINE_STORAGE_EXTENSION,
-                new Gson().toJson(offlineEvents));
+                new Gson().toJson(offlineEvents, type));
     }
 
-    public static boolean pushGroceriesOffline(Context context, DocumentReference currentHouse, List<ShopItem> items) {
+    public static boolean pushGroceriesOffline(Context context, String currentHouseId, List<ShopItem> items) {
         ArrayList<OfflineShopItem> offlineShopItems = new ArrayList<>();
         for (ShopItem item : items) {
             offlineShopItems.add(new OfflineShopItem(
@@ -174,29 +178,27 @@ public class LocalStorage {
                     item.isPickedUp()
             ));
         }
-        String house_id = "temp";
-        if (currentHouse != null) {
-            house_id = currentHouse.getId();
-        }
+
+        String house_id = currentHouseId == null ? "temp" : currentHouseId;
+
+        Type type = TypeToken.getParameterized(ArrayList.class, OfflineShopItem.class).getType();
         return writeTxtToFile(context, OFFLINE_STORAGE_GROCERIES + house_id + OFFLINE_STORAGE_EXTENSION,
-                new Gson().toJson(offlineShopItems));
+                new Gson().toJson(offlineShopItems, type));
     }
 
-    public static boolean pushTaskListOffline(Context context, DocumentReference currentHouse, List<HTask> tasks) {
+    public static boolean pushTaskListOffline(Context context, String currentHouseId, List<HTask> tasks) {
         ArrayList<OfflineTask> offlineTasks = new ArrayList<>();
         for (HTask task : tasks) {
-            offlineTasks.add(new OfflineTask( //TODO FIX ONCE TASK LIST IS FIXED
-                    "TASKNAME",
-                    "TAKSDESCRIPTION",
-                    Arrays.asList("USER1", "USER2")
-            ));
-            break; //TODO FIX ONCE TASK LIST IS FIXED
+            offlineTasks.add(new OfflineTask(
+                    task.getTitle(),
+                    task.getDescription(),
+                    task.getAssignees()));
         }
-        String house_id = "temp";
-        if (currentHouse != null) {
-            house_id = currentHouse.getId();
-        }
+
+        String house_id = currentHouseId == null ? "temp" : currentHouseId;
+
+        Type type = TypeToken.getParameterized(ArrayList.class, OfflineTask.class).getType();
         return writeTxtToFile(context, OFFLINE_STORAGE_TASKS + house_id + OFFLINE_STORAGE_EXTENSION,
-                new Gson().toJson(offlineTasks));
+                new Gson().toJson(offlineTasks, type));
     }
 }

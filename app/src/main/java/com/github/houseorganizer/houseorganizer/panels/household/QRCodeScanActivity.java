@@ -25,6 +25,7 @@ import com.github.houseorganizer.houseorganizer.image.QRAnalyzer;
 import com.github.houseorganizer.houseorganizer.image.QRListener;
 import com.github.houseorganizer.houseorganizer.util.EspressoIdlingResource;
 import com.github.houseorganizer.houseorganizer.panels.main_activities.MainScreenActivity;
+import com.github.houseorganizer.houseorganizer.panels.settings.ThemedAppCompatActivity;
 import com.github.houseorganizer.houseorganizer.util.Util;
 import com.google.common.util.concurrent.ListenableFuture;
 import com.google.firebase.auth.FirebaseAuth;
@@ -35,7 +36,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import java.util.List;
 import java.util.Map;
 
-public class QRCodeScanActivity extends AppCompatActivity {
+public class QRCodeScanActivity extends ThemedAppCompatActivity {
 
     private FirebaseFirestore db;
     private FirebaseAuth auth;

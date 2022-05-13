@@ -2,9 +2,11 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.github.houseorganizer.houseorganizer">
 
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-feature android:name="android.hardware.camera.any" />
+
     <uses-permission android:name="android.permission.CAMERA" />
 
     <application
@@ -15,7 +17,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:usesCleartextTraffic="true"
-        android:theme="@style/Theme.HouseOrganizer">
+        android:theme="@style/Theme1.HouseOrganizer">
         <activity
             android:name=".panels.household.QRCodeScanActivity"
             android:exported="false"
@@ -61,6 +63,9 @@
             android:parentActivityName=".panels.login.LoginEmail" />
         <activity
             android:name=".panels.main_activities.MainScreenActivity"
+            android:exported="false" />
+        <activity
+            android:name=".panels.offline.OfflineScreenActivity"
             android:exported="false" />
         <activity
             android:name=".panels.info.InfoActivity"

@@ -205,9 +205,9 @@ public class FirebaseTestsHelper {
         FirebaseFirestore db = FirebaseFirestore.getInstance();
 
         // Create task list instance
-        HTask taskToAdd = new HTask(TEST_USERS_EMAILS[0], TEST_TASK_TITLE, TEST_TASK_DESC);
+        HTask taskToAdd = new HTask(TEST_TASK_TITLE, TEST_TASK_DESC);
 
-        TaskList taskList = new TaskList(TEST_USERS_EMAILS[0], FIRST_TL_NAME,
+        TaskList taskList = new TaskList(
                 new ArrayList<>(Collections.singletonList(taskToAdd)));
 
         // Store instance on the database using a helper function
@@ -418,7 +418,6 @@ public class FirebaseTestsHelper {
         data.put("title", task.getTitle());
         data.put("description", task.getDescription());
         data.put("status", task.isFinished() ? "completed" : "ongoing");
-        data.put("owner", task.getOwner());
         data.put("assignees", task.getAssignees());
 
         data.put("sub tasks",
@@ -448,8 +447,6 @@ public class FirebaseTestsHelper {
 
         Map<String, Object> metadata = new HashMap<>();
 
-        metadata.put("title", taskList.getTitle());
-        metadata.put("owner", taskList.getOwner());
         metadata.put("hh-id", hhID);
         metadata.put("task-ptrs", taskPtrs);
 

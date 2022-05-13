@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#673AB7"
+    android:background="?attr/colorOnSecondary"
     tools:context=".panels.entry.EntryActivity">
 
     <ImageView
@@ -12,6 +12,7 @@
         android:layout_width="122dp"
         android:layout_height="117dp"
         android:contentDescription="@string/home_logo"
+        android:background="#00420420"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

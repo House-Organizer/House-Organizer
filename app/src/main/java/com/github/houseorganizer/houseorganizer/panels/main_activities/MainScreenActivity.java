@@ -6,9 +6,12 @@ import static com.github.houseorganizer.houseorganizer.util.Util.logAndToast;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -23,6 +26,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.github.houseorganizer.houseorganizer.R;
 import com.github.houseorganizer.houseorganizer.calendar.Calendar;
 import com.github.houseorganizer.houseorganizer.calendar.UpcomingAdapter;
+import com.github.houseorganizer.houseorganizer.panels.offline.OfflineScreenActivity;
 import com.github.houseorganizer.houseorganizer.location.LocationHelpers;
 import com.github.houseorganizer.houseorganizer.panels.household.CreateHouseholdActivity;
 import com.github.houseorganizer.houseorganizer.panels.household.HouseSelectionActivity;
@@ -30,6 +34,7 @@ import com.github.houseorganizer.houseorganizer.panels.info.InfoActivity;
 import com.github.houseorganizer.houseorganizer.panels.settings.SettingsActivity;
 import com.github.houseorganizer.houseorganizer.shop.FirestoreShopList;
 import com.github.houseorganizer.houseorganizer.shop.ShopListAdapter;
+import com.github.houseorganizer.houseorganizer.storage.LocalStorage;
 import com.github.houseorganizer.houseorganizer.task.TaskList;
 import com.github.houseorganizer.houseorganizer.task.TaskListAdapter;
 import com.github.houseorganizer.houseorganizer.task.TaskView;
@@ -53,7 +58,7 @@ import java.util.stream.Collectors;
 
 // [!!!] the current house is now an attribute of NavBarActivity
 // please don't add it back here in your merges
-public class MainScreenActivity extends NavBarActivity {
+public class MainScreenActivity extends TaskFragmentNavBarActivity {
 
     public static final String CURRENT_HOUSEHOLD = "com.github.houseorganizer.houseorganizer.CURRENT_HOUSEHOLD";
 
@@ -64,12 +69,15 @@ public class MainScreenActivity extends NavBarActivity {
     private UpcomingAdapter calendarAdapter;
     private RecyclerView calendarEvents;
 
-    private TaskList taskList;
-    private DocumentReference tlMetadata;
-    private TaskListAdapter taskListAdapter;
     private FirestoreShopList shopList;
     private ShopListAdapter shopListAdapter;
     private ListFragmentView listView = ListFragmentView.CHORES_LIST;
+
+    @Override
+    protected int taskListAdapterId() {
+        return R.id.task_list;
+    }
+
     public enum ListFragmentView { CHORES_LIST, GROCERY_LIST }
 
     /* for setting up the task owner. Not related to firebase */
@@ -100,7 +108,10 @@ public class MainScreenActivity extends NavBarActivity {
                 registerForActivityResult(new ActivityResultContracts.GetContent(), uri -> calendarAdapter.pushAttachment(uri)));
         calendarEvents.setAdapter(calendarAdapter);
         calendarEvents.setLayoutManager(new GridLayoutManager(this, 1));
-        findViewById(R.id.add_event).setOnClickListener(v -> calendarAdapter.showAddEventDialog( this, currentHouse, "addEvent:failureToAdd"));
+        findViewById(R.id.add_event).setOnClickListener(v -> {
+            goToOfflineScreenIfNeeded();
+            calendarAdapter.showAddEventDialog(this, currentHouse, "addEvent:failureToAdd");
+        });
 
         // If you want to select the main button on the navBar,
         // use `OptionalInt.of(R.id. ...)`
@@ -112,10 +123,14 @@ public class MainScreenActivity extends NavBarActivity {
                     if(c.isSuccessful()){
                         shopList = c.getResult().getFirestoreShopList();
                         shopListAdapter = c.getResult();
+
+                        LocalStorage.pushGroceriesOffline(this, currentHouse.getId(), shopList.getItems());
+
                         shopList.getOnlineReference().addSnapshotListener((doc, e) -> {
                             shopList = FirestoreShopList.buildShopList(doc);
                             shopListAdapter.setShopList(shopList);
                         });
+
                         return shopListAdapter;
                     }
                     return null;
@@ -127,20 +142,7 @@ public class MainScreenActivity extends NavBarActivity {
         return CurrentActivity.MAIN;
     }
 
-    private void initializeTaskList() {
 
-        db.collection("task_lists")
-                .whereEqualTo("hh-id", currentHouse.getId())
-                .get().addOnCompleteListener(task -> {
-                    if (task.isSuccessful()) {
-                        QueryDocumentSnapshot qds = task.getResult().iterator().next();
-                        this.tlMetadata = db.collection("task_lists").document(qds.getId());
-                        this.taskList = new TaskList(currentUID, "My weekly todo", new ArrayList<>());
-                        this.taskListAdapter = new TaskListAdapter(taskList, tlMetadata, currentHouse);
-                        TaskView.recoverTaskList(this, taskList, taskListAdapter, tlMetadata, R.id.task_list);
-                    }
-        });
-    }
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
@@ -165,7 +167,20 @@ public class MainScreenActivity extends NavBarActivity {
         SharedPreferences sharedPreferences = getSharedPrefs(this);
         String householdId = sharedPreferences.getString(CURRENT_HOUSEHOLD, "");
 
-        loadHouseholdAndTaskList(householdId);
+        selectHouse(householdId).addOnCompleteListener(h -> {
+            if(h.isSuccessful()){
+                if(currentHouse == null){
+                    noHousehold();
+                    return;
+                }
+                LocalStorage.pushCurrentHouseOffline(this, currentHouse.getId());
+
+                calendarAdapter.refreshCalendarView(this, currentHouse, "refreshCalendar:failureToRefresh", false);
+                initializeTaskList();
+            }else{
+                logAndToast(this.toString(), "loadHousehold:failure", h.getException(), getApplicationContext(), "Could not get a house.");
+            }
+        });
     }
 
     @SuppressLint("MissingPermission")
@@ -215,21 +230,6 @@ public class MainScreenActivity extends NavBarActivity {
         return null;
     }
 
-    private void loadHouseholdAndTaskList(String householdId) {
-        selectHouse(householdId).addOnCompleteListener(h -> {
-            if(h.isSuccessful()){
-                if(currentHouse == null){
-                    noHousehold();
-                    return;
-                }
-                calendarAdapter.refreshCalendarView(this, currentHouse, "refreshCalendar:failureToRefresh", false);
-                initializeTaskList();
-            }else{
-                logAndToast(this.toString(), "loadHousehold:failure", h.getException(), getApplicationContext(), "Could not get a house.");
-            }
-        });
-    }
-
     private void noHousehold() {
         saveData("");
         hideButtons();
@@ -270,21 +270,25 @@ public class MainScreenActivity extends NavBarActivity {
     }
 
     public void houseButtonPressed(View view) {
+        goToOfflineScreenIfNeeded();
         Intent intent = new Intent(this, HouseSelectionActivity.class);
         startActivity(intent);
     }
 
     public void settingsButtonPressed(View view) {
+        goToOfflineScreenIfNeeded();
         Intent intent = new Intent(this, SettingsActivity.class);
         startActivity(intent);
     }
 
     public void infoButtonPressed(View view) {
+        goToOfflineScreenIfNeeded();
         Intent intent = new Intent(this, InfoActivity.class);
         startActivity(intent);
     }
 
     public void bottomAddButtonPressed(View view){
+        goToOfflineScreenIfNeeded();
         if(listView == ListFragmentView.CHORES_LIST){
             TaskView.addTask(db, taskList, taskListAdapter, listView, tlMetadata);
         }
@@ -296,6 +300,7 @@ public class MainScreenActivity extends NavBarActivity {
     }
 
     public void rotateLists(View view) {
+        goToOfflineScreenIfNeeded();
         listView = ListFragmentView.values()[1 - listView.ordinal()];
 
         switch(listView) {
@@ -320,6 +325,17 @@ public class MainScreenActivity extends NavBarActivity {
                     }
                 });
                 break;
+        }
+    }
+
+    public void goToOfflineScreenIfNeeded() {
+        ConnectivityManager connectivityManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetInfo = connectivityManager.getActiveNetworkInfo();
+
+        boolean isConnected = (activeNetInfo != null) && activeNetInfo.isConnectedOrConnecting();
+
+        if (!isConnected) {
+            startActivity(new Intent(this, OfflineScreenActivity.class));
         }
     }
 
