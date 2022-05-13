@@ -9,6 +9,8 @@ import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.location.Address;
+import android.location.Geocoder;
 import android.graphics.drawable.Drawable;
 import android.location.Location;
 import android.os.Bundle;
@@ -34,6 +36,7 @@ import com.github.houseorganizer.houseorganizer.R;
 import com.github.houseorganizer.houseorganizer.house.HouseModel;
 import com.github.houseorganizer.houseorganizer.location.LocationHelpers;
 import com.github.houseorganizer.houseorganizer.panels.main_activities.MainScreenActivity;
+import com.github.houseorganizer.houseorganizer.panels.settings.ThemedAppCompatActivity;
 import com.github.houseorganizer.houseorganizer.util.EspressoIdlingResource;
 import com.github.houseorganizer.houseorganizer.util.RecyclerViewIdlingCallback;
 import com.github.houseorganizer.houseorganizer.util.RecyclerViewLayoutCompleteListener;
@@ -50,7 +53,9 @@ import com.google.firebase.firestore.Query;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
+import java.io.IOException;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 
@@ -75,6 +80,7 @@ public class HouseSelectionActivity extends AppCompatActivity implements
     LocationRequest locationRequest;
     // Google's API for location services
     FusedLocationProviderClient fusedLocationProviderClient;
+    Geocoder geocoder;
 
     // Flag to indicate if the layout for the recyclerview has complete. This should only be used
     // when the data in the recyclerview has been changed after the initial loading
@@ -97,44 +103,9 @@ public class HouseSelectionActivity extends AppCompatActivity implements
                 .setInterval(1000 * DEFAULT_UPDATE_INTERVAL)
                 .setPriority(LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY);
 
-        requestPermission();
-        getCoordinates();
         setHousesView();
     }
-
-    private void requestPermission() {
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            // Comment next line to pass the tests, GrantPermissionRule doesn't prevent the pop up from appearing
-            // TODO: Find alternative
-            //requestPermissions(new String[] {Manifest.permission.ACCESS_FINE_LOCATION}, PERMISSIONS_FINE_LOCATION);
-        }
-    }
-
-    @SuppressLint("MissingPermission")
-    private void getCoordinates() {
-        fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
-
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
-            // User provided the permission to track GPS
-            fusedLocationProviderClient.getLastLocation().addOnSuccessListener(this, new OnSuccessListener<Location>() {
-                @Override
-                public void onSuccess(Location location) {
-                    if (location != null) {
-                        lat = location.getLatitude();
-                        lon = location.getLongitude();
-                    } else {
-                        getCoordinates();
-                    }
-                }
-            });
-
-        } else {
-            // Permissions not granted. Default order
-            lat = null;
-            lon = null;
-        }
-    }
-
+  
     private void setHousesView() {
         Query query = firestore.collection("households").whereArrayContains("residents", emailUser);
         FirestoreRecyclerOptions<HouseModel> options = new FirestoreRecyclerOptions.Builder<HouseModel>()

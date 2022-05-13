@@ -16,8 +16,8 @@ import java.util.stream.Collectors;
 public final class FirestoreTask extends HTask {
     private final DocumentReference taskDocRef;
 
-    public FirestoreTask(String owner, String title, String description, List<SubTask> subTasks, DocumentReference taskDocRef) {
-        super(owner, title, description);
+    public FirestoreTask(String title, String description, List<SubTask> subTasks, DocumentReference taskDocRef) {
+        super(title, description);
 
         subTasks.forEach(super::addSubTask);
 
@@ -53,13 +53,6 @@ public final class FirestoreTask extends HTask {
 
         taskDocRef.update("sub tasks", FieldValue.arrayUnion(makeSubTaskData(subTask)));
     }
-
-    /* TODO [ not urgent / not important ]
-    public void addSubTask(int index, SubTask subtask) {
-        assert index < subtasks.size();
-
-        subtasks.add(index,subtask);
-    } */
 
     @Override
     public void removeSubTask(int index) {
@@ -108,7 +101,7 @@ public final class FirestoreTask extends HTask {
         List<SubTask> subTasks = collectSubTasks(data);
         List<String> assignees = collectAssignees(data);
 
-        FirestoreTask ft = new FirestoreTask((String)data.get("owner"), (String)data.get("title"),
+        FirestoreTask ft = new FirestoreTask((String)data.get("title"),
                 (String)data.get("description"), subTasks, taskDocRef);
 
         ft.getAssignees().addAll(assignees);

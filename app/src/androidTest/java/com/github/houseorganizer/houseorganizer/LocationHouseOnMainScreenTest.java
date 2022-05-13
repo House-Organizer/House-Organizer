@@ -1,5 +1,5 @@
 package com.github.houseorganizer.houseorganizer;
-
+/*
 import static androidx.test.core.app.ApplicationProvider.getApplicationContext;
 import static androidx.test.espresso.Espresso.onView;
 import static androidx.test.espresso.action.ViewActions.click;
@@ -41,7 +41,7 @@ public class LocationHouseOnMainScreenTest {
         auth = FirebaseAuth.getInstance();
         intentFromLogin = new Intent(getApplicationContext(), MainScreenActivity.class)
                 .putExtra("LoadHouse", true);
-    }
+
 
     @AfterClass
     public static void signOut() throws ExecutionException, InterruptedException {
@@ -68,11 +68,11 @@ public class LocationHouseOnMainScreenTest {
         Task<Void> t = locClient.get().setMockMode(true);
         t.continueWithTask(r -> locClient.get().setMockLocation(location));
         Tasks.await(t);
-        testRule.getScenario().recreate();*/
+        testRule.getScenario().recreate();//*
         //testRule.getScenario().onActivity(a -> a.startActivity(intentFromLogin));
         //startActivity(getApplicationContext(), intentFromLogin, null);
         onView(withId(R.id.info_imageButton)).perform(click());
         onView(withId(R.id.notesTextView)).check(matches(withText(FirebaseTestsHelper.TEST_HOUSEHOLD_DESC[0])));
     }
 
-}
+}*/

@@ -21,6 +21,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.github.houseorganizer.houseorganizer.R;
 import com.github.houseorganizer.houseorganizer.house.Verifications;
+import com.github.houseorganizer.houseorganizer.panels.settings.ThemedAppCompatActivity;
 import com.github.houseorganizer.houseorganizer.util.EspressoIdlingResource;
 import com.github.houseorganizer.houseorganizer.util.Util;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -46,7 +47,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
-public class EditHouseholdActivity extends AppCompatActivity {
+public class EditHouseholdActivity extends ThemedAppCompatActivity {
     private FirebaseFirestore firestore;
     private FirebaseAuth mAuth;
     private String householdId;

@@ -144,6 +144,7 @@
     <string name="calendar">Calendar</string>
     <string name="add_an_event">Add an event</string>
     <string name="cycle_view">Cycle view</string>
+    <string name="offline_warning">You have gone offline.</string>
     <string name="tl_screen_new_task">New task</string>
     <string name="show_qr_code">Show QR code</string>
 
@@ -151,7 +152,16 @@
     <string name="title_location_permission">Location permissions</string>
     <string name="text_location_permission">We need access to your location in order to
         automatically select the house closest to you</string>
+    <string name="go_back_online_button">Go back online</string>
+    <string name="go_offline_button">Go offline</string>
     <string name="show_invite_qr_code">Show invite QR code</string>
+    <string name="house_location_title">House location</string>
+    <string name="address_field">Enter address</string>
+    <string name="no">No</string>
+    <string name="warning_address">Please enter a more precise address</string>
+    <string name="address_error">Impossible to find coordinates</string>
+    <string name="address_fill_fields">Please fill in both fields</string>
+    <string name="address_network_error">Could not connect to the network</string>
 
     <!-- Billsharer -->
     <string name="bs_add_expense">Add expense</string>

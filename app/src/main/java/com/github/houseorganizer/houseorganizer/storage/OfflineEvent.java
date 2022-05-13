@@ -4,7 +4,7 @@ import androidx.annotation.NonNull;
 
 import java.util.Objects;
 
-public class OfflineEvent{
+public final class OfflineEvent extends OfflineItem {
     private final String title;
     private final String description;
     private final String start;
@@ -49,6 +49,17 @@ public class OfflineEvent{
 
     public String getId() {
         return id;
+    }
+
+    @NonNull
+    @Override
+    public String title() {
+        return title;
+    }
+
+    @NonNull
+    public String info() {
+        return String.format("%s\nOn %s; lasts %s minutes", description, start, duration);
     }
 
     @Override
