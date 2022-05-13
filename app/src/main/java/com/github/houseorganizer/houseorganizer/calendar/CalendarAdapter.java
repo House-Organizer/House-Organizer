@@ -110,12 +110,11 @@ public abstract class CalendarAdapter extends RecyclerView.Adapter<RecyclerView.
                         notifyDataSetChanged();
                         calendar.setEvents(newEvents);
                         generateItems(newEvents);
-                        EspressoIdlingResource.decrement();
                     } else {
                         logAndToast(ctx.toString(), errMessage, task.getException(),
                                 ctx, ctx.getString(R.string.refresh_calendar_fail));
-                        EspressoIdlingResource.decrement();
                     }
+                    EspressoIdlingResource.decrement();
                 });
     }
 
