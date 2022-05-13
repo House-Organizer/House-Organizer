@@ -19,11 +19,13 @@ import static com.github.houseorganizer.houseorganizer.FirebaseTestsHelper.start
 import android.content.Context;
 import android.content.Intent;
 
+import androidx.test.espresso.IdlingRegistry;
 import androidx.test.espresso.intent.Intents;
 import androidx.test.ext.junit.rules.ActivityScenarioRule;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 import androidx.test.platform.app.InstrumentationRegistry;
 
+import com.github.houseorganizer.houseorganizer.util.EspressoIdlingResource;
 import com.github.houseorganizer.houseorganizer.panels.login.LoginEmail;
 import com.github.houseorganizer.houseorganizer.panels.login.VerifyEmail;
 
@@ -47,10 +49,13 @@ public class LoginEmailTest {
     @BeforeClass
     public static void start() {
         startAuthEmulator();
+        IdlingRegistry.getInstance().register(EspressoIdlingResource.countingIdlingResource);
     }
 
     @AfterClass
-    public static void end() {}
+    public static void end() {
+        IdlingRegistry.getInstance().unregister(EspressoIdlingResource.countingIdlingResource);
+    }
 
     @Before
     public void dismissDialogs() {
@@ -89,6 +94,5 @@ public class LoginEmailTest {
         onView(withId(R.id.log_enter_email)).perform(clearText(), typeText(email), closeSoftKeyboard());
         onView(withId(R.id.log_enter_password)).perform(clearText(), typeText(password), closeSoftKeyboard());
         onView(withId(R.id.log_email_signin_button)).perform(click());
-        Thread.sleep(250);
     }
 }

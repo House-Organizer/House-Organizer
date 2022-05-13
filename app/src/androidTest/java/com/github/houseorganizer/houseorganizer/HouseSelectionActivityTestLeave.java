@@ -63,14 +63,12 @@ public class HouseSelectionActivityTestLeave {
         onView(withId(R.id.house_imageButton)).perform(click());
         onView(withId(R.id.housesView)).perform(RecyclerViewActions.actionOnItemAtPosition(0, RecyclerViewHelper.clickChildViewWithId(R.id.houseName)));
         onView(withId(R.id.house_imageButton)).perform(click());
-        Thread.sleep(100);
 
         Map<String, Object> houseData_before = FirebaseTestsHelper.fetchHouseholdData(TEST_HOUSEHOLD_NAMES[0], db);
         List<String> resident_before = (List<String>) houseData_before.get("residents");
         Long num_residents_before = (Long) houseData_before.get("num_members");
 
         onView(withId(R.id.leaveButton)).perform(click());
-        Thread.sleep(100);
 
         Map<String, Object> houseData_after = FirebaseTestsHelper.fetchHouseholdData(TEST_HOUSEHOLD_NAMES[0], db);
         List<String> resident_after = (List<String>) houseData_after.get("residents");

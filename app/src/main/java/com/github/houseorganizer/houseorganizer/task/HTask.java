@@ -2,6 +2,7 @@ package com.github.houseorganizer.houseorganizer.task;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 
 public class HTask {
     private boolean isFinished;

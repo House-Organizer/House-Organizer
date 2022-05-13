@@ -196,7 +196,6 @@ public class EditHouseholdActivity extends ThemedAppCompatActivity {
     }
 
     public void removeUser(View view) {
-
         EspressoIdlingResource.increment();
 
         TextView emailView = findViewById(R.id.editTextRemoveUser);

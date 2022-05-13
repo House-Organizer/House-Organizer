@@ -23,6 +23,7 @@ import androidx.core.content.ContextCompat;
 import com.github.houseorganizer.houseorganizer.R;
 import com.github.houseorganizer.houseorganizer.image.QRAnalyzer;
 import com.github.houseorganizer.houseorganizer.image.QRListener;
+import com.github.houseorganizer.houseorganizer.util.EspressoIdlingResource;
 import com.github.houseorganizer.houseorganizer.panels.main_activities.MainScreenActivity;
 import com.github.houseorganizer.houseorganizer.panels.settings.ThemedAppCompatActivity;
 import com.github.houseorganizer.houseorganizer.util.Util;
@@ -118,11 +119,12 @@ public class QRCodeScanActivity extends ThemedAppCompatActivity {
     }
 
     public void acceptInvite(String QRCode){
+        EspressoIdlingResource.increment();
         String email = auth.getCurrentUser().getEmail();
         if(email == null || QRCode == null){
+            EspressoIdlingResource.decrement();
             return;
         }
-
         DocumentReference targetHousehold = db.collection("households").document(QRCode);
         targetHousehold.get().addOnCompleteListener(task -> {
             Map<String, Object> householdData = task.getResult().getData();
@@ -133,9 +135,7 @@ public class QRCodeScanActivity extends ThemedAppCompatActivity {
                     targetHousehold.update("residents", FieldValue.arrayUnion(email));
                     targetHousehold.update("num_members", num_users + 1);
                 }
-
                 getSharedPrefsEditor(this).putString(CURRENT_HOUSEHOLD, QRCode).apply();
-
                 Intent intent = new Intent(this, MainScreenActivity.class);
                 Toast.makeText(getApplicationContext(), this.getString(R.string.add_user_success), Toast.LENGTH_SHORT).show();
                 startActivity(intent);
@@ -145,6 +145,7 @@ public class QRCodeScanActivity extends ThemedAppCompatActivity {
                 Toast.makeText(getApplicationContext(), this.getString(R.string.QR_invalid), Toast.LENGTH_SHORT).show();
                 startActivity(intent);
             }
+            EspressoIdlingResource.decrement();
         });
     }
 }
