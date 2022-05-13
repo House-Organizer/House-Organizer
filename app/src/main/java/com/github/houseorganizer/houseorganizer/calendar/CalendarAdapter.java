@@ -14,6 +14,7 @@ import androidx.activity.result.ActivityResultLauncher;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.github.houseorganizer.houseorganizer.R;
+import com.github.houseorganizer.houseorganizer.util.EspressoIdlingResource;
 import com.github.houseorganizer.houseorganizer.storage.LocalStorage;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.DocumentReference;
@@ -58,11 +59,15 @@ public abstract class CalendarAdapter extends RecyclerView.Adapter<RecyclerView.
                 .setTitle(R.string.event_creation_title)
                 .setView(dialogView)
                 .setPositiveButton(R.string.add, (dialog, id) -> {
+                    EspressoIdlingResource.increment();
+
                     Task<DocumentReference> pushTask = pushEventFromDialog(dialogView, currentHouse);
                     if (pushTask != null) {
                             pushTask.addOnSuccessListener(documentReference -> refreshCalendarView(ctx, currentHouse, errMessage, calendar.getView() == Calendar.CalendarView.MONTHLY));
                     }
                     dialog.dismiss();
+
+                    EspressoIdlingResource.decrement();
                 })
                 .setNegativeButton(R.string.cancel, (dialog, id) -> dialog.dismiss())
                 .show();
@@ -88,16 +93,13 @@ public abstract class CalendarAdapter extends RecyclerView.Adapter<RecyclerView.
 
     @SuppressLint("NotifyDataSetChanged")
     public void refreshCalendarView(Context ctx, DocumentReference currentHouse, String errMessage, boolean withPast) {
+        EspressoIdlingResource.increment();
         long timeThreshold = withPast ? LocalDateTime.MIN.toEpochSecond(ZoneOffset.UTC) : LocalDateTime.now().toEpochSecond(ZoneOffset.UTC);
-        db.collection("events")
-                .whereEqualTo("household", currentHouse)
-                .whereGreaterThan("start", timeThreshold)
-                .get()
-                .addOnCompleteListener(task -> {
+        db.collection("events").whereEqualTo("household", currentHouse)
+                .whereGreaterThan("start", timeThreshold).get().addOnCompleteListener(task -> {
                     if (task.isSuccessful()) {
                         ArrayList<Calendar.Event> newEvents = new ArrayList<>();
                         for (QueryDocumentSnapshot document : task.getResult()) {
-                            // We assume the stored data is well behaved since it got added in a well behaved manner.
                             Calendar.Event event = new Calendar.Event(
                                     document.getString("title"),
                                     document.getString("description"),
@@ -111,8 +113,10 @@ public abstract class CalendarAdapter extends RecyclerView.Adapter<RecyclerView.
                         if(currentHouse != null) LocalStorage.pushEventsOffline(ctx, currentHouse.getId(), newEvents);
                         generateItems(newEvents);
                     } else {
-                        logAndToast(ctx.toString(), errMessage, task.getException(), ctx, ctx.getString(R.string.refresh_calendar_fail));
+                        logAndToast(ctx.toString(), errMessage, task.getException(),
+                                ctx, ctx.getString(R.string.refresh_calendar_fail));
                     }
+                    EspressoIdlingResource.decrement();
                 });
     }
 

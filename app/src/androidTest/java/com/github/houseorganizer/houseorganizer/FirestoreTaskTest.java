@@ -8,11 +8,14 @@ import static org.junit.Assert.assertTrue;
 import android.content.Context;
 import android.content.Intent;
 
+import androidx.test.espresso.Espresso;
+import androidx.test.espresso.IdlingRegistry;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 import androidx.test.platform.app.InstrumentationRegistry;
 
 import com.github.houseorganizer.houseorganizer.task.FirestoreTask;
 import com.github.houseorganizer.houseorganizer.task.HTask;
+import com.github.houseorganizer.houseorganizer.util.EspressoIdlingResource;
 import com.google.android.gms.tasks.Task;
 import com.google.android.gms.tasks.Tasks;
 import com.google.firebase.auth.FirebaseAuth;
@@ -63,11 +66,13 @@ public class FirestoreTaskTest {
 
         db = FirebaseFirestore.getInstance();
         auth = FirebaseAuth.getInstance();
+        IdlingRegistry.getInstance().register(EspressoIdlingResource.countingIdlingResource);
     }
 
     @AfterClass
     public static void signOut() {
         auth.signOut();
+        IdlingRegistry.getInstance().unregister(EspressoIdlingResource.countingIdlingResource);
     }
 
     @Before
@@ -151,7 +156,6 @@ public class FirestoreTaskTest {
 
         ft.changeTitle(NEW_FANCY_TITLE);
         ft.changeDescription(NEW_FANCY_DESCRIPTION);
-        Thread.sleep(200); // cushion time to update title & description
         FirestoreTask changedFT = recoverFirestoreTask(0);
 
         assertEquals(NEW_FANCY_TITLE, ft.getTitle());
@@ -161,8 +165,8 @@ public class FirestoreTaskTest {
         assertEquals(NEW_FANCY_DESCRIPTION, changedFT.getDescription());
 
         // Revert changes
-        ft.changeTitle(oldTitle); ft.changeDescription(oldDescription);
-        Thread.sleep(200); // same cushion time
+        ft.changeTitle(oldTitle);
+        ft.changeDescription(oldDescription);
     }
 
     @Test /* adds a subtask, changes its title, then removes it | DB: unchanged */
