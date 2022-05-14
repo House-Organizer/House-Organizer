@@ -1,5 +1,8 @@
 package com.github.houseorganizer.houseorganizer.task;
 
+import com.github.houseorganizer.houseorganizer.util.EspressoIdlingResource;
+import com.google.android.gms.tasks.Task;
+import com.google.android.gms.tasks.Tasks;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FieldValue;
 
@@ -7,6 +10,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
 
 public final class FirestoreTask extends HTask {
@@ -29,16 +33,18 @@ public final class FirestoreTask extends HTask {
 
     @Override
     public void changeTitle(String newTitle) {
+        EspressoIdlingResource.increment();
         super.changeTitle(newTitle);
-
-        taskDocRef.update("title", newTitle);
+        Task<Void> task = taskDocRef.update("title", newTitle);
+        EspressoIdlingResource.decrement();
     }
 
     @Override
     public void changeDescription(String newDescription) {
+        EspressoIdlingResource.increment();
         super.changeDescription(newDescription);
-
-        taskDocRef.update("description", newDescription);
+        Task<Void> descriptionTask = taskDocRef.update("description", newDescription);
+        EspressoIdlingResource.decrement();
     }
 
     @Override
@@ -58,6 +64,8 @@ public final class FirestoreTask extends HTask {
     }
 
     public void changeSubTaskTitle(int index, String newTitle) {
+        EspressoIdlingResource.increment();
+
         SubTask subTask = super.getSubTaskAt(index);
 
         // Firestore
@@ -67,6 +75,8 @@ public final class FirestoreTask extends HTask {
         taskDocRef.update("sub tasks", FieldValue.arrayRemove(subTaskData));
         subTaskData.replace("title", newTitle);
         taskDocRef.update("sub tasks", FieldValue.arrayUnion(subTaskData));
+
+        EspressoIdlingResource.decrement();
     }
 
     /* Static API */

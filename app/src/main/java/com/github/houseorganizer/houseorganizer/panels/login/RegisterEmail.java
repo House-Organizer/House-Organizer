@@ -17,6 +17,7 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.github.houseorganizer.houseorganizer.R;
+import com.github.houseorganizer.houseorganizer.util.EspressoIdlingResource;
 import com.github.houseorganizer.houseorganizer.util.Util;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
@@ -30,17 +31,15 @@ public class RegisterEmail extends AppCompatActivity {
     private FirebaseAuth mAuth;
     private boolean isEmailAlreadyUsed = false;
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register_email);
-
         mAuth = FirebaseAuth.getInstance();
         isEmailAlreadyUsed = false;
-
         findViewById(R.id.reg_email_register_button).setOnClickListener(
                 v -> {
+                    EspressoIdlingResource.increment();
                     String email = ((EditText) findViewById(R.id.reg_enter_email)).getText().toString();
                     String password = ((EditText) findViewById(R.id.reg_enter_password)).getText().toString();
                     String confPassword = ((EditText) findViewById(R.id.reg_confirm_password)).getText().toString();
@@ -58,6 +57,7 @@ public class RegisterEmail extends AppCompatActivity {
                     } else {
                         signUpWithEmail(v);
                     }
+                    EspressoIdlingResource.decrement();
                 }
         );
     }

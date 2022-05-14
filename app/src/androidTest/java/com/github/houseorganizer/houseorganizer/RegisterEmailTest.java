@@ -21,11 +21,13 @@ import static org.hamcrest.CoreMatchers.anyOf;
 import android.content.Context;
 import android.content.Intent;
 
+import androidx.test.espresso.IdlingRegistry;
 import androidx.test.espresso.intent.Intents;
 import androidx.test.ext.junit.rules.ActivityScenarioRule;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 import androidx.test.platform.app.InstrumentationRegistry;
 
+import com.github.houseorganizer.houseorganizer.util.EspressoIdlingResource;
 import com.github.houseorganizer.houseorganizer.panels.login.RegisterEmail;
 import com.github.houseorganizer.houseorganizer.panels.login.VerifyEmail;
 
@@ -57,10 +59,13 @@ public class RegisterEmailTest {
     @BeforeClass
     public static void start() {
         startAuthEmulator();
+        IdlingRegistry.getInstance().register(EspressoIdlingResource.countingIdlingResource);
     }
 
     @AfterClass
-    public static void end() {}
+    public static void end() {
+        IdlingRegistry.getInstance().unregister(EspressoIdlingResource.countingIdlingResource);
+    }
 
     @Test
     public void signUpWithEmailWorksWithCorrectInputs() {
@@ -112,6 +117,5 @@ public class RegisterEmailTest {
         onView(withId(R.id.reg_enter_password)).perform(clearText(), typeText(password), closeSoftKeyboard());
         onView(withId(R.id.reg_confirm_password)).perform(clearText(), typeText(password), closeSoftKeyboard());
         onView(withId(R.id.reg_email_register_button)).perform(click());
-        Thread.sleep(250);
     }
 }
