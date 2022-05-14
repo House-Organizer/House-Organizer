@@ -17,7 +17,6 @@ import android.widget.Toast;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.app.AppCompatActivity;
 
 import com.github.houseorganizer.houseorganizer.R;
 import com.github.houseorganizer.houseorganizer.house.Verifications;
@@ -34,6 +33,7 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.zxing.BarcodeFormat;
@@ -303,22 +303,32 @@ public class EditHouseholdActivity extends ThemedAppCompatActivity {
                 dialog.cancel();
             }
         });
-        builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int which) {
-                deleteCalendar(view);
-                deleteGroceryList(view);
-                deleteTaskList(view);
-                deleteHousehold(view);
-                dialog.cancel();
-            }
+        builder.setPositiveButton("Yes", (dialog, which) -> {
+
+            List<Task<QuerySnapshot>> tasks = new ArrayList<>();
+            tasks.add(deleteCalendar(view));
+            tasks.add(deleteGroceryList());
+            tasks.add(deleteTaskList());
+            tasks.add(deleteBillsharer());
+
+            Tasks.whenAllComplete(tasks)
+                    .addOnFailureListener(toastExceptionFailureListener("Could not delete household"))
+                    .addOnSuccessListener(t -> deleteHousehold(view));
+            dialog.cancel();
         });
 
         AlertDialog alert = builder.create();
         alert.show();
     }
 
-    public void deleteGroceryList(View view) {
-        // TODO : The grocery list is not linked to households yet
+    public Task<QuerySnapshot> deleteGroceryList() {
+
+        return firestore.collection("shop_lists")
+                .whereEqualTo("household", currentHousehold)
+                .get().addOnCompleteListener(doc ->{
+                    assert(doc.getResult().size() == 1);
+                    doc.getResult().getDocuments().get(0).getReference().delete();
+                }).addOnFailureListener(toastExceptionFailureListener("Could not delete groceries"));
     }
 
     private OnFailureListener toastExceptionFailureListener(String message) {
@@ -326,10 +336,10 @@ public class EditHouseholdActivity extends ThemedAppCompatActivity {
                 message, Toast.LENGTH_SHORT).show();
     }
 
-    public void deleteTaskList(View view) {
+    public Task<QuerySnapshot> deleteTaskList() {
         OnFailureListener tlDeletionFailed = toastExceptionFailureListener("Cannot remove task list");
 
-        firestore.collection("task_lists")
+        return firestore.collection("task_lists")
                 .whereEqualTo("hh-id", currentHousehold.getId())
                 .get()
                 .addOnSuccessListener(docRefList -> {
@@ -355,8 +365,8 @@ public class EditHouseholdActivity extends ThemedAppCompatActivity {
                 .addOnFailureListener(tlDeletionFailed);
     }
 
-    public void deleteCalendar(View view) {
-        firestore.collection("events")
+    public Task<QuerySnapshot> deleteCalendar(View view) {
+        return firestore.collection("events")
                 .whereEqualTo("household", currentHousehold)
                 .get().addOnCompleteListener(task1 -> {
             if (task1.isSuccessful()) {
@@ -373,6 +383,16 @@ public class EditHouseholdActivity extends ThemedAppCompatActivity {
                 Toast.makeText(getApplicationContext(), view.getContext().getString(R.string.remove_calendar_failure), Toast.LENGTH_SHORT).show();
             }
         });
+    }
+
+    public Task<QuerySnapshot> deleteBillsharer(){
+        return firestore.collection("billsharers")
+                .whereEqualTo("household", currentHousehold)
+                .get().addOnCompleteListener(doc ->{
+                    assert(doc.getResult().size() <= 1);
+                    if(doc.getResult().size() < 1) return;
+                    doc.getResult().getDocuments().get(0).getReference().delete();
+                }).addOnFailureListener(toastExceptionFailureListener("Could not delete BillSharer"));
     }
 
     public void deleteHousehold(View view) {

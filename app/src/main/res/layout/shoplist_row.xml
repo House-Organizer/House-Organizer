@@ -19,7 +19,7 @@
         android:layout_height="match_parent"
         android:layout_weight="0.1"
         android:adjustViewBounds="true"
-        android:background="@color/common_google_signin_btn_text_dark"
+        android:background="#00FFFFFF"
         android:contentDescription="@string/item_delete_button_description"
         app:srcCompat="@android:drawable/ic_menu_close_clear_cancel" />
 
