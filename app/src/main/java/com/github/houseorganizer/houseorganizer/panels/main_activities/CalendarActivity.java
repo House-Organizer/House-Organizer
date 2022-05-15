@@ -17,8 +17,8 @@ import com.github.houseorganizer.houseorganizer.calendar.Calendar;
 import com.github.houseorganizer.houseorganizer.calendar.CalendarAdapter;
 import com.github.houseorganizer.houseorganizer.calendar.MonthlyAdapter;
 import com.github.houseorganizer.houseorganizer.calendar.UpcomingAdapter;
-import com.github.houseorganizer.houseorganizer.util.RecyclerViewIdlingCallback;
-import com.github.houseorganizer.houseorganizer.util.RecyclerViewLayoutCompleteListener;
+import com.github.houseorganizer.houseorganizer.util.interfaces.RecyclerViewIdlingCallback;
+import com.github.houseorganizer.houseorganizer.util.interfaces.RecyclerViewLayoutCompleteListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.time.YearMonth;
