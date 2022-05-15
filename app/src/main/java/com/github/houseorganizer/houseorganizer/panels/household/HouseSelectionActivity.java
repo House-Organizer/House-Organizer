@@ -189,26 +189,30 @@ public class HouseSelectionActivity extends AppCompatActivity implements
             DocumentReference currentHouse = firestore.collection("households").document(householdId);
             currentHouse.get().addOnCompleteListener(task -> {
                 Map<String, Object> householdData = task.getResult().getData();
-                if (householdData != null) {
-                    List<String> residents = (List<String>) householdData.getOrDefault("residents", "[]");
-                    Long num_users = (Long) householdData.get("num_members");
-                    String owner = (String) householdData.get("owner");
-                    String currentEmail = FirebaseAuth.getInstance().getCurrentUser().getEmail();
-                    if (residents.contains(currentEmail) && !owner.equals(currentEmail)) {
-                        currentHouse.update("num_members", num_users - 1);
-                        currentHouse.update("residents", FieldValue.arrayRemove(currentEmail));
-                        SharedPreferences.Editor editor = getSharedPrefsEditor(this);
-                        editor.putString(CURRENT_HOUSEHOLD, "");
-                        editor.apply();
-                        Intent intent = new Intent(this, MainScreenActivity.class);
-                        startActivity(intent);
-                    } else
-                        Toast.makeText(getApplicationContext(), this.getString(R.string.cant_remove_owner),Toast.LENGTH_SHORT).show();
-                }
+                resetData(currentHouse, householdData);
                 EspressoIdlingResource.decrement();
             });
         }
         EspressoIdlingResource.decrement();
+    }
+
+    private void resetData(DocumentReference currentHouse, Map<String, Object> householdData) {
+        if (householdData != null) {
+            List<String> residents = (List<String>) householdData.getOrDefault("residents", "[]");
+            Long num_users = (Long) householdData.get("num_members");
+            String owner = (String) householdData.get("owner");
+            String currentEmail = FirebaseAuth.getInstance().getCurrentUser().getEmail();
+            if (residents.contains(currentEmail) && !owner.equals(currentEmail)) {
+                currentHouse.update("num_members", num_users - 1);
+                currentHouse.update("residents", FieldValue.arrayRemove(currentEmail));
+                SharedPreferences.Editor editor = getSharedPrefsEditor(this);
+                editor.putString(CURRENT_HOUSEHOLD, "");
+                editor.apply();
+                Intent intent = new Intent(this, MainScreenActivity.class);
+                startActivity(intent);
+            } else
+                Toast.makeText(getApplicationContext(), this.getString(R.string.cant_remove_owner),Toast.LENGTH_SHORT).show();
+        }
     }
 
     public void sendToEditHouse(View view){
