@@ -1,7 +1,7 @@
 <resources>
     <string name="app_name" translatable="false">House Organizer</string>
     <string name="discoverButton"><u>Discover</u></string>
-    <string name="appDescription">\"Best app for house organization\" -The Developpers</string>
+    <string name="appDescription">\"Best app for house organization\" -The Developers</string>
     <string name="cloudServerID" translatable="false">203269545085-bd0ji5p3615rboo0cjkmcg9fslr9d6q8.apps.googleusercontent.com</string>
     <string name="settings_speakable_text">Settings</string>
     <string name="house_speakable_text">Home selection</string>
