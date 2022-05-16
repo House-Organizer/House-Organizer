@@ -111,7 +111,7 @@
     <string name="verify_email">Please verify your email and then reload the app.\n\n</string>
     <string name="sign_out">Sign Out</string>
     <string name="sign_in_with_email">Sign in with Email</string>
-    <string name="sign_up">SIGN UP</string>
+    <string name="sign_up">Sign up</string>
     <string name="enter_email">Enter Email</string>
     <string name="enter_password">Enter Password</string>
     <string name="confirm_password">Confirm Password</string>
