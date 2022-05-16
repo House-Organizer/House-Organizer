@@ -4,15 +4,10 @@ import static com.github.houseorganizer.houseorganizer.panels.main_activities.Ma
 import static com.github.houseorganizer.houseorganizer.util.Util.getSharedPrefs;
 import static com.github.houseorganizer.houseorganizer.util.Util.getSharedPrefsEditor;
 
-import android.Manifest;
-import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
-import android.location.Address;
 import android.location.Geocoder;
-import android.graphics.drawable.Drawable;
-import android.location.Location;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -25,7 +20,6 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.ActivityCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -36,14 +30,11 @@ import com.github.houseorganizer.houseorganizer.R;
 import com.github.houseorganizer.houseorganizer.house.HouseModel;
 import com.github.houseorganizer.houseorganizer.location.LocationHelpers;
 import com.github.houseorganizer.houseorganizer.panels.main_activities.MainScreenActivity;
-import com.github.houseorganizer.houseorganizer.panels.settings.ThemedAppCompatActivity;
 import com.github.houseorganizer.houseorganizer.util.EspressoIdlingResource;
-import com.github.houseorganizer.houseorganizer.util.RecyclerViewIdlingCallback;
-import com.github.houseorganizer.houseorganizer.util.RecyclerViewLayoutCompleteListener;
+import com.github.houseorganizer.houseorganizer.util.interfaces.RecyclerViewIdlingCallback;
+import com.github.houseorganizer.houseorganizer.util.interfaces.RecyclerViewLayoutCompleteListener;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationRequest;
-import com.google.android.gms.location.LocationServices;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
@@ -53,9 +44,7 @@ import com.google.firebase.firestore.Query;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
-import java.io.IOException;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 
@@ -147,12 +136,8 @@ public class HouseSelectionActivity extends AppCompatActivity implements
                     Glide.with(getApplicationContext()).load(uri.toString()).into(imageViewToSet);
                 })
                 .addOnFailureListener(exception -> {
-                    setDefaultImageHouse(imageViewToSet);
+                    imageViewToSet.setImageResource(R.drawable.home_icon);
                 });
-    }
-
-    private void setDefaultImageHouse(ImageView imageViewToSet){
-        imageViewToSet.setImageResource(R.drawable.home_icon);
     }
 
     private void saveData(String selectedHouse) {
@@ -200,26 +185,30 @@ public class HouseSelectionActivity extends AppCompatActivity implements
             DocumentReference currentHouse = firestore.collection("households").document(householdId);
             currentHouse.get().addOnCompleteListener(task -> {
                 Map<String, Object> householdData = task.getResult().getData();
-                if (householdData != null) {
-                    List<String> residents = (List<String>) householdData.getOrDefault("residents", "[]");
-                    Long num_users = (Long) householdData.get("num_members");
-                    String owner = (String) householdData.get("owner");
-                    String currentEmail = FirebaseAuth.getInstance().getCurrentUser().getEmail();
-                    if (residents.contains(currentEmail) && !owner.equals(currentEmail)) {
-                        currentHouse.update("num_members", num_users - 1);
-                        currentHouse.update("residents", FieldValue.arrayRemove(currentEmail));
-                        SharedPreferences.Editor editor = getSharedPrefsEditor(this);
-                        editor.putString(CURRENT_HOUSEHOLD, "");
-                        editor.apply();
-                        Intent intent = new Intent(this, MainScreenActivity.class);
-                        startActivity(intent);
-                    } else
-                        Toast.makeText(getApplicationContext(), this.getString(R.string.cant_remove_owner),Toast.LENGTH_SHORT).show();
-                }
+                resetData(currentHouse, householdData);
                 EspressoIdlingResource.decrement();
             });
         }
         EspressoIdlingResource.decrement();
+    }
+
+    private void resetData(DocumentReference currentHouse, Map<String, Object> householdData) {
+        if (householdData != null) {
+            List<String> residents = (List<String>) householdData.getOrDefault("residents", "[]");
+            Long num_users = (Long) householdData.get("num_members");
+            String owner = (String) householdData.get("owner");
+            String currentEmail = FirebaseAuth.getInstance().getCurrentUser().getEmail();
+            if (residents.contains(currentEmail) && !owner.equals(currentEmail)) {
+                currentHouse.update("num_members", num_users - 1);
+                currentHouse.update("residents", FieldValue.arrayRemove(currentEmail));
+                SharedPreferences.Editor editor = getSharedPrefsEditor(this);
+                editor.putString(CURRENT_HOUSEHOLD, "");
+                editor.apply();
+                Intent intent = new Intent(this, MainScreenActivity.class);
+                startActivity(intent);
+            } else
+                Toast.makeText(getApplicationContext(), this.getString(R.string.cant_remove_owner),Toast.LENGTH_SHORT).show();
+        }
     }
 
     public void sendToEditHouse(View view){

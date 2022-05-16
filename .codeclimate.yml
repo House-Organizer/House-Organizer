@@ -14,10 +14,10 @@ checks:
       threshold: 5
   method-count:
     config:
-      threshold: 25
+      threshold: 20
   method-lines:
     config:
-      threshold: 30
+      threshold: 25
   nested-control-flow:
     config:
       threshold: 4
@@ -34,3 +34,4 @@ exclude_patterns:
   - "**/test/"
   - "**/androidTest/"
   - "**test"
+  - "**/interfaces/"
