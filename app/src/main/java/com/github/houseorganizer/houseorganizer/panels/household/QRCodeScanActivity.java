@@ -128,24 +128,28 @@ public class QRCodeScanActivity extends ThemedAppCompatActivity {
         DocumentReference targetHousehold = db.collection("households").document(QRCode);
         targetHousehold.get().addOnCompleteListener(task -> {
             Map<String, Object> householdData = task.getResult().getData();
-            if (householdData != null) {
-                List<String> listOfUsers = (List<String>) householdData.getOrDefault("residents", "[]");
-                Long num_users = (Long) householdData.get("num_members");
-                if (!listOfUsers.contains(email)) {
-                    targetHousehold.update("residents", FieldValue.arrayUnion(email));
-                    targetHousehold.update("num_members", num_users + 1);
-                }
-                getSharedPrefsEditor(this).putString(CURRENT_HOUSEHOLD, QRCode).apply();
-                Intent intent = new Intent(this, MainScreenActivity.class);
-                Toast.makeText(getApplicationContext(), this.getString(R.string.add_user_success), Toast.LENGTH_SHORT).show();
-                startActivity(intent);
-            } else {
-                Intent intent = new Intent(this, CreateHouseholdActivity.class);
-                intent.putExtra("mUserEmail", email);
-                Toast.makeText(getApplicationContext(), this.getString(R.string.QR_invalid), Toast.LENGTH_SHORT).show();
-                startActivity(intent);
-            }
+            saveData(targetHousehold, householdData, email, QRCode);
             EspressoIdlingResource.decrement();
         });
+    }
+
+    private void saveData(DocumentReference targetHousehold, Map<String, Object> householdData, String email, String QRCode) {
+        if (householdData != null) {
+            List<String> listOfUsers = (List<String>) householdData.getOrDefault("residents", "[]");
+            Long num_users = (Long) householdData.get("num_members");
+            if (!listOfUsers.contains(email)) {
+                targetHousehold.update("residents", FieldValue.arrayUnion(email));
+                targetHousehold.update("num_members", num_users + 1);
+            }
+            getSharedPrefsEditor(this).putString(CURRENT_HOUSEHOLD, QRCode).apply();
+            Intent intent = new Intent(this, MainScreenActivity.class);
+            Toast.makeText(getApplicationContext(), this.getString(R.string.add_user_success), Toast.LENGTH_SHORT).show();
+            startActivity(intent);
+        } else {
+            Intent intent = new Intent(this, CreateHouseholdActivity.class);
+            intent.putExtra("mUserEmail", email);
+            Toast.makeText(getApplicationContext(), this.getString(R.string.QR_invalid), Toast.LENGTH_SHORT).show();
+            startActivity(intent);
+        }
     }
 }

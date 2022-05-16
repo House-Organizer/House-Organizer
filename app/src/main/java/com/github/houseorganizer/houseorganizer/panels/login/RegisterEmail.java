@@ -35,8 +35,14 @@ public class RegisterEmail extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register_email);
+
         mAuth = FirebaseAuth.getInstance();
         isEmailAlreadyUsed = false;
+
+        setUpRegisterButton();
+    }
+
+    private void setUpRegisterButton() {
         findViewById(R.id.reg_email_register_button).setOnClickListener(
                 v -> {
                     EspressoIdlingResource.increment();
@@ -61,8 +67,6 @@ public class RegisterEmail extends AppCompatActivity {
                 }
         );
     }
-
-
 
     // Returns true if email address is in use.
     private void checkIfEmailIsAlreadyUsed(String emailAddress) {

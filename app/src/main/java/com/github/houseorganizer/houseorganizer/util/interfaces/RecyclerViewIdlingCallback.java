@@ -1,4 +1,4 @@
-package com.github.houseorganizer.houseorganizer.util;
+package com.github.houseorganizer.houseorganizer.util.interfaces;
 
 public interface RecyclerViewIdlingCallback {
 

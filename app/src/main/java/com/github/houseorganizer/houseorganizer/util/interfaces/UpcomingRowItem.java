@@ -1,4 +1,4 @@
-package com.github.houseorganizer.houseorganizer.calendar;
+package com.github.houseorganizer.houseorganizer.util.interfaces;
 
 public interface UpcomingRowItem {
     int EVENT = 0;

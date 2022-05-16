@@ -30,7 +30,7 @@ import androidx.test.runner.lifecycle.Stage;
 import com.github.houseorganizer.houseorganizer.panels.household.HouseSelectionActivity;
 import com.github.houseorganizer.houseorganizer.panels.main_activities.MainScreenActivity;
 import com.github.houseorganizer.houseorganizer.util.EspressoIdlingResource;
-import com.github.houseorganizer.houseorganizer.util.RecyclerViewIdlingCallback;
+import com.github.houseorganizer.houseorganizer.util.interfaces.RecyclerViewIdlingCallback;
 import com.github.houseorganizer.houseorganizer.util.RecyclerViewLayoutCompleteIdlingResource;
 import com.google.android.gms.tasks.Task;
 import com.google.android.gms.tasks.Tasks;
