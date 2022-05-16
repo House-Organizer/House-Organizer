@@ -71,7 +71,7 @@ public class ExpenseActivity extends NavBarActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        super.setUpNavBar(R.id.nav_bar, OptionalInt.of(R.id.nav_bar_bs));
+        super.setUpNavBar(R.id.nav_bar, OptionalInt.of(R.id.nav_bar));
     }
 
     @Override
