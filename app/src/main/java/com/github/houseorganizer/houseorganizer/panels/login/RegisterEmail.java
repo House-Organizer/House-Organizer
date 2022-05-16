@@ -30,21 +30,27 @@ public class RegisterEmail extends AppCompatActivity {
 
     private FirebaseAuth mAuth;
     private boolean isEmailAlreadyUsed = false;
-    private String email;
-    private String password;
-    private String confPassword;
-    private TextView error_field;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register_email);
 
-        initializeVariables();
+        mAuth = FirebaseAuth.getInstance();
+        isEmailAlreadyUsed = false;
+
+        setUpRegisterButton();
+    }
+
+    private void setUpRegisterButton() {
         findViewById(R.id.reg_email_register_button).setOnClickListener(
                 v -> {
                     EspressoIdlingResource.increment();
-                    checkIfEmailIsAlreadyUsed();
+                    String email = ((EditText) findViewById(R.id.reg_enter_email)).getText().toString();
+                    String password = ((EditText) findViewById(R.id.reg_enter_password)).getText().toString();
+                    String confPassword = ((EditText) findViewById(R.id.reg_confirm_password)).getText().toString();
+                    TextView error_field = findViewById(R.id.reg_email_error_message);
+                    checkIfEmailIsAlreadyUsed(email);
                     if (inputsEmpty(email, password)) {
                         displayErrorMessage(Util.ErrorType.INPUTS_EMPTY, error_field);
                     } else if (isEmailAlreadyUsed) {
@@ -62,18 +68,9 @@ public class RegisterEmail extends AppCompatActivity {
         );
     }
 
-    private void initializeVariables() {
-        mAuth = FirebaseAuth.getInstance();
-        isEmailAlreadyUsed = false;
-        email = ((EditText) findViewById(R.id.reg_enter_email)).getText().toString();
-        password = ((EditText) findViewById(R.id.reg_enter_password)).getText().toString();
-        confPassword = ((EditText) findViewById(R.id.reg_confirm_password)).getText().toString();
-        error_field = findViewById(R.id.reg_email_error_message);
-    }
-
     // Returns true if email address is in use.
-    private void checkIfEmailIsAlreadyUsed() {
-        mAuth.fetchSignInMethodsForEmail(email)
+    private void checkIfEmailIsAlreadyUsed(String emailAddress) {
+        mAuth.fetchSignInMethodsForEmail(emailAddress)
                 .addOnCompleteListener(this, task -> {
                     if (task.isSuccessful()) {
                         if (!Objects.requireNonNull(task.getResult().getSignInMethods()).isEmpty()) {
