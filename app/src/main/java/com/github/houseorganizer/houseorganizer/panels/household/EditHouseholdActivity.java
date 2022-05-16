@@ -298,11 +298,7 @@ public class EditHouseholdActivity extends ThemedAppCompatActivity {
                 "Are you sure you want to delete this household?");
         builder.setTitle("Delete household");
         builder.setCancelable(false);
-        builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int which) {
-                dialog.cancel();
-            }
-        });
+        builder.setNegativeButton("No", (dialog, which) -> dialog.cancel());
         builder.setPositiveButton("Yes", (dialog, which) -> {
 
             List<Task<QuerySnapshot>> tasks = new ArrayList<>();
