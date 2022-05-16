@@ -28,6 +28,7 @@ import com.google.android.gms.tasks.Task;
 import com.google.android.gms.tasks.Tasks;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.SignInMethodQueryResult;
+import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FieldValue;
@@ -306,9 +307,9 @@ public class EditHouseholdActivity extends ThemedAppCompatActivity {
 
             List<Task<QuerySnapshot>> tasks = new ArrayList<>();
             tasks.add(deleteCalendar(view));
-            tasks.add(deleteGroceryList());
+            tasks.add(deleteFromHousehold("shop_lists", "Could not delete groceries"));
+            tasks.add(deleteFromHousehold("billsharers", "Could not delete billsharer"));
             tasks.add(deleteTaskList());
-            tasks.add(deleteBillsharer());
 
             Tasks.whenAllComplete(tasks)
                     .addOnFailureListener(toastExceptionFailureListener("Could not delete household"))
@@ -320,15 +321,15 @@ public class EditHouseholdActivity extends ThemedAppCompatActivity {
         alert.show();
     }
 
-    public Task<QuerySnapshot> deleteGroceryList() {
+    public Task<QuerySnapshot> deleteFromHousehold(String root, String errorMessage) {
 
-        return firestore.collection("shop_lists")
+        return firestore.collection(root)
                 .whereEqualTo("household", currentHousehold)
                 .get().addOnCompleteListener(doc ->{
                     assert(doc.getResult().size() <= 1);
                     if(doc.getResult().size() < 1)return;
                     doc.getResult().getDocuments().get(0).getReference().delete();
-                }).addOnFailureListener(toastExceptionFailureListener("Could not delete groceries"));
+                }).addOnFailureListener(toastExceptionFailureListener(errorMessage));
     }
 
     private OnFailureListener toastExceptionFailureListener(String message) {
@@ -383,16 +384,6 @@ public class EditHouseholdActivity extends ThemedAppCompatActivity {
                 Toast.makeText(getApplicationContext(), view.getContext().getString(R.string.remove_calendar_failure), Toast.LENGTH_SHORT).show();
             }
         });
-    }
-
-    public Task<QuerySnapshot> deleteBillsharer(){
-        return firestore.collection("billsharers")
-                .whereEqualTo("household", currentHousehold)
-                .get().addOnCompleteListener(doc ->{
-                    assert(doc.getResult().size() <= 1);
-                    if(doc.getResult().size() < 1) return;
-                    doc.getResult().getDocuments().get(0).getReference().delete();
-                }).addOnFailureListener(toastExceptionFailureListener("Could not delete BillSharer"));
     }
 
     public void deleteHousehold(View view) {
