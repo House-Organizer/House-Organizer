@@ -136,12 +136,8 @@ public class HouseSelectionActivity extends AppCompatActivity implements
                     Glide.with(getApplicationContext()).load(uri.toString()).into(imageViewToSet);
                 })
                 .addOnFailureListener(exception -> {
-                    setDefaultImageHouse(imageViewToSet);
+                    imageViewToSet.setImageResource(R.drawable.home_icon);
                 });
-    }
-
-    private void setDefaultImageHouse(ImageView imageViewToSet){
-        imageViewToSet.setImageResource(R.drawable.home_icon);
     }
 
     private void saveData(String selectedHouse) {
