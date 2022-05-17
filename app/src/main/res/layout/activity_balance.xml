@@ -12,13 +12,13 @@
         android:layout_height="0dp"
         android:layout_marginTop="3dp"
         android:layout_marginBottom="3dp"
-        app:layout_constraintBottom_toTopOf="@+id/nav_bar"
+        app:layout_constraintBottom_toTopOf="@+id/balance_nav_bar"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/balance_expenses" />
 
     <com.google.android.material.bottomnavigation.BottomNavigationView
-        android:id="@+id/nav_bar"
+        android:id="@+id/balance_nav_bar"
         android:layout_width="409dp"
         android:layout_height="53dp"
         android:layout_marginStart="1dp"
