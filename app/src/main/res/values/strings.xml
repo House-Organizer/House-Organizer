@@ -1,13 +1,14 @@
 <resources>
-    <string name="app_name">House Organizer</string>
+    <string name="app_name" translatable="false">House Organizer</string>
     <string name="discoverButton"><u>Discover</u></string>
-    <string name="appDescription">stub description of the app to appeal the user</string>
-    <string name="cloudServerID">203269545085-bd0ji5p3615rboo0cjkmcg9fslr9d6q8.apps.googleusercontent.com</string>
+    <string name="appDescription">\"Best app for house organization\" -The Developers</string>
+    <string name="cloudServerID" translatable="false">203269545085-bd0ji5p3615rboo0cjkmcg9fslr9d6q8.apps.googleusercontent.com</string>
     <string name="settings_speakable_text">Settings</string>
     <string name="house_speakable_text">Home selection</string>
     <string name="info_speakable_text">Info</string>
     <string name="img_house_row_desc">Image for the given house name</string>
     <string name="home_logo">Home Logo</string>
+    <string name="color_theme">Color theme</string>
     <string name="title_activity_settings">Settings</string>
     <string name="no_household_info">No info yet!</string>
     <string name="edit_household_notes">Edit the description</string>
@@ -60,6 +61,7 @@
     <!-- General Preferences -->
     <string name="signature_title">Your name</string>
     <string name="dark_mode_title">Dark mode</string>
+    <string name="lang_title">Language</string>
 
     <!-- Cache Preferences -->
     <string name="attachment_title">Download attachments</string>
@@ -69,23 +71,23 @@
     <!-- Task view and its buttons -->
     <string name="task_title_hint">Name</string>
     <string name="task_description_hint">Description</string>
-    <string name="add_task">+</string>
+    <string name="add_task" translatable="false">+</string>
     <string name="add_subtask">Add subtask</string>
     <string name="task_completion_title">Congratulations!</string>
     <string name="task_completion_desc">You just completed a task. Keep it up!</string>
     <string name="subtask_completion_desc">You just completed a task. Keep it up!</string>
-    <string name="tap_to_modify">\"Tap to modify\"</string>
+    <string name="tap_to_modify">Tap to modify</string>
     <string name="add_remove_assignee">Add/remove assignee</string>
     <string name="assignees_button">Assignees</string>
 
     <!-- Calendar view and its buttons -->
-    <string name="add_event">+</string>
-    <string name="cycle_calendar_views">↻</string>
+    <string name="add_event" translatable="false">+</string>
+    <string name="cycle_calendar_views" translatable="false">↻</string>
     <string name="no_events">No events on this day.</string>
     <string name="refresh_calendar_fail">Could not refresh.</string>
     <string name="calendar_upcoming_date">On the %1$s.</string>
-    <string name="left_arrow"><![CDATA[<]]></string>
-    <string name="right_arrow"><![CDATA[>]]></string>
+    <string name="left_arrow" translatable="false"><![CDATA[<]]></string>
+    <string name="right_arrow" translatable="false"><![CDATA[>]]></string>
 
     <!-- Event creation and information popups -->
     <string name="event_creation_title">Add an event</string>
@@ -95,21 +97,21 @@
     <string name="date">Date (dd/MM/yyyy HH:mm)</string>
     <string name="add">Add</string>
     <string name="cancel">Cancel</string>
-    <string name="ok">OK</string>
+    <string name="ok" translatable="false">OK</string>
     <string name="delete">Delete</string>
     <string name="edit">Edit</string>
     <string name="event_editing_title">Edit event</string>
     <string name="confirm">Confirm</string>
 
     <!-- Login -->
-    <string name="tag_login_activity">LoginActivity</string>
-    <string name="tag_register_email">RegisterEmail</string>
-    <string name="tag_login_email">LoginEmail</string>
+    <string name="tag_login_activity" translatable="false">LoginActivity</string>
+    <string name="tag_register_email" translatable="false">RegisterEmail</string>
+    <string name="tag_login_email" translatable="false">LoginEmail</string>
     <string name="email_already_used">Email is already used.</string>
     <string name="verify_email">Please verify your email and then reload the app.\n\n</string>
     <string name="sign_out">Sign Out</string>
     <string name="sign_in_with_email">Sign in with Email</string>
-    <string name="sign_up">SIGN UP</string>
+    <string name="sign_up">Sign up</string>
     <string name="enter_email">Enter Email</string>
     <string name="enter_password">Enter Password</string>
     <string name="confirm_password">Confirm Password</string>
@@ -135,10 +137,10 @@
     <string name="item_delete_button_description">Delete the corresponding shop list item</string>
     <string name="add_item_button">Add item</string>
     <string name="remove_picked_up">Remove checked items</string>
-    <string name="number_empty">0</string>
+    <string name="number_empty" translatable="false">0</string>
 
     <!-- Bottom features menu -->
-    <string name="main_screen">Main Screen</string>
+    <string name="main_screen" translatable="false">Main Screen</string>
     <string name="groceries">Groceries</string>
     <string name="tasks">Tasks</string>
     <string name="calendar">Calendar</string>
