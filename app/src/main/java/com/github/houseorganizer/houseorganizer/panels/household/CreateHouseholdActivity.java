@@ -20,6 +20,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.github.houseorganizer.houseorganizer.R;
 import com.github.houseorganizer.houseorganizer.panels.main_activities.MainScreenActivity;
 import com.github.houseorganizer.houseorganizer.panels.settings.ThemedAppCompatActivity;
+import com.github.houseorganizer.houseorganizer.shop.FirestoreShopList;
+import com.github.houseorganizer.houseorganizer.shop.ShopList;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
@@ -158,6 +160,8 @@ public class CreateHouseholdActivity extends ThemedAppCompatActivity {
         addHHTask.addOnFailureListener(taskFailedListener)
                  .addOnSuccessListener(hhDocRef -> {
                     String hhID = hhDocRef.getId();
+                     FirestoreShopList.storeNewShopList(db.collection("shop_lists"),
+                             new ShopList(), hhDocRef);
                     Task<DocumentReference> addTLTask = attachTaskList(hhID);
                     addTLTask.addOnFailureListener(taskFailedListener)
                              .addOnSuccessListener(tlDocRef -> {

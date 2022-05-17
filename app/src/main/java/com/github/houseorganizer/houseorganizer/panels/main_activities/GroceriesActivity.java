@@ -65,6 +65,7 @@ public class GroceriesActivity extends NavBarActivity implements
                         shopList = t.getResult().getFirestoreShopList();
                         shopListAdapter = t.getResult();
                         shopList.getOnlineReference().addSnapshotListener((d, e) -> {
+                            if(d == null || d.getData() == null)return;
                             shopList = FirestoreShopList.buildShopList(d);
                             shopListAdapter.setShopList(shopList);
                         });
