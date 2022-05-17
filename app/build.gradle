@@ -44,6 +44,9 @@ android {
 }
 
 dependencies {
+    // Facebook sign in
+    implementation 'com.facebook.android:facebook-login:latest.release'
+
     //QR code
     implementation "androidx.camera:camera-camera2:1.1.0-beta03"
     implementation "androidx.camera:camera-lifecycle:1.1.0-beta03"

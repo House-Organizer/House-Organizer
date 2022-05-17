@@ -32,7 +32,7 @@ public class EntryActivity extends AppCompatActivity {
                     intent.putExtra("LoadHouse", true);
                     startActivity(intent);
                 } else {
-                    startActivity(new Intent(EntryActivity.this, LoginEmail.class));
+                    startActivity(new Intent(EntryActivity.this, LoginActivity.class));
                 }
             } else {
                 Intent signInIntent = new Intent(this, LoginActivity.class);
