@@ -43,7 +43,7 @@ public class ExpenseActivity extends NavBarActivity {
             startActivity(intent);
         });
 
-        super.setUpNavBar(R.id.nav_bar, OptionalInt.of(R.id.nav_bar_bs));
+        super.setUpNavBar(R.id.expense_nav_bar, OptionalInt.of(R.id.nav_bar_bs));
     }
 
     private void initializeData(){

@@ -39,7 +39,7 @@ public class BalanceActivity extends NavBarActivity {
             startActivity(intent);
         });
 
-        super.setUpNavBar(R.id.nav_bar, OptionalInt.of(R.id.nav_bar_bs));
+        super.setUpNavBar(R.id.balance_nav_bar, OptionalInt.of(R.id.nav_bar_bs));
     }
 
     private void initializeData(){
