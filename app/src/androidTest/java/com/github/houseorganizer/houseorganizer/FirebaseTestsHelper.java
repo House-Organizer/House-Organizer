@@ -195,6 +195,7 @@ public class FirebaseTestsHelper {
         Tasks.await(task);
 
         createTestTaskList(docName); // (docName = hhID)
+        createTestShopList(docName);
     }
 
     /**
@@ -261,24 +262,17 @@ public class FirebaseTestsHelper {
     /**
      * This method will create a shopList on Firestore
      */
-    protected static void createTestShopList() throws ExecutionException, InterruptedException {
+    protected static void createTestShopList(String hhId) throws ExecutionException, InterruptedException {
         FirebaseFirestore db = FirebaseFirestore.getInstance();
 
         // Store new shop list with one item for TEST_HOUSEHOLD_NAMES[0] on Firebase
-        DocumentReference household = db.collection("households").document(TEST_HOUSEHOLD_NAMES[0]);
+        DocumentReference household = db.collection("households").document(hhId);
         FirestoreShopList shopList = new FirestoreShopList(household);
         shopList.addItem(TEST_ITEM);
         Task<DocumentReference> t = FirestoreShopList.storeNewShopList(db.collection("shop_lists"), shopList, household);
         Tasks.await(t);
         shopList.setOnlineReference(t.getResult());
 
-        // Store new shop list with one item for TEST_HOUSEHOLD_NAMES[1] on Firebase
-        household = db.collection("households").document(TEST_HOUSEHOLD_NAMES[1]);
-        shopList = new FirestoreShopList(household);
-        shopList.addItem(TEST_ITEM);
-        t = FirestoreShopList.storeNewShopList(db.collection("shop_lists"), shopList, household);
-        Tasks.await(t);
-        shopList.setOnlineReference(t.getResult());
     }
 
     /**
@@ -400,8 +394,6 @@ public class FirebaseTestsHelper {
         createHouseholds();
 
         setupNicknames();
-
-        createTestShopList();
 
         createTestEvents();
 
