@@ -62,6 +62,10 @@ public class Billsharer {
         return debts;
     }
 
+    public DocumentReference getCurrentHouse() {
+        return currentHouse;
+    }
+
     public void setDebts(List<Debt> debts) {
         this.debts = debts;
     }
@@ -190,13 +194,13 @@ public class Billsharer {
     }
 
     public void editExpense(Expense expense, int pos) {
-        removeExpense(expenses.get(pos));
+        removeExpense(pos);
         expenses.add(pos, expense);
         updateExpenses();
     }
 
-    public void removeExpense(Expense expense) {
-        expenses.remove(expense);
+    public void removeExpense(int pos) {
+        expenses.remove(pos);
         updateExpenses();
     }
 
@@ -267,7 +271,7 @@ public class Billsharer {
         return expenses;
     }
 
-    private static Task<DocumentReference> storeNewBillsharer(CollectionReference billsharerRoot, List<Expense> list, DocumentReference household){
+    public static Task<DocumentReference> storeNewBillsharer(CollectionReference billsharerRoot, List<Expense> list, DocumentReference household){
         Map<String, Object> map = new HashMap<>();
         map.put("household", household);
         List<Map<String, Object>> expenses = convertExpensesListToFirebase(list);
@@ -311,16 +315,6 @@ public class Billsharer {
                         });
                     }
                 });
-    }
-
-    public static Task<DebtAdapter> getBillsharerForDebt(DocumentReference currentHouse, FirebaseFirestore db) {
-        if (currentHouse == null) return Tasks.forCanceled();
-        CollectionReference root = db.collection("billsharers");
-        return root.whereEqualTo("household", currentHouse).get()
-                .continueWithTask(r -> Billsharer.retrieveBillsharer(root, currentHouse).continueWith(t -> {
-                    Billsharer bs = t.getResult();
-                    return new DebtAdapter(bs);
-                }));
     }
 
     public static Task<Void> deleteBillsharer(DocumentReference onlineReference) {

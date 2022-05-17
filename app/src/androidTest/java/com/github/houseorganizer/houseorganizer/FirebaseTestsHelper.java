@@ -6,6 +6,8 @@ import androidx.test.espresso.UiController;
 import androidx.test.espresso.ViewAction;
 import androidx.test.espresso.matcher.ViewMatchers;
 
+import com.github.houseorganizer.houseorganizer.billsharer.Billsharer;
+import com.github.houseorganizer.houseorganizer.billsharer.Expense;
 import com.github.houseorganizer.houseorganizer.shop.FirestoreShopList;
 import com.github.houseorganizer.houseorganizer.shop.ShopItem;
 import com.github.houseorganizer.houseorganizer.task.FirestoreTask;
@@ -282,6 +284,48 @@ public class FirebaseTestsHelper {
     }
 
     /**
+     * This method will create a billsharer on Firestore
+     */
+    protected static void createTestBillsharer() throws ExecutionException, InterruptedException {
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+
+        // Store new shop list with one item for TEST_HOUSEHOLD_NAMES[0] on Firebase
+        DocumentReference household = db.collection("households")
+                .document(FirebaseTestsHelper.TEST_HOUSEHOLD_NAMES[0]);
+        Billsharer bs = new Billsharer(household);
+        Task<DocumentSnapshot> t1 = bs.startUpBillsharer();
+        Tasks.await(t1);
+        Expense expense = test_expense(bs,40);
+        bs.addExpense(expense);
+        Task<DocumentReference> t2 = Billsharer.storeNewBillsharer(db.collection("billsharers"), new ArrayList<>(), household);
+        Tasks.await(t2);
+        bs.setOnlineReference(t2.getResult());
+
+        // Store new shop list with one item for TEST_HOUSEHOLD_NAMES[1] on Firebase
+        household = db.collection("households")
+                .document(FirebaseTestsHelper.TEST_HOUSEHOLD_NAMES[1]);
+        bs = new Billsharer(household);
+        t1 = bs.startUpBillsharer();
+        Tasks.await(t1);
+        expense = test_expense(bs,40);
+        bs.addExpense(expense);
+        t2 = Billsharer.storeNewBillsharer(db.collection("billsharers"), new ArrayList<>(), household);
+        Tasks.await(t2);
+        bs.setOnlineReference(t2.getResult());
+    }
+
+    protected static Expense test_expense(Billsharer bs, double cost) {
+        List<String> residents = bs.getResidents();
+        HashMap<String, Double> shares = new HashMap<>();
+        for (String resident : residents) {
+            shares.put(resident, cost/residents.size());
+        }
+        Expense expense = new Expense("beers", cost, TEST_USERS_EMAILS[0],
+                shares);
+        return expense;
+    }
+
+    /**
      * This method will create events for testing
      */
     protected static void createTestEvents() throws ExecutionException, InterruptedException {
@@ -402,6 +446,8 @@ public class FirebaseTestsHelper {
         setupNicknames();
 
         createTestShopList();
+
+        createTestBillsharer();
 
         createTestEvents();
 
