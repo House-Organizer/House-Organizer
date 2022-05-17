@@ -125,7 +125,7 @@ public class LocalStorageTest {
         LocalStorage.pushHouseholdsOffline(cx, db, auth.getCurrentUser());
         assertTrue(LocalStorage.pushEventsOffline(cx, db
                 .collection("households")
-                .document("home_1"), Arrays.asList(event)));
+                .document("home_1").getId(), Arrays.asList(event)));
 
         Map<String, ArrayList<OfflineEvent>> offlineEvents = LocalStorage.retrieveEventsOffline(cx);
         assertEquals(offlineEvents.get("home_1"),Arrays.asList(offlineEvent));
@@ -143,7 +143,7 @@ public class LocalStorageTest {
         LocalStorage.pushHouseholdsOffline(cx, db, auth.getCurrentUser());
         assertTrue(LocalStorage.pushGroceriesOffline(cx, db
                 .collection("households")
-                .document("home_1"), Arrays.asList(shopItem)));
+                .document("home_1").getId(), Arrays.asList(shopItem)));
 
         Map<String, ArrayList<OfflineShopItem>> offlineShopItems = LocalStorage.retrieveGroceriesOffline(cx);
         assertEquals(offlineShopItems.get("home_1"),Arrays.asList(offlineShopItem));

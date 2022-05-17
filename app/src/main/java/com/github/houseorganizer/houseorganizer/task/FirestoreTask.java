@@ -1,5 +1,8 @@
 package com.github.houseorganizer.houseorganizer.task;
 
+import com.github.houseorganizer.houseorganizer.util.EspressoIdlingResource;
+import com.google.android.gms.tasks.Task;
+import com.google.android.gms.tasks.Tasks;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FieldValue;
 
@@ -7,13 +10,14 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
 
 public final class FirestoreTask extends HTask {
     private final DocumentReference taskDocRef;
 
-    public FirestoreTask(String owner, String title, String description, List<SubTask> subTasks, DocumentReference taskDocRef) {
-        super(owner, title, description);
+    public FirestoreTask(String title, String description, List<SubTask> subTasks, DocumentReference taskDocRef) {
+        super(title, description);
 
         subTasks.forEach(super::addSubTask);
 
@@ -29,16 +33,18 @@ public final class FirestoreTask extends HTask {
 
     @Override
     public void changeTitle(String newTitle) {
+        EspressoIdlingResource.increment();
         super.changeTitle(newTitle);
-
-        taskDocRef.update("title", newTitle);
+        Task<Void> task = taskDocRef.update("title", newTitle);
+        EspressoIdlingResource.decrement();
     }
 
     @Override
     public void changeDescription(String newDescription) {
+        EspressoIdlingResource.increment();
         super.changeDescription(newDescription);
-
-        taskDocRef.update("description", newDescription);
+        Task<Void> descriptionTask = taskDocRef.update("description", newDescription);
+        EspressoIdlingResource.decrement();
     }
 
     @Override
@@ -47,13 +53,6 @@ public final class FirestoreTask extends HTask {
 
         taskDocRef.update("sub tasks", FieldValue.arrayUnion(makeSubTaskData(subTask)));
     }
-
-    /* TODO [ not urgent / not important ]
-    public void addSubTask(int index, SubTask subtask) {
-        assert index < subtasks.size();
-
-        subtasks.add(index,subtask);
-    } */
 
     @Override
     public void removeSubTask(int index) {
@@ -65,6 +64,8 @@ public final class FirestoreTask extends HTask {
     }
 
     public void changeSubTaskTitle(int index, String newTitle) {
+        EspressoIdlingResource.increment();
+
         SubTask subTask = super.getSubTaskAt(index);
 
         // Firestore
@@ -74,6 +75,8 @@ public final class FirestoreTask extends HTask {
         taskDocRef.update("sub tasks", FieldValue.arrayRemove(subTaskData));
         subTaskData.replace("title", newTitle);
         taskDocRef.update("sub tasks", FieldValue.arrayUnion(subTaskData));
+
+        EspressoIdlingResource.decrement();
     }
 
     /* Static API */
@@ -98,7 +101,7 @@ public final class FirestoreTask extends HTask {
         List<SubTask> subTasks = collectSubTasks(data);
         List<String> assignees = collectAssignees(data);
 
-        FirestoreTask ft = new FirestoreTask((String)data.get("owner"), (String)data.get("title"),
+        FirestoreTask ft = new FirestoreTask((String)data.get("title"),
                 (String)data.get("description"), subTasks, taskDocRef);
 
         ft.getAssignees().addAll(assignees);

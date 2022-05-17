@@ -78,7 +78,6 @@ public class EntryActivityTest {
         //Intent intent = new Intent(ApplicationProvider.getApplicationContext(), MainActivity.class);
         FirebaseAuth.getInstance().signOut();
         //GoogleSignIn.getClient();
-        Thread.sleep(500);
         //testRule.getScenario().recreate();
         ActivityScenario sc = ActivityScenario.launch(MainActivity.class);
         sc.moveToState(Lifecycle.State.RESUMED);

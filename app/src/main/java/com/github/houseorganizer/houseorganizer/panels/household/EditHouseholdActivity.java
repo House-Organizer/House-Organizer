@@ -17,10 +17,10 @@ import android.widget.Toast;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.app.AppCompatActivity;
 
 import com.github.houseorganizer.houseorganizer.R;
 import com.github.houseorganizer.houseorganizer.house.Verifications;
+import com.github.houseorganizer.houseorganizer.panels.settings.ThemedAppCompatActivity;
 import com.github.houseorganizer.houseorganizer.util.EspressoIdlingResource;
 import com.github.houseorganizer.houseorganizer.util.Util;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -28,11 +28,13 @@ import com.google.android.gms.tasks.Task;
 import com.google.android.gms.tasks.Tasks;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.SignInMethodQueryResult;
+import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.zxing.BarcodeFormat;
@@ -46,7 +48,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
-public class EditHouseholdActivity extends AppCompatActivity {
+public class EditHouseholdActivity extends ThemedAppCompatActivity {
     private FirebaseFirestore firestore;
     private FirebaseAuth mAuth;
     private String householdId;
@@ -195,7 +197,6 @@ public class EditHouseholdActivity extends AppCompatActivity {
     }
 
     public void removeUser(View view) {
-
         EspressoIdlingResource.increment();
 
         TextView emailView = findViewById(R.id.editTextRemoveUser);
@@ -261,6 +262,7 @@ public class EditHouseholdActivity extends AppCompatActivity {
                         if (residents.contains(email)) {
                             currentHousehold.update("num_members", num_users - 1);
                             currentHousehold.update("residents", FieldValue.arrayRemove(email));
+                            removeUserFromTaskAssignees(email);
                             Toast.makeText(getApplicationContext(),
                                     view.getContext().getString(R.string.remove_user_success),
                                     Toast.LENGTH_SHORT).show();
@@ -271,41 +273,70 @@ public class EditHouseholdActivity extends AppCompatActivity {
                 });
     }
 
+    private void removeUserFromTaskAssignees(String email) {
+        firestore.collection("task_lists")
+                .whereEqualTo("hh-id", householdId)
+                .get()
+                .addOnSuccessListener(docSnaps -> {
+                    assert docSnaps.size() == 1;
+
+                    Map<String, Object> metadata = docSnaps.iterator().next().getData();
+                    List<DocumentReference> taskPtrs = (ArrayList<DocumentReference>)
+                            metadata.getOrDefault("task-ptrs", new ArrayList<>());
+
+                    assert taskPtrs != null;
+                    taskPtrs.forEach(taskPtr ->
+                            taskPtr.update("assignees", FieldValue.arrayRemove(email)));
+
+                })
+                .addOnFailureListener(toastExceptionFailureListener("Could not update task assignees"));
+    }
+
     public void deleteDialog(View view) {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setMessage("The household calendar and lists will be deleted too. " +
                 "Are you sure you want to delete this household?");
         builder.setTitle("Delete household");
         builder.setCancelable(false);
-        builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int which) {
-                dialog.cancel();
-            }
-        });
-        builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int which) {
-                deleteCalendar(view);
-                deleteGroceryList(view);
-                deleteTaskList(view);
-                deleteHousehold(view);
-                dialog.cancel();
-            }
+        builder.setNegativeButton("No", (dialog, which) -> dialog.cancel());
+        builder.setPositiveButton("Yes", (dialog, which) -> {
+
+            List<Task<QuerySnapshot>> tasks = new ArrayList<>();
+            tasks.add(deleteCalendar(view));
+            tasks.add(deleteFromHousehold("shop_lists", "Could not delete groceries"));
+            tasks.add(deleteFromHousehold("billsharers", "Could not delete billsharer"));
+            tasks.add(deleteTaskList());
+
+            Tasks.whenAllComplete(tasks)
+                    .addOnFailureListener(toastExceptionFailureListener("Could not delete household"))
+                    .addOnSuccessListener(t -> deleteHousehold(view));
+            dialog.cancel();
         });
 
         AlertDialog alert = builder.create();
         alert.show();
     }
 
-    public void deleteGroceryList(View view) {
-        // TODO : The grocery list is not linked to households yet
+    public Task<QuerySnapshot> deleteFromHousehold(String root, String errorMessage) {
+
+        return firestore.collection(root)
+                .whereEqualTo("household", currentHousehold)
+                .get().addOnCompleteListener(doc ->{
+                    assert(doc.getResult().size() <= 1);
+                    if(doc.getResult().size() < 1)return;
+                    doc.getResult().getDocuments().get(0).getReference().delete();
+                }).addOnFailureListener(toastExceptionFailureListener(errorMessage));
     }
 
-    public void deleteTaskList(View view) {
-        OnFailureListener tlDeletionFailed =
-                exception -> Toast.makeText(getApplicationContext(),
-                        "Cannot remove task list", Toast.LENGTH_SHORT).show();
+    private OnFailureListener toastExceptionFailureListener(String message) {
+        return exception -> Toast.makeText(getApplicationContext(),
+                message, Toast.LENGTH_SHORT).show();
+    }
 
-        firestore.collection("task_lists")
+    public Task<QuerySnapshot> deleteTaskList() {
+        OnFailureListener tlDeletionFailed = toastExceptionFailureListener("Cannot remove task list");
+
+        return firestore.collection("task_lists")
                 .whereEqualTo("hh-id", currentHousehold.getId())
                 .get()
                 .addOnSuccessListener(docRefList -> {
@@ -331,8 +362,8 @@ public class EditHouseholdActivity extends AppCompatActivity {
                 .addOnFailureListener(tlDeletionFailed);
     }
 
-    public void deleteCalendar(View view) {
-        firestore.collection("events")
+    public Task<QuerySnapshot> deleteCalendar(View view) {
+        return firestore.collection("events")
                 .whereEqualTo("household", currentHousehold)
                 .get().addOnCompleteListener(task1 -> {
             if (task1.isSuccessful()) {

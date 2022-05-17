@@ -15,6 +15,12 @@
             android:key="switch_preference_1"
             android:title="@string/dark_mode_title" />
 
+        <ListPreference
+            android:key="theme"
+            android:title="Color theme"
+            android:entries="@array/colorThemes"
+            android:entryValues="@array/colorThemesIds"/>
+
     </PreferenceCategory>
 
     <PreferenceCategory app:title="@string/cache_header">
