@@ -69,7 +69,6 @@ public class BalanceActivityTest {
     private static FirebaseFirestore db;
     private static RecyclerViewLayoutCompleteIdlingResource idlingResource;
     private static Billsharer bs;
-    private static Expense expense;
 
     @Rule
     public ActivityScenarioRule<MainScreenActivity> mainScreenActivityActivityScenarioRule =
@@ -85,22 +84,6 @@ public class BalanceActivityTest {
         db = FirebaseFirestore.getInstance();
         idlingResource = new RecyclerViewLayoutCompleteIdlingResource((RecyclerViewIdlingCallback) getCurrentActivity());
         IdlingRegistry.getInstance().register(idlingResource);
-
-        SharedPreferences sharedPreferences = getSharedPrefs(getCurrentActivity());
-        String currentHouse = sharedPreferences.getString(CURRENT_HOUSEHOLD, "");
-        assert currentHouse != null;
-
-        // Store new billsharer for current house on Firebase
-        DocumentReference household = db.collection("households")
-                .document(currentHouse);
-        bs = new Billsharer(household);
-        Task<DocumentSnapshot> t1 = bs.startUpBillsharer();
-        Tasks.await(t1);
-        expense = test_expense(bs, 40);
-        bs.addExpense(expense);
-        Task<DocumentReference> t2 = Billsharer.storeNewBillsharer(db.collection("billsharers"), bs.getExpenses(), household);
-        Tasks.await(t2);
-        bs.setOnlineReference(t2.getResult());
     }
 
     @AfterClass
@@ -120,7 +103,7 @@ public class BalanceActivityTest {
     }
 
     @Before
-    public void openActivity() {
+    public void openActivity() throws ExecutionException, InterruptedException {
         Context context = getInstrumentation().getTargetContext();
         context.sendBroadcast(new Intent(Intent.ACTION_CLOSE_SYSTEM_DIALOGS));
 
@@ -128,6 +111,13 @@ public class BalanceActivityTest {
         onView(withId(R.id.housesView))
                 .perform(RecyclerViewActions.actionOnItemAtPosition(0, click()));
         onView(withId(R.id.nav_bar_bs)).perform(click());
+
+        DocumentReference household = db.collection("households")
+                .document(FirebaseTestsHelper.TEST_HOUSEHOLD_NAMES[0]);
+        Task<Billsharer> t = Billsharer.
+                retrieveBillsharer(db.collection("billsharers"), household);
+        Tasks.await(t);
+        bs = t.getResult();
     }
 
     private void openBalances() {
@@ -159,50 +149,41 @@ public class BalanceActivityTest {
     }
 
     @Test
-    public void ExpenseListHasCorrectNumberOfExpense() {
-        onView(withId(R.id.balance_recycler)).check(matches(hasChildCount(1)));
+    public void addingExpenseShowsCorrectNumberOfDebt() {
+        addNewExpense("title", 40, bs.getResidents().get(0));
+        openBalances();
+        onView(withId(R.id.balance_recycler)).check(matches(hasChildCount(bs.getResidents().size()-1)));
     }
 
     @Test
-    public void addingExpenseShowsNewExpense() {
-        addNewExpense("test", 20.5, TEST_USERS_EMAILS[1]);
-        // Checking expense exists in the view
-        onView(withId(R.id.expense_recycler)).check(matches(hasChildCount(2)));
-        onView(withId(R.id.expense_recycler)).check(matches(hasDescendant(withText(containsString("test")))));
-        onView(withId(R.id.expense_recycler)).check(matches(hasDescendant(withText(containsString("20.5")))));
-        onView(withId(R.id.expense_recycler)).check(matches(hasDescendant(withText(containsString(TEST_USERS_EMAILS[1])))));
-
-        onView(withId(R.id.expense_recycler))
+    public void deletingDebtRemovesIt() {
+        addNewExpense("title", 40, bs.getResidents().get(0));
+        openBalances();
+        onView(withId(R.id.balance_recycler))
                 .perform(RecyclerViewActions.actionOnItemAtPosition(
                         1,
-                        RecyclerViewHelper.clickChildViewWithId(R.id.expense_remove_check)));
+                        RecyclerViewHelper.clickChildViewWithId(R.id.debt_remove_check)));
+        onView(withId(R.id.balance_recycler)).check(matches(hasChildCount(bs.getResidents().size()-2)));
+    }
+
+    @Test
+    public void deletingDebtCreatesNewExpense() {
+        addNewExpense("title", 40, bs.getResidents().get(0));
+        openBalances();
+        onView(withId(R.id.balance_recycler))
+                .perform(RecyclerViewActions.actionOnItemAtPosition(
+                        1,
+                        RecyclerViewHelper.clickChildViewWithId(R.id.debt_remove_check)));
+        onView(withId(R.id.balance_expenses)).perform(click());
+        onView(withId(R.id.expense_recycler)).check(matches(hasChildCount(2)));
     }
 
     @Test
     public void navBarTakesBackToMainScreen(){
+        openBalances();
         Intents.init();
         onView(withId(R.id.nav_bar_menu)).perform(click());
         intended(hasComponent(MainScreenActivity.class.getName()));
         Intents.release();
     }
-
-    @Test
-    public void navBarTakesToExpenseScreen(){
-        Intents.init();
-        onView(withId(R.id.nav_bar_bs)).perform(click());
-        intended(hasComponent(ExpenseActivity.class.getName()));
-        Intents.release();
-    }
-
-    @Test
-    public void deletingExpenseRemovesIt() {
-        addNewExpense("expense", 40, TEST_USERS_EMAILS[0]);
-        onView(withId(R.id.expense_recycler))
-                .perform(RecyclerViewActions.actionOnItemAtPosition(
-                        1,
-                        RecyclerViewHelper.clickChildViewWithId(R.id.expense_remove_check)));
-        onView(withId(R.id.expense_recycler)).check(matches(hasChildCount(1)));
-    }
-
-
 }
