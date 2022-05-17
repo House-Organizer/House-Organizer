@@ -6,7 +6,6 @@ import android.os.Bundle;
 import android.view.View;
 
 import androidx.appcompat.app.ActionBar;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.preference.PreferenceFragmentCompat;
 
 import com.github.houseorganizer.houseorganizer.R;
@@ -67,6 +66,8 @@ public class SettingsActivity extends ThemedAppCompatActivity {
                    .document("email-to-nickname-translations")
                    .update(field, sharedPreferences.getString("nickname",""));
             }
+            Intent intent = new Intent(getContext(), SettingsActivity.class);
+            startActivity(intent);
         }
 
         @Override
