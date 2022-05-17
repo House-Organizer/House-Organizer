@@ -17,8 +17,8 @@ import com.github.houseorganizer.houseorganizer.calendar.Calendar;
 import com.github.houseorganizer.houseorganizer.calendar.CalendarAdapter;
 import com.github.houseorganizer.houseorganizer.calendar.MonthlyAdapter;
 import com.github.houseorganizer.houseorganizer.calendar.UpcomingAdapter;
-import com.github.houseorganizer.houseorganizer.util.RecyclerViewIdlingCallback;
-import com.github.houseorganizer.houseorganizer.util.RecyclerViewLayoutCompleteListener;
+import com.github.houseorganizer.houseorganizer.util.interfaces.RecyclerViewIdlingCallback;
+import com.github.houseorganizer.houseorganizer.util.interfaces.RecyclerViewLayoutCompleteListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.time.YearMonth;
@@ -62,6 +62,13 @@ public final class CalendarActivity extends NavBarActivity implements
         recyclerViewLayoutCompleted = true;
         calendarEvents.getViewTreeObserver().addOnGlobalLayoutListener(this);
 
+        setUpViewChange(yearMonth, navigateMonthLeft, navigateMonthRight);
+
+        findViewById(R.id.calendar_screen_add_event).setOnClickListener(v -> calendarAdapter.showAddEventDialog(this, currentHouse, "addEvent:failure"));
+        super.setUpNavBar(R.id.nav_bar, OptionalInt.of(R.id.nav_bar_calendar));
+    }
+
+    private void setUpViewChange(TextView yearMonth, Button navigateMonthLeft, Button navigateMonthRight) {
         findViewById(R.id.calendar_screen_view_change).setOnClickListener(v -> {
             recyclerViewLayoutCompleted = false;
             calendarAdapter = calendar.rotateCalendarView(this, calendarAdapter, calendarEvents);
@@ -71,9 +78,6 @@ public final class CalendarActivity extends NavBarActivity implements
             navigateMonthLeft.setVisibility(calendar.getView() == Calendar.CalendarView.MONTHLY ? View.VISIBLE : View.GONE);
             navigateMonthRight.setVisibility(calendar.getView() == Calendar.CalendarView.MONTHLY ? View.VISIBLE : View.GONE);
         });
-
-        findViewById(R.id.calendar_screen_add_event).setOnClickListener(v -> calendarAdapter.showAddEventDialog(this, currentHouse, "addEvent:failure"));
-        super.setUpNavBar(R.id.nav_bar, OptionalInt.of(R.id.nav_bar_calendar));
     }
 
     private void prepareMonthlyViewItems(TextView yearMonth, Button navigateMonthLeft, Button navigateMonthRight) {

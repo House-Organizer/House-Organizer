@@ -2,6 +2,9 @@ package com.github.houseorganizer.houseorganizer.util;
 
 import androidx.test.espresso.IdlingResource;
 
+import com.github.houseorganizer.houseorganizer.util.interfaces.RecyclerViewIdlingCallback;
+import com.github.houseorganizer.houseorganizer.util.interfaces.RecyclerViewLayoutCompleteListener;
+
 public class RecyclerViewLayoutCompleteIdlingResource implements IdlingResource {
 
     private ResourceCallback resourceCallback;
