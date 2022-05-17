@@ -195,7 +195,6 @@ public class FirebaseTestsHelper {
         Tasks.await(task);
 
         createTestTaskList(docName); // (docName = hhID)
-        createTestShopList(docName);
     }
 
     /**
@@ -392,6 +391,10 @@ public class FirebaseTestsHelper {
         }
 
         createHouseholds();
+
+        createTestShopList(TEST_HOUSEHOLD_NAMES[0]);
+        createTestShopList(TEST_HOUSEHOLD_NAMES[1]);
+        createTestShopList(TEST_HOUSEHOLD_NAMES[2]);
 
         setupNicknames();
 
