@@ -120,13 +120,14 @@ public class MainScreenActivity extends TaskFragmentNavBarActivity {
 
     private Task<ShopListAdapter> initializeGroceriesList() {
         return ShopListAdapter.initializeFirestoreShopList(currentHouse, db).continueWith(c -> {
-                    if(c.isSuccessful()){
+                    if(c.isSuccessful() && c.getResult() != null){
                         shopList = c.getResult().getFirestoreShopList();
                         shopListAdapter = c.getResult();
 
                         LocalStorage.pushGroceriesOffline(this, currentHouse.getId(), shopList.getItems());
 
                         shopList.getOnlineReference().addSnapshotListener((doc, e) -> {
+                            if(doc == null || doc.getData() == null)return;
                             shopList = FirestoreShopList.buildShopList(doc);
                             shopListAdapter.setShopList(shopList);
                         });
