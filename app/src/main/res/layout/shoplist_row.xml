@@ -19,7 +19,7 @@
         android:layout_height="match_parent"
         android:layout_weight="8"
         android:adjustViewBounds="true"
-        android:background="#00FFFFFF"
+        android:background="@android:color/transparent"
         android:contentDescription="@string/item_delete_button_description"
         app:srcCompat="@android:drawable/ic_menu_close_clear_cancel" />
 
