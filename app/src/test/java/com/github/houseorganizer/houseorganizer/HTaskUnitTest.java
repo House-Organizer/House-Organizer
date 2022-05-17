@@ -8,7 +8,6 @@ import com.github.houseorganizer.houseorganizer.task.HTask;
 
 import org.junit.Test;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 
@@ -44,9 +43,8 @@ public class HTaskUnitTest {
     // Task tests
     @Test
     public void taskConstructorWorks() {
-        HTask t = new HTask(NOBODY, "Task 1", "stub description");
+        HTask t = new HTask("Task 1", "stub description");
 
-        assertEquals(NOBODY, t.getOwner());
         assertEquals("Task 1", t.getTitle());
         assertEquals("stub description", t.getDescription());
 
@@ -58,26 +56,15 @@ public class HTaskUnitTest {
 
     @Test
     public void taskCanBeMarkedAsFinished() {
-        HTask t = new HTask(NOBODY, "Task 1", "stub description");
+        HTask t = new HTask("Task 1", "stub description");
 
         t.markAsFinished();
         assertTrue(t.isFinished());
     }
 
     @Test
-    public void taskCanChangeDueDates() {
-        HTask t = new HTask(NOBODY, "Task 1", "stub description");
-
-        LocalDateTime ldt = LocalDateTime.now();
-        t.changeDueDate(ldt);
-
-        assertEquals(ldt, t.getDueDate());
-        //assertTrue(t.hasDueDate());
-    }
-
-    @Test
     public void taskCanBeAssigned() {
-        HTask t = new HTask(NOBODY, "Task 1", "stub description");
+        HTask t = new HTask("Task 1", "stub description");
 
         t.assignTo(NOBODY);
         assertEquals(NOBODY, t.getAssignees().get(0));
@@ -86,7 +73,7 @@ public class HTaskUnitTest {
 
     @Test
     public void taskCanBeUnassigned() {
-        HTask t = new HTask(NOBODY, "Task 1", "stub description");
+        HTask t = new HTask("Task 1", "stub description");
 
         t.assignTo(NOBODY);
         t.removeAssigneeAt(0);
@@ -95,7 +82,7 @@ public class HTaskUnitTest {
 
     @Test
     public void taskCanChangeTitle() {
-        HTask t = new HTask(NOBODY, "Task 1", "stub description");
+        HTask t = new HTask("Task 1", "stub description");
 
         t.changeTitle("Task 1: better title");
         assertEquals("Task 1: better title", t.getTitle());
@@ -103,7 +90,7 @@ public class HTaskUnitTest {
 
     @Test
     public void taskCanChangeDescription() {
-        HTask t = new HTask(NOBODY, "Task 1", "stub description");
+        HTask t = new HTask("Task 1", "stub description");
 
         t.changeDescription("This task involves finishing the TaskUnitTest class");
         assertEquals("This task involves finishing the TaskUnitTest class", t.getDescription());
@@ -111,7 +98,7 @@ public class HTaskUnitTest {
 
     @Test
     public void taskCanHaveSubTasks() {
-        HTask t = new HTask(NOBODY, "Task 1", "stub description");
+        HTask t = new HTask("Task 1", "stub description");
         HTask.SubTask s = new HTask.SubTask("Subtask 1");
         HTask.SubTask s2 = new HTask.SubTask("Subtask 2");
 
@@ -124,7 +111,7 @@ public class HTaskUnitTest {
 
     @Test
     public void taskCanRemoveSubTasks() {
-        HTask t = new HTask(NOBODY, "Task 1", "stub description");
+        HTask t = new HTask("Task 1", "stub description");
         HTask.SubTask s = new HTask.SubTask("Subtask 1");
         HTask.SubTask s2 = new HTask.SubTask("Subtask 2");
 
@@ -141,7 +128,7 @@ public class HTaskUnitTest {
 
     @Test
     public void taskCanInsertSubTasksAtGivenIndex() {
-        HTask t = new HTask(NOBODY, "Task 1", "stub description");
+        HTask t = new HTask("Task 1", "stub description");
         HTask.SubTask s = new HTask.SubTask("Subtask 1");
         HTask.SubTask s2 = new HTask.SubTask("Subtask 2");
         HTask.SubTask s3 = new HTask.SubTask("Subtask 3");
@@ -158,7 +145,7 @@ public class HTaskUnitTest {
 
     @Test
     public void taskCanChangeSubTaskTitles() {
-        HTask t = new HTask(NOBODY, "Task 1", "stub description");
+        HTask t = new HTask("Task 1", "stub description");
         HTask.SubTask s = new HTask.SubTask("Subtask 1");
 
         t.addSubTask(s);
@@ -168,7 +155,7 @@ public class HTaskUnitTest {
 
     @Test
     public void taskCanMarkSubTasksAsFinished() {
-        HTask t = new HTask(NOBODY, "Task 1", "stub description");
+        HTask t = new HTask("Task 1", "stub description");
         HTask.SubTask s = new HTask.SubTask("Subtask 1");
 
         t.addSubTask(s);
@@ -178,7 +165,7 @@ public class HTaskUnitTest {
 
     @Test
     public void taskCanDeleteFinishedSubTasks() {
-        HTask t = new HTask(NOBODY, "Task 1", "stub description");
+        HTask t = new HTask("Task 1", "stub description");
         HTask.SubTask s = new HTask.SubTask("Subtask 1");
         HTask.SubTask s2 = new HTask.SubTask("Subtask 2");
         HTask.SubTask s3 = new HTask.SubTask("Subtask 3");
@@ -199,7 +186,7 @@ public class HTaskUnitTest {
 
     @Test
     public void taskReturnsCorrectSubTasks() {
-        HTask t = new HTask(NOBODY, "Task 1", "stub description");
+        HTask t = new HTask("Task 1", "stub description");
         HTask.SubTask s = new HTask.SubTask("Subtask 1");
         HTask.SubTask s2 = new HTask.SubTask("Subtask 2");
         HTask.SubTask s3 = new HTask.SubTask("Subtask 3");

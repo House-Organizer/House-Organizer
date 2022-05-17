@@ -1,6 +1,5 @@
 package com.github.houseorganizer.houseorganizer;
 
-
 import static androidx.test.espresso.Espresso.onView;
 import static androidx.test.espresso.action.ViewActions.clearText;
 import static androidx.test.espresso.action.ViewActions.click;
@@ -18,23 +17,32 @@ import static androidx.test.espresso.matcher.ViewMatchers.withEffectiveVisibilit
 import static androidx.test.espresso.matcher.ViewMatchers.withHint;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
 import static androidx.test.espresso.matcher.ViewMatchers.withText;
+import static androidx.test.platform.app.InstrumentationRegistry.getInstrumentation;
 import static com.github.houseorganizer.houseorganizer.FirebaseTestsHelper.DELETED_EVENT_TIME;
 import static com.github.houseorganizer.houseorganizer.FirebaseTestsHelper.EVENTS_TO_DISPLAY;
 import static com.github.houseorganizer.houseorganizer.FirebaseTestsHelper.TEST_HOUSEHOLD_NAMES;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 
+import androidx.test.espresso.IdlingRegistry;
 import androidx.test.espresso.contrib.RecyclerViewActions;
 import androidx.test.espresso.intent.Intents;
 import androidx.test.espresso.matcher.ViewMatchers;
 import androidx.test.ext.junit.rules.ActivityScenarioRule;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 import androidx.test.platform.app.InstrumentationRegistry;
+import androidx.test.runner.lifecycle.ActivityLifecycleMonitorRegistry;
+import androidx.test.runner.lifecycle.Stage;
 
+import com.github.houseorganizer.houseorganizer.util.EspressoIdlingResource;
+import com.github.houseorganizer.houseorganizer.util.interfaces.RecyclerViewIdlingCallback;
+import com.github.houseorganizer.houseorganizer.util.RecyclerViewLayoutCompleteIdlingResource;
 import com.github.houseorganizer.houseorganizer.panels.main_activities.MainScreenActivity;
+
 import com.google.android.gms.tasks.Task;
 import com.google.android.gms.tasks.Tasks;
 import com.google.firebase.auth.FirebaseAuth;
@@ -58,7 +66,9 @@ import java.io.ByteArrayOutputStream;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
 
@@ -69,6 +79,8 @@ public class CalendarViewTest {
     private static FirebaseFirestore db;
     private static FirebaseAuth auth;
     private static FirebaseStorage storage;
+
+    private static RecyclerViewLayoutCompleteIdlingResource idlingResource;
 
     @BeforeClass
     public static void createMockFirebase() throws ExecutionException, InterruptedException {
@@ -89,6 +101,10 @@ public class CalendarViewTest {
         UploadTask task2 = storage.getReference().child("event_to_delete_attachment").putBytes(baos.toByteArray());
         Tasks.await(task1);
         Tasks.await(task2);
+
+        idlingResource = new RecyclerViewLayoutCompleteIdlingResource((RecyclerViewIdlingCallback) getCurrentActivity());
+        IdlingRegistry.getInstance().register(idlingResource);
+        IdlingRegistry.getInstance().register(EspressoIdlingResource.countingIdlingResource);
     }
 
     @Before
@@ -97,7 +113,6 @@ public class CalendarViewTest {
         context.sendBroadcast(new Intent(Intent.ACTION_CLOSE_SYSTEM_DIALOGS));
 
         onView(withId(R.id.house_imageButton)).perform(click());
-        Thread.sleep(1000);
         onView(withId(R.id.housesView)).perform(RecyclerViewActions.actionOnItemAtPosition(0, click()));
         onView(withId(R.id.nav_bar_calendar)).perform(click());
     }
@@ -126,7 +141,24 @@ public class CalendarViewTest {
         Tasks.await(task2);
         Tasks.await(task3);
         Tasks.await(task4);
+
         auth.signOut();
+        IdlingRegistry.getInstance().unregister(idlingResource);
+        IdlingRegistry.getInstance().unregister(EspressoIdlingResource.countingIdlingResource);
+    }
+
+    private static Activity getCurrentActivity(){
+        final Activity[] currentActivity = {null};
+
+        getInstrumentation().runOnMainSync(new Runnable(){
+            public void run(){
+                Collection<Activity> resumedActivity = ActivityLifecycleMonitorRegistry.getInstance().getActivitiesInStage(Stage.RESUMED);
+                Iterator<Activity> it = resumedActivity.iterator();
+                currentActivity[0] = it.next();
+            }
+        });
+
+        return currentActivity[0];
     }
 
     @Rule
@@ -228,7 +260,6 @@ public class CalendarViewTest {
         onView(withHint(R.string.date)).perform(clearText()).perform(typeText(date)).perform(closeSoftKeyboard());
         onView(withHint(R.string.duration)).perform(clearText()).perform(typeText("10")).perform(closeSoftKeyboard());
         onView(withText(R.string.add)).perform(click());
-        Thread.sleep(1000);
         // Count is 2*EVENTS_TO_DISPLAY because we removed one event and added one
         // and because there is one delimiter per event
         onView(withId(R.id.calendar_screen_calendar)).check(matches(hasChildCount(2*EVENTS_TO_DISPLAY)));

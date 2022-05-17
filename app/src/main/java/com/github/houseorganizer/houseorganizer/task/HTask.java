@@ -1,8 +1,8 @@
 package com.github.houseorganizer.houseorganizer.task;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 
 public class HTask {
     private boolean isFinished;
@@ -11,23 +11,18 @@ public class HTask {
 
     /* UIDs */
     private final List<String> assignees;
-    private final String owner;
 
-    private LocalDateTime dueDate;
-
-    public HTask(String owner, String title, String description) {
+    public HTask(String title, String description) {
         this.title       = title;
         this.description = description;
         this.subtasks    = new ArrayList<>();
         this.isFinished  = false;
 
-        this.owner    = owner;
         this.assignees = new ArrayList<>();
 
-        this.dueDate = LocalDateTime.MIN;
     }
 
-    // Setters (except for owner)
+    // Setters
     public void markAsFinished() {
         this.isFinished = true;
     }
@@ -68,10 +63,6 @@ public class HTask {
         subtasks.removeIf(HTask.SubTask::isFinished);
     }
 
-    public void changeDueDate(LocalDateTime newDueDate) {
-        this.dueDate = newDueDate;
-    }
-
     // Getters
     public boolean isFinished() {
         return isFinished;
@@ -83,10 +74,6 @@ public class HTask {
 
     public String getDescription() {
         return description;
-    }
-
-    public String getOwner() {
-        return owner;
     }
 
     public boolean hasAssignees() {
@@ -110,10 +97,6 @@ public class HTask {
 
     public List<SubTask> getSubTasks() {
         return new ArrayList<>(subtasks);
-    }
-
-    public LocalDateTime getDueDate() {
-        return dueDate;
     }
 
     // Subtask class

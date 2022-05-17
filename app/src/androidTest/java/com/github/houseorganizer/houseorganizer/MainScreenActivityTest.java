@@ -164,23 +164,4 @@ public class MainScreenActivityTest {
             fail("Should have thrown NoActivityResumedException");
         } catch (NoActivityResumedException expected) { }
     }
-    /* TODO: Move sign-out button tests in rightful test class; This button is no longer on MainScreen
-    @Test
-    public void signOutButtonIsDisplayedAndEnabled(){
-        onView(withId(R.id.sign_out_button)).check(matches(isDisplayed()));
-        onView(withId(R.id.sign_out_button)).check(matches(isEnabled()));
-    }
-
-    @Test
-    public void signOutButtonIsClickable(){
-        onView(withId(R.id.sign_out_button)).check(matches(isClickable()));
-    }
-
-    @Test
-    public void zSignOutButtonFiresRightIntent(){
-        onView(withId(R.id.sign_out_button)).perform(click());
-        intended(hasComponent(LoginActivity.class.getName()));
-        intended(hasExtra(ApplicationProvider.getApplicationContext().getString(R.string.signout_intent), true));
-    }
-     */
 }

@@ -13,19 +13,26 @@ import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static androidx.test.espresso.matcher.ViewMatchers.isEnabled;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
 import static androidx.test.espresso.matcher.ViewMatchers.withText;
+import static androidx.test.platform.app.InstrumentationRegistry.getInstrumentation;
 import static org.hamcrest.Matchers.containsString;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 
+import androidx.test.espresso.IdlingRegistry;
 import androidx.test.espresso.contrib.RecyclerViewActions;
 import androidx.test.espresso.intent.Intents;
 import androidx.test.ext.junit.rules.ActivityScenarioRule;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
-import androidx.test.platform.app.InstrumentationRegistry;
+import androidx.test.runner.lifecycle.ActivityLifecycleMonitorRegistry;
+import androidx.test.runner.lifecycle.Stage;
 
+import com.github.houseorganizer.houseorganizer.util.interfaces.RecyclerViewIdlingCallback;
+import com.github.houseorganizer.houseorganizer.util.RecyclerViewLayoutCompleteIdlingResource;
 import com.github.houseorganizer.houseorganizer.panels.main_activities.CalendarActivity;
 import com.github.houseorganizer.houseorganizer.panels.main_activities.MainScreenActivity;
+
 import com.google.firebase.auth.FirebaseAuth;
 
 import org.junit.AfterClass;
@@ -35,12 +42,15 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+import java.util.Collection;
+import java.util.Iterator;
 import java.util.concurrent.ExecutionException;
 
 @RunWith(AndroidJUnit4.class)
 public class GroceriesActivityTest {
 
     private static FirebaseAuth auth;
+    private static RecyclerViewLayoutCompleteIdlingResource idlingResource;
 
     @Rule
     public ActivityScenarioRule<MainScreenActivity> mainScreenActivityActivityScenarioRule =
@@ -51,22 +61,41 @@ public class GroceriesActivityTest {
         FirebaseTestsHelper.startAuthEmulator();
         FirebaseTestsHelper.startFirestoreEmulator();
         FirebaseTestsHelper.setUpFirebase();
+
         auth = FirebaseAuth.getInstance();
+        idlingResource = new RecyclerViewLayoutCompleteIdlingResource((RecyclerViewIdlingCallback) getCurrentActivity());
+        IdlingRegistry.getInstance().register(idlingResource);
     }
 
     @AfterClass
-    public static void signOut(){auth.signOut();}
+    public static void signOut(){
+        auth.signOut();
+        IdlingRegistry.getInstance().unregister(idlingResource);
+    }
+
+    private static Activity getCurrentActivity() {
+        final Activity[] currentActivity = {null};
+
+        getInstrumentation().runOnMainSync(new Runnable() {
+            public void run() {
+                Collection<Activity> resumedActivity = ActivityLifecycleMonitorRegistry.getInstance().getActivitiesInStage(Stage.RESUMED);
+                Iterator<Activity> it = resumedActivity.iterator();
+                currentActivity[0] = it.next();
+            }
+        });
+
+        return currentActivity[0];
+    }
 
     @Before
     public void openActivity() throws InterruptedException {
-        Context context = InstrumentationRegistry.getInstrumentation().getTargetContext();
+        Context context = getInstrumentation().getTargetContext();
         context.sendBroadcast(new Intent(Intent.ACTION_CLOSE_SYSTEM_DIALOGS));
 
         onView(withId(R.id.house_imageButton)).perform(click());
         onView(withId(R.id.housesView))
                 .perform(RecyclerViewActions.actionOnItemAtPosition(0, click()));
         onView(withId(R.id.nav_bar_cart)).perform(click());
-        Thread.sleep(300);
     }
 
     private void addNewItem(String name, int quantity, String unit){
@@ -134,7 +163,6 @@ public class GroceriesActivityTest {
                 .perform(RecyclerViewActions.actionOnItemAtPosition(
                         1,
                         RecyclerViewHelper.clickChildViewWithId(R.id.delete_item_button)));
-        Thread.sleep(500);
         onView(withId(R.id.groceries_recycler)).check(matches(hasChildCount(1)));
     }
 
@@ -146,7 +174,6 @@ public class GroceriesActivityTest {
                 RecyclerViewActions.actionOnItemAtPosition(1, click()),
                 RecyclerViewActions.actionOnItemAtPosition(2, click()));
         onView(withId(R.id.groceries_picked_up_button)).perform(click());
-        Thread.sleep(50);
         onView(withId(R.id.groceries_recycler)).check(matches(hasChildCount(1)));
     }
 }

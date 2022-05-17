@@ -7,4 +7,19 @@
     <color name="teal_700">#FF018786</color>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+
+    <!-- New colours -->
+    <color name="t1_beige">#F8ECD1</color>
+    <color name="t1_peach">#DEB6AB</color>
+    <color name="t1_light_purple">#A87B86</color>
+    <color name="t1_purple">#85586F</color>
+    <color name="t1_dark_purple">#774F63</color>
+
+    <color name="t2_purple">#81667A</color>
+    <color name="t2_dark_teal">#096B72</color>
+    <color name="t2_teal">#38887E</color>
+    <color name="t2_seafoam_green">#92B4A7</color>
+    <color name="t2_ashy_green">#B6CB9E</color>
+    <color name="t2_light_green">#D1F0B1</color>
+
 </resources>

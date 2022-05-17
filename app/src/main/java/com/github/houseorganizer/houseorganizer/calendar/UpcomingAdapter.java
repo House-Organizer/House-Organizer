@@ -1,8 +1,8 @@
 package com.github.houseorganizer.houseorganizer.calendar;
 
 import static com.github.houseorganizer.houseorganizer.calendar.Calendar.Event.putEventStringsInData;
-import static com.github.houseorganizer.houseorganizer.calendar.UpcomingRowItem.DELIMITER;
-import static com.github.houseorganizer.houseorganizer.calendar.UpcomingRowItem.EVENT;
+import static com.github.houseorganizer.houseorganizer.util.interfaces.UpcomingRowItem.DELIMITER;
+import static com.github.houseorganizer.houseorganizer.util.interfaces.UpcomingRowItem.EVENT;
 
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
@@ -24,6 +24,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.github.houseorganizer.houseorganizer.R;
 import com.github.houseorganizer.houseorganizer.calendar.Calendar.Event;
 import com.github.houseorganizer.houseorganizer.image.ImageHelper;
+import com.github.houseorganizer.houseorganizer.util.interfaces.UpcomingRowItem;
 import com.google.firebase.firestore.SetOptions;
 import com.google.firebase.storage.StorageReference;
 
