@@ -4,6 +4,14 @@
     <option name="filePathToZoomLevelMap">
       <map>
         <entry key="../../../../../layout/custom_preview.xml" value="0.384375" />
+        <entry key="..\:/Users/flori/OneDrive/Documents/AAA_EPFL/BA6/Software DP/House-Organizer/app/src/main/res/drawable-v24/ic_launcher_foreground.xml" value="0.2595" />
+        <entry key="..\:/Users/flori/OneDrive/Documents/AAA_EPFL/BA6/Software DP/House-Organizer/app/src/main/res/drawable/ic_launcher_background.xml" value="0.2595" />
+        <entry key="..\:/Users/flori/OneDrive/Documents/AAA_EPFL/BA6/Software DP/House-Organizer/app/src/main/res/drawable/remove_person.xml" value="0.2595" />
+        <entry key="..\:/Users/flori/OneDrive/Documents/AAA_EPFL/BA6/Software DP/House-Organizer/app/src/main/res/layout/activity_main_screen.xml" value="0.12273550724637682" />
+        <entry key="..\:/Users/flori/OneDrive/Documents/AAA_EPFL/BA6/Software DP/House-Organizer/app/src/main/res/layout/shop_item_dialog.xml" value="0.2" />
+        <entry key="..\:/Users/flori/OneDrive/Documents/AAA_EPFL/BA6/Software DP/House-Organizer/app/src/main/res/layout/shoplist_row.xml" value="0.4" />
+        <entry key="..\:/Users/flori/OneDrive/Documents/AAA_EPFL/BA6/Software DP/House-Organizer/app/src/main/res/menu/bottom_nav_menu.xml" value="0.264" />
+        <entry key="..\:/Users/flori/OneDrive/Documents/AAA_EPFL/BA6/Software DP/House-Organizer/app/src/main/res/xml/root_preferences.xml" value="0.15896739130434784" />
         <entry key="app/src/main/res/drawable-v24/ic_launcher_foreground.xml" value="0.2255" />
         <entry key="app/src/main/res/drawable/ic_launcher_background.xml" value="0.2255" />
         <entry key="app/src/main/res/layout/activity_add_expense.xml" value="0.35625" />
