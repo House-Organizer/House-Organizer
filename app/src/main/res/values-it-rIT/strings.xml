@@ -37,7 +37,7 @@
     <string name="duplicate_user">Utente già presente!</string>
     <string name="not_owner">Non sei il proprietario!</string>
     <string name="owner_change_success">Il proprietario è stato cambiato con successo</string>
-    <string name="add_user_success">Aggiunto con successo l\'utente</string>
+    <string name="add_user_success">Utente aggiunto</string>
     <string name="remove_user_success">Rimosso con successo l\'utente</string>
     <string name="QR_invalid">Non è un\'abitazione valida</string>
     <string name="remove_user">Rimuovere l\'utente</string>
@@ -52,7 +52,7 @@
     <string name="dark_mode_title">Modo scuro</string>
     <string name="lang_title">Lingua</string>
     <string name="attachment_title">Scarica gli allegati</string>
-    <string name="attachment_summary_on">"Scarica automaticamente gli allegati per il calendario "</string>
+    <string name="attachment_summary_on">Scarica automaticamente gli allegati per il calendario</string>
     <string name="attachment_summary_off">Scarica gli allegati solo se richiesti manualmente</string>
     <string name="task_title_hint">Nome</string>
     <string name="task_description_hint">Descrizione</string>

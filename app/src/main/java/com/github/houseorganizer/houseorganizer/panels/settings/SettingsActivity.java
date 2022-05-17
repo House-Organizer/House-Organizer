@@ -10,6 +10,7 @@ import androidx.preference.PreferenceFragmentCompat;
 
 import com.github.houseorganizer.houseorganizer.R;
 import com.github.houseorganizer.houseorganizer.panels.login.LoginActivity;
+import com.github.houseorganizer.houseorganizer.panels.main_activities.MainScreenActivity;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FieldPath;
@@ -66,8 +67,10 @@ public class SettingsActivity extends ThemedAppCompatActivity {
                    .document("email-to-nickname-translations")
                    .update(field, sharedPreferences.getString("nickname",""));
             }
-            Intent intent = new Intent(getContext(), SettingsActivity.class);
-            startActivity(intent);
+            if(s.equals("theme") || s.equals("lang")) { //Settings that change UI
+                Intent intent = new Intent(getContext(), MainScreenActivity.class);
+                startActivity(intent);
+            }
         }
 
         @Override
