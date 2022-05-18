@@ -2,7 +2,6 @@ package com.github.houseorganizer.houseorganizer.panels.main_activities;
 
 import androidx.annotation.IdRes;
 
-import com.github.houseorganizer.houseorganizer.R;
 import com.github.houseorganizer.houseorganizer.task.TaskList;
 import com.github.houseorganizer.houseorganizer.task.TaskListAdapter;
 import com.github.houseorganizer.houseorganizer.task.TaskView;

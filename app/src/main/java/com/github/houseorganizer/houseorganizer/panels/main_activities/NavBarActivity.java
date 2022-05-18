@@ -1,9 +1,6 @@
 package com.github.houseorganizer.houseorganizer.panels.main_activities;
 
-import android.content.Context;
 import android.content.Intent;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 
 import androidx.annotation.IdRes;
 import androidx.appcompat.app.AppCompatActivity;
