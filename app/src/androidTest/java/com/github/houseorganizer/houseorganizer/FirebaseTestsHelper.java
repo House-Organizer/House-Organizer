@@ -291,7 +291,7 @@ public class FirebaseTestsHelper {
 
         // Store new shop list with one item for TEST_HOUSEHOLD_NAMES[0] on Firebase
         DocumentReference household = db.collection("households")
-                .document(FirebaseTestsHelper.TEST_HOUSEHOLD_NAMES[0]);
+                .document(TEST_HOUSEHOLD_NAMES[0]);
         Billsharer bs = new Billsharer(household);
         Task<DocumentSnapshot> t1 = bs.startUpBillsharer();
         Tasks.await(t1);
@@ -303,7 +303,7 @@ public class FirebaseTestsHelper {
 
         // Store new shop list with one item for TEST_HOUSEHOLD_NAMES[1] on Firebase
         household = db.collection("households")
-                .document(FirebaseTestsHelper.TEST_HOUSEHOLD_NAMES[1]);
+                .document(TEST_HOUSEHOLD_NAMES[1]);
         bs = new Billsharer(household);
         t1 = bs.startUpBillsharer();
         Tasks.await(t1);
@@ -320,9 +320,8 @@ public class FirebaseTestsHelper {
         for (String resident : residents) {
             shares.put(resident, cost/residents.size());
         }
-        Expense expense = new Expense("beers", cost, TEST_USERS_EMAILS[0],
+        return new Expense("beers", cost, TEST_USERS_EMAILS[0],
                 shares);
-        return expense;
     }
 
     /**
