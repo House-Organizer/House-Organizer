@@ -17,9 +17,15 @@
 
         <ListPreference
             android:key="theme"
-            android:title="Color theme"
+            android:title="@string/color_theme"
             android:entries="@array/colorThemes"
             android:entryValues="@array/colorThemesIds"/>
+
+        <ListPreference
+            android:key="lang"
+            android:title="@string/lang_title"
+            android:entries="@array/pref_language"
+            android:entryValues="@array/pref_language_values"/>
 
     </PreferenceCategory>
 
