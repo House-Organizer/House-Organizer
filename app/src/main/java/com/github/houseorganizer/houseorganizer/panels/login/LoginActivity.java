@@ -19,10 +19,12 @@ import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.common.api.ApiException;
+import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
 
 public class LoginActivity extends AppCompatActivity {
@@ -100,18 +102,26 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void manageTask(Task<AuthResult> task, String func) {
-        if (task.isSuccessful()) {
-            // If sign in succeeds launch MainScreenActivity
-            Log.d(getString(R.string.tag_login_activity), func + ":success");
-            Intent intent = new Intent(LoginActivity.this, MainScreenActivity.class);
-            intent.putExtra("LoadHouse", true);
-            startActivity(intent);
-            finish();
-        } else {
-            // If sign in fails, display a message to the user.
-            logAndToast(getString(R.string.tag_login_activity), func + ":failure", task.getException(),
-                    LoginActivity.this, "Authentication failed.");
-        }
+        OnFailureListener authFailed = exception ->
+                logAndToast(getString(R.string.tag_login_activity), func + ":failure",
+                        exception, LoginActivity.this, "Authentication failed.");
+
+        task.addOnFailureListener(authFailed)
+            .addOnSuccessListener(authResult -> {
+                FirebaseUser newUser = authResult.getUser();
+                assert newUser != null;
+                if (newUser.isAnonymous()) {
+                    newUser.updateEmail(newUser.getUid() + "@house-org.com")
+                            .addOnFailureListener(authFailed)
+                            .addOnSuccessListener(v -> {
+                                Log.d(getString(R.string.tag_login_activity), func + ":success");
+                                Intent intent = new Intent(LoginActivity.this, MainScreenActivity.class);
+                                intent.putExtra("LoadHouse", true);
+                                startActivity(intent);
+                                finish();
+                            });
+                }
+            });
     }
 
     private void signInAnonymously() {

@@ -92,6 +92,7 @@ public class MainScreenActivity extends TaskFragmentNavBarActivity {
         setContentView(R.layout.activity_main_screen);
 
         mUser = FirebaseAuth.getInstance().getCurrentUser();
+
         db = FirebaseFirestore.getInstance();
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
 
