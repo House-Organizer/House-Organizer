@@ -5,6 +5,7 @@ import static com.github.houseorganizer.houseorganizer.util.Util.getSharedPrefs;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.ViewTreeObserver;
 
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -14,15 +15,26 @@ import com.github.houseorganizer.houseorganizer.billsharer.Billsharer;
 import com.github.houseorganizer.houseorganizer.billsharer.ExpenseAdapter;
 import com.github.houseorganizer.houseorganizer.panels.billsharer.BalanceActivity;
 import com.github.houseorganizer.houseorganizer.util.Util;
+import com.github.houseorganizer.houseorganizer.util.interfaces.RecyclerViewIdlingCallback;
+import com.github.houseorganizer.houseorganizer.util.interfaces.RecyclerViewLayoutCompleteListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.OptionalInt;
 
-public class ExpenseActivity extends NavBarActivity {
+public class ExpenseActivity extends NavBarActivity implements
+        ViewTreeObserver.OnGlobalLayoutListener,
+        RecyclerViewIdlingCallback {
 
     private Billsharer bs;
     private ExpenseAdapter adapter;
     private final FirebaseFirestore db = FirebaseFirestore.getInstance();
+
+    // Flag to indicate if the layout for the recyclerview has complete. This should only be used
+    // when the data in the recyclerview has been changed after the initial loading
+    private boolean recyclerViewLayoutCompleted;
+    // Listener to be set by the idling resource, so that it can be notified when recyclerview
+    // layout has been done
+    private RecyclerViewLayoutCompleteListener listener;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,16 +47,21 @@ public class ExpenseActivity extends NavBarActivity {
 
         initializeData();
 
-        findViewById(R.id.expense_add_item).setOnClickListener(l -> adapter.addExpense(this));
-        findViewById(R.id.expense_expenses).setOnClickListener(l -> bs.refreshExpenses()
-                .addOnCompleteListener(t -> {
-           if (!t.isSuccessful()) {
-               Util.logAndToast("ExpenseActivity", "ExpenseActivity:refreshExpense:failure",
-                       t.getException(), getApplicationContext(), "Failure to refresh expenses");
-           }
-        }));
+        findViewById(R.id.expense_add_item).setOnClickListener(l -> {
+            recyclerViewLayoutCompleted = false;
+            adapter.addExpense(this);
+        });
+        findViewById(R.id.expense_expenses).setOnClickListener(l -> {
+            recyclerViewLayoutCompleted = false;
+            bs.refreshExpenses().addOnCompleteListener(t -> {
+                if (!t.isSuccessful()) {
+                    Util.logAndToast("ExpenseActivity", "ExpenseActivity:refreshExpense:failure",
+                            t.getException(), getApplicationContext(), "Failure to refresh expenses");
+                }
+            });
+        });
         findViewById(R.id.expense_balances).setOnClickListener(l ->
-                startActivity(new Intent(ExpenseActivity.this, BalanceActivity.class))
+            startActivity(new Intent(ExpenseActivity.this, BalanceActivity.class))
         );
 
         super.setUpNavBar(R.id.nav_bar, OptionalInt.of(R.id.nav_bar_bs));
@@ -80,7 +97,34 @@ public class ExpenseActivity extends NavBarActivity {
 
     @Override
     protected CurrentActivity currentActivity() {
-        return CurrentActivity.BILLSHARER;
+        return CurrentActivity.EXPENSE;
     }
 
+    @Override
+    public void onGlobalLayout() {
+        if (listener != null) {
+            // Set flag to let the idling resource know that processing has completed and is now idle
+            recyclerViewLayoutCompleted = true;
+
+            // Notify the listener (should be in the idling resource)
+            listener.onLayoutCompleted();
+        }
+    }
+
+    @Override
+    public void setRecyclerViewLayoutCompleteListener(RecyclerViewLayoutCompleteListener listener) {
+        this.listener = listener;
+    }
+
+    @Override
+    public void removeRecyclerViewLayoutCompleteListener(RecyclerViewLayoutCompleteListener listener) {
+        if (this.listener != null && this.listener == listener) {
+            this.listener = null;
+        }
+    }
+
+    @Override
+    public boolean isRecyclerViewLayoutCompleted() {
+        return recyclerViewLayoutCompleted;
+    }
 }

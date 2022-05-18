@@ -1,14 +1,12 @@
 package com.github.houseorganizer.houseorganizer.panels.main_activities;
 
-import android.content.Context;
 import android.content.Intent;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 
 import androidx.annotation.IdRes;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.github.houseorganizer.houseorganizer.R;
+import com.github.houseorganizer.houseorganizer.panels.billsharer.BalanceActivity;
 import com.github.houseorganizer.houseorganizer.panels.settings.ThemedAppCompatActivity;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.firestore.DocumentReference;
@@ -21,7 +19,8 @@ public abstract class NavBarActivity extends ThemedAppCompatActivity {
         CALENDAR(R.id.nav_bar_calendar, CalendarActivity.class),
         GROCERIES(R.id.nav_bar_cart, GroceriesActivity.class),
         TASKS(R.id.nav_bar_task, TaskListActivity.class),
-        BILLSHARER(R.id.nav_bar_bs, ExpenseActivity.class);
+        EXPENSE(R.id.nav_bar_bs, ExpenseActivity.class),
+        BALANCE(R.id.nav_bar_bs, BalanceActivity.class);
 
         protected final int id;
         protected final Class<? extends AppCompatActivity> panelActivity;
