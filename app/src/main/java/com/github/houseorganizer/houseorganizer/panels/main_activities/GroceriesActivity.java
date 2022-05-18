@@ -10,8 +10,8 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.github.houseorganizer.houseorganizer.R;
 import com.github.houseorganizer.houseorganizer.shop.FirestoreShopList;
 import com.github.houseorganizer.houseorganizer.shop.ShopListAdapter;
-import com.github.houseorganizer.houseorganizer.util.RecyclerViewIdlingCallback;
-import com.github.houseorganizer.houseorganizer.util.RecyclerViewLayoutCompleteListener;
+import com.github.houseorganizer.houseorganizer.util.interfaces.RecyclerViewIdlingCallback;
+import com.github.houseorganizer.houseorganizer.util.interfaces.RecyclerViewLayoutCompleteListener;
 import com.github.houseorganizer.houseorganizer.util.Util;
 import com.google.firebase.firestore.FirebaseFirestore;
 
@@ -65,6 +65,7 @@ public class GroceriesActivity extends NavBarActivity implements
                         shopList = t.getResult().getFirestoreShopList();
                         shopListAdapter = t.getResult();
                         shopList.getOnlineReference().addSnapshotListener((d, e) -> {
+                            if(d == null || d.getData() == null)return;
                             shopList = FirestoreShopList.buildShopList(d);
                             shopListAdapter.setShopList(shopList);
                         });

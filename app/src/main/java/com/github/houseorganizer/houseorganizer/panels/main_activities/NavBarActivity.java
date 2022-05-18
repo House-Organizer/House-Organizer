@@ -1,13 +1,12 @@
 package com.github.houseorganizer.houseorganizer.panels.main_activities;
 
-import android.content.Context;
 import android.content.Intent;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 
 import androidx.annotation.IdRes;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.github.houseorganizer.houseorganizer.R;
+import com.github.houseorganizer.houseorganizer.panels.billsharer.BalanceActivity;
 import com.github.houseorganizer.houseorganizer.panels.settings.ThemedAppCompatActivity;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.firestore.DocumentReference;
@@ -16,23 +15,24 @@ import java.util.OptionalInt;
 
 public abstract class NavBarActivity extends ThemedAppCompatActivity {
     protected enum CurrentActivity{
-        MAIN("Main Screen", MainScreenActivity.class),
-        CALENDAR("Calendar", CalendarActivity.class),
-        GROCERIES("Groceries", GroceriesActivity.class),
-        TASKS("Tasks", TaskListActivity.class),
-        BILLSHARER("Billsharer", ExpenseActivity.class);
+        MAIN(R.id.nav_bar_menu, MainScreenActivity.class),
+        CALENDAR(R.id.nav_bar_calendar, CalendarActivity.class),
+        GROCERIES(R.id.nav_bar_cart, GroceriesActivity.class),
+        TASKS(R.id.nav_bar_task, TaskListActivity.class),
+        EXPENSE(R.id.nav_bar_bs, ExpenseActivity.class),
+        BALANCE(R.id.nav_bar_bs, BalanceActivity.class);
 
-        protected final String name;
+        protected final int id;
         protected final Class<? extends AppCompatActivity> panelActivity;
 
-        CurrentActivity(String name, Class<? extends AppCompatActivity> panelActivity) {
-            this.name = name;
+        CurrentActivity(int id, Class<? extends AppCompatActivity> panelActivity) {
+            this.id = id;
             this.panelActivity = panelActivity;
         }
 
-        protected static CurrentActivity activityWithName(String name) {
+        protected static CurrentActivity activityWithId(int id) {
             for (CurrentActivity activity : values()) {
-                if (activity.name.equals(name)) {
+                if (activity.id == id) {
                     return activity;
                 }
             }
@@ -44,9 +44,9 @@ public abstract class NavBarActivity extends ThemedAppCompatActivity {
     abstract protected CurrentActivity currentActivity();
 
     // Hypothesis: the buttonText is always correct
-    protected boolean changeActivity(String buttonText) {
-        if(!currentActivity().name.equals(buttonText)) {
-            Intent intent = new Intent(this, CurrentActivity.activityWithName(buttonText).panelActivity);
+    protected boolean changeActivity(int buttonId) {
+        if(currentActivity().id != buttonId) {
+            Intent intent = new Intent(this, CurrentActivity.activityWithId(buttonId).panelActivity);
             intent.putExtra("house", currentHouse.getId());
             startActivity(intent);
         }
@@ -59,6 +59,7 @@ public abstract class NavBarActivity extends ThemedAppCompatActivity {
         if(navBarButtonId.isPresent()) {
             menu.setSelectedItemId(navBarButtonId.getAsInt());
         }
-        menu.setOnItemSelectedListener(l -> changeActivity(l.getTitle().toString()));
+        menu.setOnItemSelectedListener(l -> changeActivity(l.getItemId()));
+
     }
 }

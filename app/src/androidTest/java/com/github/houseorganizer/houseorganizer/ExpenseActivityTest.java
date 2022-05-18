@@ -1,5 +1,6 @@
 package com.github.houseorganizer.houseorganizer;
 
+import static androidx.test.espresso.Espresso.onData;
 import static androidx.test.espresso.Espresso.onView;
 import static androidx.test.espresso.action.ViewActions.click;
 import static androidx.test.espresso.action.ViewActions.typeText;
@@ -12,8 +13,13 @@ import static androidx.test.espresso.matcher.ViewMatchers.isClickable;
 import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static androidx.test.espresso.matcher.ViewMatchers.isEnabled;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
+import static androidx.test.espresso.matcher.ViewMatchers.withSpinnerText;
 import static androidx.test.espresso.matcher.ViewMatchers.withText;
 import static androidx.test.platform.app.InstrumentationRegistry.getInstrumentation;
+import static com.github.houseorganizer.houseorganizer.FirebaseTestsHelper.TEST_USERS_EMAILS;
+import static org.hamcrest.CoreMatchers.allOf;
+import static org.hamcrest.CoreMatchers.instanceOf;
+import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.Matchers.containsString;
 
 import android.app.Activity;
@@ -28,11 +34,10 @@ import androidx.test.ext.junit.runners.AndroidJUnit4;
 import androidx.test.runner.lifecycle.ActivityLifecycleMonitorRegistry;
 import androidx.test.runner.lifecycle.Stage;
 
-import com.github.houseorganizer.houseorganizer.util.interfaces.RecyclerViewIdlingCallback;
-import com.github.houseorganizer.houseorganizer.util.RecyclerViewLayoutCompleteIdlingResource;
-import com.github.houseorganizer.houseorganizer.panels.main_activities.CalendarActivity;
+import com.github.houseorganizer.houseorganizer.panels.main_activities.ExpenseActivity;
 import com.github.houseorganizer.houseorganizer.panels.main_activities.MainScreenActivity;
-
+import com.github.houseorganizer.houseorganizer.util.RecyclerViewLayoutCompleteIdlingResource;
+import com.github.houseorganizer.houseorganizer.util.interfaces.RecyclerViewIdlingCallback;
 import com.google.firebase.auth.FirebaseAuth;
 
 import org.junit.AfterClass;
@@ -47,7 +52,7 @@ import java.util.Iterator;
 import java.util.concurrent.ExecutionException;
 
 @RunWith(AndroidJUnit4.class)
-public class GroceriesActivityTest {
+public class ExpenseActivityTest {
 
     private static FirebaseAuth auth;
     private static RecyclerViewLayoutCompleteIdlingResource idlingResource;
@@ -75,69 +80,74 @@ public class GroceriesActivityTest {
 
     private static Activity getCurrentActivity() {
         final Activity[] currentActivity = {null};
-
-        getInstrumentation().runOnMainSync(new Runnable() {
-            public void run() {
-                Collection<Activity> resumedActivity = ActivityLifecycleMonitorRegistry.getInstance().getActivitiesInStage(Stage.RESUMED);
-                Iterator<Activity> it = resumedActivity.iterator();
-                currentActivity[0] = it.next();
-            }
+        getInstrumentation().runOnMainSync(() -> {
+            Collection<Activity> resumedActivity = ActivityLifecycleMonitorRegistry.getInstance().getActivitiesInStage(Stage.RESUMED);
+            Iterator<Activity> it = resumedActivity.iterator();
+            currentActivity[0] = it.next();
         });
-
         return currentActivity[0];
     }
 
     @Before
-    public void openActivity() throws InterruptedException {
+    public void openActivity() {
         Context context = getInstrumentation().getTargetContext();
         context.sendBroadcast(new Intent(Intent.ACTION_CLOSE_SYSTEM_DIALOGS));
 
         onView(withId(R.id.house_imageButton)).perform(click());
         onView(withId(R.id.housesView))
                 .perform(RecyclerViewActions.actionOnItemAtPosition(0, click()));
-        onView(withId(R.id.nav_bar_cart)).perform(click());
+        onView(withId(R.id.nav_bar_bs)).perform(click());
     }
 
-    private void addNewItem(String name, int quantity, String unit){
-        onView(withId(R.id.groceries_add)).perform(click());
-        onView(withId(R.id.edit_text_name)).perform(typeText(name));
-        onView(withId(R.id.edit_text_quantity)).perform(typeText(""+quantity));
-        onView(withId(R.id.edit_text_unit)).perform(typeText(unit));
-        onView(withText(R.string.add)).perform(click());
-    }
-
-    @Test
-    public void addTaskButtonAvailable(){
-        onView(withId(R.id.groceries_add)).check(matches(isEnabled()));
-        onView(withId(R.id.groceries_add)).check(matches(isDisplayed()));
-        onView(withId(R.id.groceries_add)).check(matches(isClickable()));
+    private void addNewExpense(String title, double cost, String payee){
+        onView(withId(R.id.expense_add_item)).perform(click());
+        onView(withId(R.id.expense_edit_title)).perform(typeText(title));
+        onView(withId(R.id.expense_edit_cost)).perform(typeText(""+cost));
+        onView(withId(R.id.expense_edit_payee)).perform(click());
+        onData(allOf(is(instanceOf(String.class)), is(payee))).perform(click());
+        onView(withId(R.id.expense_edit_payee)).check(matches(withSpinnerText(containsString(payee))));
+        onView(withText(R.string.confirm)).perform(click());
     }
 
     @Test
-    public void removePickedUpAvailable(){
-        onView(withId(R.id.groceries_picked_up_button)).check(matches(isEnabled()));
-        onView(withId(R.id.groceries_picked_up_button)).check(matches(isDisplayed()));
-        onView(withId(R.id.groceries_picked_up_button)).check(matches(isClickable()));
+    public void addExpenseButtonAvailable(){
+        onView(withId(R.id.expense_add_item)).check(matches(isEnabled()));
+        onView(withId(R.id.expense_add_item)).check(matches(isDisplayed()));
+        onView(withId(R.id.expense_add_item)).check(matches(isClickable()));
     }
 
     @Test
-    public void shopListHasCorrectNumberOfItems() {
-        onView(withId(R.id.groceries_recycler)).check(matches(hasChildCount(1)));
+    public void expensesButtonAvailable(){
+        onView(withId(R.id.expense_expenses)).check(matches(isEnabled()));
+        onView(withId(R.id.expense_expenses)).check(matches(isDisplayed()));
+        onView(withId(R.id.expense_expenses)).check(matches(isClickable()));
     }
 
     @Test
-    public void addingItemShowsNewItem() {
-        addNewItem("item", 2, "kg");
-        // Checking item exists in the view
-        onView(withId(R.id.groceries_recycler)).check(matches(hasChildCount(2)));
-        onView(withId(R.id.groceries_recycler)).check(matches(hasDescendant(withText(containsString("item")))));
-        onView(withId(R.id.groceries_recycler)).check(matches(hasDescendant(withText(containsString("2")))));
-        onView(withId(R.id.groceries_recycler)).check(matches(hasDescendant(withText(containsString("kg")))));
+    public void balancesButtonAvailable(){
+        onView(withId(R.id.expense_balances)).check(matches(isEnabled()));
+        onView(withId(R.id.expense_balances)).check(matches(isDisplayed()));
+        onView(withId(R.id.expense_balances)).check(matches(isClickable()));
+    }
 
-        onView(withId(R.id.groceries_recycler))
+    @Test
+    public void ExpenseListHasCorrectNumberOfExpense() {
+        onView(withId(R.id.expense_recycler)).check(matches(hasChildCount(1)));
+    }
+
+    @Test
+    public void addingExpenseShowsNewExpense() {
+        addNewExpense("test", 20.5, TEST_USERS_EMAILS[1]);
+        // Checking expense exists in the view
+        onView(withId(R.id.expense_recycler)).check(matches(hasChildCount(2)));
+        onView(withId(R.id.expense_recycler)).check(matches(hasDescendant(withText(containsString("test")))));
+        onView(withId(R.id.expense_recycler)).check(matches(hasDescendant(withText(containsString("20.5")))));
+        onView(withId(R.id.expense_recycler)).check(matches(hasDescendant(withText(containsString(TEST_USERS_EMAILS[1])))));
+
+        onView(withId(R.id.expense_recycler))
                 .perform(RecyclerViewActions.actionOnItemAtPosition(
                         1,
-                        RecyclerViewHelper.clickChildViewWithId(R.id.delete_item_button)));
+                        RecyclerViewHelper.clickChildViewWithId(R.id.expense_remove_check)));
     }
 
     @Test
@@ -149,31 +159,22 @@ public class GroceriesActivityTest {
     }
 
     @Test
-    public void navBarTakesToCalendarScreen(){
+    public void navBarTakesToExpenseScreen(){
         Intents.init();
-        onView(withId(R.id.nav_bar_calendar)).perform(click());
-        intended(hasComponent(CalendarActivity.class.getName()));
+        onView(withId(R.id.nav_bar_bs)).perform(click());
+        intended(hasComponent(ExpenseActivity.class.getName()));
         Intents.release();
     }
 
     @Test
-    public void deletingItemRemovesIt() throws InterruptedException {
-        addNewItem("item", 4, "g");
-        onView(withId(R.id.groceries_recycler))
+    public void deletingExpenseRemovesIt() {
+        addNewExpense("expense", 40, TEST_USERS_EMAILS[0]);
+        onView(withId(R.id.expense_recycler))
                 .perform(RecyclerViewActions.actionOnItemAtPosition(
                         1,
-                        RecyclerViewHelper.clickChildViewWithId(R.id.delete_item_button)));
-        onView(withId(R.id.groceries_recycler)).check(matches(hasChildCount(1)));
+                        RecyclerViewHelper.clickChildViewWithId(R.id.expense_remove_check)));
+        onView(withId(R.id.expense_recycler)).check(matches(hasChildCount(1)));
     }
 
-    @Test
-    public void removePickedUpButtonWorks() throws InterruptedException {
-        addNewItem("1rst", 8, "ol");
-        addNewItem("2nd", 5, "il");
-        onView(withId(R.id.groceries_recycler)).perform(
-                RecyclerViewActions.actionOnItemAtPosition(1, click()),
-                RecyclerViewActions.actionOnItemAtPosition(2, click()));
-        onView(withId(R.id.groceries_picked_up_button)).perform(click());
-        onView(withId(R.id.groceries_recycler)).check(matches(hasChildCount(1)));
-    }
+
 }

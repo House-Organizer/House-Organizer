@@ -59,12 +59,7 @@ public class ShopListAdapter extends RecyclerView.Adapter<ShopListAdapter.ItemsH
                 .continueWithTask(r -> {
                     // If empty -> create new house
                     if (r.getResult().getDocuments().size() == 0) {
-                        FirestoreShopList shopList = new FirestoreShopList(currentHouse);
-                        return FirestoreShopList.storeNewShopList(root, new ShopList(), currentHouse)
-                                .continueWith(t -> {
-                                    shopList.setOnlineReference(t.getResult());
-                                    return new ShopListAdapter(shopList);
-                                });
+                        return null;
                         // If not empty then retrieve the existing shopList
                     } else {
                         return FirestoreShopList.retrieveShopList(root, currentHouse).continueWith(t -> {
