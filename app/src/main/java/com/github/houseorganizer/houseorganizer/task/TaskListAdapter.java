@@ -99,7 +99,6 @@ public final class TaskListAdapter extends RecyclerView.Adapter<BiViewHolder<But
 
             View taskEditor = inflater.inflate(R.layout.task_editor, null);
 
-            /* Task name & description fully customizable now */
             EditText taskNameEditor = taskEditor.findViewById(R.id.task_title_input);
             EditText taskDescEditor = taskEditor.findViewById(R.id.task_description_input);
             TaskView.setUpTaskView(t, taskNameEditor, taskDescEditor, titleButton);
@@ -119,8 +118,6 @@ public final class TaskListAdapter extends RecyclerView.Adapter<BiViewHolder<But
                     .setView(taskEditor)
                     .show();
 
-            // Patch s.t. the alert dialog window doesn't close
-            // after pressing `Add subtask`
             alertDialog.getButton(AlertDialog.BUTTON_NEUTRAL).setOnClickListener(
                     dialog -> {
                         t.addSubTask(new HTask.SubTask(""));
