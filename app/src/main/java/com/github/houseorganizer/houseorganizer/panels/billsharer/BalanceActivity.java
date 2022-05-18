@@ -76,7 +76,7 @@ public class BalanceActivity extends NavBarActivity implements
 
     @Override
     protected CurrentActivity currentActivity() {
-        return CurrentActivity.BILLSHARER;
+        return CurrentActivity.BALANCE;
     }
 
     @Override
