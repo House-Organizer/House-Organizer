@@ -175,8 +175,8 @@
     <string name="debt">Debt</string>
 
     <!-- Notifications TODO translate into other languages (french done) -->
-    <string name="reminder">Reminder</string>
-    <string name="reminder_message">Don\'t forget your task :</string>
-    <string name="notify">Notify</string>
+    <string name="reminder" translatable="false">Reminder</string>
+    <string name="reminder_message" translatable="false">Don\'t forget your task :</string>
+    <string name="notify" translatable="false">Notify</string>
 
 </resources>
