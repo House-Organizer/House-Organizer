@@ -136,7 +136,7 @@ public class GroceriesActivityTest {
 
         onView(withId(R.id.groceries_recycler))
                 .perform(RecyclerViewActions.actionOnItemAtPosition(
-                        1,
+                        4,
                         RecyclerViewHelper.clickChildViewWithId(R.id.delete_item_button)));
     }
 
