@@ -287,7 +287,7 @@ public class TaskListActivityTest {
     }
 
     @Test
-    public void notifySendsNotification() throws InterruptedException {
+    public void notifySendsNotification() {
         // Add assignee to the task
         onView(withText(FirebaseTestsHelper.TEST_TASK_TITLE)).perform(click());
         onView(withText(R.string.assignees_button)).perform(click());
@@ -305,7 +305,7 @@ public class TaskListActivityTest {
         device.openNotification();
         device.wait(Until.hasObject(By.text("Reminder")), TIMEOUT);
         UiObject2 title = device.findObject(By.text("Reminder"));
-        UiObject2 text = device.findObject(By.text("Don't forget your task : "));
+        UiObject2 text = device.findObject(By.text("Don't forget your task : " + FirebaseTestsHelper.TEST_TASK_TITLE));
         assertEquals("Reminder", title.getText());
         assertEquals("Don't forget your task : ", text.getText());
     }
