@@ -12,7 +12,7 @@
         <entry key="app/src/main/res/layout/activity_create_household.xml" value="0.1" />
         <entry key="app/src/main/res/layout/activity_dialog_expense.xml" value="0.33" />
         <entry key="app/src/main/res/layout/activity_edit_household.xml" value="0.1" />
-        <entry key="app/src/main/res/layout/activity_expense.xml" value="0.1" />
+        <entry key="app/src/main/res/layout/activity_expense.xml" value="0.33" />
         <entry key="app/src/main/res/layout/activity_greeting.xml" value="0.25416666666666665" />
         <entry key="app/src/main/res/layout/activity_groceries.xml" value="0.15691489361702127" />
         <entry key="app/src/main/res/layout/activity_home_selection.xml" value="0.1796875" />
@@ -40,7 +40,7 @@
         <entry key="app/src/main/res/layout/fragment_second.xml" value="0.2210144927536232" />
         <entry key="app/src/main/res/layout/house_row.xml" value="0.22" />
         <entry key="app/src/main/res/layout/shop_item_dialog.xml" value="0.17325227963525835" />
-        <entry key="app/src/main/res/layout/shoplist_row.xml" value="0.1" />
+        <entry key="app/src/main/res/layout/shoplist_row.xml" value="0.33" />
         <entry key="app/src/main/res/layout/subtask_row.xml" value="0.25" />
         <entry key="app/src/main/res/layout/task_editor.xml" value="0.22" />
         <entry key="app/src/main/res/layout/task_list_screen.xml" value="0.20153985507246377" />

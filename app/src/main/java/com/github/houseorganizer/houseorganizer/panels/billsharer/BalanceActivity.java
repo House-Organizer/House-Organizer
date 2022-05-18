@@ -64,7 +64,7 @@ public class BalanceActivity extends NavBarActivity {
 
     @Override
     protected CurrentActivity currentActivity() {
-        return CurrentActivity.BILLSHARER;
+        return CurrentActivity.BALANCE;
     }
 
 
