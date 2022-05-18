@@ -8,6 +8,7 @@ import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -138,12 +139,17 @@ public class MainScreenActivity extends TaskFragmentNavBarActivity {
     }
 
     private void sendNotification(String task) {
+        Intent intent = new Intent(this, MainScreenActivity.class);
+        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_IMMUTABLE);
+
         String CHANNEL_ID = "0";
         NotificationCompat.Builder builder = new NotificationCompat.Builder(this, CHANNEL_ID)
                 .setContentTitle(getString(R.string.reminder))
                 .setSmallIcon(R.drawable.home_icon)
                 .setContentText(getString(R.string.reminder_message)+ " " + task)
-                .setPriority(NotificationCompat.PRIORITY_DEFAULT);
+                .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+                .setContentIntent(pendingIntent)
+                .setAutoCancel(true);
 
         // This only creates the channel if it is not created yet so it is fine to call everytime
         int importance = NotificationManager.IMPORTANCE_DEFAULT;

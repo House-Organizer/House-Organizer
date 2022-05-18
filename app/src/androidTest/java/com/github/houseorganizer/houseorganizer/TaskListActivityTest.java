@@ -18,6 +18,7 @@ import static androidx.test.espresso.matcher.ViewMatchers.withId;
 import static androidx.test.espresso.matcher.ViewMatchers.withTagValue;
 import static androidx.test.espresso.matcher.ViewMatchers.withText;
 import static com.github.houseorganizer.houseorganizer.FirebaseTestsHelper.TEST_HOUSEHOLD_NAMES;
+import static com.github.houseorganizer.houseorganizer.FirebaseTestsHelper.TEST_USERS_EMAILS;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -26,9 +27,14 @@ import static org.junit.Assert.assertTrue;
 
 import android.content.Context;
 import android.content.Intent;
+import android.support.test.uiautomator.By;
+import android.support.test.uiautomator.UiDevice;
+import android.support.test.uiautomator.UiObject2;
+import android.support.test.uiautomator.Until;
 
 import androidx.test.core.app.ApplicationProvider;
 import androidx.test.espresso.IdlingRegistry;
+import androidx.test.espresso.contrib.RecyclerViewActions;
 import androidx.test.ext.junit.rules.ActivityScenarioRule;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 import androidx.test.platform.app.InstrumentationRegistry;
@@ -278,5 +284,29 @@ public class TaskListActivityTest {
         taskPtrs = (ArrayList<DocumentReference>) metadata.get("task-ptrs");
         assertNotNull(taskPtrs);
         assertEquals(1, taskPtrs.size());
+    }
+
+    @Test
+    public void notifySendsNotification() throws InterruptedException {
+        // Add assignee to the task
+        onView(withText(FirebaseTestsHelper.TEST_TASK_TITLE)).perform(click());
+        onView(withText(R.string.assignees_button)).perform(click());
+        onView(withId(R.id.assignee_editor))
+                .perform(RecyclerViewActions.actionOnItemAtPosition(0, RecyclerViewHelper.clickChildViewWithId(R.id.assignee_interaction_button)));
+        onView(withId(R.id.assignee_editor)).perform(pressBack());
+        onView(withText(R.string.notify)).perform(click());
+
+        onView(withText(R.string.assignees_button)).perform(click());
+        // Remove assignee
+        onView(withId(R.id.assignee_editor))
+                .perform(RecyclerViewActions.actionOnItemAtPosition(0, RecyclerViewHelper.clickChildViewWithId(R.id.assignee_interaction_button)));
+        final long TIMEOUT = 10000;
+        UiDevice device = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation());
+        device.openNotification();
+        device.wait(Until.hasObject(By.text("Reminder")), TIMEOUT);
+        UiObject2 title = device.findObject(By.text("Reminder"));
+        UiObject2 text = device.findObject(By.text("Don't forget your task : "));
+        assertEquals("Reminder", title.getText());
+        assertEquals("Don't forget your task : ", text.getText());
     }
 }
