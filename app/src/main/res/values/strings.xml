@@ -1,8 +1,8 @@
 <resources>
     <!-- Facebook sign in -->
-    <string name="facebook_app_id">3250021858609713</string>
-    <string name="facebook_client_token">1ababe214e641d42a8aadaefeb569ea3</string>
-    <string name="info_facebook_button">Sign in with facebook</string>
+    <string name="facebook_app_id" translatable="false">3250021858609713</string>
+    <string name="facebook_client_token" translatable="false">1ababe214e641d42a8aadaefeb569ea3</string>
+    <string name="info_facebook_button">Sign in with Facebook</string>
 
     <string name="app_name" translatable="false">House Organizer</string>
     <string name="discoverButton"><u>Discover</u></string>
