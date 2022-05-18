@@ -100,7 +100,7 @@ public class BalanceActivityTest {
     private static Activity getCurrentActivity() {
         final Activity[] currentActivity = {null};
         getInstrumentation().runOnMainSync(() -> {
-            Collection<Activity> resumedActivity = ActivityLifecycleMonitorRegistry.getInstance().getActivitiesInStage(Stage.RESUMED);
+            Collection<Activity> resumedActivity = ActivityLifecycleMonitorRegistry.getInstance().getActivitiesInStage(Stage.CREATED);
             Iterator<Activity> it = resumedActivity.iterator();
             currentActivity[0] = it.next();
         });

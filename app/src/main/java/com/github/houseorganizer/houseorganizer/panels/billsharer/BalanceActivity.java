@@ -1,5 +1,8 @@
 package com.github.houseorganizer.houseorganizer.panels.billsharer;
 
+import static com.github.houseorganizer.houseorganizer.panels.main_activities.MainScreenActivity.CURRENT_HOUSEHOLD;
+import static com.github.houseorganizer.houseorganizer.util.Util.getSharedPrefs;
+
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.ViewTreeObserver;
@@ -39,16 +42,16 @@ public class BalanceActivity extends NavBarActivity implements
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_balance);
 
-        currentHouse = FirebaseFirestore.getInstance().collection("households")
-                .document(getIntent().getStringExtra("house"));
+        currentHouse = db.collection("households").document(
+                getSharedPrefs(this).getString(CURRENT_HOUSEHOLD, "")
+        );
+
         initializeData();
 
         findViewById(R.id.balance_balances).setOnClickListener(l -> bs.refreshBalances());
-        findViewById(R.id.balance_expenses).setOnClickListener(l -> {
-            Intent intent = new Intent(BalanceActivity.this, ExpenseActivity.class);
-            intent.putExtra("house", currentHouse.getId());
-            startActivity(intent);
-        });
+        findViewById(R.id.balance_expenses).setOnClickListener(l ->
+                startActivity(new Intent(BalanceActivity.this, ExpenseActivity.class))
+        );
 
         super.setUpNavBar(R.id.nav_bar, OptionalInt.of(R.id.nav_bar_bs));
     }

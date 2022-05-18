@@ -1,5 +1,8 @@
 package com.github.houseorganizer.houseorganizer.panels.main_activities;
 
+import static com.github.houseorganizer.houseorganizer.panels.main_activities.MainScreenActivity.CURRENT_HOUSEHOLD;
+import static com.github.houseorganizer.houseorganizer.util.Util.getSharedPrefs;
+
 import android.content.Intent;
 import android.os.Bundle;
 
@@ -19,14 +22,17 @@ public class ExpenseActivity extends NavBarActivity {
 
     private Billsharer bs;
     private ExpenseAdapter adapter;
+    private final FirebaseFirestore db = FirebaseFirestore.getInstance();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_expense);
 
-        currentHouse = FirebaseFirestore.getInstance().collection("households")
-                .document(getIntent().getStringExtra("house"));
+        currentHouse = db.collection("households").document(
+                getSharedPrefs(this).getString(CURRENT_HOUSEHOLD, "")
+        );
+
         initializeData();
 
         findViewById(R.id.expense_add_item).setOnClickListener(l -> adapter.addExpense(this));
@@ -37,11 +43,9 @@ public class ExpenseActivity extends NavBarActivity {
                        t.getException(), getApplicationContext(), "Failure to refresh expenses");
            }
         }));
-        findViewById(R.id.expense_balances).setOnClickListener(l -> {
-            Intent intent = new Intent(ExpenseActivity.this, BalanceActivity.class);
-            intent.putExtra("house", currentHouse.getId());
-            startActivity(intent);
-        });
+        findViewById(R.id.expense_balances).setOnClickListener(l ->
+                startActivity(new Intent(ExpenseActivity.this, BalanceActivity.class))
+        );
 
         super.setUpNavBar(R.id.nav_bar, OptionalInt.of(R.id.nav_bar_bs));
     }
