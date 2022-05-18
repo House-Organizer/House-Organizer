@@ -80,7 +80,7 @@ public class ExpenseAdapter extends RecyclerView.Adapter<ExpenseAdapter.ExpenseH
         new AlertDialog.Builder(ctx)
                 .setTitle("Remove Expense")
                 .setPositiveButton(R.string.confirm, (dialog, id) -> {
-                    billsharer.removeExpense(expense);
+                    billsharer.removeExpense(pos);
                     this.notifyItemRemoved(pos);
                 })
                 .setNegativeButton(R.string.cancel, (dialog, id) -> dialog.dismiss())
