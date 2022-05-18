@@ -8,7 +8,6 @@ import static androidx.test.espresso.assertion.ViewAssertions.matches;
 import static androidx.test.espresso.intent.Intents.intended;
 import static androidx.test.espresso.intent.matcher.IntentMatchers.hasComponent;
 import static androidx.test.espresso.matcher.ViewMatchers.hasChildCount;
-import static androidx.test.espresso.matcher.ViewMatchers.hasDescendant;
 import static androidx.test.espresso.matcher.ViewMatchers.isClickable;
 import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static androidx.test.espresso.matcher.ViewMatchers.isEnabled;
@@ -16,10 +15,6 @@ import static androidx.test.espresso.matcher.ViewMatchers.withId;
 import static androidx.test.espresso.matcher.ViewMatchers.withSpinnerText;
 import static androidx.test.espresso.matcher.ViewMatchers.withText;
 import static androidx.test.platform.app.InstrumentationRegistry.getInstrumentation;
-import static com.github.houseorganizer.houseorganizer.FirebaseTestsHelper.TEST_USERS_EMAILS;
-import static com.github.houseorganizer.houseorganizer.FirebaseTestsHelper.test_expense;
-import static com.github.houseorganizer.houseorganizer.panels.main_activities.MainScreenActivity.CURRENT_HOUSEHOLD;
-import static com.github.houseorganizer.houseorganizer.util.Util.getSharedPrefs;
 import static org.hamcrest.CoreMatchers.allOf;
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.is;
@@ -28,7 +23,6 @@ import static org.hamcrest.Matchers.containsString;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 
 import androidx.test.espresso.IdlingRegistry;
 import androidx.test.espresso.contrib.RecyclerViewActions;
@@ -39,8 +33,7 @@ import androidx.test.runner.lifecycle.ActivityLifecycleMonitorRegistry;
 import androidx.test.runner.lifecycle.Stage;
 
 import com.github.houseorganizer.houseorganizer.billsharer.Billsharer;
-import com.github.houseorganizer.houseorganizer.billsharer.Expense;
-import com.github.houseorganizer.houseorganizer.panels.main_activities.ExpenseActivity;
+import com.github.houseorganizer.houseorganizer.panels.billsharer.BalanceActivity;
 import com.github.houseorganizer.houseorganizer.panels.main_activities.MainScreenActivity;
 import com.github.houseorganizer.houseorganizer.util.RecyclerViewLayoutCompleteIdlingResource;
 import com.github.houseorganizer.houseorganizer.util.interfaces.RecyclerViewIdlingCallback;
@@ -48,7 +41,6 @@ import com.google.android.gms.tasks.Task;
 import com.google.android.gms.tasks.Tasks;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentReference;
-import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import org.junit.AfterClass;
@@ -66,13 +58,11 @@ import java.util.concurrent.ExecutionException;
 public class BalanceActivityTest {
 
     private static FirebaseAuth auth;
-    private static FirebaseFirestore db;
     private static RecyclerViewLayoutCompleteIdlingResource idlingResource;
     private static Billsharer bs;
 
     @Rule
-    public ActivityScenarioRule<MainScreenActivity> mainScreenActivityActivityScenarioRule =
-            new ActivityScenarioRule<>(MainScreenActivity.class);
+    public ActivityScenarioRule<BalanceActivity> rule = new ActivityScenarioRule<>(BalanceActivity.class);
 
     @BeforeClass
     public static void createFirebase() throws ExecutionException, InterruptedException {
@@ -81,9 +71,24 @@ public class BalanceActivityTest {
         FirebaseTestsHelper.setUpFirebase();
 
         auth = FirebaseAuth.getInstance();
-        db = FirebaseFirestore.getInstance();
         idlingResource = new RecyclerViewLayoutCompleteIdlingResource((RecyclerViewIdlingCallback) getCurrentActivity());
         IdlingRegistry.getInstance().register(idlingResource);
+
+        // Go in the first house
+        onView(withId(R.id.nav_bar_menu)).perform(click());
+        onView(withId(R.id.house_imageButton)).perform(click());
+        onView(withId(R.id.housesView))
+                .perform(RecyclerViewActions.actionOnItemAtPosition(0, click()));
+        onView(withId(R.id.nav_bar_bs)).perform(click());
+
+        // Retrieve the billsharer
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        DocumentReference household = db.collection("households")
+                .document(FirebaseTestsHelper.TEST_HOUSEHOLD_NAMES[0]);
+        Task<Billsharer> t = Billsharer.
+                retrieveBillsharer(db.collection("billsharers"), household);
+        Tasks.await(t);
+        bs = t.getResult();
     }
 
     @AfterClass
@@ -103,28 +108,25 @@ public class BalanceActivityTest {
     }
 
     @Before
-    public void openActivity() throws ExecutionException, InterruptedException {
+    public void dismissDialogs() {
         Context context = getInstrumentation().getTargetContext();
         context.sendBroadcast(new Intent(Intent.ACTION_CLOSE_SYSTEM_DIALOGS));
-
-        onView(withId(R.id.house_imageButton)).perform(click());
-        onView(withId(R.id.housesView))
-                .perform(RecyclerViewActions.actionOnItemAtPosition(0, click()));
-        onView(withId(R.id.nav_bar_bs)).perform(click());
-
-        DocumentReference household = db.collection("households")
-                .document(FirebaseTestsHelper.TEST_HOUSEHOLD_NAMES[0]);
-        Task<Billsharer> t = Billsharer.
-                retrieveBillsharer(db.collection("billsharers"), household);
-        Tasks.await(t);
-        bs = t.getResult();
     }
 
     private void openBalances() {
         onView(withId(R.id.expense_balances)).perform(click());
     }
 
+    private void openExpenses() {
+        onView(withId(R.id.balance_expenses)).perform(click());
+    }
+
+    /**
+     * From the Balance activity, opens the Expense activity, adds a new expense and comes back to
+     * the Balance activity.
+     */
     private void addNewExpense(String title, double cost, String payee){
+        openExpenses();
         onView(withId(R.id.expense_add_item)).perform(click());
         onView(withId(R.id.expense_edit_title)).perform(typeText(title));
         onView(withId(R.id.expense_edit_cost)).perform(typeText(""+cost));
@@ -132,6 +134,7 @@ public class BalanceActivityTest {
         onData(allOf(is(instanceOf(String.class)), is(payee))).perform(click());
         onView(withId(R.id.expense_edit_payee)).check(matches(withSpinnerText(containsString(payee))));
         onView(withText(R.string.confirm)).perform(click());
+        openBalances();
     }
 
     @Test
@@ -150,15 +153,13 @@ public class BalanceActivityTest {
 
     @Test
     public void addingExpenseShowsCorrectNumberOfDebt() {
-        addNewExpense("title", 40, bs.getResidents().get(0));
-        openBalances();
+        addNewExpense("title1", 41, bs.getResidents().get(0));
         onView(withId(R.id.balance_recycler)).check(matches(hasChildCount(bs.getResidents().size()-1)));
     }
 
     @Test
     public void deletingDebtRemovesIt() {
-        addNewExpense("title", 40, bs.getResidents().get(0));
-        openBalances();
+        addNewExpense("title2", 42, bs.getResidents().get(0));
         onView(withId(R.id.balance_recycler))
                 .perform(RecyclerViewActions.actionOnItemAtPosition(
                         1,
@@ -168,8 +169,7 @@ public class BalanceActivityTest {
 
     @Test
     public void deletingDebtCreatesNewExpense() {
-        addNewExpense("title", 40, bs.getResidents().get(0));
-        openBalances();
+        addNewExpense("title3", 43, bs.getResidents().get(0));
         onView(withId(R.id.balance_recycler))
                 .perform(RecyclerViewActions.actionOnItemAtPosition(
                         1,
@@ -180,7 +180,6 @@ public class BalanceActivityTest {
 
     @Test
     public void navBarTakesBackToMainScreen(){
-        openBalances();
         Intents.init();
         onView(withId(R.id.nav_bar_menu)).perform(click());
         intended(hasComponent(MainScreenActivity.class.getName()));
