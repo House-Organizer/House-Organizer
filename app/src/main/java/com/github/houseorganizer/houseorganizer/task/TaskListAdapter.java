@@ -2,6 +2,8 @@ package com.github.houseorganizer.houseorganizer.task;
 
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -9,15 +11,19 @@ import android.widget.Button;
 import android.widget.EditText;
 
 import androidx.annotation.NonNull;
+import androidx.core.app.NotificationCompat;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.github.houseorganizer.houseorganizer.R;
+import com.github.houseorganizer.houseorganizer.calendar.Calendar;
 import com.github.houseorganizer.houseorganizer.util.BiViewHolder;
 import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -113,6 +119,7 @@ public final class TaskListAdapter extends RecyclerView.Adapter<BiViewHolder<But
                     = new AlertDialog.Builder(v.getContext())
                     .setNeutralButton(R.string.add_subtask, null)
                     .setPositiveButton(R.string.assignees_button, null)
+                    .setNegativeButton(R.string.notify, null)
                     .setView(taskEditor)
                     .show();
 
@@ -127,6 +134,19 @@ public final class TaskListAdapter extends RecyclerView.Adapter<BiViewHolder<But
             alertDialog.getButton(AlertDialog.BUTTON_POSITIVE)
                     .setOnClickListener(assigneeButtonListener(alertDialog, position));
 
+            alertDialog.getButton(AlertDialog.BUTTON_NEGATIVE)
+                    .setOnClickListener(notifyAssignees(position));
+        };
+    }
+
+    private View.OnClickListener notifyAssignees(int position) {
+        return v -> {
+            for (String assignee : taskList.getTaskAt(position).getAssignees()) {
+                Map<String, String> notif = new HashMap<>();
+                notif.put("user", assignee);
+                notif.put("task", taskList.getTaskAt(position).getTitle());
+                FirebaseFirestore.getInstance().collection("notifications").add(notif);
+            }
         };
     }
 

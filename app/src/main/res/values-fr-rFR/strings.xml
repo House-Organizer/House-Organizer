@@ -130,4 +130,7 @@
     <string name="unit">Unité</string>
     <string name="lang_title">Langue</string>
     <string name="password_constraints">- Doit contenir 8 caractères minimum - Doit contenir une majuscule et une minuscule - Doit contenur un caractères spécial - Ne doit pas contenir d\'espace - Les deux mots de passe doivent être identiques</string>
+    <string name="reminder">Rappel</string>
+    <string name="reminder_message">N\'oublie pas ta tâche :</string>
+    <string name="notify">Notifier</string>
 </resources>

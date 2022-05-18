@@ -6,6 +6,8 @@ import static com.github.houseorganizer.houseorganizer.util.Util.logAndToast;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -19,6 +21,7 @@ import android.view.View;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
+import androidx.core.app.NotificationCompat;
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -102,7 +105,7 @@ public class MainScreenActivity extends TaskFragmentNavBarActivity {
             locationPermission = true;
             loadData();
         }
-
+        setupNotifications();
         calendarEvents = findViewById(R.id.calendar);
         calendarAdapter = new UpcomingAdapter(calendar,
                 registerForActivityResult(new ActivityResultContracts.GetContent(), uri -> calendarAdapter.pushAttachment(uri)));
@@ -116,6 +119,43 @@ public class MainScreenActivity extends TaskFragmentNavBarActivity {
         // If you want to select the main button on the navBar,
         // use `OptionalInt.of(R.id. ...)`
         super.setUpNavBar(R.id.nav_bar, OptionalInt.empty());
+    }
+
+    private void setupNotifications() {
+        db.collection("notifications")
+                .whereEqualTo("user", mUser.getEmail())
+                .addSnapshotListener((notifications, exception) -> {
+                    if (notifications != null) {
+                        notifyFromNotif(notifications);
+                    }
+                });
+    }
+
+    private void notifyFromNotif(QuerySnapshot notifications) {
+        for (DocumentSnapshot notif : notifications.getDocuments()) {
+            Object taskName = notif.get("task");
+            if (taskName != null) {
+                sendNotification((String)taskName);
+            }
+            notif.getReference().delete();
+        }
+    }
+
+    private void sendNotification(String task) {
+        String CHANNEL_ID = "0";
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(this, CHANNEL_ID)
+                .setContentTitle(getString(R.string.reminder))
+                .setSmallIcon(R.drawable.home_icon)
+                .setContentText(getString(R.string.reminder_message)+ " " + task)
+                .setPriority(NotificationCompat.PRIORITY_DEFAULT);
+
+        // This only creates the channel if it is not created yet so it is fine to call everytime
+        int importance = NotificationManager.IMPORTANCE_DEFAULT;
+        NotificationChannel channel = new NotificationChannel(CHANNEL_ID, "notif channel", importance);
+        // Register the channel with the system
+        NotificationManager notificationManager = getSystemService(NotificationManager.class);
+        notificationManager.createNotificationChannel(channel);
+        notificationManager.notify(0, builder.build());
     }
 
     private Task<ShopListAdapter> initializeGroceriesList() {
