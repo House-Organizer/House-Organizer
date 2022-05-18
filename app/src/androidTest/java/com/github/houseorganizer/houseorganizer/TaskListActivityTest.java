@@ -307,6 +307,6 @@ public class TaskListActivityTest {
         UiObject2 title = device.findObject(By.text("Reminder"));
         UiObject2 text = device.findObject(By.text("Don't forget your task : " + FirebaseTestsHelper.TEST_TASK_TITLE));
         assertEquals("Reminder", title.getText());
-        assertEquals("Don't forget your task : ", text.getText());
+        assertEquals("Don't forget your task : " + FirebaseTestsHelper.TEST_TASK_TITLE, text.getText());
     }
 }
