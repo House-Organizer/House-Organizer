@@ -62,7 +62,7 @@ public class BalanceActivityTest {
     private static Billsharer bs;
 
     @Rule
-    public ActivityScenarioRule<BalanceActivity> rule = new ActivityScenarioRule<>(BalanceActivity.class);
+    public ActivityScenarioRule<MainScreenActivity> rule = new ActivityScenarioRule<>(MainScreenActivity.class);
 
     @BeforeClass
     public static void createFirebase() throws ExecutionException, InterruptedException {
@@ -111,6 +111,12 @@ public class BalanceActivityTest {
     public void dismissDialogs() {
         Context context = getInstrumentation().getTargetContext();
         context.sendBroadcast(new Intent(Intent.ACTION_CLOSE_SYSTEM_DIALOGS));
+
+        onView(withId(R.id.house_imageButton)).perform(click());
+        onView(withId(R.id.housesView))
+                .perform(RecyclerViewActions.actionOnItemAtPosition(0, click()));
+        onView(withId(R.id.nav_bar_bs)).perform(click());
+        onView(withId(R.id.expense_balances));
     }
 
     private void openBalances() {
