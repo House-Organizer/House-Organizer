@@ -28,11 +28,10 @@ import androidx.test.ext.junit.runners.AndroidJUnit4;
 import androidx.test.runner.lifecycle.ActivityLifecycleMonitorRegistry;
 import androidx.test.runner.lifecycle.Stage;
 
-import com.github.houseorganizer.houseorganizer.util.interfaces.RecyclerViewIdlingCallback;
-import com.github.houseorganizer.houseorganizer.util.RecyclerViewLayoutCompleteIdlingResource;
 import com.github.houseorganizer.houseorganizer.panels.main_activities.CalendarActivity;
 import com.github.houseorganizer.houseorganizer.panels.main_activities.MainScreenActivity;
-
+import com.github.houseorganizer.houseorganizer.util.RecyclerViewLayoutCompleteIdlingResource;
+import com.github.houseorganizer.houseorganizer.util.interfaces.RecyclerViewIdlingCallback;
 import com.google.firebase.auth.FirebaseAuth;
 
 import org.junit.AfterClass;
