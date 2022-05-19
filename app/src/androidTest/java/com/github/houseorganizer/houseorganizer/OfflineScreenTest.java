@@ -112,24 +112,18 @@ public class OfflineScreenTest {
 
     //@Test
     public void eventsDisplayProperly() {
-        onView(withId(R.id.offline_calendar)).check(matches(hasChildCount(EVENTS.size())));
-
         for (int i = 0; i < EVENTS.size(); ++i)
             onView(withText(EVENTS.get(i).getTitle())).check(matches(isDisplayed()));
     }
 
     //@Test
     public void tasksDisplayProperly() {
-        onView(withId(R.id.offline_task_list)).check(matches(hasChildCount(TASKS.size())));
-
         for (int i = 0; i < TASKS.size(); ++i)
             onView(withText(TASKS.get(i).getTitle())).check(matches(isDisplayed()));
     }
 
     //@Test
     public void groceriesDisplayProperly() {
-        onView(withId(R.id.offline_groceries)).check(matches(hasChildCount(GROCERIES.size())));
-
         for (int i = 0; i < GROCERIES.size(); ++i)
             onView(withText(GROCERIES.get(i).getName())).check(matches(isDisplayed()));
     }
