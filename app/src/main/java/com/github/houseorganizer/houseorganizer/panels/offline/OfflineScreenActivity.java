@@ -6,7 +6,6 @@ import android.view.View;
 
 import androidx.annotation.IdRes;
 import androidx.annotation.LayoutRes;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
