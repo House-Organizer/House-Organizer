@@ -139,11 +139,9 @@ public class MainScreenActivity extends TaskFragmentNavBarActivity {
     }
 
     private void sendNotification(String task) {
-        Intent intent = new Intent(this, MainScreenActivity.class);
-        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_IMMUTABLE);
+        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, new Intent(this, MainScreenActivity.class), PendingIntent.FLAG_IMMUTABLE);
 
-        String CHANNEL_ID = "0";
-        NotificationCompat.Builder builder = new NotificationCompat.Builder(this, CHANNEL_ID)
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(this, "0")
                 .setContentTitle(getString(R.string.reminder))
                 .setSmallIcon(R.drawable.home_icon)
                 .setContentText(getString(R.string.reminder_message)+ " " + task)
@@ -152,8 +150,7 @@ public class MainScreenActivity extends TaskFragmentNavBarActivity {
                 .setAutoCancel(true);
 
         // This only creates the channel if it is not created yet so it is fine to call everytime
-        int importance = NotificationManager.IMPORTANCE_DEFAULT;
-        NotificationChannel channel = new NotificationChannel(CHANNEL_ID, "notif channel", importance);
+        NotificationChannel channel = new NotificationChannel("0", "notif channel", NotificationManager.IMPORTANCE_DEFAULT);
         // Register the channel with the system
         NotificationManager notificationManager = getSystemService(NotificationManager.class);
         notificationManager.createNotificationChannel(channel);
