@@ -27,9 +27,9 @@ import androidx.test.ext.junit.rules.ActivityScenarioRule;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 import androidx.test.platform.app.InstrumentationRegistry;
 
-import com.github.houseorganizer.houseorganizer.util.EspressoIdlingResource;
 import com.github.houseorganizer.houseorganizer.panels.login.RegisterEmail;
 import com.github.houseorganizer.houseorganizer.panels.login.VerifyEmail;
+import com.github.houseorganizer.houseorganizer.util.EspressoIdlingResource;
 
 import org.junit.AfterClass;
 import org.junit.Before;

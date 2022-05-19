@@ -16,8 +16,10 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.github.houseorganizer.houseorganizer.R;
 import com.github.houseorganizer.houseorganizer.util.BiViewHolder;
 import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -97,7 +99,6 @@ public final class TaskListAdapter extends RecyclerView.Adapter<BiViewHolder<But
 
             View taskEditor = inflater.inflate(R.layout.task_editor, null);
 
-            /* Task name & description fully customizable now */
             EditText taskNameEditor = taskEditor.findViewById(R.id.task_title_input);
             EditText taskDescEditor = taskEditor.findViewById(R.id.task_description_input);
             TaskView.setUpTaskView(t, taskNameEditor, taskDescEditor, titleButton);
@@ -113,11 +114,10 @@ public final class TaskListAdapter extends RecyclerView.Adapter<BiViewHolder<But
                     = new AlertDialog.Builder(v.getContext())
                     .setNeutralButton(R.string.add_subtask, null)
                     .setPositiveButton(R.string.assignees_button, null)
+                    .setNegativeButton(R.string.notify, null)
                     .setView(taskEditor)
                     .show();
 
-            // Patch s.t. the alert dialog window doesn't close
-            // after pressing `Add subtask`
             alertDialog.getButton(AlertDialog.BUTTON_NEUTRAL).setOnClickListener(
                     dialog -> {
                         t.addSubTask(new HTask.SubTask(""));
@@ -127,6 +127,19 @@ public final class TaskListAdapter extends RecyclerView.Adapter<BiViewHolder<But
             alertDialog.getButton(AlertDialog.BUTTON_POSITIVE)
                     .setOnClickListener(assigneeButtonListener(alertDialog, position));
 
+            alertDialog.getButton(AlertDialog.BUTTON_NEGATIVE)
+                    .setOnClickListener(notifyAssignees(position));
+        };
+    }
+
+    private View.OnClickListener notifyAssignees(int position) {
+        return v -> {
+            for (String assignee : taskList.getTaskAt(position).getAssignees()) {
+                Map<String, String> notif = new HashMap<>();
+                notif.put("user", assignee);
+                notif.put("task", taskList.getTaskAt(position).getTitle());
+                FirebaseFirestore.getInstance().collection("notifications").add(notif);
+            }
         };
     }
 

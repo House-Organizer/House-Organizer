@@ -130,4 +130,7 @@
     <string name="payer">Pagatore</string>
     <string name="debt">Debito</string>
     <string name="password_constraints">- Deve essere composto da almeno 8 caratteri. - Deve contenere almeno 1 lettera minuscola e 1 maiuscola. - Deve contenere almeno 1 numero. - Deve contenere almeno 1 carattere speciale. - Non può contenere spazi bianchi. - Le due password devono essere uguali.</string>
+    <string name="reminder">Promemoria</string>
+    <string name="reminder_message">Non dimenticate il vostro compito:</string>
+    <string name="notify">Notificare</string>
 </resources>

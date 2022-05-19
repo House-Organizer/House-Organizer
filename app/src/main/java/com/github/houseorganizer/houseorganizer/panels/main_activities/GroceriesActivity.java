@@ -10,9 +10,9 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.github.houseorganizer.houseorganizer.R;
 import com.github.houseorganizer.houseorganizer.shop.FirestoreShopList;
 import com.github.houseorganizer.houseorganizer.shop.ShopListAdapter;
+import com.github.houseorganizer.houseorganizer.util.Util;
 import com.github.houseorganizer.houseorganizer.util.interfaces.RecyclerViewIdlingCallback;
 import com.github.houseorganizer.houseorganizer.util.interfaces.RecyclerViewLayoutCompleteListener;
-import com.github.houseorganizer.houseorganizer.util.Util;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.OptionalInt;
