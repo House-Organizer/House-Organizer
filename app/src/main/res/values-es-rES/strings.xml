@@ -130,4 +130,7 @@
     <string name="lang_title">Idioma</string>
     <string name="password_constraints">- Debe contener mínimo 8 caracteres - Debe contener una mayúscula y una minúscula - Debe contener un carácter especial - No debe contener espacio - Las dos contraseñas deben ser idénticas</string>
     <string name="household_creation_hint">Nombre de la casa</string>
+    <string name="reminder">Recordatorio</string>
+    <string name="reminder_message">No olvides tu tarea :</string>
+    <string name="notify">Notificar</string>
 </resources>
