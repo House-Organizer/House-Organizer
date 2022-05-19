@@ -1,6 +1,10 @@
 package com.github.houseorganizer.houseorganizer.storage;
 
+import androidx.annotation.AttrRes;
+import androidx.annotation.ColorRes;
 import androidx.annotation.NonNull;
+
+import com.github.houseorganizer.houseorganizer.R;
 
 import java.util.List;
 import java.util.Objects;
@@ -62,5 +66,9 @@ public final class OfflineTask extends OfflineItem {
     @NonNull
     public String info() {
         return description;
+    }
+
+    public @AttrRes int color() {
+        return com.google.android.material.R.attr.colorSecondary;
     }
 }

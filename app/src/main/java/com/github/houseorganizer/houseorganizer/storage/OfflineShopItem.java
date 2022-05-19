@@ -1,6 +1,10 @@
 package com.github.houseorganizer.houseorganizer.storage;
 
+import androidx.annotation.AttrRes;
+import androidx.annotation.ColorRes;
 import androidx.annotation.NonNull;
+
+import com.github.houseorganizer.houseorganizer.R;
 
 import java.util.Locale;
 import java.util.Objects;
@@ -49,6 +53,11 @@ public final class OfflineShopItem extends OfflineItem {
     @Override
     public String title() {
         return name;
+    }
+
+    public @AttrRes
+    int color() {
+        return com.google.android.material.R.attr.colorSecondaryVariant;
     }
 
     @NonNull

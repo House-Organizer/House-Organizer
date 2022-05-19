@@ -1,6 +1,10 @@
 package com.github.houseorganizer.houseorganizer.storage;
 
+import androidx.annotation.AttrRes;
+import androidx.annotation.ColorRes;
 import androidx.annotation.NonNull;
+
+import com.github.houseorganizer.houseorganizer.R;
 
 import java.util.Objects;
 
@@ -52,7 +56,6 @@ public final class OfflineEvent extends OfflineItem {
     }
 
     @NonNull
-    @Override
     public String title() {
         return title;
     }
@@ -60,6 +63,11 @@ public final class OfflineEvent extends OfflineItem {
     @NonNull
     public String info() {
         return String.format("%s\nOn %s; lasts %s minutes", description, start, duration);
+    }
+
+    public @AttrRes
+    int color() {
+        return com.google.android.material.R.attr.colorPrimary;
     }
 
     @Override

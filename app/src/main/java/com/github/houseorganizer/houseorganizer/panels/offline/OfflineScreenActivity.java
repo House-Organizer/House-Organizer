@@ -4,8 +4,7 @@ import android.app.AlertDialog;
 import android.os.Bundle;
 import android.view.View;
 
-import androidx.annotation.IdRes;
-import androidx.annotation.LayoutRes;
+import androidx.core.widget.CompoundButtonCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -43,17 +42,23 @@ public final class OfflineScreenActivity extends ThemedAppCompatActivity {
         groceriesMap = LocalStorage.retrieveGroceriesOffline(this);
         tasksMap = LocalStorage.retrieveTaskListOffline(this);
 
-        setUpItemCollection(eventsMap.getOrDefault(currentHouseId, new ArrayList<>()), R.id.offline_calendar, R.layout.offline_event_row, R.id.offline_event_button);
-        setUpItemCollection(tasksMap.getOrDefault(currentHouseId, new ArrayList<>()), R.id.offline_task_list, R.layout.offline_task_row, R.id.offline_task_button);
-        setUpItemCollection(groceriesMap.getOrDefault(currentHouseId, new ArrayList<>()), R.id.offline_groceries, R.layout.offline_grocery_row, R.id.offline_grocery_button);
+        List<OfflineEvent> events = eventsMap.getOrDefault(currentHouseId, new ArrayList<>());
+        List<OfflineTask> tasks = tasksMap.getOrDefault(currentHouseId, new ArrayList<>());
+        List<OfflineShopItem> groceries = groceriesMap.getOrDefault(currentHouseId, new ArrayList<>());
+
+        List<OfflineItem> items = new ArrayList<>();
+        items.addAll(events);
+        items.addAll(groceries);
+        items.addAll(tasks);
+
+        setUpItemCollection(items);
     }
 
-    private <T extends OfflineItem> void setUpItemCollection(List<T> itemCollection, @IdRes int recyclerViewResId,
-                                                             @LayoutRes int itemRowLayoutId, @IdRes int itemButtonResId) {
+    private <T extends OfflineItem> void setUpItemCollection(List<T> itemCollection) {
         if (itemCollection == null) itemCollection = new ArrayList<>();
-        RecyclerView itemRV = findViewById(recyclerViewResId);
+        RecyclerView itemRV = findViewById(R.id.offline_items);
         itemRV.setLayoutManager(new LinearLayoutManager(this));
-        itemRV.setAdapter(new OfflineAdapter<>(itemCollection, itemRowLayoutId, itemButtonResId));
+        itemRV.setAdapter(new OfflineAdapter(itemCollection, this));
     }
 
     public void unsupportedActionAlert(View view) {
