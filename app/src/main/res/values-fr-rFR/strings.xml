@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="info_facebook_button">Connexion avec Facebook</string>
     <string name="discoverButton">Découvrir</string>
     <string name="appDescription">\"Meilleur application d\'organisation du quotidien\" -Les développeurs</string>
     <string name="settings_speakable_text">Paramètres</string>
