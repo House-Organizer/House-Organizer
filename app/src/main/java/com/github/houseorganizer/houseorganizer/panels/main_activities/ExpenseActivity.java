@@ -2,6 +2,7 @@ package com.github.houseorganizer.houseorganizer.panels.main_activities;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.ViewTreeObserver;
 
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -74,7 +75,7 @@ public class ExpenseActivity extends NavBarActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        super.setUpNavBar(R.id.nav_bar, OptionalInt.of(R.id.nav_bar));
+        super.setUpNavBar(R.id.nav_bar, OptionalInt.of(R.id.nav_bar_bs));
     }
 
     @Override

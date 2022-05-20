@@ -22,9 +22,11 @@ import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.Matchers.containsString;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 
+import androidx.test.espresso.IdlingRegistry;
 import androidx.test.espresso.contrib.RecyclerViewActions;
 import androidx.test.espresso.intent.Intents;
 import androidx.test.ext.junit.rules.ActivityScenarioRule;
@@ -57,6 +59,7 @@ public class ExpenseActivityTest {
         FirebaseTestsHelper.startAuthEmulator();
         FirebaseTestsHelper.startFirestoreEmulator();
         FirebaseTestsHelper.setUpFirebase();
+
         auth = FirebaseAuth.getInstance();
     }
 
