@@ -22,22 +22,16 @@ import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.Matchers.containsString;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 
-import androidx.test.espresso.IdlingRegistry;
 import androidx.test.espresso.contrib.RecyclerViewActions;
 import androidx.test.espresso.intent.Intents;
 import androidx.test.ext.junit.rules.ActivityScenarioRule;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
-import androidx.test.runner.lifecycle.ActivityLifecycleMonitorRegistry;
-import androidx.test.runner.lifecycle.Stage;
 
 import com.github.houseorganizer.houseorganizer.panels.main_activities.ExpenseActivity;
 import com.github.houseorganizer.houseorganizer.panels.main_activities.MainScreenActivity;
-import com.github.houseorganizer.houseorganizer.util.RecyclerViewLayoutCompleteIdlingResource;
-import com.github.houseorganizer.houseorganizer.util.interfaces.RecyclerViewIdlingCallback;
 import com.google.firebase.auth.FirebaseAuth;
 
 import org.junit.AfterClass;
@@ -47,15 +41,12 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import java.util.Collection;
-import java.util.Iterator;
 import java.util.concurrent.ExecutionException;
 
 @RunWith(AndroidJUnit4.class)
 public class ExpenseActivityTest {
 
     private static FirebaseAuth auth;
-    private static RecyclerViewLayoutCompleteIdlingResource idlingResource;
 
     @Rule
     public ActivityScenarioRule<MainScreenActivity> mainScreenActivityActivityScenarioRule =
@@ -66,26 +57,12 @@ public class ExpenseActivityTest {
         FirebaseTestsHelper.startAuthEmulator();
         FirebaseTestsHelper.startFirestoreEmulator();
         FirebaseTestsHelper.setUpFirebase();
-
         auth = FirebaseAuth.getInstance();
-        idlingResource = new RecyclerViewLayoutCompleteIdlingResource((RecyclerViewIdlingCallback) getCurrentActivity());
-        IdlingRegistry.getInstance().register(idlingResource);
     }
 
     @AfterClass
     public static void signOut(){
         auth.signOut();
-        IdlingRegistry.getInstance().unregister(idlingResource);
-    }
-
-    private static Activity getCurrentActivity() {
-        final Activity[] currentActivity = {null};
-        getInstrumentation().runOnMainSync(() -> {
-            Collection<Activity> resumedActivity = ActivityLifecycleMonitorRegistry.getInstance().getActivitiesInStage(Stage.RESUMED);
-            Iterator<Activity> it = resumedActivity.iterator();
-            currentActivity[0] = it.next();
-        });
-        return currentActivity[0];
     }
 
     @Before

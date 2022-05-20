@@ -24,7 +24,6 @@ import com.github.houseorganizer.houseorganizer.image.QRAnalyzer;
 import com.github.houseorganizer.houseorganizer.image.QRListener;
 import com.github.houseorganizer.houseorganizer.panels.main_activities.MainScreenActivity;
 import com.github.houseorganizer.houseorganizer.panels.settings.ThemedAppCompatActivity;
-import com.github.houseorganizer.houseorganizer.util.EspressoIdlingResource;
 import com.github.houseorganizer.houseorganizer.util.Util;
 import com.google.common.util.concurrent.ListenableFuture;
 import com.google.firebase.auth.FirebaseAuth;
@@ -117,18 +116,15 @@ public class QRCodeScanActivity extends ThemedAppCompatActivity {
         cameraProvider.bindToLifecycle(this, cameraSelector, imageAnalysis, preview);
     }
 
-    public void acceptInvite(String QRCode){
-        EspressoIdlingResource.increment();
+    public void acceptInvite(String QRCode) {
         String email = auth.getCurrentUser().getEmail();
-        if(email == null || QRCode == null){
-            EspressoIdlingResource.decrement();
+        if(email == null || QRCode == null) {
             return;
         }
         DocumentReference targetHousehold = db.collection("households").document(QRCode);
         targetHousehold.get().addOnCompleteListener(task -> {
             Map<String, Object> householdData = task.getResult().getData();
             saveData(targetHousehold, householdData, email, QRCode);
-            EspressoIdlingResource.decrement();
         });
     }
 
