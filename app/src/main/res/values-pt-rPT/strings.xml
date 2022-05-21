@@ -133,4 +133,5 @@
     <string name="reminder">Lembrete</string>
     <string name="reminder_message">Não se esqueça da sua tarefa :</string>
     <string name="notify">Notificar</string>
+    <string name="show_image">TODO</string>
 </resources>

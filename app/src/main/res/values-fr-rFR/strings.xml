@@ -133,4 +133,5 @@
     <string name="reminder">Rappel</string>
     <string name="reminder_message">N\'oublie pas ta tâche :</string>
     <string name="notify">Notifier</string>
+    <string name="show_image">TODO</string>
 </resources>
