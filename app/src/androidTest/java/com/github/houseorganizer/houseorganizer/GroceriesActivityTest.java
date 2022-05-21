@@ -73,7 +73,7 @@ public class GroceriesActivityTest {
 
     private void addNewItem(String name, int quantity, String unit) throws InterruptedException {
         onView(withId(R.id.groceries_add)).perform(click());
-        Thread.sleep(1000);
+        Thread.sleep(2000);
         onView(withId(R.id.edit_text_name)).perform(typeText(name));
         onView(withId(R.id.edit_text_quantity)).perform(typeText(""+quantity));
         onView(withId(R.id.edit_text_unit)).perform(typeText(unit));
