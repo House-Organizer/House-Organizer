@@ -2,6 +2,7 @@ package com.github.houseorganizer.houseorganizer;
 
 import static androidx.test.espresso.Espresso.onView;
 import static androidx.test.espresso.action.ViewActions.click;
+import static androidx.test.espresso.action.ViewActions.longClick;
 import static androidx.test.espresso.action.ViewActions.typeText;
 import static androidx.test.espresso.assertion.ViewAssertions.matches;
 import static androidx.test.espresso.intent.Intents.intended;
@@ -75,19 +76,17 @@ public class GroceriesActivityTest {
     private static Activity getCurrentActivity() {
         final Activity[] currentActivity = {null};
 
-        getInstrumentation().runOnMainSync(new Runnable() {
-            public void run() {
-                Collection<Activity> resumedActivity = ActivityLifecycleMonitorRegistry.getInstance().getActivitiesInStage(Stage.RESUMED);
-                Iterator<Activity> it = resumedActivity.iterator();
-                currentActivity[0] = it.next();
-            }
+        getInstrumentation().runOnMainSync(() -> {
+            Collection<Activity> resumedActivity = ActivityLifecycleMonitorRegistry.getInstance().getActivitiesInStage(Stage.RESUMED);
+            Iterator<Activity> it = resumedActivity.iterator();
+            currentActivity[0] = it.next();
         });
 
         return currentActivity[0];
     }
 
     @Before
-    public void openActivity() throws InterruptedException {
+    public void openActivity() {
         Context context = getInstrumentation().getTargetContext();
         context.sendBroadcast(new Intent(Intent.ACTION_CLOSE_SYSTEM_DIALOGS));
 
@@ -140,6 +139,24 @@ public class GroceriesActivityTest {
     }
 
     @Test
+    public void modifyingItemModifiesIt(){
+        String added = "o";
+        onView(withId(R.id.groceries_recycler)).perform(RecyclerViewActions.actionOnItemAtPosition(0,
+                longClick()));
+        onView(withId(R.id.edit_text_name)).perform(typeText(added));
+        onView(withId(R.id.edit_text_quantity)).perform(typeText("0"));
+        onView(withId(R.id.edit_text_unit)).perform(typeText(added));
+        onView(withText(R.string.edit_item_button)).perform(click());
+        onView(withId(R.id.groceries_recycler)).check(matches(hasDescendant(withText(containsString(
+                FirebaseTestsHelper.TEST_ITEM.getName() + added)))));
+        onView(withId(R.id.groceries_recycler)).check(matches(hasDescendant(withText(containsString(
+                FirebaseTestsHelper.TEST_ITEM.getQuantity() + "0")))));
+        onView(withId(R.id.groceries_recycler)).check(matches(hasDescendant(withText(containsString(
+                FirebaseTestsHelper.TEST_ITEM.getUnit() + added)))));
+
+    }
+
+    @Test
     public void navBarTakesBackToMainScreen(){
         Intents.init();
         onView(withId(R.id.nav_bar_menu)).perform(click());
@@ -156,7 +173,7 @@ public class GroceriesActivityTest {
     }
 
     @Test
-    public void deletingItemRemovesIt() throws InterruptedException {
+    public void deletingItemRemovesIt() {
         addNewItem("item", 4, "g");
         onView(withId(R.id.groceries_recycler))
                 .perform(RecyclerViewActions.actionOnItemAtPosition(
@@ -166,7 +183,7 @@ public class GroceriesActivityTest {
     }
 
     @Test
-    public void removePickedUpButtonWorks() throws InterruptedException {
+    public void removePickedUpButtonWorks() {
         addNewItem("1rst", 8, "ol");
         addNewItem("2nd", 5, "il");
         onView(withId(R.id.groceries_recycler)).perform(
