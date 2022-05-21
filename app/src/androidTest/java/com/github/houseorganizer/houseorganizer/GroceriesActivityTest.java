@@ -68,17 +68,17 @@ public class GroceriesActivityTest {
         onView(withId(R.id.housesView))
                 .perform(RecyclerViewActions.actionOnItemAtPosition(0, click()));
         onView(withId(R.id.nav_bar_cart)).perform(click());
-        Thread.sleep(1000);
+        Thread.sleep(500);
     }
 
     private void addNewItem(String name, int quantity, String unit) throws InterruptedException {
         onView(withId(R.id.groceries_add)).perform(click());
-        Thread.sleep(1000);
+        Thread.sleep(500);
         onView(withId(R.id.edit_text_name)).perform(typeText(name));
         onView(withId(R.id.edit_text_quantity)).perform(typeText(""+quantity));
         onView(withId(R.id.edit_text_unit)).perform(typeText(unit));
         onView(withText(R.string.add)).perform(click());
-        Thread.sleep(1000);
+        Thread.sleep(500);
     }
 
     @Test
@@ -103,7 +103,7 @@ public class GroceriesActivityTest {
     @Test
     public void addingItemShowsNewItem() throws InterruptedException {
         addNewItem("item", 2, "kg");
-        Thread.sleep(1000);
+        Thread.sleep(500);
         // Checking item exists in the view
         onView(withId(R.id.groceries_recycler)).check(matches(hasChildCount(2)));
         onView(withId(R.id.groceries_recycler)).check(matches(hasDescendant(withText(containsString("item")))));
@@ -114,12 +114,13 @@ public class GroceriesActivityTest {
                 .perform(RecyclerViewActions.actionOnItemAtPosition(
                         1,
                         RecyclerViewHelper.clickChildViewWithId(R.id.delete_item_button)));
-        Thread.sleep(1000);
+        Thread.sleep(500);
     }
 
     @Test
-    public void navBarTakesBackToMainScreen(){
+    public void navBarTakesBackToMainScreen() throws InterruptedException {
         Intents.init();
+        Thread.sleep(50);
         onView(withId(R.id.nav_bar_menu)).perform(click());
         intended(hasComponent(MainScreenActivity.class.getName()));
         Intents.release();
@@ -136,27 +137,27 @@ public class GroceriesActivityTest {
     @Test
     public void deletingItemRemovesIt() throws InterruptedException {
         addNewItem("item", 4, "g");
-        Thread.sleep(1000);
+        Thread.sleep(500);
         onView(withId(R.id.groceries_recycler))
                 .perform(RecyclerViewActions.actionOnItemAtPosition(
                         1,
                         RecyclerViewHelper.clickChildViewWithId(R.id.delete_item_button)));
+        Thread.sleep(500);
         onView(withId(R.id.groceries_recycler)).check(matches(hasChildCount(1)));
-        Thread.sleep(1000);
+
     }
 
     @Test
     public void removePickedUpButtonWorks() throws InterruptedException {
         addNewItem("1rst", 8, "ol");
-        Thread.sleep(1000);
+        Thread.sleep(300);
         addNewItem("2nd", 5, "il");
-        Thread.sleep(1000);
+        Thread.sleep(500);
         onView(withId(R.id.groceries_recycler)).perform(
                 RecyclerViewActions.actionOnItemAtPosition(1, click()),
                 RecyclerViewActions.actionOnItemAtPosition(2, click()));
-        Thread.sleep(1000);
         onView(withId(R.id.groceries_picked_up_button)).perform(click());
-        Thread.sleep(1000);
+        Thread.sleep(500);
         onView(withId(R.id.groceries_recycler)).check(matches(hasChildCount(1)));
     }
 }
