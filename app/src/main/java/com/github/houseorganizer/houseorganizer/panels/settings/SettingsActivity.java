@@ -10,15 +10,10 @@ import androidx.preference.PreferenceFragmentCompat;
 
 import com.github.houseorganizer.houseorganizer.R;
 import com.github.houseorganizer.houseorganizer.panels.login.LoginActivity;
-import com.github.houseorganizer.houseorganizer.panels.main_activities.MainScreenActivity;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FieldPath;
 import com.google.firebase.firestore.FirebaseFirestore;
-
-import java.util.HashMap;
-import java.util.Map;
-
 
 public class SettingsActivity extends ThemedAppCompatActivity {
     @Override
@@ -56,19 +51,17 @@ public class SettingsActivity extends ThemedAppCompatActivity {
         @Override
         public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String s) {
             if (s.equals("nickname")){
-                Map<String, Object> user_nickname = new HashMap<>();
-
-                FirebaseUser Uid = FirebaseAuth.getInstance().getCurrentUser();
+                FirebaseUser uid = FirebaseAuth.getInstance().getCurrentUser();
                 FirebaseFirestore db = FirebaseFirestore.getInstance();
 
-                FieldPath field = FieldPath.of(Uid.getEmail());
+                FieldPath field = FieldPath.of(uid.getEmail());
 
                 db.collection("email-to-nickname")
                    .document("email-to-nickname-translations")
                    .update(field, sharedPreferences.getString("nickname",""));
             }
             if(s.equals("theme") || s.equals("lang")) { //Settings that change UI
-                Intent intent = new Intent(getContext(), MainScreenActivity.class);
+                Intent intent = new Intent(getContext(), SettingsActivity.class);
                 startActivity(intent);
             }
         }

@@ -4,16 +4,15 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 
-import androidx.appcompat.app.AppCompatActivity;
-
 import com.github.houseorganizer.houseorganizer.R;
 import com.github.houseorganizer.houseorganizer.panels.login.LoginActivity;
 import com.github.houseorganizer.houseorganizer.panels.login.LoginEmail;
 import com.github.houseorganizer.houseorganizer.panels.main_activities.MainScreenActivity;
+import com.github.houseorganizer.houseorganizer.panels.settings.ThemedAppCompatActivity;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
-public class EntryActivity extends AppCompatActivity {
+public class EntryActivity extends ThemedAppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
