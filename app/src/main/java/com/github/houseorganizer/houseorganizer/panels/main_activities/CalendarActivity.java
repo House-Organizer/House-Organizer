@@ -33,8 +33,7 @@ public final class CalendarActivity extends NavBarActivity implements
     private RecyclerView calendarEvents;
     private final Calendar calendar = new Calendar();
 
-    // Flag to indicate if the layout for the recyclerview has complete. This should only be used
-    // when the data in the recyclerview has been changed after the initial loading
+    // Flag to indicate if the layout for the recyclerview has complete.
     private boolean recyclerViewLayoutCompleted;
     // Listener to be set by the idling resource, so that it can be notified when recyclerview
     // layout has been done
