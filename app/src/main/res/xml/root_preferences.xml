@@ -9,12 +9,6 @@
             app:title="@string/signature_title"
             app:useSimpleSummaryProvider="true" />
 
-        <SwitchPreference
-            android:id="@+id/dark_mode_switch"
-            android:defaultValue="false"
-            android:key="switch_preference_1"
-            android:title="@string/dark_mode_title" />
-
         <ListPreference
             android:key="theme"
             android:title="@string/color_theme"
@@ -31,12 +25,9 @@
 
     <PreferenceCategory app:title="@string/cache_header">
 
-        <SwitchPreferenceCompat
-            android:id="@+id/cache_attachments"
-            app:key="attachment"
-            app:summaryOff="@string/attachment_summary_off"
-            app:summaryOn="@string/attachment_summary_on"
-            app:title="@string/attachment_title" />
+        <Preference
+            android:title="@string/clear_local_storage"
+            android:key="clear_cache" />
 
     </PreferenceCategory>
 
