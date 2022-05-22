@@ -4,7 +4,6 @@ import static androidx.test.espresso.Espresso.onView;
 import static androidx.test.espresso.action.ViewActions.click;
 import static androidx.test.espresso.assertion.ViewAssertions.matches;
 import static androidx.test.espresso.matcher.RootMatchers.isDialog;
-import static androidx.test.espresso.matcher.ViewMatchers.hasChildCount;
 import static androidx.test.espresso.matcher.ViewMatchers.isClickable;
 import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static androidx.test.espresso.matcher.ViewMatchers.isEnabled;
@@ -48,15 +47,15 @@ public class OfflineScreenTest {
 
     private final static List<Calendar.Event> EVENTS =
             Arrays.asList(new Calendar.Event("Movie night", "This week sometime",
-                    LocalDateTime.of(2022, Month.MAY, 21, 20, 20), 100, "0"),
+                    LocalDateTime.of(2030, Month.MAY, 21, 20, 20), 100, "0"),
                     new Calendar.Event("Celine's bday", "We should make cupcakes!",
-                            LocalDateTime.of(2022, Month.MAY, 25, 15, 30), 200, "0"));
+                            LocalDateTime.of(2030, Month.MAY, 25, 15, 30), 200, "0"));
     @Rule
     public ActivityScenarioRule<OfflineScreenActivity> offlineScreenRule =
             new ActivityScenarioRule<>(OfflineScreenActivity.class);
 
     @BeforeClass
-    public static void pushEverythingOffline() throws InterruptedException {
+    public static void pushEverythingOffline() {
         Context context = InstrumentationRegistry.getInstrumentation().getTargetContext();
 
         String currentHouseId =  FirebaseTestsHelper.TEST_HOUSEHOLD_NAMES[0];
@@ -110,25 +109,25 @@ public class OfflineScreenTest {
         onView(withText("This action is not available at the moment")).inRoot(isDialog()).check(matches(isDisplayed()));
     }
 
-    //@Test
+    @Test
     public void eventsDisplayProperly() {
         for (int i = 0; i < EVENTS.size(); ++i)
             onView(withText(EVENTS.get(i).getTitle())).check(matches(isDisplayed()));
     }
 
-    //@Test
+    @Test
     public void tasksDisplayProperly() {
         for (int i = 0; i < TASKS.size(); ++i)
             onView(withText(TASKS.get(i).getTitle())).check(matches(isDisplayed()));
     }
 
-    //@Test
+    @Test
     public void groceriesDisplayProperly() {
         for (int i = 0; i < GROCERIES.size(); ++i)
             onView(withText(GROCERIES.get(i).getName())).check(matches(isDisplayed()));
     }
 
-    //@Test
+    @Test
     public void eventInformationIsDisplayedProperly() {
         onView(withText(EVENTS.get(0).getTitle())).perform(click());
 
@@ -139,7 +138,7 @@ public class OfflineScreenTest {
         onView(withText(info)).inRoot(isDialog()).check(matches(isDisplayed()));
     }
 
-    //@Test
+    @Test
     public void taskInformationIsDisplayedProperly() {
         onView(withText(TASKS.get(0).getTitle())).perform(click());
 
@@ -147,5 +146,14 @@ public class OfflineScreenTest {
         onView(withText(TASKS.get(0).getDescription())).inRoot(isDialog()).check(matches(isDisplayed()));
     }
 
-    // TODO grocery format check
+    @Test
+    public void groceryInformationIsDisplayedProperly() {
+        onView(withText(GROCERIES.get(0).getName())).perform(click());
+
+        ShopItem shopItem = GROCERIES.get(0);
+
+        onView(withText(String.format("%s [%d %s][%s]",
+                shopItem.getName(), shopItem.getQuantity(),
+                shopItem.getUnit(), shopItem.isPickedUp() ? "x" : "\t"))).inRoot(isDialog()).check(matches(isDisplayed()));
+    }
 }
