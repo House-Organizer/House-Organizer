@@ -81,7 +81,7 @@ public class LocalStorage {
             }
             return buffer.toString();
         } catch (Exception e) {
-            return "";
+            throw new RuntimeException(e); // debugging purposes
         }
     }
 
