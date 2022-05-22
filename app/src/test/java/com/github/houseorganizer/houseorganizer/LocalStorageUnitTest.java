@@ -45,6 +45,16 @@ public class LocalStorageUnitTest {
     }
 
     @Test
+    public void offlineEventMiscMethodsWork() {
+        OfflineEvent event = new OfflineEvent("title", "description", "start", 1, "id");
+        assertEquals("title", event.title());
+        assertEquals(String.format("%s\nOn %s; lasts %s minutes",
+                event.getDescription(), event.getStart(), event.getDuration()),
+                event.info());
+        assertEquals(com.google.android.material.R.attr.colorPrimary, event.color());
+    }
+
+    @Test
     public void offlineShopItemBuilds(){
         OfflineShopItem shopItem = new OfflineShopItem("name",1, "unit", true);
                 assertThat(shopItem, is(notNullValue()));
@@ -72,6 +82,14 @@ public class LocalStorageUnitTest {
     }
 
     @Test
+    public void offlineShopItemMiscMethodsWork() {
+        OfflineShopItem shopItem = new OfflineShopItem("name",1, "unit", true);
+        assertEquals("name", shopItem.title());
+        assertEquals("name [1 unit][x]", shopItem.info());
+        assertEquals(com.google.android.material.R.attr.colorSecondaryVariant, shopItem.color());
+    }
+
+    @Test
     public void offlineTaskBuilds(){
         OfflineTask task = new OfflineTask("name", "description", Arrays.asList("user1", "user2"));
         assertThat(task, is(notNullValue()));
@@ -94,5 +112,13 @@ public class LocalStorageUnitTest {
         assertEquals("name", task.getName());
         assertEquals("description", task.getDescription());
         assertEquals(Arrays.asList("user1", "user2"), task.getAssignees());
+    }
+
+    @Test
+    public void offlineTaskMiscMethodsWork() {
+        OfflineTask task = new OfflineTask("name", "description", Arrays.asList("user1", "user2"));
+        assertEquals("name", task.title());
+        assertEquals("description", task.info());
+        assertEquals(com.google.android.material.R.attr.colorSecondary, task.color());
     }
 }
