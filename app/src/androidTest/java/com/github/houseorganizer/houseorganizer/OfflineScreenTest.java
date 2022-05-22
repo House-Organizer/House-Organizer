@@ -56,7 +56,10 @@ public class OfflineScreenTest {
 
     @BeforeClass
     public static void pushEverythingOffline() {
-        Context context = InstrumentationRegistry.getInstrumentation().getTargetContext();
+        Context context =
+                InstrumentationRegistry.getInstrumentation()
+                        .getTargetContext()
+                        .getApplicationContext();
 
         String currentHouseId =  FirebaseTestsHelper.TEST_HOUSEHOLD_NAMES[0];
         LocalStorage.pushCurrentHouseOffline(context, currentHouseId);
@@ -67,7 +70,11 @@ public class OfflineScreenTest {
 
     @AfterClass
     public static void clearStorage(){
-        Context context = InstrumentationRegistry.getInstrumentation().getTargetContext();
+        Context context =
+                InstrumentationRegistry.getInstrumentation()
+                        .getTargetContext()
+                        .getApplicationContext();
+        
         LocalStorage.clearOfflineStorage(context);
     }
 
