@@ -60,24 +60,28 @@ public class FirestoreShopList extends ShopList {
     public void removeItem(int index) {
         super.removeItem(index);
         updateItems();
+        refreshItems();
     }
 
     @Override
     public void addItem(ShopItem item) {
         super.addItem(item);
         updateItems();
+        refreshItems();
     }
 
     @Override
     public void removePickedUpItems() {
         super.removePickedUpItems();
         updateItems();
+        refreshItems();
     }
 
     @Override
     public void toggleItemPickedUp(int index) {
         super.toggleItemPickedUp(index);
         updateItems();
+        refreshItems();
     }
 
     public Task<Void> updateItems() {
