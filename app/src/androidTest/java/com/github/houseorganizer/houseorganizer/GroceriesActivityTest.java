@@ -2,6 +2,7 @@ package com.github.houseorganizer.houseorganizer;
 
 import static androidx.test.espresso.Espresso.onView;
 import static androidx.test.espresso.action.ViewActions.click;
+import static androidx.test.espresso.action.ViewActions.closeSoftKeyboard;
 import static androidx.test.espresso.action.ViewActions.typeText;
 import static androidx.test.espresso.assertion.ViewAssertions.matches;
 import static androidx.test.espresso.intent.Intents.intended;
@@ -18,6 +19,7 @@ import static org.hamcrest.Matchers.containsString;
 import android.content.Context;
 import android.content.Intent;
 
+import androidx.test.core.app.ApplicationProvider;
 import androidx.test.espresso.contrib.RecyclerViewActions;
 import androidx.test.espresso.intent.Intents;
 import androidx.test.ext.junit.rules.ActivityScenarioRule;
@@ -25,8 +27,11 @@ import androidx.test.ext.junit.runners.AndroidJUnit4;
 import androidx.test.platform.app.InstrumentationRegistry;
 
 import com.github.houseorganizer.houseorganizer.panels.main_activities.CalendarActivity;
+import com.github.houseorganizer.houseorganizer.panels.main_activities.GroceriesActivity;
 import com.github.houseorganizer.houseorganizer.panels.main_activities.MainScreenActivity;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.FirebaseFirestore;
 
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -41,10 +46,11 @@ import java.util.concurrent.ExecutionException;
 public class GroceriesActivityTest {
 
     private static FirebaseAuth auth;
+    private static Intent startIntent;
 
     @Rule
     public ActivityScenarioRule<MainScreenActivity> mainScreenActivityActivityScenarioRule =
-            new ActivityScenarioRule<>(MainScreenActivity.class);
+            new ActivityScenarioRule<>(startIntent);
 
     @BeforeClass
     public static void createFirebase() throws ExecutionException, InterruptedException {
@@ -52,6 +58,8 @@ public class GroceriesActivityTest {
         FirebaseTestsHelper.startFirestoreEmulator();
         FirebaseTestsHelper.setUpFirebase();
         auth = FirebaseAuth.getInstance();
+        startIntent = new Intent(ApplicationProvider.getApplicationContext(), GroceriesActivity.class);
+        startIntent.putExtra("house", FirebaseTestsHelper.TEST_HOUSEHOLD_NAMES[0]);
     }
 
     @AfterClass
@@ -64,20 +72,20 @@ public class GroceriesActivityTest {
         Context context = InstrumentationRegistry.getInstrumentation().getTargetContext();
         context.sendBroadcast(new Intent(Intent.ACTION_CLOSE_SYSTEM_DIALOGS));
 
-        onView(withId(R.id.house_imageButton)).perform(click());
+        /*onView(withId(R.id.house_imageButton)).perform(click());
         onView(withId(R.id.housesView))
                 .perform(RecyclerViewActions.actionOnItemAtPosition(0, click()));
         onView(withId(R.id.nav_bar_cart)).perform(click());
-        Thread.sleep(500);
+        Thread.sleep(500);*/
     }
 
     private void addNewItem(String name, int quantity, String unit) throws InterruptedException {
-        Thread.sleep(1000);
-        onView(withId(R.id.groceries_add)).perform(click());
         Thread.sleep(500);
+        onView(withId(R.id.groceries_add)).perform(click());
+        Thread.sleep(1000);
         onView(withId(R.id.edit_text_name)).perform(typeText(name));
         onView(withId(R.id.edit_text_quantity)).perform(typeText(""+quantity));
-        onView(withId(R.id.edit_text_unit)).perform(typeText(unit));
+        onView(withId(R.id.edit_text_unit)).perform(typeText(unit), closeSoftKeyboard());
         onView(withText(R.string.add)).perform(click());
         Thread.sleep(500);
     }
@@ -97,7 +105,8 @@ public class GroceriesActivityTest {
     }
 
     @Test
-    public void shopListHasCorrectNumberOfItems() {
+    public void shopListHasCorrectNumberOfItems() throws InterruptedException {
+        Thread.sleep(500);
         onView(withId(R.id.groceries_recycler)).check(matches(hasChildCount(1)));
     }
 
@@ -115,7 +124,7 @@ public class GroceriesActivityTest {
                 .perform(RecyclerViewActions.actionOnItemAtPosition(
                         1,
                         RecyclerViewHelper.clickChildViewWithId(R.id.delete_item_button)));
-        Thread.sleep(500);
+        Thread.sleep(300);
     }
 
     @Test
