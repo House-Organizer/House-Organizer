@@ -24,6 +24,7 @@ import com.github.houseorganizer.houseorganizer.storage.OfflineTask;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.StringJoiner;
 
 // TODO: Fetch list of member emails [sprint 9 task]
 public final class OfflineScreenActivity extends ThemedAppCompatActivity {
@@ -40,6 +41,13 @@ public final class OfflineScreenActivity extends ThemedAppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_offline_screen);
         houseNames = LocalStorage.retrieveHouseholdsOffline(getApplicationContext());
+
+        if(houseNames.size()!=1) {
+            StringJoiner sj = new StringJoiner(", ");
+            houseNames.keySet().forEach(sj::add);
+            throw new RuntimeException(sj + " " + houseNames.keySet().iterator().next());
+        }
+
         currentHouseId = houseNames.keySet().iterator().next();
 
         eventsMap = LocalStorage.retrieveEventsOffline(getApplicationContext());
