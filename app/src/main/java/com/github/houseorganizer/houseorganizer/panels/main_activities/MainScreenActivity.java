@@ -375,7 +375,7 @@ public class MainScreenActivity extends TaskFragmentNavBarActivity {
         boolean isConnected = (activeNetInfo != null) && activeNetInfo.isConnectedOrConnecting();
 
         if (!isConnected) {
-            startActivity(new Intent(this, OfflineScreenActivity.class));
+            startActivity(new Intent(this, OfflineScreenActivity.class).putExtra("hh-id", currentHouse.getId()));
         }
     }
 

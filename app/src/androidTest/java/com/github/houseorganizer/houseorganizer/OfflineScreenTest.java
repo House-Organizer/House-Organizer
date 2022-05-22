@@ -12,6 +12,7 @@ import static androidx.test.espresso.matcher.ViewMatchers.withText;
 import static org.junit.Assert.assertTrue;
 
 import android.content.Context;
+import android.content.Intent;
 
 import androidx.annotation.IdRes;
 import androidx.test.ext.junit.rules.ActivityScenarioRule;
@@ -19,6 +20,7 @@ import androidx.test.ext.junit.runners.AndroidJUnit4;
 import androidx.test.platform.app.InstrumentationRegistry;
 
 import com.github.houseorganizer.houseorganizer.calendar.Calendar;
+import com.github.houseorganizer.houseorganizer.panels.main_activities.MainScreenActivity;
 import com.github.houseorganizer.houseorganizer.panels.offline.OfflineScreenActivity;
 import com.github.houseorganizer.houseorganizer.shop.ShopItem;
 import com.github.houseorganizer.houseorganizer.storage.LocalStorage;
@@ -37,6 +39,7 @@ import java.util.List;
 
 @RunWith(AndroidJUnit4.class)
 public class OfflineScreenTest {
+    private static Intent intentFromMainScreen;
     private final static List<ShopItem> GROCERIES =
             Arrays.asList(new ShopItem("oranges", 1, "kg"),
                     new ShopItem("apples", 2, "units"));
@@ -52,7 +55,7 @@ public class OfflineScreenTest {
                             LocalDateTime.of(2030, Month.MAY, 25, 15, 30), 200, "0"));
     @Rule
     public ActivityScenarioRule<OfflineScreenActivity> offlineScreenRule =
-            new ActivityScenarioRule<>(OfflineScreenActivity.class);
+            new ActivityScenarioRule<>(intentFromMainScreen);
 
     @BeforeClass
     public static void pushEverythingOffline() {
@@ -66,6 +69,8 @@ public class OfflineScreenTest {
         assertTrue(LocalStorage.pushEventsOffline(context, currentHouseId, EVENTS));
         assertTrue(LocalStorage.pushGroceriesOffline(context, currentHouseId, GROCERIES));
         assertTrue(LocalStorage.pushTaskListOffline(context, currentHouseId, TASKS));
+
+        intentFromMainScreen = new Intent(context, OfflineScreenActivity.class).putExtra("hh-id", currentHouseId);
     }
 
     @AfterClass
