@@ -163,7 +163,7 @@ public class MainScreenActivity extends TaskFragmentNavBarActivity {
                         shopList = c.getResult().getFirestoreShopList();
                         shopListAdapter = c.getResult();
 
-                        LocalStorage.pushGroceriesOffline(this, currentHouse.getId(), shopList.getItems());
+                        LocalStorage.pushGroceriesOffline(getApplicationContext(), currentHouse.getId(), shopList.getItems());
 
                         shopList.getOnlineReference().addSnapshotListener((doc, e) -> {
                             if(doc == null || doc.getData() == null)return;
@@ -213,7 +213,7 @@ public class MainScreenActivity extends TaskFragmentNavBarActivity {
                     noHousehold();
                     return;
                 }
-                LocalStorage.pushCurrentHouseOffline(this, currentHouse.getId());
+                LocalStorage.pushCurrentHouseOffline(getApplicationContext(), currentHouse.getId());
 
                 calendarAdapter.refreshCalendarView(this, currentHouse, "refreshCalendar:failureToRefresh", false);
                 initializeTaskList();

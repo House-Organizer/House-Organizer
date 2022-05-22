@@ -35,12 +35,12 @@ public final class OfflineScreenActivity extends ThemedAppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_offline_screen);
-        houseNames = LocalStorage.retrieveHouseholdsOffline(this);
+        houseNames = LocalStorage.retrieveHouseholdsOffline(getApplicationContext());
         currentHouseId = houseNames.keySet().iterator().next();
 
-        eventsMap = LocalStorage.retrieveEventsOffline(this);
-        groceriesMap = LocalStorage.retrieveGroceriesOffline(this);
-        tasksMap = LocalStorage.retrieveTaskListOffline(this);
+        eventsMap = LocalStorage.retrieveEventsOffline(getApplicationContext());
+        groceriesMap = LocalStorage.retrieveGroceriesOffline(getApplicationContext());
+        tasksMap = LocalStorage.retrieveTaskListOffline(getApplicationContext());
 
         List<OfflineEvent> events = eventsMap.getOrDefault(currentHouseId, new ArrayList<>());
         List<OfflineTask> tasks = tasksMap.getOrDefault(currentHouseId, new ArrayList<>());
