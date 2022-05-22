@@ -41,22 +41,22 @@
         app:layout_constraintVertical_bias="0.011"
         app:srcCompat="@drawable/info_icon" />
 
-    <!-- TODO replace this with wifi cut button -->
-    <TextView
-        android:id="@+id/offline_warning_textView"
+
+    <ImageButton
+        android:id="@+id/offline_wifi_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:background="?attr/colorSecondary"
-        android:text="@string/offline_warning"
-        android:textAlignment="center"
-        android:textColor="?attr/colorOnPrimary"
-        android:textSize="15sp"
-        app:layout_constraintBottom_toTopOf="@id/offline_items"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="16dp"
+        android:background="#00000000"
+        android:onClick="goOnlineIfPossible"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@id/offline_info_imageButton"
-        app:layout_constraintHorizontal_bias="0.496"
+        app:layout_constraintHorizontal_bias="0.521"
         app:layout_constraintStart_toEndOf="@id/offline_settings_imageButton"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.176" />
+        app:layout_constraintVertical_bias="0.011"
+        app:srcCompat="@drawable/ic_wifi_off_svgrepo_com" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/offline_items"

@@ -1,6 +1,10 @@
 package com.github.houseorganizer.houseorganizer.panels.offline;
 
 import android.app.AlertDialog;
+import android.content.Context;
+import android.content.Intent;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.view.View;
 
@@ -66,5 +70,18 @@ public final class OfflineScreenActivity extends ThemedAppCompatActivity {
                 .setTitle("Oh no!")
                 .setMessage("This action is not available at the moment")
                 .show();
+    }
+
+    public void goOnlineIfPossible(View view) {
+        ConnectivityManager connectivityManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetInfo = connectivityManager.getActiveNetworkInfo();
+
+        boolean isConnected = (activeNetInfo != null) && activeNetInfo.isConnectedOrConnecting();
+
+        if (isConnected) {
+            startActivity(new Intent(this, OfflineScreenActivity.class));
+        } else {
+            unsupportedActionAlert(view);
+        }
     }
 }

@@ -81,15 +81,15 @@ public class OfflineScreenTest {
         buttonUIWorks(R.id.offline_settings_imageButton);
     }
 
+    @Test
+    public void offlineButtonWorks() {
+        buttonUIWorks(R.id.offline_wifi_button);
+    }
+
     private void buttonUIWorks(@IdRes int resId) {
         onView(withId(resId)).check(matches(isDisplayed()));
         onView(withId(resId)).check(matches(isEnabled()));
         onView(withId(resId)).check(matches(isClickable()));
-    }
-
-    @Test
-    public void offlineWarningIsDisplayed() {
-        onView(withText(R.string.offline_warning)).check(matches(isDisplayed()));
     }
 
     @Test
@@ -101,6 +101,8 @@ public class OfflineScreenTest {
     public void settingsButtonShowsAlertDialog() {
         unimplementedButtonShowsAlertDialog(R.id.offline_settings_imageButton);
     }
+
+    // TODO test clicking on offline button goes to MainScreen OR displays warning
 
     private void unimplementedButtonShowsAlertDialog(@IdRes int resId) {
         onView(withId(resId)).perform(click());
