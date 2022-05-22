@@ -12,6 +12,7 @@ import static androidx.test.espresso.matcher.ViewMatchers.hasDescendant;
 import static androidx.test.espresso.matcher.ViewMatchers.isClickable;
 import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static androidx.test.espresso.matcher.ViewMatchers.isEnabled;
+import static androidx.test.espresso.matcher.ViewMatchers.withHint;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
 import static androidx.test.espresso.matcher.ViewMatchers.withText;
 import static org.hamcrest.Matchers.containsString;
@@ -83,9 +84,9 @@ public class GroceriesActivityTest {
         Thread.sleep(500);
         onView(withId(R.id.groceries_add)).perform(click());
         Thread.sleep(1000);
-        onView(withId(R.id.edit_text_name)).perform(typeText(name));
-        onView(withId(R.id.edit_text_quantity)).perform(typeText(""+quantity));
-        onView(withId(R.id.edit_text_unit)).perform(typeText(unit), closeSoftKeyboard());
+        onView(withHint(R.string.name)).perform(typeText(name));
+        onView(withHint("0")).perform(typeText(""+quantity));
+        onView(withHint(R.string.unit)).perform(typeText(unit), closeSoftKeyboard());
         onView(withText(R.string.add)).perform(click());
         Thread.sleep(500);
     }
