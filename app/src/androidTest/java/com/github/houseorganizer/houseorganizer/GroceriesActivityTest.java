@@ -109,7 +109,7 @@ public class GroceriesActivityTest {
 
     @Test
     public void shopListHasCorrectNumberOfItems() throws InterruptedException {
-        Thread.sleep(500);
+        Thread.sleep(1000);
         onView(withId(R.id.groceries_recycler)).check(matches(hasChildCount(1)));
     }
 
