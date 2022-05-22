@@ -81,9 +81,11 @@ public class GroceriesActivityTest {
     }
 
     private void addNewItem(String name, int quantity, String unit) throws InterruptedException {
-        Thread.sleep(500);
-        onView(withId(R.id.groceries_add)).perform(click());
         Thread.sleep(1000);
+        onView(withId(R.id.groceries_add)).perform(click());
+        Thread.sleep(2000);
+        Context context = InstrumentationRegistry.getInstrumentation().getTargetContext();
+        context.sendBroadcast(new Intent(Intent.ACTION_CLOSE_SYSTEM_DIALOGS));
         onView(withHint(R.string.name)).perform(typeText(name));
         onView(withHint("0")).perform(typeText(""+quantity));
         onView(withHint(R.string.unit)).perform(typeText(unit), closeSoftKeyboard());
