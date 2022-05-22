@@ -320,7 +320,6 @@ public class EditHouseholdActivity extends ThemedAppCompatActivity {
         return firestore.collection(root)
                 .whereEqualTo("household", currentHousehold)
                 .get().addOnCompleteListener(doc ->{
-                    assert(doc.getResult().size() <= 1);
                     if(doc.getResult().size() < 1)return;
                     doc.getResult().getDocuments().get(0).getReference().delete();
                 }).addOnFailureListener(toastExceptionFailureListener(errorMessage));
