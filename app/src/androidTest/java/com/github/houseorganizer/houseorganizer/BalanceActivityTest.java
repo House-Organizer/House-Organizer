@@ -58,7 +58,6 @@ import java.util.concurrent.ExecutionException;
 public class BalanceActivityTest {
 
     private static FirebaseAuth auth;
-    private static RecyclerViewLayoutCompleteIdlingResource idlingResource;
     private static Billsharer bs;
 
     @Rule
@@ -71,8 +70,6 @@ public class BalanceActivityTest {
         FirebaseTestsHelper.setUpFirebase();
 
         auth = FirebaseAuth.getInstance();
-        idlingResource = new RecyclerViewLayoutCompleteIdlingResource((RecyclerViewIdlingCallback) getCurrentActivity());
-        IdlingRegistry.getInstance().register(idlingResource);
 
         // Go in the first house
         onView(withId(R.id.nav_bar_menu)).perform(click());
@@ -94,17 +91,6 @@ public class BalanceActivityTest {
     @AfterClass
     public static void signOut(){
         auth.signOut();
-        IdlingRegistry.getInstance().unregister(idlingResource);
-    }
-
-    private static Activity getCurrentActivity() {
-        final Activity[] currentActivity = {null};
-        getInstrumentation().runOnMainSync(() -> {
-            Collection<Activity> resumedActivity = ActivityLifecycleMonitorRegistry.getInstance().getActivitiesInStage(Stage.CREATED);
-            Iterator<Activity> it = resumedActivity.iterator();
-            if (it.hasNext()) currentActivity[0] = it.next();
-        });
-        return currentActivity[0];
     }
 
     @Before
