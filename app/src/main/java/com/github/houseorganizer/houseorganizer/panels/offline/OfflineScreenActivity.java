@@ -85,7 +85,7 @@ public final class OfflineScreenActivity extends ThemedAppCompatActivity {
             List<OfflineTask> tasks = tasksMap.get(currentHouseId);
             List<OfflineShopItem> groceries = groceriesMap.get(currentHouseId);
 
-            Stream.of(events, tasks, groceries)
+            Stream.of(events, groceries, tasks)
                     .filter(Objects::nonNull)
                     .forEach(items::addAll);
 
