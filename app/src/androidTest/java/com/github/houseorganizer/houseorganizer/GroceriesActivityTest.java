@@ -72,12 +72,6 @@ public class GroceriesActivityTest {
     public void openActivity() throws InterruptedException {
         Context context = InstrumentationRegistry.getInstrumentation().getTargetContext();
         context.sendBroadcast(new Intent(Intent.ACTION_CLOSE_SYSTEM_DIALOGS));
-
-        /*onView(withId(R.id.house_imageButton)).perform(click());
-        onView(withId(R.id.housesView))
-                .perform(RecyclerViewActions.actionOnItemAtPosition(0, click()));
-        onView(withId(R.id.nav_bar_cart)).perform(click());
-        Thread.sleep(500);*/
     }
 
     private void addNewItem(String name, int quantity, String unit) throws InterruptedException {
