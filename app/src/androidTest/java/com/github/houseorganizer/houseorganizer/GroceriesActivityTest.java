@@ -31,6 +31,7 @@ import androidx.test.runner.lifecycle.Stage;
 
 import com.github.houseorganizer.houseorganizer.panels.main_activities.CalendarActivity;
 import com.github.houseorganizer.houseorganizer.panels.main_activities.MainScreenActivity;
+import com.github.houseorganizer.houseorganizer.shop.ShopItem;
 import com.github.houseorganizer.houseorganizer.util.RecyclerViewLayoutCompleteIdlingResource;
 import com.github.houseorganizer.houseorganizer.util.interfaces.RecyclerViewIdlingCallback;
 import com.google.firebase.auth.FirebaseAuth;
@@ -153,7 +154,12 @@ public class GroceriesActivityTest {
                 FirebaseTestsHelper.TEST_ITEM.getQuantity() + "0")))));
         onView(withId(R.id.groceries_recycler)).check(matches(hasDescendant(withText(containsString(
                 FirebaseTestsHelper.TEST_ITEM.getUnit() + added)))));
-
+        onView(withId(R.id.groceries_recycler))
+                .perform(RecyclerViewActions.actionOnItemAtPosition(
+                        0,
+                        RecyclerViewHelper.clickChildViewWithId(R.id.delete_item_button)));
+        ShopItem item = FirebaseTestsHelper.TEST_ITEM;
+        addNewItem(item.getName(), item.getQuantity(), item.getUnit());
     }
 
     @Test
