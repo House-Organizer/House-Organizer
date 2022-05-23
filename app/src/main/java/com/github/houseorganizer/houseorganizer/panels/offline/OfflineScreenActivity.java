@@ -13,6 +13,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.github.houseorganizer.houseorganizer.R;
+import com.github.houseorganizer.houseorganizer.panels.main_activities.MainScreenActivity;
 import com.github.houseorganizer.houseorganizer.panels.settings.ThemedAppCompatActivity;
 import com.github.houseorganizer.houseorganizer.storage.LocalStorage;
 import com.github.houseorganizer.houseorganizer.storage.OfflineAdapter;
@@ -117,7 +118,7 @@ public final class OfflineScreenActivity extends ThemedAppCompatActivity {
         boolean isConnected = (activeNetInfo != null) && activeNetInfo.isConnectedOrConnecting();
 
         if (isConnected) {
-            startActivity(new Intent(this, OfflineScreenActivity.class));
+            startActivity(new Intent(this, MainScreenActivity.class));
         } else {
             unsupportedActionAlert(view);
         }
