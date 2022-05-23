@@ -7,6 +7,7 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.Toast;
 
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -23,10 +24,14 @@ import com.github.houseorganizer.houseorganizer.storage.OfflineTask;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
+import java.util.stream.Stream;
 
 // TODO: Fetch list of member emails [sprint 9 task]
 public final class OfflineScreenActivity extends ThemedAppCompatActivity {
     private String currentHouseId;
+    private int currentHouseIdx;
+    private List<String> allHousesList;
 
     /* All of these have HouseIds as keys */
     private Map<String, String> houseNames;
@@ -39,29 +44,63 @@ public final class OfflineScreenActivity extends ThemedAppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_offline_screen);
 
-        currentHouseId = getIntent().getStringExtra("hh-id");
-
-        eventsMap = LocalStorage.retrieveEventsOffline(getApplicationContext());
-        groceriesMap = LocalStorage.retrieveGroceriesOffline(getApplicationContext());
-        tasksMap = LocalStorage.retrieveTaskListOffline(getApplicationContext());
-
-        List<OfflineEvent> events = eventsMap.getOrDefault(currentHouseId, new ArrayList<>());
-        List<OfflineTask> tasks = tasksMap.getOrDefault(currentHouseId, new ArrayList<>());
-        List<OfflineShopItem> groceries = groceriesMap.getOrDefault(currentHouseId, new ArrayList<>());
-
-        List<OfflineItem> items = new ArrayList<>();
-        items.addAll(events);
-        items.addAll(groceries);
-        items.addAll(tasks);
-
-        setUpItemCollection(items);
+        loadData();
+        fixHouseOrder();
+        setUpItemCollectionForHouse(currentHouseId);
     }
 
-    private <T extends OfflineItem> void setUpItemCollection(List<T> itemCollection) {
-        if (itemCollection == null) itemCollection = new ArrayList<>();
+    private void loadData() {
+        Context appCtx = getApplicationContext();
+
+        houseNames = LocalStorage.retrieveHouseholdsOffline(appCtx);
+        eventsMap = LocalStorage.retrieveEventsOffline(appCtx);
+        groceriesMap = LocalStorage.retrieveGroceriesOffline(appCtx);
+        tasksMap = LocalStorage.retrieveTaskListOffline(appCtx);
+
+        currentHouseId = getIntent().getStringExtra("hh-id");
+    }
+
+    private void fixHouseOrder() {
+        allHousesList = new ArrayList<>();
+        currentHouseIdx = 0;
+
+        if (currentHouseId != null) {
+            allHousesList.add(currentHouseId);
+        }
+
+        houseNames.keySet()
+                .stream()
+                .filter(name -> !name.equals(currentHouseId))
+                .forEach(allHousesList::add);
+
+        currentHouseId = allHousesList.get(currentHouseIdx);
+    }
+
+    private void setUpItemCollectionForHouse(String houseId) {
+        List<OfflineItem> items = new ArrayList<>();
+
+        if (houseId != null) {
+            List<OfflineEvent> events = eventsMap.get(currentHouseId);
+            List<OfflineTask> tasks = tasksMap.get(currentHouseId);
+            List<OfflineShopItem> groceries = groceriesMap.get(currentHouseId);
+
+            Stream.of(events, tasks, groceries)
+                    .filter(Objects::nonNull)
+                    .forEach(items::addAll);
+
+            Toast.makeText(getApplicationContext(), houseNames.get(houseId),Toast.LENGTH_SHORT)
+                    .show();
+        }
+
         RecyclerView itemRV = findViewById(R.id.offline_items);
         itemRV.setLayoutManager(new LinearLayoutManager(this));
-        itemRV.setAdapter(new OfflineAdapter(itemCollection, this));
+        itemRV.setAdapter(new OfflineAdapter(items, this));
+    }
+
+    public void switchToNextHouse(View view) {
+        currentHouseId = allHousesList.get((++currentHouseIdx) % allHousesList.size());
+
+        setUpItemCollectionForHouse(currentHouseId);
     }
 
     public void unsupportedActionAlert(View view) {

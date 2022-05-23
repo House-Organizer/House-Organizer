@@ -3,6 +3,8 @@ package com.github.houseorganizer.houseorganizer;
 import static androidx.test.espresso.Espresso.onView;
 import static androidx.test.espresso.action.ViewActions.click;
 import static androidx.test.espresso.assertion.ViewAssertions.matches;
+import static androidx.test.espresso.intent.Intents.intended;
+import static androidx.test.espresso.intent.matcher.IntentMatchers.hasComponent;
 import static androidx.test.espresso.matcher.RootMatchers.isDialog;
 import static androidx.test.espresso.matcher.ViewMatchers.isClickable;
 import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
@@ -15,6 +17,7 @@ import android.content.Context;
 import android.content.Intent;
 
 import androidx.annotation.IdRes;
+import androidx.test.espresso.intent.Intents;
 import androidx.test.ext.junit.rules.ActivityScenarioRule;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 import androidx.test.platform.app.InstrumentationRegistry;
@@ -57,6 +60,8 @@ public class OfflineScreenTest {
     public ActivityScenarioRule<OfflineScreenActivity> offlineScreenRule =
             new ActivityScenarioRule<>(intentFromMainScreen);
 
+    // TODO dismiss alert dialogs in @before
+
     @BeforeClass
     public static void pushEverythingOffline() {
         Context context =
@@ -89,12 +94,12 @@ public class OfflineScreenTest {
     }
 
     @Test
-    public void settingsButtonUIWorks() {
-        buttonUIWorks(R.id.offline_settings_imageButton);
+    public void cycleButtonUIWorks() {
+        buttonUIWorks(R.id.offline_cycle_button);
     }
 
     @Test
-    public void offlineButtonWorks() {
+    public void offlineButtonUIWorks() {
         buttonUIWorks(R.id.offline_wifi_button);
     }
 
@@ -110,11 +115,14 @@ public class OfflineScreenTest {
     }
 
     @Test
-    public void settingsButtonShowsAlertDialog() {
-        unimplementedButtonShowsAlertDialog(R.id.offline_settings_imageButton);
+    public void offlineButtonLeadsToMainScreen() {
+        Intents.init();
+        onView(withId(R.id.offline_wifi_button)).perform(click());
+        intended(hasComponent(MainScreenActivity.class.getName()));
+        Intents.release();
     }
 
-    // TODO test clicking on offline button goes to MainScreen OR displays warning
+    // TODO test for cycle button going between houses
 
     private void unimplementedButtonShowsAlertDialog(@IdRes int resId) {
         onView(withId(resId)).perform(click());

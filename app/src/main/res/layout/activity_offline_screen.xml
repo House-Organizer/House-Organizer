@@ -7,21 +7,21 @@
     tools:context=".panels.offline.OfflineScreenActivity">
 
     <ImageButton
-        android:id="@+id/offline_settings_imageButton"
+        android:id="@+id/offline_cycle_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:layout_marginTop="8dp"
         android:background="#00000000"
-        android:contentDescription="@string/settings_speakable_text"
-        android:onClick="unsupportedActionAlert"
+        android:text="@string/cycle_calendar_views"
+        android:onClick="switchToNextHouse"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@id/offline_info_imageButton"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.011"
-        app:srcCompat="@drawable/settings_icon" />
+        app:srcCompat="@drawable/ic_reload_svgrepo_com"/>
 
 
     <ImageButton
@@ -47,13 +47,13 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
-        android:layout_marginEnd="16dp"
+        android:layout_marginEnd="116dp"
         android:background="#00000000"
         android:onClick="goOnlineIfPossible"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@id/offline_info_imageButton"
-        app:layout_constraintHorizontal_bias="0.521"
-        app:layout_constraintStart_toEndOf="@id/offline_settings_imageButton"
+        app:layout_constraintHorizontal_bias="0.987"
+        app:layout_constraintStart_toEndOf="@id/offline_cycle_button"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.011"
         app:srcCompat="@drawable/ic_wifi_off_svgrepo_com" />
@@ -65,8 +65,8 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/offline_settings_imageButton"
-        app:layout_constraintVertical_bias="0.154" />
+        app:layout_constraintTop_toBottomOf="@id/offline_cycle_button"
+        app:layout_constraintVertical_bias="0.216" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
