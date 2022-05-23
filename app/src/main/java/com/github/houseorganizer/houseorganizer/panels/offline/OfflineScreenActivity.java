@@ -8,7 +8,6 @@ import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.view.View;
 
-import androidx.core.widget.CompoundButtonCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -24,7 +23,6 @@ import com.github.houseorganizer.houseorganizer.storage.OfflineTask;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.StringJoiner;
 
 // TODO: Fetch list of member emails [sprint 9 task]
 public final class OfflineScreenActivity extends ThemedAppCompatActivity {
@@ -41,7 +39,7 @@ public final class OfflineScreenActivity extends ThemedAppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_offline_screen);
 
-        currentHouseId = savedInstanceState.getString("hh-id");
+        currentHouseId = getIntent().getStringExtra("hh-id");
 
         eventsMap = LocalStorage.retrieveEventsOffline(getApplicationContext());
         groceriesMap = LocalStorage.retrieveGroceriesOffline(getApplicationContext());
