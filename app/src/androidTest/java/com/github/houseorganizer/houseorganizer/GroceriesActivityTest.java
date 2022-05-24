@@ -2,8 +2,8 @@ package com.github.houseorganizer.houseorganizer;
 
 import static androidx.test.espresso.Espresso.onView;
 import static androidx.test.espresso.action.ViewActions.click;
-import static androidx.test.espresso.action.ViewActions.longClick;
 import static androidx.test.espresso.action.ViewActions.closeSoftKeyboard;
+import static androidx.test.espresso.action.ViewActions.longClick;
 import static androidx.test.espresso.action.ViewActions.typeText;
 import static androidx.test.espresso.assertion.ViewAssertions.matches;
 import static androidx.test.espresso.intent.Intents.intended;
@@ -32,11 +32,7 @@ import com.github.houseorganizer.houseorganizer.panels.main_activities.CalendarA
 import com.github.houseorganizer.houseorganizer.panels.main_activities.GroceriesActivity;
 import com.github.houseorganizer.houseorganizer.panels.main_activities.MainScreenActivity;
 import com.github.houseorganizer.houseorganizer.shop.ShopItem;
-import com.github.houseorganizer.houseorganizer.util.RecyclerViewLayoutCompleteIdlingResource;
-import com.github.houseorganizer.houseorganizer.util.interfaces.RecyclerViewIdlingCallback;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.firestore.DocumentReference;
-import com.google.firebase.firestore.FirebaseFirestore;
 
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -73,7 +69,7 @@ public class GroceriesActivityTest {
     }
 
     @Before
-    public void openActivity() throws InterruptedException {
+    public void openActivity() {
         Context context = InstrumentationRegistry.getInstrumentation().getTargetContext();
         context.sendBroadcast(new Intent(Intent.ACTION_CLOSE_SYSTEM_DIALOGS));
     }
