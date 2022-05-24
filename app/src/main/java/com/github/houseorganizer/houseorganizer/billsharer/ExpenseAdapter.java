@@ -15,9 +15,12 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.github.houseorganizer.houseorganizer.R;
+import com.github.houseorganizer.houseorganizer.task.FirestoreTask;
+import com.github.houseorganizer.houseorganizer.task.TaskAssigneeAdapter;
 
 import java.util.HashMap;
 import java.util.List;
@@ -45,35 +48,63 @@ public class ExpenseAdapter extends RecyclerView.Adapter<ExpenseAdapter.ExpenseH
         ArrayAdapter<String> aa = new ArrayAdapter<>(dialogView.getContext(),
                 android.R.layout.simple_spinner_dropdown_item, billsharer.getResidents());
         spinner.setAdapter(aa);
-        new AlertDialog.Builder(parent)
+        AlertDialog alertDialog = new AlertDialog.Builder(parent)
                 .setTitle(R.string.new_expense)
                 .setView(dialogView)
-                .setNeutralButton(R.string.specify_shares, ((dialog, which) -> specifyShares(dialog, which)))
+                .setNeutralButton(R.string.specify_shares, null)
                 .setPositiveButton(R.string.confirm, (dialog, id) -> getExpenseFromDialog(dialogView))
                 .setNegativeButton(R.string.cancel, (dialog, id) -> dialog.dismiss())
                 .show();
+
+        alertDialog.getButton(AlertDialog.BUTTON_NEUTRAL).setOnClickListener(
+                l -> specifyShares(alertDialog, getCostFromDialog(dialogView), dialogView.getContext())
+        );
     }
 
-    private void specifyShares(DialogInterface dialog, int which) {
+    private void specifyShares(AlertDialog dialog, double cost, Context ctx) {
         dialog.dismiss();
+
+        View sharesEditor = LayoutInflater.from(ctx).inflate(R.layout.assignee_editor, null);
+        RecyclerView sharesView = sharesEditor.findViewById(R.id.assignee_editor);
+        SharesAdapter sharesAdapter = new SharesAdapter(initShares(cost));
+
+        sharesView.setAdapter(sharesAdapter);
+        sharesView.setLayoutManager(new LinearLayoutManager(ctx));
+
+        new AlertDialog.Builder(ctx)
+                .setView(sharesEditor)
+                .setOnDismissListener(d -> dialog.show())
+                .show();
     }
 
     private void getExpenseFromDialog(View dialogView) {
         String title = ((EditText) dialogView.findViewById(R.id.expense_edit_title)).getText().toString();
         Spinner spinner = dialogView.findViewById(R.id.expense_edit_payee);
+
+        double cost = getCostFromDialog(dialogView);
+        HashMap<String, Double> shares = initShares(cost);
+
+        billsharer.addExpense(new Expense(title, cost, spinner.getSelectedItem().toString(), shares));
+        this.notifyItemInserted(billsharer.getExpenses().size()-1);
+    }
+
+    private double getCostFromDialog(View dialogView) {
         double cost = 0f;
         try {
             cost = Double.parseDouble(((EditText) dialogView.findViewById(R.id.expense_edit_cost)).getText().toString());
         }catch (Exception e){
             // Only possible bad input is empty field
         }
+        return cost;
+    }
+
+    private HashMap<String, Double> initShares(double cost) {
         List<String> residents = billsharer.getResidents();
         HashMap<String, Double> shares = new HashMap<>();
         for (String resident : residents) {
             shares.put(resident, cost/residents.size());
         }
-        billsharer.addExpense(new Expense(title, cost, spinner.getSelectedItem().toString(), shares));
-        this.notifyItemInserted(billsharer.getExpenses().size()-1);
+        return shares;
     }
 
     /*

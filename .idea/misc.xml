@@ -25,6 +25,7 @@
         <entry key="app/src/main/res/layout/activity_offline_screen.xml" value="0.35625" />
         <entry key="app/src/main/res/layout/activity_register_email.xml" value="0.1" />
         <entry key="app/src/main/res/layout/activity_verify_email.xml" value="0.259375" />
+        <entry key="app/src/main/res/layout/assignee_editor.xml" value="0.17325227963525835" />
         <entry key="app/src/main/res/layout/assignee_row.xml" value="0.35625" />
         <entry key="app/src/main/res/layout/calendar_monthly_cell.xml" value="0.17325227963525835" />
         <entry key="app/src/main/res/layout/calendar_row.xml" value="0.25317028985507245" />
