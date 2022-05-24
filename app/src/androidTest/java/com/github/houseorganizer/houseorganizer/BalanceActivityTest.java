@@ -25,7 +25,7 @@ import androidx.test.ext.junit.rules.ActivityScenarioRule;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 
 import com.github.houseorganizer.houseorganizer.billsharer.Billsharer;
-import com.github.houseorganizer.houseorganizer.panels.billsharer.BalanceActivity;
+import com.github.houseorganizer.houseorganizer.panels.main_activities.ExpenseActivity;
 import com.github.houseorganizer.houseorganizer.panels.main_activities.MainScreenActivity;
 import com.google.android.gms.tasks.Task;
 import com.google.android.gms.tasks.Tasks;
@@ -49,7 +49,7 @@ public class BalanceActivityTest {
     private static Billsharer bs;
 
     @Rule
-    public ActivityScenarioRule<BalanceActivity> rule = new ActivityScenarioRule<>(BalanceActivity.class);
+    public ActivityScenarioRule<ExpenseActivity> rule = new ActivityScenarioRule<>(ExpenseActivity.class);
 
     @BeforeClass
     public static void createFirebase() throws ExecutionException, InterruptedException {
@@ -90,6 +90,7 @@ public class BalanceActivityTest {
     public void dismissDialogs() {
         Context context = getInstrumentation().getTargetContext();
         context.sendBroadcast(new Intent(Intent.ACTION_CLOSE_SYSTEM_DIALOGS));
+        openBalances();
     }
 
     private void openBalances() {

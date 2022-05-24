@@ -5,7 +5,6 @@ import static com.github.houseorganizer.houseorganizer.util.Util.getSharedPrefs;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.view.ViewTreeObserver;
 
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -16,8 +15,6 @@ import com.github.houseorganizer.houseorganizer.billsharer.DebtAdapter;
 import com.github.houseorganizer.houseorganizer.panels.main_activities.ExpenseActivity;
 import com.github.houseorganizer.houseorganizer.panels.main_activities.NavBarActivity;
 import com.github.houseorganizer.houseorganizer.util.Util;
-import com.github.houseorganizer.houseorganizer.util.interfaces.RecyclerViewIdlingCallback;
-import com.github.houseorganizer.houseorganizer.util.interfaces.RecyclerViewLayoutCompleteListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.OptionalInt;
