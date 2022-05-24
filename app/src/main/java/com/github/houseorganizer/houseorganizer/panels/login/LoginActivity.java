@@ -27,6 +27,8 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
 
+import java.util.Objects;
+
 public class LoginActivity extends AppCompatActivity {
 
     private GoogleSignInClient mGoogleSignInClient;
@@ -111,7 +113,7 @@ public class LoginActivity extends AppCompatActivity {
                 FirebaseUser newUser = authResult.getUser();
                 assert newUser != null;
                 if (newUser.isAnonymous()) {
-                    newUser.updateEmail(newUser.getUid() + "@house-org.com")
+                    newUser.updateEmail(newUser.getUid().hashCode() + "@house-org.com")
                             .addOnFailureListener(authFailed)
                             .addOnSuccessListener(v -> {
                                 Log.d(getString(R.string.tag_login_activity), func + ":success");
