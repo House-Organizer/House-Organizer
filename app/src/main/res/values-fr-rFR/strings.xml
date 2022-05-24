@@ -133,4 +133,6 @@
     <string name="reminder">Rappel</string>
     <string name="reminder_message">N\'oublie pas ta tâche :</string>
     <string name="notify">Notifier</string>
+    <string name="specify_shares">TODO</string>
+    <string name="new_expense">TODO</string>
 </resources>

@@ -133,4 +133,6 @@
     <string name="reminder">Recordatorio</string>
     <string name="reminder_message">No olvides tu tarea :</string>
     <string name="notify">Notificar</string>
+    <string name="specify_shares">TODO</string>
+    <string name="new_expense">TODO</string>
 </resources>
