@@ -11,10 +11,13 @@ import static androidx.test.espresso.matcher.ViewMatchers.hasChildCount;
 import static androidx.test.espresso.matcher.ViewMatchers.isClickable;
 import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static androidx.test.espresso.matcher.ViewMatchers.isEnabled;
+import static androidx.test.espresso.matcher.ViewMatchers.isRoot;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
 import static androidx.test.espresso.matcher.ViewMatchers.withSpinnerText;
 import static androidx.test.espresso.matcher.ViewMatchers.withText;
 import static androidx.test.platform.app.InstrumentationRegistry.getInstrumentation;
+import static com.github.houseorganizer.houseorganizer.panels.main_activities.MainScreenActivity.CURRENT_HOUSEHOLD;
+import static com.github.houseorganizer.houseorganizer.util.Util.getSharedPrefs;
 import static org.hamcrest.CoreMatchers.allOf;
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.is;
@@ -24,19 +27,13 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 
-import androidx.test.espresso.IdlingRegistry;
 import androidx.test.espresso.contrib.RecyclerViewActions;
 import androidx.test.espresso.intent.Intents;
 import androidx.test.ext.junit.rules.ActivityScenarioRule;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
-import androidx.test.runner.lifecycle.ActivityLifecycleMonitorRegistry;
-import androidx.test.runner.lifecycle.Stage;
 
 import com.github.houseorganizer.houseorganizer.billsharer.Billsharer;
-import com.github.houseorganizer.houseorganizer.panels.billsharer.BalanceActivity;
 import com.github.houseorganizer.houseorganizer.panels.main_activities.MainScreenActivity;
-import com.github.houseorganizer.houseorganizer.util.RecyclerViewLayoutCompleteIdlingResource;
-import com.github.houseorganizer.houseorganizer.util.interfaces.RecyclerViewIdlingCallback;
 import com.google.android.gms.tasks.Task;
 import com.google.android.gms.tasks.Tasks;
 import com.google.firebase.auth.FirebaseAuth;
@@ -50,8 +47,6 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import java.util.Collection;
-import java.util.Iterator;
 import java.util.concurrent.ExecutionException;
 
 @RunWith(AndroidJUnit4.class)
@@ -70,6 +65,7 @@ public class BalanceActivityTest {
         FirebaseTestsHelper.setUpFirebase();
 
         auth = FirebaseAuth.getInstance();
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
 
         // Go in the first house
         onView(withId(R.id.nav_bar_menu)).perform(click());
@@ -78,14 +74,22 @@ public class BalanceActivityTest {
                 .perform(RecyclerViewActions.actionOnItemAtPosition(0, click()));
         onView(withId(R.id.nav_bar_bs)).perform(click());
 
+        String currentHouse = db.collection("households").document(
+                getSharedPrefs(getCurrentActivity()).getString(CURRENT_HOUSEHOLD, "")
+        ).getId();
+
         // Retrieve the billsharer
-        FirebaseFirestore db = FirebaseFirestore.getInstance();
-        DocumentReference household = db.collection("households")
-                .document(FirebaseTestsHelper.TEST_HOUSEHOLD_NAMES[0]);
+        DocumentReference household = db.collection("households").document(currentHouse);
         Task<Billsharer> t = Billsharer.
                 retrieveBillsharer(db.collection("billsharers"), household);
         Tasks.await(t);
         bs = t.getResult();
+    }
+
+    private static Activity getCurrentActivity() {
+        final Activity[] activity = new Activity[1];
+        onView(isRoot()).check((view, noViewFoundException) -> activity[0] = (Activity) view.getContext());
+        return activity[0];
     }
 
     @AfterClass
