@@ -12,29 +12,22 @@ import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static androidx.test.espresso.matcher.ViewMatchers.isEnabled;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
 import static androidx.test.espresso.matcher.ViewMatchers.withText;
-import static androidx.test.platform.app.InstrumentationRegistry.getInstrumentation;
 import static com.github.houseorganizer.houseorganizer.FirebaseTestsHelper.EVENTS_TO_DISPLAY;
 import static com.github.houseorganizer.houseorganizer.RecyclerViewHelper.atPosition;
 import static org.hamcrest.Matchers.containsString;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 
-import androidx.test.espresso.IdlingRegistry;
 import androidx.test.espresso.contrib.RecyclerViewActions;
 import androidx.test.espresso.intent.Intents;
 import androidx.test.ext.junit.rules.ActivityScenarioRule;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
-import androidx.test.runner.lifecycle.ActivityLifecycleMonitorRegistry;
-import androidx.test.runner.lifecycle.Stage;
+import androidx.test.platform.app.InstrumentationRegistry;
 
-import com.github.houseorganizer.houseorganizer.util.interfaces.RecyclerViewIdlingCallback;
-import com.github.houseorganizer.houseorganizer.util.RecyclerViewLayoutCompleteIdlingResource;
 import com.github.houseorganizer.houseorganizer.panels.main_activities.MainScreenActivity;
 import com.google.firebase.auth.FirebaseAuth;
 
-import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -44,8 +37,6 @@ import org.junit.runner.RunWith;
 
 import java.time.LocalDate;
 import java.time.YearMonth;
-import java.util.Collection;
-import java.util.Iterator;
 import java.time.format.DateTimeFormatter;
 import java.util.concurrent.ExecutionException;
 
@@ -53,7 +44,6 @@ import java.util.concurrent.ExecutionException;
 public class CalendarActivityTest {
 
     private static FirebaseAuth auth;
-    private static RecyclerViewLayoutCompleteIdlingResource idlingResource;
 
     @Rule
     public ActivityScenarioRule<MainScreenActivity> mainScreenActivityActivityScenarioRule =
@@ -74,36 +64,15 @@ public class CalendarActivityTest {
     }
 
     @Before
-    public void openActivity() {
-        Context context = getInstrumentation().getTargetContext();
+    public void openActivity() throws InterruptedException {
+        Context context = InstrumentationRegistry.getInstrumentation().getTargetContext();
         context.sendBroadcast(new Intent(Intent.ACTION_CLOSE_SYSTEM_DIALOGS));
 
         onView(withId(R.id.house_imageButton)).perform(click());
-
-        idlingResource = new RecyclerViewLayoutCompleteIdlingResource((RecyclerViewIdlingCallback) getCurrentActivity());
-        IdlingRegistry.getInstance().register(idlingResource);
+        Thread.sleep(1000);
 
         onView(withId(R.id.housesView)).perform(RecyclerViewActions.actionOnItemAtPosition(0, click()));
         onView(withId(R.id.nav_bar_calendar)).perform(click());
-    }
-
-    private Activity getCurrentActivity(){
-        final Activity[] currentActivity = {null};
-
-        getInstrumentation().runOnMainSync(new Runnable(){
-            public void run(){
-                Collection<Activity> resumedActivity = ActivityLifecycleMonitorRegistry.getInstance().getActivitiesInStage(Stage.RESUMED);
-                Iterator<Activity> it = resumedActivity.iterator();
-                currentActivity[0] = it.next();
-            }
-        });
-
-        return currentActivity[0];
-    }
-
-    @After
-    public void unregisterIdlingResource() {
-        IdlingRegistry.getInstance().unregister(idlingResource);
     }
 
     @Test
@@ -141,8 +110,10 @@ public class CalendarActivityTest {
         // The waits are here in order to wait for the refreshing of the calendar
         onView(withId(R.id.calendar_screen_calendar)).check(matches(hasChildCount(2*EVENTS_TO_DISPLAY)));
         onView(withId(R.id.calendar_screen_view_change)).perform(click());
+        Thread.sleep(1000);
         onView(withId(R.id.calendar_screen_calendar)).check(matches(hasChildCount(MONTHLY_CHILDREN)));
         onView(withId(R.id.calendar_screen_view_change)).perform(click());
+        Thread.sleep(1000);
         onView(withId(R.id.calendar_screen_calendar)).check(matches(hasChildCount(2*EVENTS_TO_DISPLAY)));
     }
 
@@ -150,6 +121,7 @@ public class CalendarActivityTest {
     public void monthlyViewShowsBusyDays() throws InterruptedException {
         // The wait is here in order to wait for the refreshing of the calendar
         onView(withId(R.id.calendar_screen_view_change)).perform(click());
+        Thread.sleep(1000);
         if (LocalDate.now().getDayOfMonth() == YearMonth.now().lengthOfMonth()) {
             onView(withId(R.id.calendar_screen_calendar)).check(matches(atPosition(LocalDate.now().getDayOfMonth() - 2, hasDescendant(withText(containsString("!"))))));
         }
@@ -163,6 +135,7 @@ public class CalendarActivityTest {
     public void monthlyViewOpensPopup() throws InterruptedException {
         // The wait is here in order to wait for the refreshing of the calendar
         onView(withId(R.id.calendar_screen_view_change)).perform(click());
+        Thread.sleep(1000);
         onView(withId(R.id.calendar_screen_calendar)).perform(RecyclerViewActions.actionOnItemAtPosition(LocalDate.now().getDayOfMonth() - 1, click()));
         onView(withText(R.string.no_events)).inRoot(isDialog()).check(matches(isDisplayed()));
     }
@@ -171,6 +144,7 @@ public class CalendarActivityTest {
     public void monthlyViewOpensRecyclerView() throws InterruptedException {
         // The wait is here in order to wait for the refreshing of the calendar
         onView(withId(R.id.calendar_screen_view_change)).perform(click());
+        Thread.sleep(1000);
         if (LocalDate.now().getDayOfMonth() == YearMonth.now().lengthOfMonth()) {
             onView(withId(R.id.calendar_screen_calendar)).perform(RecyclerViewActions.actionOnItemAtPosition(LocalDate.now().getDayOfMonth() - 2, click()));
         }
@@ -181,11 +155,12 @@ public class CalendarActivityTest {
     }
 
     @Test
-    public void monthNavigationWorks() {
+    public void monthNavigationWorks() throws InterruptedException {
         String yearMonthText = YearMonth.now().plusMonths(1).format(DateTimeFormatter.ofPattern("LLLL uuuu"));
         String yearMonthText2 = YearMonth.now().format(DateTimeFormatter.ofPattern("LLLL uuuu"));
         // The wait is here in order to wait for the refreshing of the calendar
         onView(withId(R.id.calendar_screen_view_change)).perform(click());
+        Thread.sleep(1000);
 
         onView(withId(R.id.calendar_screen_month_right)).perform(click());
         onView(withId(R.id.calendar_screen_year_month)).check(matches(withText(yearMonthText)));
