@@ -173,6 +173,8 @@
     <string name="amount">Amount</string>
     <string name="payer">Payer</string>
     <string name="debt">Debt</string>
+    <string name="specify_shares">Specify shares</string>
+    <string name="new_expense">New Expense</string>
 
     <!-- Notifications -->
     <string name="reminder">Reminder</string>

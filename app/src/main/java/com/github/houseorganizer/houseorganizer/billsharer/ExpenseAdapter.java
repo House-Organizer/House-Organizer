@@ -2,6 +2,7 @@ package com.github.houseorganizer.houseorganizer.billsharer;
 
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -45,11 +46,16 @@ public class ExpenseAdapter extends RecyclerView.Adapter<ExpenseAdapter.ExpenseH
                 android.R.layout.simple_spinner_dropdown_item, billsharer.getResidents());
         spinner.setAdapter(aa);
         new AlertDialog.Builder(parent)
-                .setTitle("New Expense")
+                .setTitle(R.string.new_expense)
                 .setView(dialogView)
+                .setNeutralButton(R.string.specify_shares, ((dialog, which) -> specifyShares(dialog, which)))
                 .setPositiveButton(R.string.confirm, (dialog, id) -> getExpenseFromDialog(dialogView))
                 .setNegativeButton(R.string.cancel, (dialog, id) -> dialog.dismiss())
                 .show();
+    }
+
+    private void specifyShares(DialogInterface dialog, int which) {
+        dialog.dismiss();
     }
 
     private void getExpenseFromDialog(View dialogView) {

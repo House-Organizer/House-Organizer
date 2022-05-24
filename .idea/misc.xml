@@ -22,6 +22,7 @@
         <entry key="app/src/main/res/layout/activity_login2.xml" value="0.1911231884057971" />
         <entry key="app/src/main/res/layout/activity_main.xml" value="0.259375" />
         <entry key="app/src/main/res/layout/activity_main_screen.xml" value="0.259375" />
+        <entry key="app/src/main/res/layout/activity_offline_screen.xml" value="0.35625" />
         <entry key="app/src/main/res/layout/activity_register_email.xml" value="0.1" />
         <entry key="app/src/main/res/layout/activity_verify_email.xml" value="0.259375" />
         <entry key="app/src/main/res/layout/assignee_row.xml" value="0.35625" />
@@ -39,6 +40,7 @@
         <entry key="app/src/main/res/layout/fragment_first.xml" value="0.2210144927536232" />
         <entry key="app/src/main/res/layout/fragment_second.xml" value="0.2210144927536232" />
         <entry key="app/src/main/res/layout/house_row.xml" value="0.22" />
+        <entry key="app/src/main/res/layout/share_row.xml" value="0.33" />
         <entry key="app/src/main/res/layout/shop_item_dialog.xml" value="0.17325227963525835" />
         <entry key="app/src/main/res/layout/shoplist_row.xml" value="0.33" />
         <entry key="app/src/main/res/layout/subtask_row.xml" value="0.25" />
