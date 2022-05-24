@@ -66,7 +66,7 @@ public class ExpenseAdapter extends RecyclerView.Adapter<ExpenseAdapter.ExpenseH
 
         View sharesEditor = LayoutInflater.from(ctx).inflate(R.layout.assignee_editor, null);
         RecyclerView sharesView = sharesEditor.findViewById(R.id.assignee_editor);
-        SharesAdapter sharesAdapter = new SharesAdapter(initShares(cost));
+        SharesAdapter sharesAdapter = new SharesAdapter(initShares(cost), cost);
 
         sharesView.setAdapter(sharesAdapter);
         sharesView.setLayoutManager(new LinearLayoutManager(ctx));

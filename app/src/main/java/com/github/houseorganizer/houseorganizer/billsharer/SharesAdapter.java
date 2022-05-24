@@ -24,9 +24,14 @@ public class SharesAdapter extends RecyclerView.Adapter<SharesAdapter.ShareHolde
     private final HashMap<String, Double> shares;
     private final HashMap<String, Boolean> modified;
     private final List<String> user_emails;
+    private final double cost;
+    private double subTotal;
+    private int numModified;
 
-    public SharesAdapter(HashMap<String, Double> shares) {
+    public SharesAdapter(HashMap<String, Double> shares, double cost) {
         this.shares = shares;
+        this.cost = cost;
+        subTotal = cost;
         user_emails = new ArrayList<>();
         modified = new HashMap<>();
         shares.forEach((k, v) -> user_emails.add(k));
@@ -47,25 +52,35 @@ public class SharesAdapter extends RecyclerView.Adapter<SharesAdapter.ShareHolde
         String user = user_emails.get(position);
         holder.user.setText(user);
         holder.amount.setText(Objects.requireNonNull(shares.get(user)).toString());
-        holder.amount.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-            }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {}
-
-            @Override
-            public void afterTextChanged(Editable s) {
+        holder.amount.setOnFocusChangeListener((view, hasFocus) -> {
+            if (!hasFocus) {
+                shares.put(user, Double.parseDouble(holder.amount.getText().toString()));
                 modified.put(user, true);
                 updateShares();
+                notifyItemRangeChanged(0, getItemCount());
             }
         });
     }
 
     private void updateShares() {
+        updateSubTotal();
+        for (String user : user_emails) {
+            if (Boolean.FALSE.equals(modified.get(user))) {
+                shares.put(user, subTotal/(getItemCount()-numModified));
+            }
+        }
+    }
 
+    private void updateSubTotal() {
+        double res = cost;
+        numModified = 0;
+        for (String user : user_emails) {
+            if (Boolean.TRUE.equals(modified.get(user))) {
+                res = res - shares.get(user);
+                numModified++;
+            }
+        }
+        subTotal = res;
     }
 
     @Override
@@ -79,6 +94,8 @@ public class SharesAdapter extends RecyclerView.Adapter<SharesAdapter.ShareHolde
 
         public ShareHolder(@NonNull View itemView) {
             super(itemView);
+            user = itemView.findViewById(R.id.share_user_email);
+            amount = itemView.findViewById(R.id.share_amount);
         }
     }
 }
