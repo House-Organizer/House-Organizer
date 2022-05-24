@@ -129,7 +129,7 @@ public class GroceriesActivityTest {
     }
 
     @Test
-    public void modifyingItemModifiesIt(){
+    public void modifyingItemModifiesIt() throws InterruptedException {
         String added = "o";
         onView(withId(R.id.groceries_recycler)).perform(RecyclerViewActions.actionOnItemAtPosition(0,
                 longClick()));
@@ -168,7 +168,7 @@ public class GroceriesActivityTest {
     }
 
     @Test
-    public void deletingItemRemovesIt() {
+    public void deletingItemRemovesIt() throws InterruptedException {
         addNewItem("item", 4, "g");
         Thread.sleep(500);
         onView(withId(R.id.groceries_recycler))
@@ -181,7 +181,7 @@ public class GroceriesActivityTest {
     }
 
     @Test
-    public void removePickedUpButtonWorks() {
+    public void removePickedUpButtonWorks() throws InterruptedException {
         addNewItem("1rst", 8, "ol");
         Thread.sleep(300);
         addNewItem("2nd", 5, "il");
