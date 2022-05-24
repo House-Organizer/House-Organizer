@@ -1,6 +1,7 @@
 package com.github.houseorganizer.houseorganizer.shop;
 
 import android.annotation.SuppressLint;
+import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -86,6 +87,10 @@ public class ShopListAdapter extends RecyclerView.Adapter<ShopListAdapter.ItemsH
         box.setText(text);
         box.setChecked(item.isPickedUp());
         box.setOnClickListener( v -> shopList.toggleItemPickedUp(position));
+        box.setOnLongClickListener(l -> {
+            editItem(l.getContext(), shopList, position);
+            return true;
+        });
         holder.cancel.setOnClickListener(v -> {
             shopList.removeItem(item);
             this.notifyItemRemoved(position);
@@ -103,18 +108,36 @@ public class ShopListAdapter extends RecyclerView.Adapter<ShopListAdapter.ItemsH
         shopListView.setLayoutManager(new LinearLayoutManager(parent));
     }
 
+    public void editItem(Context parent, ShopList shopList, int position){
+        ShopItem toModify = shopList.getItemAt(position);
+
+        LayoutInflater inflater = LayoutInflater.from(parent);
+        final View dialogView = inflater.inflate(R.layout.shop_item_dialog, null);
+
+        ((EditText)dialogView.findViewById(R.id.edit_text_name)).setText(toModify.getName());
+        ((EditText)dialogView.findViewById(R.id.edit_text_quantity)).setText(Integer.toString(toModify.getQuantity()));
+        ((EditText)dialogView.findViewById(R.id.edit_text_unit)).setText(toModify.getUnit());
+
+        new AlertDialog.Builder(parent)
+                .setTitle(R.string.edit_item_title)
+                .setView(dialogView)
+                .setPositiveButton(R.string.edit_item_button, (dialog, id) -> retrieveItemFromDialog(shopList, dialogView, position))
+                .setNegativeButton(R.string.cancel, (dialog, id) -> dialog.dismiss())
+                .show();
+    }
+
     public void addItem(AppCompatActivity parent, FirestoreShopList shopList){
         LayoutInflater inflater = LayoutInflater.from(parent);
         final View dialogView = inflater.inflate(R.layout.shop_item_dialog, null);
         new AlertDialog.Builder(parent)
                 .setTitle(R.string.add_item_title)
                 .setView(dialogView)
-                .setPositiveButton(R.string.add, (dialog, id) -> retrieveItemFromDialog(shopList, dialogView))
+                .setPositiveButton(R.string.add, (dialog, id) -> retrieveItemFromDialog(shopList, dialogView, -1))
                 .setNegativeButton(R.string.cancel, (dialog, id) -> dialog.dismiss())
                 .show();
     }
 
-    private void retrieveItemFromDialog(FirestoreShopList shopList, View dialogView){
+    private void retrieveItemFromDialog(ShopList shopList, View dialogView, int position){
         final String name = ((EditText) dialogView.findViewById(R.id.edit_text_name)).getText().toString();
         final String unit = ((EditText) dialogView.findViewById(R.id.edit_text_unit)).getText().toString();
         int quantity = 0;
@@ -123,8 +146,19 @@ public class ShopListAdapter extends RecyclerView.Adapter<ShopListAdapter.ItemsH
         }catch (Exception e){
             // Only possible bad input is empty field
         }
-        shopList.addItem(new ShopItem(name, quantity, unit));
-        this.notifyItemInserted(shopList.size()-1);
-        shopList.updateItems();
+        if(position < 0){
+            // Adding item
+            shopList.addItem(new ShopItem(name, quantity, unit));
+            this.notifyItemInserted(shopList.size()-1);
+        }else{
+            // Modifying item
+            ShopItem toEdit = shopList.getItemAt(position);
+            toEdit.changeName(name);
+            toEdit.setQuantity(quantity);
+            toEdit.setUnit(unit);
+            this.notifyItemChanged(position);
+        }
+
+        if(getFirestoreShopList() != null) ((FirestoreShopList)shopList).updateItems();
     }
 }
