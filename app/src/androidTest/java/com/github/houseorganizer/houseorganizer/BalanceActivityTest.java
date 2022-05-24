@@ -33,6 +33,7 @@ import androidx.test.ext.junit.rules.ActivityScenarioRule;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 
 import com.github.houseorganizer.houseorganizer.billsharer.Billsharer;
+import com.github.houseorganizer.houseorganizer.panels.billsharer.BalanceActivity;
 import com.github.houseorganizer.houseorganizer.panels.main_activities.MainScreenActivity;
 import com.google.android.gms.tasks.Task;
 import com.google.android.gms.tasks.Tasks;
@@ -56,7 +57,7 @@ public class BalanceActivityTest {
     private static Billsharer bs;
 
     @Rule
-    public ActivityScenarioRule<MainScreenActivity> rule = new ActivityScenarioRule<>(MainScreenActivity.class);
+    public ActivityScenarioRule<BalanceActivity> rule = new ActivityScenarioRule<>(BalanceActivity.class);
 
     @BeforeClass
     public static void createFirebase() throws ExecutionException, InterruptedException {
@@ -67,28 +68,24 @@ public class BalanceActivityTest {
         auth = FirebaseAuth.getInstance();
         FirebaseFirestore db = FirebaseFirestore.getInstance();
 
-        // Go in the first house
-        onView(withId(R.id.nav_bar_menu)).perform(click());
-        onView(withId(R.id.house_imageButton)).perform(click());
-        onView(withId(R.id.housesView))
-                .perform(RecyclerViewActions.actionOnItemAtPosition(0, click()));
-        onView(withId(R.id.nav_bar_bs)).perform(click());
-
         String currentHouse = db.collection("households").document(
                 getSharedPrefs(getCurrentActivity()).getString(CURRENT_HOUSEHOLD, "")
         ).getId();
 
         // Retrieve the billsharer
-        DocumentReference household = db.collection("households").document(currentHouse);
-        Task<Billsharer> t = Billsharer.
-                retrieveBillsharer(db.collection("billsharers"), household);
+        DocumentReference household = db.collection("households")
+                .document(currentHouse);
+        Task<Billsharer> t = Billsharer
+                .retrieveBillsharer(db.collection("billsharers"), household);
         Tasks.await(t);
         bs = t.getResult();
     }
 
     private static Activity getCurrentActivity() {
         final Activity[] activity = new Activity[1];
-        onView(isRoot()).check((view, noViewFoundException) -> activity[0] = (Activity) view.getContext());
+        onView(isRoot()).check((view, noViewFoundException) ->
+                activity[0] = (Activity) view.getContext()
+        );
         return activity[0];
     }
 
@@ -101,12 +98,6 @@ public class BalanceActivityTest {
     public void dismissDialogs() {
         Context context = getInstrumentation().getTargetContext();
         context.sendBroadcast(new Intent(Intent.ACTION_CLOSE_SYSTEM_DIALOGS));
-
-        onView(withId(R.id.house_imageButton)).perform(click());
-        onView(withId(R.id.housesView))
-                .perform(RecyclerViewActions.actionOnItemAtPosition(0, click()));
-        onView(withId(R.id.nav_bar_bs)).perform(click());
-        onView(withId(R.id.expense_balances));
     }
 
     private void openBalances() {
@@ -117,19 +108,9 @@ public class BalanceActivityTest {
         onView(withId(R.id.balance_expenses)).perform(click());
     }
 
-    /**
-     * From the Balance activity, opens the Expense activity, adds a new expense and comes back to
-     * the Balance activity.
-     */
-    private void addNewExpense(String title, double cost, String payee){
+    private void goAddExpense(String title, double cost, String payee) {
         openExpenses();
-        onView(withId(R.id.expense_add_item)).perform(click());
-        onView(withId(R.id.expense_edit_title)).perform(typeText(title));
-        onView(withId(R.id.expense_edit_cost)).perform(typeText(""+cost));
-        onView(withId(R.id.expense_edit_payee)).perform(click());
-        onData(allOf(is(instanceOf(String.class)), is(payee))).perform(click());
-        onView(withId(R.id.expense_edit_payee)).check(matches(withSpinnerText(containsString(payee))));
-        onView(withText(R.string.confirm)).perform(click());
+        ExpenseActivityTest.addNewExpense(title, cost, payee);
         openBalances();
     }
 
@@ -149,13 +130,13 @@ public class BalanceActivityTest {
 
     @Test
     public void addingExpenseShowsCorrectNumberOfDebt() {
-        addNewExpense("title1", 41, bs.getResidents().get(0));
+        goAddExpense("title1", 41, bs.getResidents().get(0));
         onView(withId(R.id.balance_recycler)).check(matches(hasChildCount(bs.getResidents().size()-1)));
     }
 
     @Test
     public void deletingDebtRemovesIt() {
-        addNewExpense("title2", 42, bs.getResidents().get(0));
+        goAddExpense("title2", 42, bs.getResidents().get(0));
         onView(withId(R.id.balance_recycler))
                 .perform(RecyclerViewActions.actionOnItemAtPosition(
                         1,
@@ -165,7 +146,7 @@ public class BalanceActivityTest {
 
     @Test
     public void deletingDebtCreatesNewExpense() {
-        addNewExpense("title3", 43, bs.getResidents().get(0));
+        goAddExpense("title3", 43, bs.getResidents().get(0));
         onView(withId(R.id.balance_recycler))
                 .perform(RecyclerViewActions.actionOnItemAtPosition(
                         1,

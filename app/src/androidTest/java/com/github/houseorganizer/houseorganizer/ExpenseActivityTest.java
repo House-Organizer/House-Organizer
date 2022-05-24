@@ -99,7 +99,7 @@ public class ExpenseActivityTest {
         onView(withId(R.id.nav_bar_bs)).perform(click());
     }
 
-    private void addNewExpense(String title, double cost, String payee){
+    protected static void addNewExpense(String title, double cost, String payee){
         onView(withId(R.id.expense_add_item)).perform(click());
         onView(withId(R.id.expense_edit_title)).perform(typeText(title));
         onView(withId(R.id.expense_edit_cost)).perform(typeText(""+cost));
