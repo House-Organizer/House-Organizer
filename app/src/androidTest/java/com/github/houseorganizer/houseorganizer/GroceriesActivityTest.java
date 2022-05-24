@@ -81,7 +81,7 @@ public class GroceriesActivityTest {
     private void addNewItem(String name, int quantity, String unit) throws InterruptedException {
         Thread.sleep(1000);
         onView(withId(R.id.groceries_add)).perform(click());
-        Thread.sleep(2000);
+        Thread.sleep(1000);
         Context context = InstrumentationRegistry.getInstrumentation().getTargetContext();
         context.sendBroadcast(new Intent(Intent.ACTION_CLOSE_SYSTEM_DIALOGS));
         onView(withHint(R.string.name)).perform(typeText(name));
@@ -131,6 +131,7 @@ public class GroceriesActivityTest {
     @Test
     public void modifyingItemModifiesIt() throws InterruptedException {
         String added = "o";
+        Thread.sleep(500);
         onView(withId(R.id.groceries_recycler)).perform(RecyclerViewActions.actionOnItemAtPosition(0,
                 longClick()));
         onView(withId(R.id.edit_text_name)).perform(typeText(added));
