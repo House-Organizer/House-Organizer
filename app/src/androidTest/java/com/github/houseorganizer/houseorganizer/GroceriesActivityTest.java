@@ -127,7 +127,7 @@ public class GroceriesActivityTest {
     @Test
     public void modifyingItemModifiesIt() throws InterruptedException {
         String added = "o";
-        Thread.sleep(500);
+        Thread.sleep(1000);
         onView(withId(R.id.groceries_recycler)).perform(RecyclerViewActions.actionOnItemAtPosition(0,
                 longClick()));
         onView(withId(R.id.edit_text_name)).perform(typeText(added));
