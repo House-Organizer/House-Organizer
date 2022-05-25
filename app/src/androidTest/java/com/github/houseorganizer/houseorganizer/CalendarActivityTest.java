@@ -180,7 +180,7 @@ public class CalendarActivityTest {
     public void swipingLeftOpensExpenses() throws InterruptedException {
         Intents.init();
         onView(withId(R.id.entire_screen)).perform(swipeLeft());
-        Thread.sleep(100);
+        Thread.sleep(500);
         intended(hasComponent(ExpenseActivity.class.getName()));
         Intents.release();
     }
@@ -189,7 +189,7 @@ public class CalendarActivityTest {
     public void swipingRightOpensTasks() throws InterruptedException {
         Intents.init();
         onView(withId(R.id.entire_screen)).perform(swipeRight());
-        Thread.sleep(100);
+        Thread.sleep(500);
         intended(hasComponent(TaskListActivity.class.getName()));
         Intents.release();
     }
