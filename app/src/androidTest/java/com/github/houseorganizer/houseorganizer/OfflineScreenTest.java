@@ -32,6 +32,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import org.junit.AfterClass;
+import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.Test;
@@ -76,6 +77,12 @@ public class OfflineScreenTest {
         auth = FirebaseAuth.getInstance();
 
         pushEverythingOffline();
+    }
+
+    @Before
+    public void dismissDialogs() {
+        Context context = InstrumentationRegistry.getInstrumentation().getTargetContext();
+        context.sendBroadcast(new Intent(Intent.ACTION_CLOSE_SYSTEM_DIALOGS));
     }
 
     private static void pushEverythingOffline() {
