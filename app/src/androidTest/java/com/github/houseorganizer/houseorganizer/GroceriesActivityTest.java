@@ -195,19 +195,17 @@ public class GroceriesActivityTest {
     }
 
     @Test
-    public void swipingLeftOpensTasks() throws InterruptedException {
+    public void swipingLeftOpensTasks() {
         Intents.init();
         onView(withId(R.id.entire_screen)).perform(swipeLeft());
-        Thread.sleep(500);
         intended(hasComponent(TaskListActivity.class.getName()));
         Intents.release();
     }
 
     @Test
-    public void swipingRightOpensMain() throws InterruptedException {
+    public void swipingRightOpensMain() {
         Intents.init();
         onView(withId(R.id.entire_screen)).perform(swipeRight());
-        Thread.sleep(500);
         intended(hasComponent(MainScreenActivity.class.getName()));
         Intents.release();
     }
