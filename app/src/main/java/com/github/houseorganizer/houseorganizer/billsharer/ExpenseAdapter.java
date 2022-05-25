@@ -63,39 +63,40 @@ public class ExpenseAdapter extends RecyclerView.Adapter<ExpenseAdapter.ExpenseH
         );
     }
 
-    private void specifyShares(AlertDialog dialog, Context ctx, double cost, AtomicReference<HashMap<String, Double>> shares) {
-        dialog.dismiss();
+    private void specifyShares(AlertDialog expenseDialog, Context ctx, double cost, AtomicReference<HashMap<String, Double>> shares) {
+        expenseDialog.dismiss();
 
-        View sharesEditor = LayoutInflater.from(ctx).inflate(R.layout.assignee_editor, null);
-        RecyclerView sharesView = sharesEditor.findViewById(R.id.assignee_editor);
+        View sharesEditor = LayoutInflater.from(ctx).inflate(R.layout.share_editor, null);
+        RecyclerView sharesView = sharesEditor.findViewById(R.id.share_editor);
         SharesAdapter sharesAdapter = new SharesAdapter(initShares(cost));
 
         sharesView.setAdapter(sharesAdapter);
         sharesView.setLayoutManager(new LinearLayoutManager(ctx));
 
-        AlertDialog alertDialog = new AlertDialog.Builder(ctx)
+        AlertDialog sharesDialog = new AlertDialog.Builder(ctx)
                 .setTitle("Specify shares")
                 .setView(sharesEditor)
                 .setNegativeButton(R.string.cancel, (d, i) -> {
                     shares.set(null);
-                    dialog.show();
+                    expenseDialog.show();
                 })
                 .setPositiveButton(R.string.confirm, null)
                 .show();
 
-        alertDialog.getButton(DialogInterface.BUTTON_POSITIVE).setOnClickListener( l ->
-                alertDoesntAddUp(alertDialog, ctx, sharesAdapter, cost, shares)
+        sharesDialog.getButton(DialogInterface.BUTTON_POSITIVE).setOnClickListener( l ->
+                alertDoesntAddUp(expenseDialog, sharesDialog, ctx, sharesAdapter, cost, shares)
         );
     }
 
-    private void alertDoesntAddUp(AlertDialog dialog, Context ctx, SharesAdapter adapter, double cost, AtomicReference<HashMap<String, Double>> shares) {
-        dialog.dismiss();
+    private void alertDoesntAddUp(AlertDialog expenseDialog, AlertDialog sharesDialog, Context ctx, SharesAdapter adapter, double cost, AtomicReference<HashMap<String, Double>> shares) {
         if (addsUpToTotal(cost, adapter.getShares())) {
             shares.set(adapter.getShares());
+            sharesDialog.dismiss();
+            expenseDialog.show();
         } else {
             new AlertDialog.Builder(ctx)
                     .setTitle(R.string.adds_up_to_total)
-                    .setPositiveButton(R.string.ok, (d, i) -> dialog.show())
+                    .setPositiveButton(R.string.ok, (d, i) -> sharesDialog.show())
                     .show();
         }
     }
