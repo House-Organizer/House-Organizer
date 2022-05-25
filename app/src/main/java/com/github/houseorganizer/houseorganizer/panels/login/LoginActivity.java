@@ -2,6 +2,7 @@ package com.github.houseorganizer.houseorganizer.panels.login;
 
 
 import static com.github.houseorganizer.houseorganizer.util.Util.logAndToast;
+import static com.github.houseorganizer.houseorganizer.util.Util.wipeUserData;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -27,6 +28,8 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
+
+import java.util.List;
 
 public class LoginActivity extends AppCompatActivity {
 
@@ -56,19 +59,17 @@ public class LoginActivity extends AppCompatActivity {
 
       // If a sign out has been requested, sign out the current user
         if(getIntent().hasExtra(getString(R.string.signout_intent))){
-            if (mAuth.getCurrentUser().isAnonymous()) {
-                mAuth.getCurrentUser()
-                        .delete()
-                        .addOnSuccessListener(v -> {
-                            Util.wipeUserData(mAuth.getCurrentUser().getEmail());
-                        });
-            } else {
-                mAuth.signOut();
-            }
+            FirebaseUser currentUser = mAuth.getCurrentUser();
 
-            // Needed for the listener; works even if no user is signed in
-            mGoogleSignInClient.signOut().addOnCompleteListener(this, l ->
-                    setUpSignInButtons());
+            mAuth.signOut();
+
+            if (currentUser.isAnonymous()) {
+                String email = currentUser.getEmail();
+                Util.wipeUserData(email);
+                currentUser.delete().addOnSuccessListener(v -> setUpSignInButtons());
+            } else {
+                mGoogleSignInClient.signOut().addOnCompleteListener(this, l -> setUpSignInButtons());
+            }
         } else{
             setUpSignInButtons();
         }
