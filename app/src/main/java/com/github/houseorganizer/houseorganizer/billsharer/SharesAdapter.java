@@ -1,8 +1,6 @@
 package com.github.houseorganizer.houseorganizer.billsharer;
 
 import android.annotation.SuppressLint;
-import android.text.Editable;
-import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -36,6 +34,10 @@ public class SharesAdapter extends RecyclerView.Adapter<SharesAdapter.ShareHolde
         modified = new HashMap<>();
         shares.forEach((k, v) -> user_emails.add(k));
         shares.forEach((k, v) -> modified.put(k, false));
+    }
+
+    public HashMap<String, Double> getShares() {
+        return shares;
     }
 
     @NonNull

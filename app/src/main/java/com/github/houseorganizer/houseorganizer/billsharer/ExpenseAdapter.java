@@ -2,7 +2,6 @@ package com.github.houseorganizer.houseorganizer.billsharer;
 
 
 import android.content.Context;
-import android.content.DialogInterface;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,11 +18,10 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.github.houseorganizer.houseorganizer.R;
-import com.github.houseorganizer.houseorganizer.task.FirestoreTask;
-import com.github.houseorganizer.houseorganizer.task.TaskAssigneeAdapter;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicReference;
 
 public class ExpenseAdapter extends RecyclerView.Adapter<ExpenseAdapter.ExpenseHolder> {
 
@@ -42,6 +40,7 @@ public class ExpenseAdapter extends RecyclerView.Adapter<ExpenseAdapter.ExpenseH
     }
 
     public void addExpense(AppCompatActivity parent) {
+        AtomicReference<HashMap<String, Double>> shares = new AtomicReference<>();
         LayoutInflater inflater = LayoutInflater.from(parent);
         final View dialogView = inflater.inflate(R.layout.activity_dialog_expense, null);
         Spinner spinner = dialogView.findViewById(R.id.expense_edit_payee);
@@ -51,18 +50,20 @@ public class ExpenseAdapter extends RecyclerView.Adapter<ExpenseAdapter.ExpenseH
         AlertDialog alertDialog = new AlertDialog.Builder(parent)
                 .setTitle(R.string.new_expense)
                 .setView(dialogView)
-                .setNeutralButton(R.string.specify_shares, null)
-                .setPositiveButton(R.string.confirm, (dialog, id) -> getExpenseFromDialog(dialogView))
+                .setPositiveButton(R.string.specify_shares, null)
+                .setNeutralButton(R.string.confirm, (dialog, id) -> getExpenseFromDialog(dialogView, shares.get()))
                 .setNegativeButton(R.string.cancel, (dialog, id) -> dialog.dismiss())
                 .show();
 
-        alertDialog.getButton(AlertDialog.BUTTON_NEUTRAL).setOnClickListener(
-                l -> specifyShares(alertDialog, getCostFromDialog(dialogView), dialogView.getContext())
+        alertDialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(l ->
+                shares.set(specifyShares(alertDialog, getCostFromDialog(dialogView), dialogView.getContext()))
         );
     }
 
-    private void specifyShares(AlertDialog dialog, double cost, Context ctx) {
+    private HashMap<String, Double> specifyShares(AlertDialog dialog, double cost, Context ctx) {
         dialog.dismiss();
+
+        AtomicReference<HashMap<String, Double>> shares = new AtomicReference<>();
 
         View sharesEditor = LayoutInflater.from(ctx).inflate(R.layout.assignee_editor, null);
         RecyclerView sharesView = sharesEditor.findViewById(R.id.assignee_editor);
@@ -72,17 +73,32 @@ public class ExpenseAdapter extends RecyclerView.Adapter<ExpenseAdapter.ExpenseH
         sharesView.setLayoutManager(new LinearLayoutManager(ctx));
 
         new AlertDialog.Builder(ctx)
+                .setTitle("Specify shares")
                 .setView(sharesEditor)
+                .setNegativeButton(R.string.cancel, (d, i) -> {
+                    shares.set(null);
+                    d.dismiss();
+                    dialog.show();
+                })
+                .setPositiveButton(R.string.confirm, (d, i) -> {
+                    shares.set(sharesAdapter.getShares());
+                    d.dismiss();
+                    dialog.show();
+                })
                 .setOnDismissListener(d -> dialog.show())
                 .show();
+
+        return shares.get();
     }
 
-    private void getExpenseFromDialog(View dialogView) {
+    private void getExpenseFromDialog(View dialogView, HashMap<String, Double> shares) {
         String title = ((EditText) dialogView.findViewById(R.id.expense_edit_title)).getText().toString();
         Spinner spinner = dialogView.findViewById(R.id.expense_edit_payee);
 
         double cost = getCostFromDialog(dialogView);
-        HashMap<String, Double> shares = initShares(cost);
+        if (shares == null) {
+            shares = initShares(cost);
+        }
 
         billsharer.addExpense(new Expense(title, cost, spinner.getSelectedItem().toString(), shares));
         this.notifyItemInserted(billsharer.getExpenses().size()-1);
