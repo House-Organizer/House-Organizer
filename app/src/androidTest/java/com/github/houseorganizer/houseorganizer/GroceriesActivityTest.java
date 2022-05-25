@@ -4,6 +4,8 @@ import static androidx.test.espresso.Espresso.onView;
 import static androidx.test.espresso.action.ViewActions.click;
 import static androidx.test.espresso.action.ViewActions.closeSoftKeyboard;
 import static androidx.test.espresso.action.ViewActions.longClick;
+import static androidx.test.espresso.action.ViewActions.swipeLeft;
+import static androidx.test.espresso.action.ViewActions.swipeRight;
 import static androidx.test.espresso.action.ViewActions.typeText;
 import static androidx.test.espresso.assertion.ViewAssertions.matches;
 import static androidx.test.espresso.intent.Intents.intended;
@@ -31,6 +33,7 @@ import androidx.test.platform.app.InstrumentationRegistry;
 import com.github.houseorganizer.houseorganizer.panels.main_activities.CalendarActivity;
 import com.github.houseorganizer.houseorganizer.panels.main_activities.GroceriesActivity;
 import com.github.houseorganizer.houseorganizer.panels.main_activities.MainScreenActivity;
+import com.github.houseorganizer.houseorganizer.panels.main_activities.TaskListActivity;
 import com.github.houseorganizer.houseorganizer.shop.ShopItem;
 import com.google.firebase.auth.FirebaseAuth;
 
@@ -190,4 +193,17 @@ public class GroceriesActivityTest {
         Thread.sleep(500);
         onView(withId(R.id.groceries_recycler)).check(matches(hasChildCount(1)));
     }
+
+    @Test
+    public void swipingLeftOpensTasks() {
+        swipeLeft();
+        intended(hasComponent(TaskListActivity.class.getName()));
+    }
+
+    @Test
+    public void swipingRightOpensMain() {
+        swipeRight();
+        intended(hasComponent(MainScreenActivity.class.getName()));
+    }
+
 }

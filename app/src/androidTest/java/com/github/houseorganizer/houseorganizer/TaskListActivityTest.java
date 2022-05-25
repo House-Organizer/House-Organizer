@@ -6,8 +6,12 @@ import static androidx.test.espresso.action.ViewActions.clearText;
 import static androidx.test.espresso.action.ViewActions.click;
 import static androidx.test.espresso.action.ViewActions.closeSoftKeyboard;
 import static androidx.test.espresso.action.ViewActions.pressBack;
+import static androidx.test.espresso.action.ViewActions.swipeLeft;
+import static androidx.test.espresso.action.ViewActions.swipeRight;
 import static androidx.test.espresso.action.ViewActions.typeText;
 import static androidx.test.espresso.assertion.ViewAssertions.matches;
+import static androidx.test.espresso.intent.Intents.intended;
+import static androidx.test.espresso.intent.matcher.IntentMatchers.hasComponent;
 import static androidx.test.espresso.matcher.RootMatchers.isDialog;
 import static androidx.test.espresso.matcher.ViewMatchers.hasChildCount;
 import static androidx.test.espresso.matcher.ViewMatchers.hasSibling;
@@ -39,6 +43,9 @@ import androidx.test.ext.junit.rules.ActivityScenarioRule;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 import androidx.test.platform.app.InstrumentationRegistry;
 
+import com.github.houseorganizer.houseorganizer.panels.main_activities.CalendarActivity;
+import com.github.houseorganizer.houseorganizer.panels.main_activities.GroceriesActivity;
+import com.github.houseorganizer.houseorganizer.panels.main_activities.MainScreenActivity;
 import com.github.houseorganizer.houseorganizer.panels.main_activities.TaskListActivity;
 import com.github.houseorganizer.houseorganizer.task.FirestoreTask;
 import com.github.houseorganizer.houseorganizer.util.EspressoIdlingResource;
@@ -308,5 +315,17 @@ public class TaskListActivityTest {
         UiObject2 text = device.findObject(By.text("Don't forget your task : " + FirebaseTestsHelper.TEST_TASK_TITLE));
         assertEquals("Reminder", title.getText());
         assertEquals("Don't forget your task : " + FirebaseTestsHelper.TEST_TASK_TITLE, text.getText());
+    }
+
+    @Test
+    public void swipingLeftOpensCalendar() {
+        swipeLeft();
+        intended(hasComponent(CalendarActivity.class.getName()));
+    }
+
+    @Test
+    public void swipingRightOpensGroceries() {
+        swipeRight();
+        intended(hasComponent(GroceriesActivity.class.getName()));
     }
 }
