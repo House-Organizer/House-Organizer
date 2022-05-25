@@ -131,7 +131,7 @@ public class ExpenseActivityTest {
     }
 
     @Test
-    public void ExpenseListHasCorrectNumberOfExpense() {
+    public void expenseListHasCorrectNumberOfExpense() {
         onView(withId(R.id.expense_recycler)).check(matches(hasChildCount(1)));
     }
 
@@ -148,6 +148,16 @@ public class ExpenseActivityTest {
                 .perform(RecyclerViewActions.actionOnItemAtPosition(
                         1,
                         RecyclerViewHelper.clickChildViewWithId(R.id.expense_remove_check)));
+    }
+
+    @Test
+    public void specifyingExpenseSharesCreatesCorrectDebts() {
+        // TODO test
+    }
+
+    @Test
+    public void wrongSharesOpensDialog() {
+        // TODO test
     }
 
     @Test
