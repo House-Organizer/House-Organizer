@@ -141,6 +141,14 @@ public class Billsharer {
         temp_balances.values().removeIf(v -> v == 0);
         while (!temp_balances.isEmpty()) {
             computeNextDebt(temp_balances);
+
+            if (temp_balances.size() == 1) {
+                String max = findMaxBalance(temp_balances);
+                double max_val = temp_balances.get(max);
+                if (max_val < 0.01) {
+                    temp_balances = new HashMap<>();
+                }
+            }
         }
     }
 
