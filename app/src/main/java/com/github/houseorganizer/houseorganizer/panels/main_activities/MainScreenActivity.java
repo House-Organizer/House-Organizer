@@ -81,7 +81,6 @@ public class MainScreenActivity extends TaskFragmentNavBarActivity {
     public enum ListFragmentView { CHORES_LIST, GROCERY_LIST }
 
     /* for setting up the task owner. Not related to firebase */
-    private final String currentUID = "0";
     private boolean loadHouse = false;
     private boolean locationPermission = false;
     public FusedLocationProviderClient fusedLocationClient;
@@ -91,12 +90,18 @@ public class MainScreenActivity extends TaskFragmentNavBarActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main_screen);
 
+
         mUser = FirebaseAuth.getInstance().getCurrentUser();
         db = FirebaseFirestore.getInstance();
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
 
         loadHouse = getIntent().hasExtra("LoadHouse");
-
+        findViewById(R.id.entire_screen).setOnTouchListener(new OnSwipeTouchListener(this) {
+            @Override
+            public void onSwipeLeft() {
+                changeActivity(CurrentActivity.GROCERIES.id);
+            }
+        });
         if(!loadHouse) loadData();
         if(loadHouse && LocationHelpers.checkLocationPermission(getApplicationContext(), this)){
             locationPermission = true;

@@ -69,7 +69,7 @@
     <string name="title">Título</string>
     <string name="duration">Duração (min)</string>
     <string name="date">Data (dd/MM/aaaa HH:mm)</string>
-    <string name="add">Adicionar</string>
+    <string name="add_event">Adicionar</string>
     <string name="cancel">Anular</string>
     <string name="delete">Apagar</string>
     <string name="edit">Editar</string>

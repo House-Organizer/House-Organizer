@@ -40,6 +40,18 @@ public final class CalendarActivity extends NavBarActivity {
         Button navigateMonthRight = findViewById(R.id.calendar_screen_month_right);
         prepareMonthlyViewItems(yearMonth, navigateMonthLeft, navigateMonthRight);
 
+        findViewById(R.id.entire_screen).setOnTouchListener(new OnSwipeTouchListener(this) {
+            @Override
+            public void onSwipeLeft() {
+                changeActivity(CurrentActivity.EXPENSE.id);
+            }
+
+            @Override
+            public void onSwipeRight() {
+                changeActivity(CurrentActivity.TASKS.id);
+            }
+        });
+
         calendarEvents = findViewById(R.id.calendar_screen_calendar);
         calendarAdapter = new UpcomingAdapter(calendar,
                 registerForActivityResult(new ActivityResultContracts.GetContent(), uri -> calendarAdapter.pushAttachment(uri)));
