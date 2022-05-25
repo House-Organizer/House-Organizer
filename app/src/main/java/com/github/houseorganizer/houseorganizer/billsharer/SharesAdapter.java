@@ -58,7 +58,8 @@ public class SharesAdapter extends RecyclerView.Adapter<SharesAdapter.ShareHolde
             @Override
             public void afterTextChanged(Editable s) {
                 if (!holder.amount.getText().toString().equals("")) {
-                    shares.put(user, Double.parseDouble(holder.amount.getText().toString()));
+                    double db = Double.parseDouble(holder.amount.getText().toString());
+                    shares.put(user, Math.round(db*100.0)/100.0);
                 }
             }
         });

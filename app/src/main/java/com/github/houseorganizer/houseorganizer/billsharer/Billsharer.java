@@ -160,15 +160,15 @@ public class Billsharer {
         if (max_val + closest_val == 0) {
             temp_balances.remove(max);
             temp_balances.remove(closest);
-            debts.add(new Debt(max, closest, max_val));
+            debts.add(new Debt(max, closest, Math.round(max_val*100.0)/100.0));
         } else if (max_val + closest_val < 0) {
             temp_balances.remove(max);
             temp_balances.put(closest, max_val+closest_val);
-            debts.add(new Debt(max, closest, max_val));
+            debts.add(new Debt(max, closest, Math.round(max_val*100.0)/100.0));
         } else { // max_val + closest_val > 0
             temp_balances.remove(closest);
             temp_balances.put(max, max_val+closest_val);
-            debts.add(new Debt(max, closest, abs(closest_val)));
+            debts.add(new Debt(max, closest, Math.round(abs(closest_val)*100.0)/100.0));
         }
     }
 

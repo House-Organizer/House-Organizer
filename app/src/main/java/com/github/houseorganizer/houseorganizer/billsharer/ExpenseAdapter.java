@@ -136,7 +136,7 @@ public class ExpenseAdapter extends RecyclerView.Adapter<ExpenseAdapter.ExpenseH
         List<String> residents = billsharer.getResidents();
         HashMap<String, Double> shares = new HashMap<>();
         for (String resident : residents) {
-            shares.put(resident, cost/residents.size());
+            shares.put(resident, Math.round((cost/residents.size())*100.0)/100.0);
         }
         return shares;
     }
