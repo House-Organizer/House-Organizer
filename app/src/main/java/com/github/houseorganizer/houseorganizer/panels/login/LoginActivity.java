@@ -47,26 +47,21 @@ public class LoginActivity extends AppCompatActivity {
         // Firebase Auth Instance
         mAuth = FirebaseAuth.getInstance();
 
-        findViewById(R.id.email_signin_button).setOnClickListener(
-                v -> startActivity(new Intent(this, LoginEmail.class))
-        );
-        findViewById(R.id.google_sign_in_button).setOnClickListener(
-                v -> googleSignInResultLauncher.launch(new Intent(mGoogleSignInClient.getSignInIntent()))
-        );
+        setUpSignInButtons();
 
       // If a sign out has been requested, sign out the current user
         if(getIntent().hasExtra(getString(R.string.signout_intent))){
             FirebaseUser currentUser = mAuth.getCurrentUser();
 
             mAuth.signOut();
+            mGoogleSignInClient.signOut().addOnCompleteListener(this, l -> setUpSignInButtons());
 
             if (currentUser.isAnonymous()) {
                 String email = currentUser.getEmail();
                 Util.wipeUserData(email);
-                currentUser.delete().addOnSuccessListener(v -> setUpSignInButtons());
-            } else {
-                mGoogleSignInClient.signOut().addOnCompleteListener(this, l -> setUpSignInButtons());
+                currentUser.delete();
             }
+
         } else{
             setUpSignInButtons();
         }
@@ -100,10 +95,13 @@ public class LoginActivity extends AppCompatActivity {
     );
 
     /**
-     *  Sets up the discover and Google Sign-In buttons for
+     *  Sets up the discover, email and Google Sign-In buttons for
      *  the user to authenticate
      */
     private void setUpSignInButtons(){
+        findViewById(R.id.email_signin_button).setOnClickListener(
+                v -> startActivity(new Intent(this, LoginEmail.class)));
+
         findViewById(R.id.google_sign_in_button).setOnClickListener(
                 v -> googleSignInResultLauncher.launch(new Intent(mGoogleSignInClient.getSignInIntent())));
 
