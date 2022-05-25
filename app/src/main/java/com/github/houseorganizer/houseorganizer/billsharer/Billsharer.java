@@ -173,7 +173,7 @@ public class Billsharer {
     }
 
     private String findMaxBalance(Map<String, Double> balances) {
-        double max = Double.MIN_VALUE;
+        double max = -Double.MAX_VALUE;
         String max_key = "";
         for (String bal : balances.keySet()) {
             if (balances.get(bal) > max) {
