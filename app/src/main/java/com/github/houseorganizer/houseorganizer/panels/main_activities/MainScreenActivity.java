@@ -9,12 +9,9 @@ import android.annotation.SuppressLint;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
-import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -40,6 +37,7 @@ import com.github.houseorganizer.houseorganizer.shop.FirestoreShopList;
 import com.github.houseorganizer.houseorganizer.shop.ShopListAdapter;
 import com.github.houseorganizer.houseorganizer.storage.LocalStorage;
 import com.github.houseorganizer.houseorganizer.task.TaskView;
+import com.github.houseorganizer.houseorganizer.util.Util;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.tasks.Task;
@@ -80,8 +78,6 @@ public class MainScreenActivity extends TaskFragmentNavBarActivity {
 
     public enum ListFragmentView { CHORES_LIST, GROCERY_LIST }
 
-    /* for setting up the task owner. Not related to firebase */
-    private final String currentUID = "0";
     private boolean loadHouse = false;
     private boolean locationPermission = false;
     public FusedLocationProviderClient fusedLocationClient;
@@ -369,14 +365,16 @@ public class MainScreenActivity extends TaskFragmentNavBarActivity {
     }
 
     public void goToOfflineScreenIfNeeded() {
-        ConnectivityManager connectivityManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo activeNetInfo = connectivityManager.getActiveNetworkInfo();
-
-        boolean isConnected = (activeNetInfo != null) && activeNetInfo.isConnectedOrConnecting();
-
-        if (!isConnected) {
-            startActivity(new Intent(this, OfflineScreenActivity.class).putExtra("hh-id", currentHouse.getId()));
+        if(! Util.hasWifiOrData(this)) {
+            startActivity(new Intent(this, OfflineScreenActivity.class)
+                    .putExtra("hh-id", currentHouse.getId()));
         }
+    }
+
+    @Override
+    protected boolean changeActivity(int buttonId) {
+        goToOfflineScreenIfNeeded();
+        return super.changeActivity(buttonId);
     }
 
     @Override

@@ -144,8 +144,7 @@ public class OfflineScreenTest {
     private void unimplementedButtonShowsAlertDialog(@IdRes int resId) {
         onView(withId(resId)).perform(click());
 
-        onView(withText("Oh no!")).inRoot(isDialog()).check(matches(isDisplayed()));
-        onView(withText("This action is not available at the moment")).inRoot(isDialog()).check(matches(isDisplayed()));
+        onView(withText("To perform this action, you need to have an active WiFi or data connection.")).inRoot(isDialog()).check(matches(isDisplayed()));
     }
 
     @Test

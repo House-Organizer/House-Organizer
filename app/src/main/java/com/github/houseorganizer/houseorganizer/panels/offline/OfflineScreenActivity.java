@@ -3,8 +3,6 @@ package com.github.houseorganizer.houseorganizer.panels.offline;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Toast;
@@ -21,6 +19,7 @@ import com.github.houseorganizer.houseorganizer.storage.OfflineEvent;
 import com.github.houseorganizer.houseorganizer.storage.OfflineItem;
 import com.github.houseorganizer.houseorganizer.storage.OfflineShopItem;
 import com.github.houseorganizer.houseorganizer.storage.OfflineTask;
+import com.github.houseorganizer.houseorganizer.util.Util;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -106,18 +105,12 @@ public final class OfflineScreenActivity extends ThemedAppCompatActivity {
 
     public void unsupportedActionAlert(View view) {
         new AlertDialog.Builder(view.getContext())
-                .setTitle("Oh no!")
-                .setMessage("This action is not available at the moment")
+                .setMessage("To perform this action, you need to have an active WiFi or data connection.")
                 .show();
     }
 
     public void goOnlineIfPossible(View view) {
-        ConnectivityManager connectivityManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo activeNetInfo = connectivityManager.getActiveNetworkInfo();
-
-        boolean isConnected = (activeNetInfo != null) && activeNetInfo.isConnectedOrConnecting();
-
-        if (isConnected) {
+        if (Util.hasWifiOrData(this)) {
             startActivity(new Intent(this, MainScreenActivity.class));
         } else {
             unsupportedActionAlert(view);

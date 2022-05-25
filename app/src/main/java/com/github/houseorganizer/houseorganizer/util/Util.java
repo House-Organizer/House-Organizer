@@ -4,12 +4,16 @@ import static android.content.Context.MODE_PRIVATE;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.util.Log;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.github.houseorganizer.houseorganizer.R;
+import com.github.houseorganizer.houseorganizer.panels.offline.OfflineScreenActivity;
 
 public class Util {
 
@@ -56,5 +60,14 @@ public class Util {
         }
     }
 
+    //<---------------------| Connection Status |------------------------------------------->
+    public static boolean hasWifiOrData(Context panelCtx) {
+        ConnectivityManager connectivityManager =
+                (ConnectivityManager) panelCtx.getSystemService(Context.CONNECTIVITY_SERVICE);
+
+        NetworkInfo activeNetInfo = connectivityManager.getActiveNetworkInfo();
+
+        return (activeNetInfo != null) && activeNetInfo.isConnectedOrConnecting();
+    }
 
 }
