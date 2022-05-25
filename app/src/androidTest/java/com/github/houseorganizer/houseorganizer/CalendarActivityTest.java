@@ -179,7 +179,7 @@ public class CalendarActivityTest {
     @Test
     public void swipingLeftOpensExpenses() {
         Intents.init();
-        swipeLeft();
+        onView(withId(R.id.entire_screen)).perform(swipeLeft());
         intended(hasComponent(ExpenseActivity.class.getName()));
         Intents.release();
     }
@@ -187,7 +187,7 @@ public class CalendarActivityTest {
     @Test
     public void swipingRightOpensTasks() {
         Intents.init();
-        swipeRight();
+        onView(withId(R.id.entire_screen)).perform(swipeRight());
         intended(hasComponent(TaskListActivity.class.getName()));
         Intents.release();
     }

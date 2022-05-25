@@ -183,7 +183,7 @@ public class ExpenseActivityTest {
     @Test
     public void swipingRightOpensCalendar() {
         Intents.init();
-        swipeRight();
+        onView(withId(R.id.entire_screen)).perform(swipeRight());
         intended(hasComponent(CalendarActivity.class.getName()));
         Intents.release();
     }

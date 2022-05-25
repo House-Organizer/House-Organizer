@@ -169,7 +169,7 @@ public class MainScreenActivityTest {
 
     @Test
     public void swipingLeftOpensGroceries() {
-        swipeLeft();
+        onView(withId(R.id.entire_screen)).perform(swipeLeft());
         intended(hasComponent(GroceriesActivity.class.getName()));
     }
 }

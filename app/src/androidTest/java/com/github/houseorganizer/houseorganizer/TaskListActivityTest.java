@@ -321,7 +321,7 @@ public class TaskListActivityTest {
     @Test
     public void swipingLeftOpensCalendar() {
         Intents.init();
-        swipeLeft();
+        onView(withId(R.id.entire_screen)).perform(swipeLeft());
         intended(hasComponent(CalendarActivity.class.getName()));
         Intents.release();
     }
@@ -329,7 +329,7 @@ public class TaskListActivityTest {
     @Test
     public void swipingRightOpensGroceries() {
         Intents.init();
-        swipeRight();
+        onView(withId(R.id.entire_screen)).perform(swipeRight());
         intended(hasComponent(GroceriesActivity.class.getName()));
         Intents.release();
     }

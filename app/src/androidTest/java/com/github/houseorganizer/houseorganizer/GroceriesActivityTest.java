@@ -197,7 +197,7 @@ public class GroceriesActivityTest {
     @Test
     public void swipingLeftOpensTasks() {
         Intents.init();
-        swipeLeft();
+        onView(withId(R.id.entire_screen)).perform(swipeLeft());
         intended(hasComponent(TaskListActivity.class.getName()));
         Intents.release();
     }
@@ -205,7 +205,7 @@ public class GroceriesActivityTest {
     @Test
     public void swipingRightOpensMain() {
         Intents.init();
-        swipeRight();
+        onView(withId(R.id.entire_screen)).perform(swipeRight());
         intended(hasComponent(MainScreenActivity.class.getName()));
         Intents.release();
     }
