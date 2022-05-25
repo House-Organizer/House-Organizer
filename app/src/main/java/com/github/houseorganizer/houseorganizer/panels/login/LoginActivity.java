@@ -2,7 +2,6 @@ package com.github.houseorganizer.houseorganizer.panels.login;
 
 
 import static com.github.houseorganizer.houseorganizer.util.Util.logAndToast;
-import static com.github.houseorganizer.houseorganizer.util.Util.wipeUserData;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -28,8 +27,6 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
-
-import java.util.List;
 
 public class LoginActivity extends AppCompatActivity {
 
