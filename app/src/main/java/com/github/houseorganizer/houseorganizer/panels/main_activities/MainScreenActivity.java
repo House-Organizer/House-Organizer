@@ -108,6 +108,14 @@ public class MainScreenActivity extends TaskFragmentNavBarActivity {
             loadData();
         }
         setupNotifications();
+        setupCalendar();
+
+        // If you want to select the main button on the navBar,
+        // use `OptionalInt.of(R.id. ...)`
+        super.setUpNavBar(R.id.nav_bar, OptionalInt.empty());
+    }
+
+    private void setupCalendar() {
         calendarEvents = findViewById(R.id.calendar);
         calendarAdapter = new UpcomingAdapter(calendar,
                 registerForActivityResult(new ActivityResultContracts.GetContent(), uri -> calendarAdapter.pushAttachment(uri)));
@@ -117,10 +125,6 @@ public class MainScreenActivity extends TaskFragmentNavBarActivity {
             goToOfflineScreenIfNeeded();
             calendarAdapter.showAddEventDialog(this, currentHouse, "addEvent:failureToAdd");
         });
-
-        // If you want to select the main button on the navBar,
-        // use `OptionalInt.of(R.id. ...)`
-        super.setUpNavBar(R.id.nav_bar, OptionalInt.empty());
     }
 
     private void setupNotifications() {
