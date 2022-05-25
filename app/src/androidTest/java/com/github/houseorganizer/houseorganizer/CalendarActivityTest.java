@@ -178,13 +178,17 @@ public class CalendarActivityTest {
 
     @Test
     public void swipingLeftOpensExpenses() {
+        Intents.init();
         swipeLeft();
         intended(hasComponent(ExpenseActivity.class.getName()));
+        Intents.release();
     }
 
     @Test
     public void swipingRightOpensTasks() {
+        Intents.init();
         swipeRight();
         intended(hasComponent(TaskListActivity.class.getName()));
+        Intents.release();
     }
 }

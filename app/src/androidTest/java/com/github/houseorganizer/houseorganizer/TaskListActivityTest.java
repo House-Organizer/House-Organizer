@@ -39,6 +39,7 @@ import android.support.test.uiautomator.Until;
 import androidx.test.core.app.ApplicationProvider;
 import androidx.test.espresso.IdlingRegistry;
 import androidx.test.espresso.contrib.RecyclerViewActions;
+import androidx.test.espresso.intent.Intents;
 import androidx.test.ext.junit.rules.ActivityScenarioRule;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 import androidx.test.platform.app.InstrumentationRegistry;
@@ -319,13 +320,17 @@ public class TaskListActivityTest {
 
     @Test
     public void swipingLeftOpensCalendar() {
+        Intents.init();
         swipeLeft();
         intended(hasComponent(CalendarActivity.class.getName()));
+        Intents.release();
     }
 
     @Test
     public void swipingRightOpensGroceries() {
+        Intents.init();
         swipeRight();
         intended(hasComponent(GroceriesActivity.class.getName()));
+        Intents.release();
     }
 }

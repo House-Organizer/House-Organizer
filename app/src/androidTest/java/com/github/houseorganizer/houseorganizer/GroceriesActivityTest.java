@@ -196,14 +196,18 @@ public class GroceriesActivityTest {
 
     @Test
     public void swipingLeftOpensTasks() {
+        Intents.init();
         swipeLeft();
         intended(hasComponent(TaskListActivity.class.getName()));
+        Intents.release();
     }
 
     @Test
     public void swipingRightOpensMain() {
+        Intents.init();
         swipeRight();
         intended(hasComponent(MainScreenActivity.class.getName()));
+        Intents.release();
     }
 
 }
