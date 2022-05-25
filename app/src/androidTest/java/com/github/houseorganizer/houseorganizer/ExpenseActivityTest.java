@@ -181,9 +181,10 @@ public class ExpenseActivityTest {
     }
 
     @Test
-    public void swipingRightOpensCalendar() {
+    public void swipingRightOpensCalendar() throws InterruptedException {
         Intents.init();
         onView(withId(R.id.entire_screen)).perform(swipeRight());
+        Thread.sleep(100);
         intended(hasComponent(CalendarActivity.class.getName()));
         Intents.release();
     }

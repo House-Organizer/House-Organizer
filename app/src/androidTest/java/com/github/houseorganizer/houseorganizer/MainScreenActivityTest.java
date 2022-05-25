@@ -168,8 +168,9 @@ public class MainScreenActivityTest {
     }
 
     @Test
-    public void swipingLeftOpensGroceries() {
+    public void swipingLeftOpensGroceries() throws InterruptedException {
         onView(withId(R.id.entire_screen)).perform(swipeLeft());
+        Thread.sleep(100);
         intended(hasComponent(GroceriesActivity.class.getName()));
     }
 }
