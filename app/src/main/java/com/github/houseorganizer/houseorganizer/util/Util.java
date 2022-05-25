@@ -71,28 +71,27 @@ public class Util {
      * here indicated by their email address
      *
      * @param email the email of the user to delete
-     * @return a Task that is successful once the household and task deletion are done;
-     *          [!] Success of underlying tasks has to be checked manually, if needed.
      */
-    public static Task<List<Task<?>>> wipeUserData(String email) {
+    public static void wipeUserData(String email) {
         FirebaseFirestore db = FirebaseFirestore.getInstance();
 
         // Remove user from each household where they are a resident
-        Task<QuerySnapshot> hhTask =
-                db.collection("households")
+        db.collection("households")
                 .whereArrayContains("residents", email)
                 .get()
                 .addOnSuccessListener(queryDocumentSnapshots -> {
+
                     for (QueryDocumentSnapshot docSnap: queryDocumentSnapshots) {
-                        docSnap.getReference()
-                                .update("num_members", (Integer) docSnap.getData().get("num_members") - 1,
-                                        "residents", FieldValue.arrayRemove(email));
+
+                        Long updatedMemberCount = (Long) docSnap.getData().get("num_members") - 1;
+                        docSnap.getReference().update("num_members", updatedMemberCount,
+                                "residents", FieldValue.arrayRemove(email));
                     }
                 });
 
+
         // Remove user from each task where they are an assignee
-        Task<QuerySnapshot> tlTask =
-            db.collection("task_dump")
+        db.collection("task_dump")
                     .whereArrayContains("assignees", email)
                     .get()
                     .addOnSuccessListener(queryDocumentSnapshots -> {
@@ -101,7 +100,5 @@ public class Util {
                                     .update("assignees", FieldValue.arrayRemove(email));
                         }
                     });
-
-        return Tasks.whenAllComplete(hhTask, tlTask);
     }
 }
