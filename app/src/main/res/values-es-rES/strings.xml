@@ -135,4 +135,5 @@
     <string name="notify">Notificar</string>
     <string name="edit_item_title">Editar un producto</string>
     <string name="edit_item_button">Editar</string>
+    <string name="go_offline">Pasar al modo offline</string>
 </resources>

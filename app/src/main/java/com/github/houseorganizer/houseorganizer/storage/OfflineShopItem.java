@@ -55,9 +55,8 @@ public final class OfflineShopItem extends OfflineItem {
         return name;
     }
 
-    public @AttrRes
-    int color() {
-        return com.google.android.material.R.attr.colorSecondaryVariant;
+    public float colorRatio() {
+        return 0.6f;
     }
 
     @NonNull

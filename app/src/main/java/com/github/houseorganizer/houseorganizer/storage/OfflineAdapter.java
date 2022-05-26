@@ -10,8 +10,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 
+import androidx.annotation.AttrRes;
+import androidx.annotation.ColorInt;
 import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
+import androidx.core.graphics.ColorUtils;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.github.houseorganizer.houseorganizer.R;
@@ -50,10 +53,19 @@ public final class OfflineAdapter extends RecyclerView.Adapter<OfflineAdapter.It
     }
 
     private ColorStateList getColor(OfflineItem item) {
-        TypedValue tv = new TypedValue();
-        context.getTheme().resolveAttribute(item.color(), tv, true);
+        int gradientStart = resolveColor(com.google.android.material.R.attr.colorPrimary);
+        int gradientEnd = resolveColor(com.google.android.material.R.attr.colorSecondary);
 
-        return ColorStateList.valueOf(ContextCompat.getColor(context, tv.resourceId));
+        int color = ColorUtils.blendARGB(gradientStart, gradientEnd, 1-item.colorRatio());
+
+        return ColorStateList.valueOf(color);
+    }
+
+    private @ColorInt int resolveColor(@AttrRes int colorAttrId) {
+        TypedValue tv = new TypedValue();
+        context.getTheme().resolveAttribute(colorAttrId, tv, true);
+
+        return ContextCompat.getColor(context, tv.resourceId);
     }
 
     @Override

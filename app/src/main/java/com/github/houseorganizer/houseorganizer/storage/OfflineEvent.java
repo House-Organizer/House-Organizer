@@ -65,9 +65,8 @@ public final class OfflineEvent extends OfflineItem {
         return String.format("%s\nOn %s; lasts %s minutes", description, start, duration);
     }
 
-    public @AttrRes
-    int color() {
-        return com.google.android.material.R.attr.colorPrimary;
+    public float colorRatio() {
+        return 1f;
     }
 
     @Override

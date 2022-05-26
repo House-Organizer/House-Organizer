@@ -135,4 +135,5 @@
     <string name="notify">Notificare</string>
     <string name="edit_item_title">Modifica un articolo</string>
     <string name="edit_item_button">Modifica</string>
+    <string name="go_offline">Vai offline</string>
 </resources>

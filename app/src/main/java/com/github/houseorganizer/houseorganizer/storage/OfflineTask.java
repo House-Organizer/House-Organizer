@@ -68,7 +68,7 @@ public final class OfflineTask extends OfflineItem {
         return description;
     }
 
-    public @AttrRes int color() {
-        return com.google.android.material.R.attr.colorSecondary;
+    public float colorRatio() {
+        return 0.15f;
     }
 }

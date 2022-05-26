@@ -41,9 +41,8 @@ public class OfflineExpense extends OfflineItem {
         return info;
     }
 
-    @Override
-    public int color() {
-        return com.google.android.material.R.attr.colorSecondary;
+    public float colorRatio() {
+        return 0f;
     }
 
     @Override

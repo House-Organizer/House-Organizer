@@ -52,7 +52,7 @@ public class LocalStorageUnitTest {
         assertEquals(String.format("%s\nOn %s; lasts %s minutes",
                 event.getDescription(), event.getStart(), event.getDuration()),
                 event.info());
-        assertEquals(com.google.android.material.R.attr.colorPrimary, event.color());
+        assertEquals(0.25, event.colorRatio(), 0.1);
     }
 
     @Test
@@ -87,7 +87,7 @@ public class LocalStorageUnitTest {
         OfflineShopItem shopItem = new OfflineShopItem("name",1, "unit", true);
         assertEquals("name", shopItem.title());
         assertEquals("name [1 unit][x]", shopItem.info());
-        assertEquals(com.google.android.material.R.attr.colorSecondaryVariant, shopItem.color());
+        assertEquals(0.5, shopItem.colorRatio(), 0.1);
     }
 
     @Test
@@ -120,7 +120,7 @@ public class LocalStorageUnitTest {
         OfflineTask task = new OfflineTask("name", "description", Arrays.asList("user1", "user2"));
         assertEquals("name", task.title());
         assertEquals("description", task.info());
-        assertEquals(com.google.android.material.R.attr.colorSecondary, task.color());
+        assertEquals(0.75, task.colorRatio(), 0.1);
     }
 
     @Test
@@ -150,6 +150,6 @@ public class LocalStorageUnitTest {
         OfflineExpense expense = new OfflineExpense("title", "info");
         assertEquals("title", expense.title());
         assertEquals("info", expense.info());
-        assertEquals(com.google.android.material.R.attr.colorSecondary, expense.color());
+        assertEquals(1, expense.colorRatio(), 0.1);
     }
 }

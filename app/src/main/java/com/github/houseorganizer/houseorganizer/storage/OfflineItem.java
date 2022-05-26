@@ -16,6 +16,5 @@ public abstract class OfflineItem {
     @NonNull
     abstract public String info();
 
-    abstract public @AttrRes
-    int color();
+    abstract public float colorRatio();
 }
