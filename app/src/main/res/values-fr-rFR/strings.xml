@@ -50,9 +50,6 @@
     <string name="cache_header">Cache</string>
     <string name="signature_title">Votre nom</string>
     <string name="dark_mode_title">Mode sombre</string>
-    <string name="attachment_title">Télécharger les pièces jointes</string>
-    <string name="attachment_summary_on">Télécharger automatiquement les pièces jointes</string>
-    <string name="attachment_summary_off">Télécharger manuellement les pièces jointes</string>
     <string name="task_title_hint">Nom</string>
     <string name="task_description_hint">Description</string>
     <string name="add_subtask">Ajouter une sous-tâche</string>
@@ -134,4 +131,8 @@
     <string name="reminder">Rappel</string>
     <string name="reminder_message">N\'oublie pas ta tâche :</string>
     <string name="notify">Notifier</string>
+    <string name="clear_local_storage">TODO</string>
+    <string name="clear_local_storage_success">TODO</string>
+    <string name="edit_item_title">Modifier un article</string>
+    <string name="edit_item_button">Modifier</string>
 </resources>

@@ -49,9 +49,6 @@
     <string name="cache_header">Almacenamiento local</string>
     <string name="signature_title">Su nombre</string>
     <string name="dark_mode_title">Modo oscuro</string>
-    <string name="attachment_title">Descargar las imágenes adjuntas</string>
-    <string name="attachment_summary_on">Descargar automáticamente las imágenes adjuntas</string>
-    <string name="attachment_summary_off">Descargar manualmente las imágenes adjuntas</string>
     <string name="task_title_hint">Nombre</string>
     <string name="task_description_hint">Descripción</string>
     <string name="add_subtask">Añadir una subtarea</string>
@@ -134,4 +131,8 @@
     <string name="reminder">Recordatorio</string>
     <string name="reminder_message">No olvides tu tarea :</string>
     <string name="notify">Notificar</string>
+    <string name="clear_local_storage">TODO</string>
+    <string name="clear_local_storage_success">TODO</string>
+    <string name="edit_item_title">Editar un producto</string>
+    <string name="edit_item_button">Editar</string>
 </resources>

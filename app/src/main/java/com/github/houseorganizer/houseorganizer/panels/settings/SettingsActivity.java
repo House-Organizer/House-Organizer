@@ -4,21 +4,21 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
+import androidx.preference.Preference;
 import androidx.preference.PreferenceFragmentCompat;
+import androidx.preference.PreferenceScreen;
 
 import com.github.houseorganizer.houseorganizer.R;
 import com.github.houseorganizer.houseorganizer.panels.login.LoginActivity;
-import com.github.houseorganizer.houseorganizer.panels.main_activities.MainScreenActivity;
+import com.github.houseorganizer.houseorganizer.storage.LocalStorage;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FieldPath;
 import com.google.firebase.firestore.FirebaseFirestore;
-
-import java.util.HashMap;
-import java.util.Map;
-
 
 public class SettingsActivity extends ThemedAppCompatActivity {
     @Override
@@ -54,21 +54,30 @@ public class SettingsActivity extends ThemedAppCompatActivity {
         }
 
         @Override
+        public boolean onPreferenceTreeClick(@NonNull Preference preference) {
+            if(preference.getKey().equals("clear_cache")){
+                LocalStorage.clearOfflineStorage(this.getContext());
+                Toast.makeText(this.getContext(), R.string.clear_local_storage_success, Toast.LENGTH_SHORT).show();
+                return true;
+            } else {
+                return false;
+            }
+        }
+
+        @Override
         public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String s) {
             if (s.equals("nickname")){
-                Map<String, Object> user_nickname = new HashMap<>();
-
-                FirebaseUser Uid = FirebaseAuth.getInstance().getCurrentUser();
+                FirebaseUser uid = FirebaseAuth.getInstance().getCurrentUser();
                 FirebaseFirestore db = FirebaseFirestore.getInstance();
 
-                FieldPath field = FieldPath.of(Uid.getEmail());
+                FieldPath field = FieldPath.of(uid.getEmail());
 
                 db.collection("email-to-nickname")
                    .document("email-to-nickname-translations")
                    .update(field, sharedPreferences.getString("nickname",""));
             }
             if(s.equals("theme") || s.equals("lang")) { //Settings that change UI
-                Intent intent = new Intent(getContext(), MainScreenActivity.class);
+                Intent intent = new Intent(getContext(), SettingsActivity.class);
                 startActivity(intent);
             }
         }

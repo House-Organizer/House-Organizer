@@ -69,9 +69,8 @@
     <string name="lang_title">Language</string>
 
     <!-- Cache Preferences -->
-    <string name="attachment_title">Download attachments</string>
-    <string name="attachment_summary_on">Automatically download attachments for calendar </string>
-    <string name="attachment_summary_off">Only download attachments when manually requested</string>
+    <string name="clear_local_storage">Clear local storage</string>
+    <string name="clear_local_storage_success">Cleared local storage!</string>
 
     <!-- Task view and its buttons -->
     <string name="task_title_hint">Name</string>
@@ -139,6 +138,8 @@
     <string name="name">Name</string>
     <string name="unit">Unit</string>
     <string name="add_item_title">Adding an item to the list</string>
+    <string name="edit_item_title">Edit an item</string>
+    <string name="edit_item_button">Edit</string>
     <string name="item_delete_button_description">Delete the corresponding shop list item</string>
     <string name="add_item_button">Add item</string>
     <string name="remove_picked_up">Remove checked items</string>
