@@ -11,6 +11,7 @@ import com.github.houseorganizer.houseorganizer.R;
 import com.github.houseorganizer.houseorganizer.billsharer.Billsharer;
 import com.github.houseorganizer.houseorganizer.billsharer.ExpenseAdapter;
 import com.github.houseorganizer.houseorganizer.panels.billsharer.BalanceActivity;
+import com.github.houseorganizer.houseorganizer.storage.LocalStorage;
 import com.github.houseorganizer.houseorganizer.util.Util;
 import com.github.houseorganizer.houseorganizer.util.interfaces.RecyclerViewIdlingCallback;
 import com.github.houseorganizer.houseorganizer.util.interfaces.RecyclerViewLayoutCompleteListener;
@@ -78,6 +79,8 @@ public class ExpenseActivity extends NavBarActivity implements
                             view.setLayoutManager(linearLayoutManager);
                             view.setAdapter(adapter);
                         });
+
+                        LocalStorage.pushDebtsOffline(getApplicationContext(), currentHouse.getId(), bs.getDebts());
                     } else {
                         Util.logAndToast("ExpenseActivity", "Could not initialize billsharer",
                                 t.getException(), this, "Could not load billsharer");
