@@ -33,6 +33,7 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+import java.util.Collections;
 import java.util.concurrent.ExecutionException;
 
 @RunWith(AndroidJUnit4.class)
@@ -49,22 +50,6 @@ public class AnonAccountsTest {
 
     @Rule
     public ActivityScenarioRule<LoginActivity> loginRule = new ActivityScenarioRule<>(LoginActivity.class);
-
-    @Test
-    public void discoverButtonCreatesAnonUserAndGoesToMainScreen() throws ExecutionException, InterruptedException {
-        assertNull(FirebaseAuth.getInstance().getCurrentUser());
-
-        Intents.init();
-        onView(withId(R.id.discoverButton)).perform(click());
-
-        Thread.sleep(200);
-        intended(hasComponent(MainScreenActivity.class.getName()));
-        assertNotNull(FirebaseAuth.getInstance().getCurrentUser());
-        assertTrue(FirebaseAuth.getInstance().getCurrentUser().isAnonymous());
-
-        Intents.release();
-        Tasks.await(FirebaseAuth.getInstance().getCurrentUser().delete());
-    }
 
     @Test
     public void discoverButtonCreatesAnonUserWithCorrectEmail() throws ExecutionException, InterruptedException {
