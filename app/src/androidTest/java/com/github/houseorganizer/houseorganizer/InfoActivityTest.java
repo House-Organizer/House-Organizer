@@ -7,6 +7,7 @@ import static androidx.test.espresso.action.ViewActions.typeText;
 import static androidx.test.espresso.assertion.ViewAssertions.matches;
 import static androidx.test.espresso.matcher.ViewMatchers.hasChildCount;
 import static androidx.test.espresso.matcher.ViewMatchers.hasDescendant;
+import static androidx.test.espresso.matcher.ViewMatchers.isClickable;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
 import static androidx.test.espresso.matcher.ViewMatchers.withText;
 import static com.github.houseorganizer.houseorganizer.FirebaseTestsHelper.TEST_HOUSEHOLD_NAMES;
@@ -92,6 +93,13 @@ public class InfoActivityTest {
     public void usersAreDisplayed() {
         onView(withId(R.id.info_imageButton)).perform(click());
         onView(withId(R.id.info_recycler_view)).check(matches(hasChildCount(2)));
+    }
+
+    @Test
+    public void showImageButtonEnabled() {
+        onView(withId(R.id.info_imageButton)).perform(click());
+        onView(withId(R.id.imageOfHousehold)).check(matches(isClickable()));
+        onView(withId(R.id.imageOfHousehold)).perform(click());
     }
 
     @Test
