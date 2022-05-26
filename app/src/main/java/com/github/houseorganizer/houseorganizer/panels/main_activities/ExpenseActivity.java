@@ -73,14 +73,13 @@ public class ExpenseActivity extends NavBarActivity implements
                         adapter = t.getResult();
                         bs.getOnlineReference().addSnapshotListener((d, e) -> bs.refreshExpenses());
                         bs.startUpBillsharer().addOnCompleteListener(t1 -> {
+                            LocalStorage.pushDebtsOffline(getApplicationContext(), currentHouse.getId(), bs.getDebts());
                             LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
                             linearLayoutManager.setReverseLayout(true);
                             linearLayoutManager.setStackFromEnd(true);
                             view.setLayoutManager(linearLayoutManager);
                             view.setAdapter(adapter);
                         });
-
-                        LocalStorage.pushDebtsOffline(getApplicationContext(), currentHouse.getId(), bs.getDebts());
                     } else {
                         Util.logAndToast("ExpenseActivity", "Could not initialize billsharer",
                                 t.getException(), this, "Could not load billsharer");

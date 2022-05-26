@@ -53,14 +53,13 @@ public class BalanceActivity extends NavBarActivity {
                         bs = t.getResult();
                         adapter = new DebtAdapter(bs);
                         bs.startUpBillsharer().addOnCompleteListener(t1 -> {
+                            LocalStorage.pushDebtsOffline(getApplicationContext(), currentHouse.getId(), bs.getDebts());
                             LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
                             linearLayoutManager.setReverseLayout(true);
                             linearLayoutManager.setStackFromEnd(true);
                             view.setLayoutManager(linearLayoutManager);
                             view.setAdapter(adapter);
                         });
-
-                        LocalStorage.pushDebtsOffline(getApplicationContext(), currentHouse.getId(), bs.getDebts());
                     } else {
                         Util.logAndToast("BalanceActivity", "Could not initialize billsharer",
                                 t.getException(), this, "Could not load billsharer");
