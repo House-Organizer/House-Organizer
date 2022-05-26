@@ -61,12 +61,12 @@
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/offline_items"
         android:layout_width="325dp"
-        android:layout_height="wrap_content"
+        android:layout_height="500dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/offline_cycle_button"
-        app:layout_constraintVertical_bias="0.216" />
+        app:layout_constraintVertical_bias="0.481" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

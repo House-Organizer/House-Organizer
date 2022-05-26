@@ -77,6 +77,8 @@ public final class OfflineScreenActivity extends ThemedAppCompatActivity {
                 .forEach(allHousesList::add);
 
         currentHouseId = allHousesList.get(currentHouseIdx);
+        System.out.println("!!!!!!" + allHousesList);
+        System.out.println("!!!!!!!" + houseNames);
     }
 
     private void setUpItemCollectionForHouse(String houseId) {
@@ -92,7 +94,7 @@ public final class OfflineScreenActivity extends ThemedAppCompatActivity {
                     .filter(Objects::nonNull)
                     .forEach(items::addAll);
 
-            Toast.makeText(getApplicationContext(), houseNames.get(houseId),Toast.LENGTH_SHORT)
+            Toast.makeText(getApplicationContext(), houseNames.getOrDefault(houseId, "Unknown house"),Toast.LENGTH_SHORT)
                     .show();
         }
 

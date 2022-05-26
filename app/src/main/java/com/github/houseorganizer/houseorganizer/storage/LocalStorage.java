@@ -95,36 +95,20 @@ public class LocalStorage {
         return new Gson().fromJson(householdsString, type);
     }
 
-    public static void pushHouseholdsOffline(Context context, FirebaseFirestore db, FirebaseUser mUser)
-            throws ExecutionException, InterruptedException {
+    // Can't use Task::await on main application thread
+    public static Task<QuerySnapshot> pushHouseholdsOffline(Context context, FirebaseFirestore db, FirebaseUser mUser) {
         Task<QuerySnapshot> householdsTasks = db.collection("households").whereArrayContains("residents",
                 Objects.requireNonNull(mUser.getEmail())).get();
 
-        QuerySnapshot query = await(householdsTasks);
-        for (DocumentSnapshot document : query.getDocuments()) {
-            setOfHouseholds.put(document.getId(), (String) document.getData().get("name"));
-        }
-        writeTxtToFile(context, OFFLINE_STORAGE_HOUSEHOLDS + OFFLINE_STORAGE_EXTENSION,
-                new Gson().toJson(setOfHouseholds));
-    }
+        householdsTasks.addOnSuccessListener(query -> {
+            for (DocumentSnapshot document : query.getDocuments()) {
+                setOfHouseholds.put(document.getId(), (String) document.getData().get("name"));
+            }
+            writeTxtToFile(context, OFFLINE_STORAGE_HOUSEHOLDS + OFFLINE_STORAGE_EXTENSION,
+                    new Gson().toJson(setOfHouseholds));
+        });
 
-    // Temporary
-    public static void pushCurrentHouseOffline(Context context, String currentHouseId)
-            throws ExecutionException, InterruptedException {
-        Task<DocumentSnapshot> task = FirebaseFirestore.getInstance()
-                .collection("households")
-                .document(currentHouseId)
-                .get();
-
-        Tasks.await(task);
-
-        String houseName = task.isSuccessful()
-                ? (String) task.getResult().getData().get("name")
-                : "Dummy house name";
-
-        setOfHouseholds.put(currentHouseId, houseName);
-        writeTxtToFile(context, OFFLINE_STORAGE_HOUSEHOLDS + OFFLINE_STORAGE_EXTENSION,
-                new Gson().toJson(setOfHouseholds));
+        return householdsTasks;
     }
 
     public static Map<String, ArrayList<OfflineEvent>> retrieveEventsOffline(Context context) {

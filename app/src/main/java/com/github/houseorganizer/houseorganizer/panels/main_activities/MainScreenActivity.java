@@ -200,6 +200,7 @@ public class MainScreenActivity extends TaskFragmentNavBarActivity {
     }
 
     private void loadData() {
+        LocalStorage.pushHouseholdsOffline(getApplicationContext(), db, mUser);
         SharedPreferences sharedPreferences = getSharedPrefs(this);
         String householdId = sharedPreferences.getString(CURRENT_HOUSEHOLD, "");
 
@@ -209,13 +210,6 @@ public class MainScreenActivity extends TaskFragmentNavBarActivity {
                     noHousehold();
                     return;
                 }
-
-                try {
-                    LocalStorage.pushCurrentHouseOffline(getApplicationContext(), currentHouse.getId());
-                } catch (Exception e) {
-                    ; //nothing
-                }
-
                 calendarAdapter.refreshCalendarView(this, currentHouse, "refreshCalendar:failureToRefresh", false);
                 initializeTaskList();
             }else{

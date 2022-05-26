@@ -30,6 +30,7 @@ import com.github.houseorganizer.houseorganizer.shop.ShopItem;
 import com.github.houseorganizer.houseorganizer.storage.LocalStorage;
 import com.github.houseorganizer.houseorganizer.task.HTask;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.FirebaseFirestore;
 
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -95,7 +96,7 @@ public class OfflineScreenTest {
                         .getApplicationContext();
 
         String currentHouseId = FirebaseTestsHelper.TEST_HOUSEHOLD_NAMES[0];
-        LocalStorage.pushCurrentHouseOffline(context, currentHouseId);
+        LocalStorage.pushHouseholdsOffline(context, FirebaseFirestore.getInstance(), auth.getCurrentUser());
         assertTrue(LocalStorage.pushEventsOffline(context, currentHouseId, EVENTS));
         assertTrue(LocalStorage.pushGroceriesOffline(context, currentHouseId, GROCERIES));
         assertTrue(LocalStorage.pushTaskListOffline(context, currentHouseId, TASKS));

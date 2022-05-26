@@ -21,6 +21,7 @@ import com.github.houseorganizer.houseorganizer.storage.OfflineDebt;
 import com.github.houseorganizer.houseorganizer.storage.OfflineShopItem;
 import com.github.houseorganizer.houseorganizer.storage.OfflineTask;
 import com.github.houseorganizer.houseorganizer.task.HTask;
+import com.google.android.gms.tasks.Tasks;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
 
@@ -110,7 +111,7 @@ public class LocalStorageTest {
     public void householdsOfflineWork() throws ExecutionException, InterruptedException {
         Context cx = InstrumentationRegistry.getInstrumentation().getTargetContext();
 
-        LocalStorage.pushHouseholdsOffline(cx, db, auth.getCurrentUser());
+        Tasks.await(LocalStorage.pushHouseholdsOffline(cx, db, auth.getCurrentUser()));
         HashMap<String, String> households = LocalStorage.retrieveHouseholdsOffline(cx);
         assertTrue(households.containsKey("home_2"));
         assertTrue(households.containsKey("home_1"));
@@ -127,7 +128,7 @@ public class LocalStorageTest {
         Calendar.Event event = new Calendar.Event("title","description", time, 1, "id");
         OfflineEvent offlineEvent = new OfflineEvent("title","description", time.toString(), 1, "id");
 
-        LocalStorage.pushHouseholdsOffline(cx, db, auth.getCurrentUser());
+        Tasks.await(LocalStorage.pushHouseholdsOffline(cx, db, auth.getCurrentUser()));
         assertTrue(LocalStorage.pushEventsOffline(cx, db
                 .collection("households")
                 .document("home_1").getId(), Collections.singletonList(event)));
@@ -144,7 +145,7 @@ public class LocalStorageTest {
         ShopItem shopItem = new ShopItem("name", 1, "unit");
         OfflineShopItem offlineShopItem = new OfflineShopItem("name", 1, "unit", false);
 
-        LocalStorage.pushHouseholdsOffline(cx, db, auth.getCurrentUser());
+        Tasks.await(LocalStorage.pushHouseholdsOffline(cx, db, auth.getCurrentUser()));
         assertTrue(LocalStorage.pushGroceriesOffline(cx, db
                 .collection("households")
                 .document("home_1").getId(), Collections.singletonList(shopItem)));
@@ -161,7 +162,7 @@ public class LocalStorageTest {
         HTask task = new HTask("title", "description");
         OfflineTask offlineTask = new OfflineTask(task.getTitle(), task.getDescription(), task.getAssignees());
 
-        LocalStorage.pushHouseholdsOffline(cx, db, auth.getCurrentUser());
+        Tasks.await(LocalStorage.pushHouseholdsOffline(cx, db, auth.getCurrentUser()));
         assertTrue(LocalStorage.pushTaskListOffline(cx, db
                 .collection("households")
                 .document("home_1").getId(), Collections.singletonList(task)));
@@ -180,7 +181,7 @@ public class LocalStorageTest {
         String title = String.format(Locale.ROOT, "%.1f chf (%s)", debt.getAmount(), debt.getDebtor());
         OfflineDebt offlineDebt = new OfflineDebt(title, debt.toText());
 
-        LocalStorage.pushHouseholdsOffline(cx, db, auth.getCurrentUser());
+        Tasks.await(LocalStorage.pushHouseholdsOffline(cx, db, auth.getCurrentUser()));
         assertTrue(LocalStorage.pushDebtsOffline(cx, db
                 .collection("households")
                 .document("home_1").getId(), Collections.singletonList(debt)));
