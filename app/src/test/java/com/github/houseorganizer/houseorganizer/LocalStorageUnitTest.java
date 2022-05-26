@@ -52,7 +52,7 @@ public class LocalStorageUnitTest {
         assertEquals(String.format("%s\nOn %s; lasts %s minutes",
                 event.getDescription(), event.getStart(), event.getDuration()),
                 event.info());
-        assertEquals(0.25, event.colorRatio(), 0.1);
+        assertEquals(1, event.colorRatio(), 0.1);
     }
 
     @Test
@@ -87,7 +87,7 @@ public class LocalStorageUnitTest {
         OfflineShopItem shopItem = new OfflineShopItem("name",1, "unit", true);
         assertEquals("name", shopItem.title());
         assertEquals("name [1 unit][x]", shopItem.info());
-        assertEquals(0.5, shopItem.colorRatio(), 0.1);
+        assertEquals(0.6, shopItem.colorRatio(), 0.1);
     }
 
     @Test
@@ -120,7 +120,7 @@ public class LocalStorageUnitTest {
         OfflineTask task = new OfflineTask("name", "description", Arrays.asList("user1", "user2"));
         assertEquals("name", task.title());
         assertEquals("description", task.info());
-        assertEquals(0.75, task.colorRatio(), 0.1);
+        assertEquals(0.15, task.colorRatio(), 0.1);
     }
 
     @Test
@@ -132,9 +132,9 @@ public class LocalStorageUnitTest {
     @Test
     public void offlineDebtStringIsCorrect() {
         OfflineDebt debt = new OfflineDebt("10 CHF for Frank", "Joe owes Frank 10 CHF");
-        assertEquals("OfflineExpense{" +
-                "title='" + "bowling" + '\'' +
-                ", info='" + "bowling info" + '\'' +
+        assertEquals("OfflineDebt{" +
+                "title='" + "10 CHF for Frank" + '\'' +
+                ", info='" + "Joe owes Frank 10 CHF" + '\'' +
                 '}', debt.toString());
     }
 
@@ -150,6 +150,6 @@ public class LocalStorageUnitTest {
         OfflineDebt expense = new OfflineDebt("title", "info");
         assertEquals("title", expense.title());
         assertEquals("info", expense.info());
-        assertEquals(1, expense.colorRatio(), 0.1);
+        assertEquals(0, expense.colorRatio(), 0.1);
     }
 }
