@@ -209,7 +209,12 @@ public class MainScreenActivity extends TaskFragmentNavBarActivity {
                     noHousehold();
                     return;
                 }
-                LocalStorage.pushCurrentHouseOffline(getApplicationContext(), currentHouse.getId());
+
+                try {
+                    LocalStorage.pushCurrentHouseOffline(getApplicationContext(), currentHouse.getId());
+                } catch (Exception e) {
+                    ; //nothing
+                }
 
                 calendarAdapter.refreshCalendarView(this, currentHouse, "refreshCalendar:failureToRefresh", false);
                 initializeTaskList();

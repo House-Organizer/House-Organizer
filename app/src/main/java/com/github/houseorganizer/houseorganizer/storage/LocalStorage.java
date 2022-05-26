@@ -9,6 +9,7 @@ import com.github.houseorganizer.houseorganizer.calendar.Calendar;
 import com.github.houseorganizer.houseorganizer.shop.ShopItem;
 import com.github.houseorganizer.houseorganizer.task.HTask;
 import com.google.android.gms.tasks.Task;
+import com.google.android.gms.tasks.Tasks;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -94,7 +95,8 @@ public class LocalStorage {
         return new Gson().fromJson(householdsString, type);
     }
 
-    public static void pushHouseholdsOffline(Context context, FirebaseFirestore db, FirebaseUser mUser) throws ExecutionException, InterruptedException {
+    public static void pushHouseholdsOffline(Context context, FirebaseFirestore db, FirebaseUser mUser)
+            throws ExecutionException, InterruptedException {
         Task<QuerySnapshot> householdsTasks = db.collection("households").whereArrayContains("residents",
                 Objects.requireNonNull(mUser.getEmail())).get();
 
@@ -107,8 +109,20 @@ public class LocalStorage {
     }
 
     // Temporary
-    public static void pushCurrentHouseOffline(Context context, String currentHouseId) {
-        setOfHouseholds.put(currentHouseId, "Dummy house name");
+    public static void pushCurrentHouseOffline(Context context, String currentHouseId)
+            throws ExecutionException, InterruptedException {
+        Task<DocumentSnapshot> task = FirebaseFirestore.getInstance()
+                .collection("households")
+                .document(currentHouseId)
+                .get();
+
+        Tasks.await(task);
+
+        String houseName = task.isSuccessful()
+                ? (String) task.getResult().getData().get("name")
+                : "Dummy house name";
+
+        setOfHouseholds.put(currentHouseId, houseName);
         writeTxtToFile(context, OFFLINE_STORAGE_HOUSEHOLDS + OFFLINE_STORAGE_EXTENSION,
                 new Gson().toJson(setOfHouseholds));
     }

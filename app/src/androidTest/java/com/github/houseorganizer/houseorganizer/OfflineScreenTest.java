@@ -88,7 +88,7 @@ public class OfflineScreenTest {
         context.sendBroadcast(new Intent(Intent.ACTION_CLOSE_SYSTEM_DIALOGS));
     }
 
-    private static void pushEverythingOffline() {
+    private static void pushEverythingOffline() throws ExecutionException, InterruptedException {
         Context context =
                 InstrumentationRegistry.getInstrumentation()
                         .getTargetContext()
