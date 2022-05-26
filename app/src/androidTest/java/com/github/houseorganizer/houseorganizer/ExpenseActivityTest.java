@@ -17,22 +17,17 @@ import static androidx.test.platform.app.InstrumentationRegistry.getInstrumentat
 import static com.github.houseorganizer.houseorganizer.FirebaseTestsHelper.TEST_USERS_EMAILS;
 import static org.hamcrest.Matchers.containsString;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 
-import androidx.test.espresso.IdlingRegistry;
+import androidx.test.core.app.ApplicationProvider;
 import androidx.test.espresso.contrib.RecyclerViewActions;
 import androidx.test.espresso.intent.Intents;
 import androidx.test.ext.junit.rules.ActivityScenarioRule;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
-import androidx.test.runner.lifecycle.ActivityLifecycleMonitorRegistry;
-import androidx.test.runner.lifecycle.Stage;
 
 import com.github.houseorganizer.houseorganizer.panels.main_activities.ExpenseActivity;
 import com.github.houseorganizer.houseorganizer.panels.main_activities.MainScreenActivity;
-import com.github.houseorganizer.houseorganizer.util.RecyclerViewLayoutCompleteIdlingResource;
-import com.github.houseorganizer.houseorganizer.util.interfaces.RecyclerViewIdlingCallback;
 import com.google.firebase.auth.FirebaseAuth;
 
 import org.junit.AfterClass;
@@ -42,19 +37,17 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import java.util.Collection;
-import java.util.Iterator;
 import java.util.concurrent.ExecutionException;
 
 @RunWith(AndroidJUnit4.class)
 public class ExpenseActivityTest {
 
     private static FirebaseAuth auth;
-    private static RecyclerViewLayoutCompleteIdlingResource idlingResource;
+    private static Intent startIntent;
 
     @Rule
-    public ActivityScenarioRule<MainScreenActivity> mainScreenActivityActivityScenarioRule =
-            new ActivityScenarioRule<>(MainScreenActivity.class);
+    public ActivityScenarioRule<ExpenseActivity> mainScreenActivityActivityScenarioRule =
+            new ActivityScenarioRule<>(startIntent);
 
     @BeforeClass
     public static void createFirebase() throws ExecutionException, InterruptedException {
@@ -63,38 +56,23 @@ public class ExpenseActivityTest {
         FirebaseTestsHelper.setUpFirebase();
 
         auth = FirebaseAuth.getInstance();
-        idlingResource = new RecyclerViewLayoutCompleteIdlingResource((RecyclerViewIdlingCallback) getCurrentActivity());
-        IdlingRegistry.getInstance().register(idlingResource);
+        startIntent = new Intent(ApplicationProvider.getApplicationContext(), ExpenseActivity.class);
+        startIntent.putExtra("house", FirebaseTestsHelper.TEST_HOUSEHOLD_NAMES[0]);
     }
 
     @AfterClass
     public static void signOut(){
         auth.signOut();
-        IdlingRegistry.getInstance().unregister(idlingResource);
-    }
-
-    private static Activity getCurrentActivity() {
-        final Activity[] currentActivity = {null};
-        getInstrumentation().runOnMainSync(() -> {
-            Collection<Activity> resumedActivity = ActivityLifecycleMonitorRegistry.getInstance().getActivitiesInStage(Stage.RESUMED);
-            Iterator<Activity> it = resumedActivity.iterator();
-            currentActivity[0] = it.next();
-        });
-        return currentActivity[0];
     }
 
     @Before
     public void openActivity() {
         Context context = getInstrumentation().getTargetContext();
         context.sendBroadcast(new Intent(Intent.ACTION_CLOSE_SYSTEM_DIALOGS));
-
-        onView(withId(R.id.house_imageButton)).perform(click());
-        onView(withId(R.id.housesView))
-                .perform(RecyclerViewActions.actionOnItemAtPosition(0, click()));
-        onView(withId(R.id.nav_bar_bs)).perform(click());
     }
 
     protected static void addNewExpense(String title, double cost) throws InterruptedException {
+        Thread.sleep(2000);
         onView(withId(R.id.expense_add_item)).perform(click());
         Thread.sleep(500);
         onView(withId(R.id.expense_edit_title)).perform(typeText(title));
@@ -149,14 +127,6 @@ public class ExpenseActivityTest {
         Intents.init();
         onView(withId(R.id.nav_bar_menu)).perform(click());
         intended(hasComponent(MainScreenActivity.class.getName()));
-        Intents.release();
-    }
-
-    @Test
-    public void navBarTakesToExpenseScreen(){
-        Intents.init();
-        onView(withId(R.id.nav_bar_bs)).perform(click());
-        intended(hasComponent(ExpenseActivity.class.getName()));
         Intents.release();
     }
 

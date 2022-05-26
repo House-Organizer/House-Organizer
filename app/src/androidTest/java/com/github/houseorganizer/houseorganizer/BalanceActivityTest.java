@@ -9,11 +9,9 @@ import static androidx.test.espresso.matcher.ViewMatchers.hasChildCount;
 import static androidx.test.espresso.matcher.ViewMatchers.isClickable;
 import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static androidx.test.espresso.matcher.ViewMatchers.isEnabled;
-import static androidx.test.espresso.matcher.ViewMatchers.isRoot;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
 import static androidx.test.platform.app.InstrumentationRegistry.getInstrumentation;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 
@@ -46,7 +44,6 @@ import java.util.concurrent.ExecutionException;
 public class BalanceActivityTest {
 
     private static FirebaseAuth auth;
-    private static FirebaseFirestore db;
     private static Billsharer bs;
     private static Intent startIntent;
 
@@ -60,7 +57,7 @@ public class BalanceActivityTest {
         FirebaseTestsHelper.setUpFirebase();
 
         auth = FirebaseAuth.getInstance();
-        db = FirebaseFirestore.getInstance();
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
         startIntent = new Intent(ApplicationProvider.getApplicationContext(), BalanceActivity.class);
         startIntent.putExtra("house", FirebaseTestsHelper.TEST_HOUSEHOLD_NAMES[0]);
 
@@ -73,14 +70,6 @@ public class BalanceActivityTest {
         bs = t.getResult();
         Task<DocumentSnapshot> t1 = bs.startUpBillsharer();
         Tasks.await(t1);
-    }
-
-    private static Activity getCurrentActivity() {
-        final Activity[] activity = new Activity[1];
-        onView(isRoot()).check((view, noViewFoundException) ->
-                activity[0] = (Activity) view.getContext()
-        );
-        return activity[0];
     }
 
     @AfterClass
@@ -105,7 +94,7 @@ public class BalanceActivityTest {
         Thread.sleep(500);
     }
 
-    private void goAddExpense(String title, double cost, String payee) throws InterruptedException {
+    private void goAddExpense(String title, double cost) throws InterruptedException {
         openExpenses();
         ExpenseActivityTest.addNewExpense(title, cost);
         openBalances();
@@ -127,13 +116,13 @@ public class BalanceActivityTest {
 
     @Test
     public void addingExpenseShowsCorrectNumberOfDebt() throws InterruptedException {
-        goAddExpense("title1", 41, bs.getResidents().get(0));
+        goAddExpense("title1", 41);
         onView(withId(R.id.balance_recycler)).check(matches(hasChildCount(bs.getResidents().size()-1)));
     }
 
     @Test
     public void deletingDebtRemovesIt() throws InterruptedException {
-        goAddExpense("title2", 42, bs.getResidents().get(0));
+        goAddExpense("title2", 42);
         onView(withId(R.id.balance_recycler))
                 .perform(RecyclerViewActions.actionOnItemAtPosition(
                         1,
@@ -143,7 +132,7 @@ public class BalanceActivityTest {
 
     @Test
     public void deletingDebtCreatesNewExpense() throws InterruptedException {
-        goAddExpense("title3", 43, bs.getResidents().get(0));
+        goAddExpense("title3", 43);
         onView(withId(R.id.balance_recycler))
                 .perform(RecyclerViewActions.actionOnItemAtPosition(
                         1,
