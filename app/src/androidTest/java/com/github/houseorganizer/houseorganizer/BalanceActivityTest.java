@@ -25,7 +25,7 @@ import androidx.test.ext.junit.rules.ActivityScenarioRule;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 
 import com.github.houseorganizer.houseorganizer.billsharer.Billsharer;
-import com.github.houseorganizer.houseorganizer.panels.main_activities.ExpenseActivity;
+import com.github.houseorganizer.houseorganizer.panels.billsharer.BalanceActivity;
 import com.github.houseorganizer.houseorganizer.panels.main_activities.MainScreenActivity;
 import com.google.android.gms.tasks.Task;
 import com.google.android.gms.tasks.Tasks;
@@ -46,10 +46,12 @@ import java.util.concurrent.ExecutionException;
 public class BalanceActivityTest {
 
     private static FirebaseAuth auth;
+    private static FirebaseFirestore db;
     private static Billsharer bs;
+    private boolean done = false;
 
     @Rule
-    public ActivityScenarioRule<ExpenseActivity> rule = new ActivityScenarioRule<>(ExpenseActivity.class);
+    public ActivityScenarioRule<BalanceActivity> rule = new ActivityScenarioRule<>(BalanceActivity.class);
 
     @BeforeClass
     public static void createFirebase() throws ExecutionException, InterruptedException {
@@ -58,19 +60,7 @@ public class BalanceActivityTest {
         FirebaseTestsHelper.setUpFirebase();
 
         auth = FirebaseAuth.getInstance();
-        FirebaseFirestore db = FirebaseFirestore.getInstance();
-
-        String currentHouse = db.collection("households").document(
-                getSharedPrefs(getCurrentActivity()).getString(CURRENT_HOUSEHOLD, "")
-        ).getId();
-
-        // Retrieve the billsharer
-        DocumentReference household = db.collection("households")
-                .document(currentHouse);
-        Task<Billsharer> t = Billsharer
-                .retrieveBillsharer(db.collection("billsharers"), household);
-        Tasks.await(t);
-        bs = t.getResult();
+        db = FirebaseFirestore.getInstance();
     }
 
     private static Activity getCurrentActivity() {
@@ -87,10 +77,26 @@ public class BalanceActivityTest {
     }
 
     @Before
-    public void dismissDialogs() {
+    public void dismissDialogs() throws ExecutionException, InterruptedException {
         Context context = getInstrumentation().getTargetContext();
         context.sendBroadcast(new Intent(Intent.ACTION_CLOSE_SYSTEM_DIALOGS));
         openBalances();
+
+        if (!done) {
+            String currentHouse = db.collection("households").document(
+                    getSharedPrefs(getCurrentActivity()).getString(CURRENT_HOUSEHOLD, "")
+            ).getId();
+
+            // Retrieve the billsharer
+            DocumentReference household = db.collection("households")
+                    .document(currentHouse);
+            Task<Billsharer> t = Billsharer
+                    .retrieveBillsharer(db.collection("billsharers"), household);
+            Tasks.await(t);
+            bs = t.getResult();
+
+            done = true;
+        }
     }
 
     private void openBalances() {
