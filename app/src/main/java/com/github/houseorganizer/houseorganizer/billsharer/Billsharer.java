@@ -141,6 +141,14 @@ public class Billsharer {
         temp_balances.values().removeIf(v -> v == 0);
         while (!temp_balances.isEmpty()) {
             computeNextDebt(temp_balances);
+
+            if (temp_balances.size() == 1) {
+                String max = findMaxBalance(temp_balances);
+                double max_val = temp_balances.get(max);
+                if (max_val < 0.01) {
+                    temp_balances = new HashMap<>();
+                }
+            }
         }
     }
 
@@ -152,20 +160,20 @@ public class Billsharer {
         if (max_val + closest_val == 0) {
             temp_balances.remove(max);
             temp_balances.remove(closest);
-            debts.add(new Debt(max, closest, max_val));
+            debts.add(new Debt(max, closest, Math.round(max_val*100.0)/100.0));
         } else if (max_val + closest_val < 0) {
             temp_balances.remove(max);
             temp_balances.put(closest, max_val+closest_val);
-            debts.add(new Debt(max, closest, max_val));
+            debts.add(new Debt(max, closest, Math.round(max_val*100.0)/100.0));
         } else { // max_val + closest_val > 0
             temp_balances.remove(closest);
             temp_balances.put(max, max_val+closest_val);
-            debts.add(new Debt(max, closest, abs(closest_val)));
+            debts.add(new Debt(max, closest, Math.round(abs(closest_val)*100.0)/100.0));
         }
     }
 
     private String findMaxBalance(Map<String, Double> balances) {
-        double max = Double.MIN_VALUE;
+        double max = -Double.MAX_VALUE;
         String max_key = "";
         for (String bal : balances.keySet()) {
             if (balances.get(bal) > max) {
