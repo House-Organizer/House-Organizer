@@ -12,13 +12,12 @@ import static androidx.test.espresso.matcher.ViewMatchers.isEnabled;
 import static androidx.test.espresso.matcher.ViewMatchers.isRoot;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
 import static androidx.test.platform.app.InstrumentationRegistry.getInstrumentation;
-import static com.github.houseorganizer.houseorganizer.panels.main_activities.MainScreenActivity.CURRENT_HOUSEHOLD;
-import static com.github.houseorganizer.houseorganizer.util.Util.getSharedPrefs;
 
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 
+import androidx.test.core.app.ApplicationProvider;
 import androidx.test.espresso.contrib.RecyclerViewActions;
 import androidx.test.espresso.intent.Intents;
 import androidx.test.ext.junit.rules.ActivityScenarioRule;
@@ -31,6 +30,7 @@ import com.google.android.gms.tasks.Task;
 import com.google.android.gms.tasks.Tasks;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import org.junit.AfterClass;
@@ -48,10 +48,10 @@ public class BalanceActivityTest {
     private static FirebaseAuth auth;
     private static FirebaseFirestore db;
     private static Billsharer bs;
-    private boolean done = false;
+    private static Intent startIntent;
 
     @Rule
-    public ActivityScenarioRule<BalanceActivity> rule = new ActivityScenarioRule<>(BalanceActivity.class);
+    public ActivityScenarioRule<BalanceActivity> rule = new ActivityScenarioRule<>(startIntent);
 
     @BeforeClass
     public static void createFirebase() throws ExecutionException, InterruptedException {
@@ -61,6 +61,18 @@ public class BalanceActivityTest {
 
         auth = FirebaseAuth.getInstance();
         db = FirebaseFirestore.getInstance();
+        startIntent = new Intent(ApplicationProvider.getApplicationContext(), BalanceActivity.class);
+        startIntent.putExtra("house", FirebaseTestsHelper.TEST_HOUSEHOLD_NAMES[0]);
+
+        // Retrieve the billsharer
+        DocumentReference household = db.collection("households")
+                .document(FirebaseTestsHelper.TEST_HOUSEHOLD_NAMES[0]);
+        Task<Billsharer> t = Billsharer
+                .retrieveBillsharer(db.collection("billsharers"), household);
+        Tasks.await(t);
+        bs = t.getResult();
+        Task<DocumentSnapshot> t1 = bs.startUpBillsharer();
+        Tasks.await(t1);
     }
 
     private static Activity getCurrentActivity() {
@@ -80,36 +92,22 @@ public class BalanceActivityTest {
     public void dismissDialogs() throws ExecutionException, InterruptedException {
         Context context = getInstrumentation().getTargetContext();
         context.sendBroadcast(new Intent(Intent.ACTION_CLOSE_SYSTEM_DIALOGS));
-        openBalances();
-
-        if (!done) {
-            String currentHouse = db.collection("households").document(
-                    getSharedPrefs(getCurrentActivity()).getString(CURRENT_HOUSEHOLD, "")
-            ).getId();
-
-            // Retrieve the billsharer
-            DocumentReference household = db.collection("households")
-                    .document(currentHouse);
-            Task<Billsharer> t = Billsharer
-                    .retrieveBillsharer(db.collection("billsharers"), household);
-            Tasks.await(t);
-            bs = t.getResult();
-
-            done = true;
-        }
+        //openBalances();
     }
 
-    private void openBalances() {
+    private void openBalances() throws InterruptedException {
         onView(withId(R.id.expense_balances)).perform(click());
+        Thread.sleep(500);
     }
 
-    private void openExpenses() {
+    private void openExpenses() throws InterruptedException {
         onView(withId(R.id.balance_expenses)).perform(click());
+        Thread.sleep(500);
     }
 
-    private void goAddExpense(String title, double cost, String payee) {
+    private void goAddExpense(String title, double cost, String payee) throws InterruptedException {
         openExpenses();
-        ExpenseActivityTest.addNewExpense(title, cost, payee);
+        ExpenseActivityTest.addNewExpense(title, cost);
         openBalances();
     }
 
@@ -128,13 +126,13 @@ public class BalanceActivityTest {
     }
 
     @Test
-    public void addingExpenseShowsCorrectNumberOfDebt() {
+    public void addingExpenseShowsCorrectNumberOfDebt() throws InterruptedException {
         goAddExpense("title1", 41, bs.getResidents().get(0));
         onView(withId(R.id.balance_recycler)).check(matches(hasChildCount(bs.getResidents().size()-1)));
     }
 
     @Test
-    public void deletingDebtRemovesIt() {
+    public void deletingDebtRemovesIt() throws InterruptedException {
         goAddExpense("title2", 42, bs.getResidents().get(0));
         onView(withId(R.id.balance_recycler))
                 .perform(RecyclerViewActions.actionOnItemAtPosition(
@@ -144,7 +142,7 @@ public class BalanceActivityTest {
     }
 
     @Test
-    public void deletingDebtCreatesNewExpense() {
+    public void deletingDebtCreatesNewExpense() throws InterruptedException {
         goAddExpense("title3", 43, bs.getResidents().get(0));
         onView(withId(R.id.balance_recycler))
                 .perform(RecyclerViewActions.actionOnItemAtPosition(
@@ -155,9 +153,10 @@ public class BalanceActivityTest {
     }
 
     @Test
-    public void navBarTakesBackToMainScreen(){
+    public void navBarTakesBackToMainScreen() throws InterruptedException {
         Intents.init();
         onView(withId(R.id.nav_bar_menu)).perform(click());
+        Thread.sleep(500);
         intended(hasComponent(MainScreenActivity.class.getName()));
         Intents.release();
     }

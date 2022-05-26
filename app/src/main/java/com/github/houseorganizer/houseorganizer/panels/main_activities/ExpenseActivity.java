@@ -1,8 +1,5 @@
 package com.github.houseorganizer.houseorganizer.panels.main_activities;
 
-import static com.github.houseorganizer.houseorganizer.panels.main_activities.MainScreenActivity.CURRENT_HOUSEHOLD;
-import static com.github.houseorganizer.houseorganizer.util.Util.getSharedPrefs;
-
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.ViewTreeObserver;
@@ -41,9 +38,8 @@ public class ExpenseActivity extends NavBarActivity implements
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_expense);
 
-        currentHouse = db.collection("households").document(
-                getSharedPrefs(this).getString(CURRENT_HOUSEHOLD, "")
-        );
+        currentHouse = FirebaseFirestore.getInstance().collection("households")
+                .document(getIntent().getStringExtra("house"));
 
         initializeData();
 
@@ -60,9 +56,11 @@ public class ExpenseActivity extends NavBarActivity implements
                 }
             });
         });
-        findViewById(R.id.expense_balances).setOnClickListener(l ->
-            startActivity(new Intent(ExpenseActivity.this, BalanceActivity.class))
-        );
+        findViewById(R.id.expense_balances).setOnClickListener(l -> {
+            Intent intent = new Intent(this, BalanceActivity.class);
+            intent.putExtra("house", currentHouse.getId());
+            startActivity(intent);
+        });
 
         super.setUpNavBar(R.id.nav_bar, OptionalInt.of(R.id.nav_bar_bs));
     }
