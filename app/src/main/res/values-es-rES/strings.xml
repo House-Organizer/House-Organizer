@@ -135,4 +135,8 @@
     <string name="clear_local_storage_success">TODO</string>
     <string name="edit_item_title">Editar un producto</string>
     <string name="edit_item_button">Editar</string>
+    <string name="specify_shares">TODO</string>
+    <string name="new_expense">TODO</string>
+    <string name="adds_up_to_total">TODO</string>
+
 </resources>

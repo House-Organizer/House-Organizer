@@ -177,6 +177,9 @@
     <string name="amount">Amount</string>
     <string name="payer">Payer</string>
     <string name="debt">Debt</string>
+    <string name="specify_shares">Specify shares</string>
+    <string name="new_expense">New Expense</string>
+    <string name="adds_up_to_total">The total of the shares doesn\'t add up to the cost of the expense.</string>
 
     <!-- Notifications -->
     <string name="reminder">Reminder</string>
