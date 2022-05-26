@@ -15,7 +15,6 @@ import static androidx.test.espresso.matcher.ViewMatchers.isRoot;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
 import static androidx.test.espresso.matcher.ViewMatchers.withText;
 import static androidx.test.platform.app.InstrumentationRegistry.getInstrumentation;
-import static com.github.houseorganizer.houseorganizer.FirebaseTestsHelper.TEST_USERS_EMAILS;
 import static com.github.houseorganizer.houseorganizer.FirebaseTestsHelper.waitFor;
 import static org.hamcrest.Matchers.containsString;
 
@@ -73,14 +72,25 @@ public class ExpenseActivityTest {
         context.sendBroadcast(new Intent(Intent.ACTION_CLOSE_SYSTEM_DIALOGS));
     }
 
-    protected static void addNewExpense(String title, double cost) {
+    protected static void addNewExpense(String title, String cost) {
         onView(isRoot()).perform(waitFor(1000));
         onView(withId(R.id.expense_add_item)).perform(click());
         onView(isRoot()).perform(waitFor(500));
         onView(withId(R.id.expense_edit_title)).perform(typeText(title));
-        onView(withId(R.id.expense_edit_cost)).perform(typeText(""+cost));
+        onView(withId(R.id.expense_edit_cost)).perform(typeText(cost));
         onView(isRoot()).perform(waitFor(500));
         onView(withText(R.string.confirm)).perform(click());
+        onView(isRoot()).perform(waitFor(1000));
+    }
+
+    private void deleteExpense() {
+        onView(withId(R.id.expense_recycler))
+                .perform(RecyclerViewActions.actionOnItemAtPosition(
+                        0,
+                        RecyclerViewHelper.clickChildViewWithId(R.id.expense_remove_check)));
+        onView(isRoot()).perform(waitFor(500));
+        onView(withText(R.string.confirm)).perform(click());
+        onView(isRoot()).perform(waitFor(500));
     }
 
     @Test
@@ -105,24 +115,14 @@ public class ExpenseActivityTest {
     }
 
     @Test
-    public void ExpenseListHasCorrectNumberOfExpense() {
-        onView(withId(R.id.expense_recycler)).check(matches(hasChildCount(1)));
-    }
-
-    @Test
     public void addingExpenseShowsNewExpense() {
-        double cost = 20.5;
-        addNewExpense("test", cost);
+        addNewExpense("test", "20");
         // Checking expense exists in the view
-        onView(withId(R.id.expense_recycler)).check(matches(hasChildCount(2)));
+        onView(withId(R.id.expense_recycler)).check(matches(hasChildCount(1)));
         onView(withId(R.id.expense_recycler)).check(matches(hasDescendant(withText(containsString("test")))));
-        onView(withId(R.id.expense_recycler)).check(matches(hasDescendant(withText(containsString(""+cost)))));
-        onView(withId(R.id.expense_recycler)).check(matches(hasDescendant(withText(containsString(TEST_USERS_EMAILS[1])))));
+        onView(withId(R.id.expense_recycler)).check(matches(hasDescendant(withText(containsString("20.0")))));
 
-        onView(withId(R.id.expense_recycler))
-                .perform(RecyclerViewActions.actionOnItemAtPosition(
-                        1,
-                        RecyclerViewHelper.clickChildViewWithId(R.id.expense_remove_check)));
+        deleteExpense();
     }
 
     @Test
@@ -135,12 +135,8 @@ public class ExpenseActivityTest {
 
     @Test
     public void deletingExpenseRemovesIt() {
-        addNewExpense("expense", 40);
-        onView(withId(R.id.expense_recycler))
-                .perform(RecyclerViewActions.actionOnItemAtPosition(
-                        1,
-                        RecyclerViewHelper.clickChildViewWithId(R.id.expense_remove_check)));
-        onView(withId(R.id.expense_recycler)).check(matches(hasChildCount(1)));
+        addNewExpense("expense", "40");
+        deleteExpense();
+        onView(withId(R.id.expense_recycler)).check(matches(hasChildCount(0)));
     }
-
 }

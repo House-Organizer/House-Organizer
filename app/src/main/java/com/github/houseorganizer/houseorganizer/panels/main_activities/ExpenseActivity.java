@@ -24,7 +24,6 @@ public class ExpenseActivity extends NavBarActivity implements
 
     private Billsharer bs;
     private ExpenseAdapter adapter;
-    private final FirebaseFirestore db = FirebaseFirestore.getInstance();
 
     // Flag to indicate if the layout for the recyclerview has complete. This should only be used
     // when the data in the recyclerview has been changed after the initial loading

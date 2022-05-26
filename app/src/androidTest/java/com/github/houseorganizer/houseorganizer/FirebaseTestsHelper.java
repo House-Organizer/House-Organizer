@@ -321,8 +321,6 @@ public class FirebaseTestsHelper {
         Billsharer bs = new Billsharer(household);
         Task<DocumentSnapshot> t1 = bs.startUpBillsharer();
         Tasks.await(t1);
-        Expense expense = test_expense(bs,40);
-        bs.addExpense(expense);
         Task<DocumentReference> t2 = Billsharer.storeNewBillsharer(db.collection("billsharers"), new ArrayList<>(), household);
         Tasks.await(t2);
         bs.setOnlineReference(t2.getResult());
@@ -333,8 +331,6 @@ public class FirebaseTestsHelper {
         bs = new Billsharer(household);
         t1 = bs.startUpBillsharer();
         Tasks.await(t1);
-        expense = test_expense(bs,40);
-        bs.addExpense(expense);
         t2 = Billsharer.storeNewBillsharer(db.collection("billsharers"), new ArrayList<>(), household);
         Tasks.await(t2);
         bs.setOnlineReference(t2.getResult());

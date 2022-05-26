@@ -11,6 +11,7 @@ import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static androidx.test.espresso.matcher.ViewMatchers.isEnabled;
 import static androidx.test.espresso.matcher.ViewMatchers.isRoot;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
+import static androidx.test.espresso.matcher.ViewMatchers.withText;
 import static androidx.test.platform.app.InstrumentationRegistry.getInstrumentation;
 import static com.github.houseorganizer.houseorganizer.FirebaseTestsHelper.waitFor;
 
@@ -83,23 +84,32 @@ public class BalanceActivityTest {
     public void dismissDialogs() throws ExecutionException, InterruptedException {
         Context context = getInstrumentation().getTargetContext();
         context.sendBroadcast(new Intent(Intent.ACTION_CLOSE_SYSTEM_DIALOGS));
-        //openBalances();
     }
 
-    private void openBalances() throws InterruptedException {
+    private void openBalances() {
         onView(withId(R.id.expense_balances)).perform(click());
         onView(isRoot()).perform(waitFor(500));
     }
 
-    private void openExpenses() throws InterruptedException {
+    private void openExpenses() {
         onView(withId(R.id.balance_expenses)).perform(click());
         onView(isRoot()).perform(waitFor(500));
     }
 
-    private void goAddExpense(String title, double cost) throws InterruptedException {
+    private void goAddExpense(String title, String cost) {
         openExpenses();
         ExpenseActivityTest.addNewExpense(title, cost);
         openBalances();
+    }
+
+    private void deleteDebt() {
+        onView(withId(R.id.balance_recycler))
+                .perform(RecyclerViewActions.actionOnItemAtPosition(
+                        0,
+                        RecyclerViewHelper.clickChildViewWithId(R.id.debt_remove_check)));
+        onView(isRoot()).perform(waitFor(500));
+        onView(withText(R.string.confirm)).perform(click());
+        onView(isRoot()).perform(waitFor(500));
     }
 
     @Test
@@ -117,34 +127,28 @@ public class BalanceActivityTest {
     }
 
     @Test
-    public void addingExpenseShowsCorrectNumberOfDebt() throws InterruptedException {
-        goAddExpense("title1", 41);
+    public void addingExpenseShowsCorrectNumberOfDebt() {
+        goAddExpense("title1", "41");
         onView(withId(R.id.balance_recycler)).check(matches(hasChildCount(bs.getResidents().size()-1)));
     }
 
     @Test
-    public void deletingDebtRemovesIt() throws InterruptedException {
-        goAddExpense("title2", 42);
-        onView(withId(R.id.balance_recycler))
-                .perform(RecyclerViewActions.actionOnItemAtPosition(
-                        1,
-                        RecyclerViewHelper.clickChildViewWithId(R.id.debt_remove_check)));
+    public void deletingDebtRemovesIt() {
+        goAddExpense("title2", "42");
+        deleteDebt();
         onView(withId(R.id.balance_recycler)).check(matches(hasChildCount(bs.getResidents().size()-2)));
     }
 
     @Test
-    public void deletingDebtCreatesNewExpense() throws InterruptedException {
-        goAddExpense("title3", 43);
-        onView(withId(R.id.balance_recycler))
-                .perform(RecyclerViewActions.actionOnItemAtPosition(
-                        1,
-                        RecyclerViewHelper.clickChildViewWithId(R.id.debt_remove_check)));
-        onView(withId(R.id.balance_expenses)).perform(click());
+    public void deletingDebtCreatesNewExpense() {
+        goAddExpense("title3", "43");
+        deleteDebt();
+        openExpenses();
         onView(withId(R.id.expense_recycler)).check(matches(hasChildCount(2)));
     }
 
     @Test
-    public void navBarTakesBackToMainScreen() throws InterruptedException {
+    public void navBarTakesBackToMainScreen() {
         Intents.init();
         onView(withId(R.id.nav_bar_menu)).perform(click());
         onView(isRoot()).perform(waitFor(500));
