@@ -34,6 +34,7 @@ import com.github.houseorganizer.houseorganizer.location.LocationHelpers;
 import com.github.houseorganizer.houseorganizer.panels.household.CreateHouseholdActivity;
 import com.github.houseorganizer.houseorganizer.panels.household.HouseSelectionActivity;
 import com.github.houseorganizer.houseorganizer.panels.info.InfoActivity;
+import com.github.houseorganizer.houseorganizer.panels.login.LoginActivity;
 import com.github.houseorganizer.houseorganizer.panels.offline.OfflineScreenActivity;
 import com.github.houseorganizer.houseorganizer.panels.settings.SettingsActivity;
 import com.github.houseorganizer.houseorganizer.shop.FirestoreShopList;
@@ -92,6 +93,8 @@ public class MainScreenActivity extends TaskFragmentNavBarActivity {
 
 
         mUser = FirebaseAuth.getInstance().getCurrentUser();
+        if (mUser == null) startActivity(new Intent(this, LoginActivity.class));
+
         db = FirebaseFirestore.getInstance();
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
 
