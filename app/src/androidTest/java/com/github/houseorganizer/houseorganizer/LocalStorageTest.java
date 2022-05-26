@@ -11,13 +11,13 @@ import androidx.test.ext.junit.rules.ActivityScenarioRule;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 import androidx.test.platform.app.InstrumentationRegistry;
 
-import com.github.houseorganizer.houseorganizer.billsharer.Expense;
+import com.github.houseorganizer.houseorganizer.billsharer.Debt;
 import com.github.houseorganizer.houseorganizer.calendar.Calendar;
 import com.github.houseorganizer.houseorganizer.panels.info.InfoActivity;
 import com.github.houseorganizer.houseorganizer.shop.ShopItem;
 import com.github.houseorganizer.houseorganizer.storage.LocalStorage;
 import com.github.houseorganizer.houseorganizer.storage.OfflineEvent;
-import com.github.houseorganizer.houseorganizer.storage.OfflineExpense;
+import com.github.houseorganizer.houseorganizer.storage.OfflineDebt;
 import com.github.houseorganizer.houseorganizer.storage.OfflineShopItem;
 import com.github.houseorganizer.houseorganizer.storage.OfflineTask;
 import com.github.houseorganizer.houseorganizer.task.HTask;
@@ -36,6 +36,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
 
@@ -171,20 +172,22 @@ public class LocalStorageTest {
 
     //------------------- EXPENSES ------------------->
     @Test
-    public void expensesOfflineWork() throws ExecutionException, InterruptedException {
+    public void debtsOfflineWork() throws ExecutionException, InterruptedException {
         Context cx = InstrumentationRegistry.getInstrumentation().getTargetContext();
 
-        Expense expense = new Expense("Lunch at tibits", 70d, "dummy-email@gmail.com", new HashMap<>());
-        OfflineExpense offlineExpense = new OfflineExpense(expense.getTitle(), expense.toText());
+        Debt debt = new Debt("Emilie", "Florence", 35f);
+
+        String title = String.format(Locale.ROOT, "%f CHF for %s", debt.getAmount(), debt.getCreditor());
+        OfflineDebt offlineDebt = new OfflineDebt(title, debt.toText());
 
         LocalStorage.pushHouseholdsOffline(cx, db, auth.getCurrentUser());
-        assertTrue(LocalStorage.pushExpensesOffline(cx, db
+        assertTrue(LocalStorage.pushDebtsOffline(cx, db
                 .collection("households")
-                .document("home_1").getId(), Collections.singletonList(expense)));
+                .document("home_1").getId(), Collections.singletonList(debt)));
 
-        Map<String, ArrayList<OfflineExpense>> offlineExpenses =
-                LocalStorage.retrieveExpensesOffline(cx);
+        Map<String, ArrayList<OfflineDebt>> offlineExpenses =
+                LocalStorage.retrieveDebtsOffline(cx);
 
-        assertEquals(offlineExpenses.get("home_1"), Collections.singletonList(offlineExpense));
+        assertEquals(offlineExpenses.get("home_1"), Collections.singletonList(offlineDebt));
     }
 }

@@ -4,7 +4,7 @@ import static com.google.android.gms.tasks.Tasks.await;
 
 import android.content.Context;
 
-import com.github.houseorganizer.houseorganizer.billsharer.Expense;
+import com.github.houseorganizer.houseorganizer.billsharer.Debt;
 import com.github.houseorganizer.houseorganizer.calendar.Calendar;
 import com.github.houseorganizer.houseorganizer.shop.ShopItem;
 import com.github.houseorganizer.houseorganizer.task.HTask;
@@ -26,6 +26,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.ExecutionException;
@@ -38,7 +39,7 @@ public class LocalStorage {
     public static final String OFFLINE_STORAGE_CALENDAR = "offline_calendar_";
     public static final String OFFLINE_STORAGE_GROCERIES = "offline_groceries_";
     public static final String OFFLINE_STORAGE_TASKS = "offline_tasks_";
-    public static final String OFFLINE_STORAGE_EXPENSES = "offline_expenses_";
+    public static final String OFFLINE_STORAGE_DEBTS = "offline_expenses_";
 
     public static final String OFFLINE_STORAGE_EXTENSION = "_.json";
 
@@ -124,8 +125,8 @@ public class LocalStorage {
         return retrieveSomethingOffline(context, OFFLINE_STORAGE_TASKS, OfflineTask.class);
     }
 
-    public static Map<String, ArrayList<OfflineExpense>> retrieveExpensesOffline(Context context) {
-        return retrieveSomethingOffline(context, OFFLINE_STORAGE_EXPENSES, OfflineExpense.class);
+    public static Map<String, ArrayList<OfflineDebt>> retrieveDebtsOffline(Context context) {
+        return retrieveSomethingOffline(context, OFFLINE_STORAGE_DEBTS, OfflineDebt.class);
     }
 
     private static <T extends OfflineItem> Map<String, ArrayList<T>>
@@ -196,17 +197,18 @@ public class LocalStorage {
                 new Gson().toJson(offlineTasks, type));
     }
 
-    public static boolean pushExpensesOffline(Context context, String currentHouseId, List<Expense> expenses) {
-        ArrayList<OfflineExpense> offlineExpenses = new ArrayList<>();
-        for (Expense expense: expenses) {
-            offlineExpenses.add(new OfflineExpense(expense.getTitle(), expense.toText()));
+    public static boolean pushDebtsOffline(Context context, String currentHouseId, List<Debt> debts) {
+        ArrayList<OfflineDebt> offlineDebts = new ArrayList<>();
+        for (Debt debt : debts) {
+            String title = String.format(Locale.ROOT, "%f CHF for %s", debt.getAmount(), debt.getCreditor());
+            offlineDebts.add(new OfflineDebt(title, debt.toText()));
         }
 
         String house_id = currentHouseId == null ? "temp" : currentHouseId;
 
-        Type type = TypeToken.getParameterized(ArrayList.class, OfflineExpense.class).getType();
-        return writeTxtToFile(context, OFFLINE_STORAGE_EXPENSES + house_id + OFFLINE_STORAGE_EXTENSION,
-                new Gson().toJson(offlineExpenses, type));
+        Type type = TypeToken.getParameterized(ArrayList.class, OfflineDebt.class).getType();
+        return writeTxtToFile(context, OFFLINE_STORAGE_DEBTS + house_id + OFFLINE_STORAGE_EXTENSION,
+                new Gson().toJson(offlineDebts, type));
     }
 
 

@@ -7,7 +7,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 import com.github.houseorganizer.houseorganizer.storage.OfflineEvent;
-import com.github.houseorganizer.houseorganizer.storage.OfflineExpense;
+import com.github.houseorganizer.houseorganizer.storage.OfflineDebt;
 import com.github.houseorganizer.houseorganizer.storage.OfflineShopItem;
 import com.github.houseorganizer.houseorganizer.storage.OfflineTask;
 
@@ -124,30 +124,30 @@ public class LocalStorageUnitTest {
     }
 
     @Test
-    public void offlineExpenseBuilds() {
-        OfflineExpense expense = new OfflineExpense("title", "info");
-        assertThat(expense, is(notNullValue()));
+    public void offlineDebtBuilds() {
+        OfflineDebt debt = new OfflineDebt("title", "info");
+        assertThat(debt, is(notNullValue()));
     }
 
     @Test
-    public void offlineExpenseStringIsCorrect() {
-        OfflineExpense expense = new OfflineExpense("bowling", "bowling info");
+    public void offlineDebtStringIsCorrect() {
+        OfflineDebt debt = new OfflineDebt("10 CHF for Frank", "Joe owes Frank 10 CHF");
         assertEquals("OfflineExpense{" +
                 "title='" + "bowling" + '\'' +
                 ", info='" + "bowling info" + '\'' +
-                '}', expense.toString());
+                '}', debt.toString());
     }
 
     @Test
-    public void offlineExpenseGettersGet() {
-        OfflineExpense expense = new OfflineExpense("title", "info");
+    public void offlineDebtGettersGet() {
+        OfflineDebt expense = new OfflineDebt("title", "info");
         assertEquals("title", expense.getTitle());
         assertEquals("info", expense.getInfo());
     }
 
     @Test
-    public void offlineExpenseMiscMethodsWork() {
-        OfflineExpense expense = new OfflineExpense("title", "info");
+    public void offlineDebtMiscMethodsWork() {
+        OfflineDebt expense = new OfflineDebt("title", "info");
         assertEquals("title", expense.title());
         assertEquals("info", expense.info());
         assertEquals(1, expense.colorRatio(), 0.1);

@@ -4,10 +4,10 @@ import androidx.annotation.NonNull;
 
 import java.util.Objects;
 
-public class OfflineExpense extends OfflineItem {
+public class OfflineDebt extends OfflineItem {
     private final String title, info;
 
-    public OfflineExpense(String title, String info) {
+    public OfflineDebt(String title, String info) {
         this.title = title;
         this.info = info;
     }
@@ -15,7 +15,7 @@ public class OfflineExpense extends OfflineItem {
     @Override
     @NonNull
     public String toString() {
-        return "OfflineExpense{" +
+        return "OfflineDebt{" +
                 "title='" + title + '\'' +
                 ", info='" + info + '\'' +
                 '}';
@@ -51,7 +51,7 @@ public class OfflineExpense extends OfflineItem {
             return false;
         }
 
-        OfflineExpense that = (OfflineExpense) o;
+        OfflineDebt that = (OfflineDebt) o;
         return Objects.equals(title, that.title) && Objects.equals(info, that.info);
 
     }
