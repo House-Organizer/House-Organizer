@@ -73,11 +73,8 @@ public class ExpenseActivity extends NavBarActivity implements
                         adapter = t.getResult();
                         bs.getOnlineReference().addSnapshotListener((d, e) -> bs.refreshExpenses());
                         bs.startUpBillsharer().addOnCompleteListener(t1 -> {
-                            LocalStorage.pushDebtsOffline(getApplicationContext(), currentHouse.getId(), bs.getDebts());
-                            LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
-                            linearLayoutManager.setReverseLayout(true);
-                            linearLayoutManager.setStackFromEnd(true);
-                            view.setLayoutManager(linearLayoutManager);
+                            Util.setUpBillsharer(getApplicationContext(), view,
+                                    currentHouse.getId(), bs.getDebts());
                             view.setAdapter(adapter);
                         });
                     } else {

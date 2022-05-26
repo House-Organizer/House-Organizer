@@ -9,15 +9,23 @@ import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.util.Log;
+import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
 import com.github.houseorganizer.houseorganizer.R;
+import com.github.houseorganizer.houseorganizer.billsharer.Debt;
 import com.github.houseorganizer.houseorganizer.panels.offline.OfflineScreenActivity;
 
+import com.github.houseorganizer.houseorganizer.storage.LocalStorage;
 import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
+
+import java.util.List;
 
 
 public class Util {
@@ -110,5 +118,14 @@ public class Util {
                                     .update("assignees", FieldValue.arrayRemove(email));
                         }
                     });
+    }
+
+    //<--------------------------| Billsharer util |------------------------------------->
+    public static void setUpBillsharer(Context appCtx, RecyclerView view, String houseId, List<Debt> debts) {
+        LocalStorage.pushDebtsOffline(appCtx, houseId, debts);
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(appCtx);
+        linearLayoutManager.setReverseLayout(true);
+        linearLayoutManager.setStackFromEnd(true);
+        view.setLayoutManager(linearLayoutManager);
     }
 }

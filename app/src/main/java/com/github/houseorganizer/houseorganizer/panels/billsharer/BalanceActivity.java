@@ -53,11 +53,8 @@ public class BalanceActivity extends NavBarActivity {
                         bs = t.getResult();
                         adapter = new DebtAdapter(bs);
                         bs.startUpBillsharer().addOnCompleteListener(t1 -> {
-                            LocalStorage.pushDebtsOffline(getApplicationContext(), currentHouse.getId(), bs.getDebts());
-                            LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
-                            linearLayoutManager.setReverseLayout(true);
-                            linearLayoutManager.setStackFromEnd(true);
-                            view.setLayoutManager(linearLayoutManager);
+                            Util.setUpBillsharer(getApplicationContext(), view,
+                                    currentHouse.getId(), bs.getDebts());
                             view.setAdapter(adapter);
                         });
                     } else {
