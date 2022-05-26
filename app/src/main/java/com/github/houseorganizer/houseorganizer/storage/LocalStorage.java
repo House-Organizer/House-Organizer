@@ -113,55 +113,35 @@ public class LocalStorage {
     }
 
     public static Map<String, ArrayList<OfflineEvent>> retrieveEventsOffline(Context context) {
-        HashMap<String, String> households = retrieveHouseholdsOffline(context);
-
-        Map<String, ArrayList<OfflineEvent>> mapHouseholdIdToEvents = new HashMap<>();
-        for (String household : households.keySet()) {
-            String householdsEventsString = retrieveTxtFromFile(context,
-                    OFFLINE_STORAGE_CALENDAR + household + OFFLINE_STORAGE_EXTENSION);
-            Type type = TypeToken.getParameterized(ArrayList.class, OfflineEvent.class).getType();
-            ArrayList<OfflineEvent> householdsEvents = new Gson().fromJson(householdsEventsString, type);
-            mapHouseholdIdToEvents.put(household, householdsEvents);
-        }
-        return mapHouseholdIdToEvents;
+        return retrieveSomethingOffline(context, OFFLINE_STORAGE_CALENDAR, OfflineEvent.class);
     }
 
     public static Map<String, ArrayList<OfflineShopItem>> retrieveGroceriesOffline(Context context) {
-        Map<String, ArrayList<OfflineShopItem>> mapHouseholdIdToGroceries = new HashMap<>();
-
-        HashMap<String, String> households = retrieveHouseholdsOffline(context);
-        for (String household : households.keySet()) {
-            String householdsGroceriesString = retrieveTxtFromFile(context,
-                    OFFLINE_STORAGE_GROCERIES + household + OFFLINE_STORAGE_EXTENSION);
-            Type type = TypeToken.getParameterized(ArrayList.class, OfflineShopItem.class).getType();
-            ArrayList<OfflineShopItem> householdsGroceries = new Gson().fromJson(householdsGroceriesString, type);
-            mapHouseholdIdToGroceries.put(household, householdsGroceries);
-        }
-        return mapHouseholdIdToGroceries;
+        return retrieveSomethingOffline(context, OFFLINE_STORAGE_GROCERIES, OfflineShopItem.class);
     }
 
     public static Map<String, ArrayList<OfflineTask>> retrieveTaskListOffline(Context context) {
-        Map<String, ArrayList<OfflineTask>> mapHouseholdIdToTasks = new HashMap<>();
-        for (String household : retrieveHouseholdsOffline(context).keySet()) {
-            String householdsTasksString = retrieveTxtFromFile(context,
-                    OFFLINE_STORAGE_TASKS + household + OFFLINE_STORAGE_EXTENSION);
-            Type type = TypeToken.getParameterized(ArrayList.class, OfflineTask.class).getType();
-            ArrayList<OfflineTask> householdsTasks = new Gson().fromJson(householdsTasksString, type);
-            mapHouseholdIdToTasks.put(household, householdsTasks);
-        }
-        return mapHouseholdIdToTasks;
+        return retrieveSomethingOffline(context, OFFLINE_STORAGE_TASKS, OfflineTask.class);
     }
 
     public static Map<String, ArrayList<OfflineExpense>> retrieveExpensesOffline(Context context) {
-        Map<String, ArrayList<OfflineExpense>> mapHouseholdIdToExpenses = new HashMap<>();
+        return retrieveSomethingOffline(context, OFFLINE_STORAGE_EXPENSES, OfflineExpense.class);
+    }
+
+    private static <T extends OfflineItem> Map<String, ArrayList<T>>
+    retrieveSomethingOffline(Context context, String filePrefix, Type itemClass) {
+        Map<String, ArrayList<T>> mapToFill = new HashMap<>();
+
         for (String household : retrieveHouseholdsOffline(context).keySet()) {
-            String householdsExpenseString = retrieveTxtFromFile(context,
-                    OFFLINE_STORAGE_EXPENSES + household + OFFLINE_STORAGE_EXTENSION);
-            Type type = TypeToken.getParameterized(ArrayList.class, OfflineExpense.class).getType();
-            ArrayList<OfflineExpense> householdsExpenses = new Gson().fromJson(householdsExpenseString, type);
-            mapHouseholdIdToExpenses.put(household, householdsExpenses);
+            String householdItemString = retrieveTxtFromFile(context,
+                    filePrefix + household + OFFLINE_STORAGE_EXTENSION);
+
+            Type type = TypeToken.getParameterized(ArrayList.class, itemClass).getType();
+            ArrayList<T> items = new Gson().fromJson(householdItemString, type);
+            mapToFill.put(household, items);
         }
-        return mapHouseholdIdToExpenses;
+
+        return mapToFill;
     }
 
     public static boolean pushEventsOffline(Context context, String currentHouseId, List<Calendar.Event> events) {
