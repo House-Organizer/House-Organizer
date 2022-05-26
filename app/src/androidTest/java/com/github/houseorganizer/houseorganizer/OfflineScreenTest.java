@@ -22,6 +22,7 @@ import androidx.test.ext.junit.rules.ActivityScenarioRule;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 import androidx.test.platform.app.InstrumentationRegistry;
 
+import com.github.houseorganizer.houseorganizer.billsharer.Debt;
 import com.github.houseorganizer.houseorganizer.calendar.Calendar;
 import com.github.houseorganizer.houseorganizer.panels.main_activities.MainScreenActivity;
 import com.github.houseorganizer.houseorganizer.panels.offline.OfflineScreenActivity;
@@ -29,7 +30,6 @@ import com.github.houseorganizer.houseorganizer.shop.ShopItem;
 import com.github.houseorganizer.houseorganizer.storage.LocalStorage;
 import com.github.houseorganizer.houseorganizer.task.HTask;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.firestore.FirebaseFirestore;
 
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -42,6 +42,7 @@ import java.time.LocalDateTime;
 import java.time.Month;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Locale;
 import java.util.concurrent.ExecutionException;
 
 @RunWith(AndroidJUnit4.class)
@@ -62,6 +63,10 @@ public class OfflineScreenTest {
                     LocalDateTime.of(2030, Month.MAY, 21, 20, 20), 100, "0"),
                     new Calendar.Event("Celine's bday", "We should make cupcakes!",
                             LocalDateTime.of(2030, Month.MAY, 25, 15, 30), 200, "0"));
+
+    private final static List<Debt> DEBTS =
+            Arrays.asList(new Debt("Kim", "Alex", 100),
+                    new Debt("Petra", "Whitney", 250));
     @Rule
     public ActivityScenarioRule<OfflineScreenActivity> offlineScreenRule =
             new ActivityScenarioRule<>(intentFromMainScreen);
@@ -94,6 +99,7 @@ public class OfflineScreenTest {
         assertTrue(LocalStorage.pushEventsOffline(context, currentHouseId, EVENTS));
         assertTrue(LocalStorage.pushGroceriesOffline(context, currentHouseId, GROCERIES));
         assertTrue(LocalStorage.pushTaskListOffline(context, currentHouseId, TASKS));
+        assertTrue(LocalStorage.pushDebtsOffline(context, currentHouseId, DEBTS));
 
         intentFromMainScreen = new Intent(context, OfflineScreenActivity.class).putExtra("hh-id", currentHouseId);
     }
@@ -171,6 +177,14 @@ public class OfflineScreenTest {
     }
 
     @Test
+    public void debtsDisplayProperly() {
+        for (Debt debt : DEBTS) {
+            String title = String.format(Locale.ROOT, "%f CHF for %s", debt.getAmount(), debt.getCreditor());
+            onView(withText(title)).check(matches(isDisplayed()));
+        }
+    }
+
+    @Test
     public void eventInformationIsDisplayedProperly() {
         onView(withText(EVENTS.get(0).getTitle())).perform(click());
 
@@ -198,5 +212,19 @@ public class OfflineScreenTest {
         onView(withText(String.format("%s [%d %s][%s]",
                 shopItem.getName(), shopItem.getQuantity(),
                 shopItem.getUnit(), shopItem.isPickedUp() ? "x" : "\t"))).inRoot(isDialog()).check(matches(isDisplayed()));
+    }
+
+    @Test
+    public void debtInformationIsDisplayedProperly() {
+        Debt debt = DEBTS.get(0);
+
+        String title = String.format(Locale.ROOT,
+                "%f CHF for %s",
+                debt.getAmount(), debt.getCreditor());
+
+        onView(withText(title)).perform(click());
+
+        onView(withText(debt.toText())).inRoot(isDialog())
+                .check(matches(isDisplayed()));
     }
 }
