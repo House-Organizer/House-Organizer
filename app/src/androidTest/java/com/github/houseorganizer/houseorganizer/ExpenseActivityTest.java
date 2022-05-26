@@ -131,7 +131,7 @@ public class ExpenseActivityTest {
     }
 
     @Test
-    public void ExpenseListHasCorrectNumberOfExpense() {
+    public void expenseListHasCorrectNumberOfExpense() {
         onView(withId(R.id.expense_recycler)).check(matches(hasChildCount(1)));
     }
 
