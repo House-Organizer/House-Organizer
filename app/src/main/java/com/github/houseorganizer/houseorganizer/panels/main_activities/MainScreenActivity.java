@@ -98,7 +98,7 @@ public class MainScreenActivity extends TaskFragmentNavBarActivity {
         loadHouse = getIntent().hasExtra("LoadHouse");
 
         if(!loadHouse) loadData();
-        if(loadHouse && LocationHelpers.checkLocationPermission(getApplicationContext(), this)){
+        if(loadHouse && LocationHelpers.checkLocationPermission(this, this)){
             locationPermission = true;
             loadData();
         }
