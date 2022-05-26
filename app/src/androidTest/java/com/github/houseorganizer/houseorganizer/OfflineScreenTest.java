@@ -143,7 +143,7 @@ public class OfflineScreenTest {
     }
 
     //@Test [TODO makes rest fail]
-    public void offlineButtonLeadsToMainScreen() throws InterruptedException {
+    public void offlineButtonLeadsToMainScreen() {
         Intents.init();
         onView(withId(R.id.offline_wifi_button)).perform(click());
         intended(hasComponent(MainScreenActivity.class.getName()));
@@ -219,8 +219,8 @@ public class OfflineScreenTest {
         Debt debt = DEBTS.get(0);
 
         String title = String.format(Locale.ROOT,
-                "%f CHF for %s",
-                debt.getAmount(), debt.getCreditor());
+                "%.1f chf (%s)",
+                debt.getAmount(), debt.getDebtor());
 
         onView(withText(title)).perform(click());
 

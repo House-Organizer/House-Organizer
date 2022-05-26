@@ -214,7 +214,7 @@ public class LocalStorage {
     public static boolean pushDebtsOffline(Context context, String currentHouseId, List<Debt> debts) {
         ArrayList<OfflineDebt> offlineDebts = new ArrayList<>();
         for (Debt debt : debts) {
-            String title = String.format(Locale.ROOT, "%f CHF for %s", debt.getAmount(), debt.getCreditor());
+            String title = String.format(Locale.ROOT, "%.1f chf (%s)", debt.getAmount(), debt.getDebtor());
             offlineDebts.add(new OfflineDebt(title, debt.toText()));
         }
 

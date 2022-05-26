@@ -21,7 +21,7 @@ public class BalanceActivity extends NavBarActivity {
 
     private Billsharer bs;
     private DebtAdapter adapter;
-    private FirebaseFirestore db = FirebaseFirestore.getInstance();
+    private final FirebaseFirestore db = FirebaseFirestore.getInstance();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

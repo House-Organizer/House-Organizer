@@ -177,7 +177,7 @@ public class LocalStorageTest {
 
         Debt debt = new Debt("Emilie", "Florence", 35f);
 
-        String title = String.format(Locale.ROOT, "%f CHF for %s", debt.getAmount(), debt.getCreditor());
+        String title = String.format(Locale.ROOT, "%.1f chf (%s)", debt.getAmount(), debt.getDebtor());
         OfflineDebt offlineDebt = new OfflineDebt(title, debt.toText());
 
         LocalStorage.pushHouseholdsOffline(cx, db, auth.getCurrentUser());
