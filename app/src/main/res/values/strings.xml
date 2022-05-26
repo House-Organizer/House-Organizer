@@ -134,6 +134,8 @@
     <string name="name">Name</string>
     <string name="unit">Unit</string>
     <string name="add_item_title">Adding an item to the list</string>
+    <string name="edit_item_title">Edit an item</string>
+    <string name="edit_item_button">Edit</string>
     <string name="item_delete_button_description">Delete the corresponding shop list item</string>
     <string name="add_item_button">Add item</string>
     <string name="remove_picked_up">Remove checked items</string>
@@ -173,5 +175,10 @@
     <string name="amount">Amount</string>
     <string name="payer">Payer</string>
     <string name="debt">Debt</string>
+
+    <!-- Notifications -->
+    <string name="reminder">Reminder</string>
+    <string name="reminder_message">Don\'t forget your task :</string>
+    <string name="notify">Notify</string>
 
 </resources>

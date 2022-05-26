@@ -6,6 +6,9 @@ import static com.github.houseorganizer.houseorganizer.util.Util.logAndToast;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -19,6 +22,7 @@ import android.view.View;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
+import androidx.core.app.NotificationCompat;
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -26,17 +30,15 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.github.houseorganizer.houseorganizer.R;
 import com.github.houseorganizer.houseorganizer.calendar.Calendar;
 import com.github.houseorganizer.houseorganizer.calendar.UpcomingAdapter;
-import com.github.houseorganizer.houseorganizer.panels.offline.OfflineScreenActivity;
 import com.github.houseorganizer.houseorganizer.location.LocationHelpers;
 import com.github.houseorganizer.houseorganizer.panels.household.CreateHouseholdActivity;
 import com.github.houseorganizer.houseorganizer.panels.household.HouseSelectionActivity;
 import com.github.houseorganizer.houseorganizer.panels.info.InfoActivity;
+import com.github.houseorganizer.houseorganizer.panels.offline.OfflineScreenActivity;
 import com.github.houseorganizer.houseorganizer.panels.settings.SettingsActivity;
 import com.github.houseorganizer.houseorganizer.shop.FirestoreShopList;
 import com.github.houseorganizer.houseorganizer.shop.ShopListAdapter;
 import com.github.houseorganizer.houseorganizer.storage.LocalStorage;
-import com.github.houseorganizer.houseorganizer.task.TaskList;
-import com.github.houseorganizer.houseorganizer.task.TaskListAdapter;
 import com.github.houseorganizer.houseorganizer.task.TaskView;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
@@ -47,10 +49,8 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.OptionalInt;
@@ -102,7 +102,7 @@ public class MainScreenActivity extends TaskFragmentNavBarActivity {
             locationPermission = true;
             loadData();
         }
-
+        setupNotifications();
         calendarEvents = findViewById(R.id.calendar);
         calendarAdapter = new UpcomingAdapter(calendar,
                 registerForActivityResult(new ActivityResultContracts.GetContent(), uri -> calendarAdapter.pushAttachment(uri)));
@@ -116,6 +116,45 @@ public class MainScreenActivity extends TaskFragmentNavBarActivity {
         // If you want to select the main button on the navBar,
         // use `OptionalInt.of(R.id. ...)`
         super.setUpNavBar(R.id.nav_bar, OptionalInt.empty());
+    }
+
+    private void setupNotifications() {
+        db.collection("notifications")
+                .whereEqualTo("user", mUser.getEmail())
+                .addSnapshotListener((notifications, exception) -> {
+                    if (notifications != null) {
+                        notifyFromNotif(notifications);
+                    }
+                });
+    }
+
+    private void notifyFromNotif(QuerySnapshot notifications) {
+        for (DocumentSnapshot notif : notifications.getDocuments()) {
+            Object taskName = notif.get("task");
+            if (taskName != null) {
+                sendNotification((String)taskName);
+            }
+            notif.getReference().delete();
+        }
+    }
+
+    private void sendNotification(String task) {
+        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, new Intent(this, MainScreenActivity.class), PendingIntent.FLAG_IMMUTABLE);
+
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(this, "0")
+                .setContentTitle(getString(R.string.reminder))
+                .setSmallIcon(R.drawable.home_icon)
+                .setContentText(getString(R.string.reminder_message)+ " " + task)
+                .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+                .setContentIntent(pendingIntent)
+                .setAutoCancel(true);
+
+        // This only creates the channel if it is not created yet so it is fine to call everytime
+        NotificationChannel channel = new NotificationChannel("0", "notif channel", NotificationManager.IMPORTANCE_DEFAULT);
+        // Register the channel with the system
+        NotificationManager notificationManager = getSystemService(NotificationManager.class);
+        notificationManager.createNotificationChannel(channel);
+        notificationManager.notify(0, builder.build());
     }
 
     private Task<ShopListAdapter> initializeGroceriesList() {

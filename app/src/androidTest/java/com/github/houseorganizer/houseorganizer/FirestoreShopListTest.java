@@ -52,6 +52,10 @@ public class FirestoreShopListTest {
         Task<DocumentReference> t1 = FirestoreShopList.storeNewShopList(db.collection("shop_lists"), shopList, household);
         Tasks.await(t1);
         shopList.setOnlineReference(t1.getResult());
+        t = db.collection("shop_lists").whereEqualTo("household", db.collection("households").document("home_3")).get();
+        Tasks.await(t);
+        t.getResult().getDocuments().get(1).getReference().delete();
+        shopList.setOnlineReference(t.getResult().getDocuments().get(0).getReference());
     }
 
     @Before

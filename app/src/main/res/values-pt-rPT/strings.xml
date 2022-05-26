@@ -130,4 +130,9 @@
     <string name="color_theme">Tema de cores</string>
     <string name="lang_title">Língua</string>
     <string name="password_constraints">- Deve conter, no mínimo, 8 caracteres -  Deve conter uma maiúscula e uma minúscula - Deve conter um caractere especial - Não deve conter espaços - As duas palavras-passe devem ser identicas</string>
+    <string name="reminder">Lembrete</string>
+    <string name="reminder_message">Não se esqueça da sua tarefa :</string>
+    <string name="notify">Notificar</string>
+    <string name="edit_item_title">TODO</string>
+    <string name="edit_item_button">TODO</string>
 </resources>

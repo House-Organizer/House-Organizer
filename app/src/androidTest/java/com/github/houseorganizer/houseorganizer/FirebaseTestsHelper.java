@@ -234,6 +234,8 @@ public class FirebaseTestsHelper {
                         TEST_USERS_EMAILS[4], TEST_USERS_EMAILS[5], TEST_USERS_EMAILS[6]),
                 TEST_HOUSEHOLD_NAMES[2], TEST_HOUSEHOLD_DESC[2],
                 TEST_HOUSEHOLD_LATS[2], TEST_HOUSEHOLD_LONS[2]);
+
+        createTestShopLists();
     }
 
     protected static Map<String, Object> fetchHouseholdData(String houseName, FirebaseFirestore db) throws ExecutionException, InterruptedException {
@@ -263,8 +265,22 @@ public class FirebaseTestsHelper {
     /**
      * This method will create a shopList on Firestore
      */
-    protected static void createTestShopList() throws ExecutionException, InterruptedException {
+    protected static void createTestShopLists() throws ExecutionException, InterruptedException {
         FirebaseFirestore db = FirebaseFirestore.getInstance();
+
+        Task<QuerySnapshot> q = db.collection("shop_lists").get();
+        Tasks.await(q);
+        System.out.println("Results + " + q.getResult().size());
+        if(q.getResult().size() > 0 && q.getResult().size() != 3){
+            List<Task<Void>> list = new ArrayList<>();
+            for(int i = 0; i < q.getResult().size(); ++i){
+                list.add(q.getResult().getDocuments().get(i).getReference().delete());
+            }
+            Tasks.await(Tasks.whenAllComplete(list));
+        }
+        if(q.getResult().size() == 3){
+            return;
+        }
 
         // Store new shop list with one item for TEST_HOUSEHOLD_NAMES[0] on Firebase
         DocumentReference household = db.collection("households").document(TEST_HOUSEHOLD_NAMES[0]);
@@ -276,6 +292,14 @@ public class FirebaseTestsHelper {
 
         // Store new shop list with one item for TEST_HOUSEHOLD_NAMES[1] on Firebase
         household = db.collection("households").document(TEST_HOUSEHOLD_NAMES[1]);
+        shopList = new FirestoreShopList(household);
+        shopList.addItem(TEST_ITEM);
+        t = FirestoreShopList.storeNewShopList(db.collection("shop_lists"), shopList, household);
+        Tasks.await(t);
+        shopList.setOnlineReference(t.getResult());
+
+        // Store new shop list with one item for TEST_HOUSEHOLD_NAMES[1] on Firebase
+        household = db.collection("households").document(TEST_HOUSEHOLD_NAMES[2]);
         shopList = new FirestoreShopList(household);
         shopList.addItem(TEST_ITEM);
         t = FirestoreShopList.storeNewShopList(db.collection("shop_lists"), shopList, household);
@@ -443,8 +467,6 @@ public class FirebaseTestsHelper {
         createHouseholds();
 
         setupNicknames();
-
-        createTestShopList();
 
         createTestBillsharer();
 

@@ -26,7 +26,6 @@ import com.github.houseorganizer.houseorganizer.panels.household.HouseSelectionA
 import com.github.houseorganizer.houseorganizer.panels.household.QRCodeScanActivity;
 import com.google.android.gms.tasks.Task;
 import com.google.android.gms.tasks.Tasks;
-
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
