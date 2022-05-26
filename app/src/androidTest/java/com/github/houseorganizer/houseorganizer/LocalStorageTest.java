@@ -112,6 +112,7 @@ public class LocalStorageTest {
         Context cx = InstrumentationRegistry.getInstrumentation().getTargetContext();
 
         Tasks.await(LocalStorage.pushHouseholdsOffline(cx, db, auth.getCurrentUser()));
+        Thread.sleep(300);
         HashMap<String, String> households = LocalStorage.retrieveHouseholdsOffline(cx);
         assertTrue(households.containsKey("home_2"));
         assertTrue(households.containsKey("home_1"));
@@ -129,6 +130,7 @@ public class LocalStorageTest {
         OfflineEvent offlineEvent = new OfflineEvent("title","description", time.toString(), 1, "id");
 
         Tasks.await(LocalStorage.pushHouseholdsOffline(cx, db, auth.getCurrentUser()));
+        Thread.sleep(300);
         assertTrue(LocalStorage.pushEventsOffline(cx, db
                 .collection("households")
                 .document("home_1").getId(), Collections.singletonList(event)));
@@ -146,6 +148,7 @@ public class LocalStorageTest {
         OfflineShopItem offlineShopItem = new OfflineShopItem("name", 1, "unit", false);
 
         Tasks.await(LocalStorage.pushHouseholdsOffline(cx, db, auth.getCurrentUser()));
+        Thread.sleep(300);
         assertTrue(LocalStorage.pushGroceriesOffline(cx, db
                 .collection("households")
                 .document("home_1").getId(), Collections.singletonList(shopItem)));
@@ -163,6 +166,7 @@ public class LocalStorageTest {
         OfflineTask offlineTask = new OfflineTask(task.getTitle(), task.getDescription(), task.getAssignees());
 
         Tasks.await(LocalStorage.pushHouseholdsOffline(cx, db, auth.getCurrentUser()));
+        Thread.sleep(300);
         assertTrue(LocalStorage.pushTaskListOffline(cx, db
                 .collection("households")
                 .document("home_1").getId(), Collections.singletonList(task)));
@@ -182,6 +186,7 @@ public class LocalStorageTest {
         OfflineDebt offlineDebt = new OfflineDebt(title, debt.toText());
 
         Tasks.await(LocalStorage.pushHouseholdsOffline(cx, db, auth.getCurrentUser()));
+        Thread.sleep(300);
         assertTrue(LocalStorage.pushDebtsOffline(cx, db
                 .collection("households")
                 .document("home_1").getId(), Collections.singletonList(debt)));
