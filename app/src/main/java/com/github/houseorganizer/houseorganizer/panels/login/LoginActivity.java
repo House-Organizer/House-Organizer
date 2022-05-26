@@ -112,9 +112,6 @@ public class LoginActivity extends AppCompatActivity {
      *  the user to authenticate
      */
     private void setUpSignInButtons(){
-        findViewById(R.id.email_signin_button).setOnClickListener(
-                v -> startActivity(new Intent(this, LoginEmail.class)));
-
         findViewById(R.id.facebookLogInButton).setOnClickListener(
                 v -> startActivity(new Intent(this, FacebookAuthActivity.class))
         );
