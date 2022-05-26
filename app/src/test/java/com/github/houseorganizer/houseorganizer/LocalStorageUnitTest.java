@@ -7,6 +7,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 import com.github.houseorganizer.houseorganizer.storage.OfflineEvent;
+import com.github.houseorganizer.houseorganizer.storage.OfflineExpense;
 import com.github.houseorganizer.houseorganizer.storage.OfflineShopItem;
 import com.github.houseorganizer.houseorganizer.storage.OfflineTask;
 
@@ -102,7 +103,7 @@ public class LocalStorageUnitTest {
                 "OfflineTask{" +
                         "name='" + "name" + '\'' +
                         ", description='" + "description" + '\'' +
-                        ", assignees=" + Arrays.asList("user1", "user2").toString() +
+                        ", assignees=" + Arrays.asList("user1", "user2") +
                         '}', task.toString());
     }
 
@@ -120,5 +121,35 @@ public class LocalStorageUnitTest {
         assertEquals("name", task.title());
         assertEquals("description", task.info());
         assertEquals(com.google.android.material.R.attr.colorSecondary, task.color());
+    }
+
+    @Test
+    public void offlineExpenseBuilds() {
+        OfflineExpense expense = new OfflineExpense("title", "info");
+        assertThat(expense, is(notNullValue()));
+    }
+
+    @Test
+    public void offlineExpenseStringIsCorrect() {
+        OfflineExpense expense = new OfflineExpense("bowling", "bowling info");
+        assertEquals("OfflineExpense{" +
+                "title='" + "bowling" + '\'' +
+                ", info='" + "bowling info" + '\'' +
+                '}', expense.toString());
+    }
+
+    @Test
+    public void offlineExpenseGettersGet() {
+        OfflineExpense expense = new OfflineExpense("title", "info");
+        assertEquals("title", expense.getTitle());
+        assertEquals("info", expense.getInfo());
+    }
+
+    @Test
+    public void offlineExpenseMiscMethodsWork() {
+        OfflineExpense expense = new OfflineExpense("title", "info");
+        assertEquals("title", expense.title());
+        assertEquals("info", expense.info());
+        assertEquals(com.google.android.material.R.attr.colorSecondary, expense.color());
     }
 }

@@ -4,6 +4,7 @@ import static com.google.android.gms.tasks.Tasks.await;
 
 import android.content.Context;
 
+import com.github.houseorganizer.houseorganizer.billsharer.Expense;
 import com.github.houseorganizer.houseorganizer.calendar.Calendar;
 import com.github.houseorganizer.houseorganizer.shop.ShopItem;
 import com.github.houseorganizer.houseorganizer.task.HTask;
@@ -37,6 +38,7 @@ public class LocalStorage {
     public static final String OFFLINE_STORAGE_CALENDAR = "offline_calendar_";
     public static final String OFFLINE_STORAGE_GROCERIES = "offline_groceries_";
     public static final String OFFLINE_STORAGE_TASKS = "offline_tasks_";
+    public static final String OFFLINE_STORAGE_EXPENSES = "offline_expenses_";
 
     public static final String OFFLINE_STORAGE_EXTENSION = "_.json";
 
@@ -150,6 +152,18 @@ public class LocalStorage {
         return mapHouseholdIdToTasks;
     }
 
+    public static Map<String, ArrayList<OfflineExpense>> retrieveExpensesOffline(Context context) {
+        Map<String, ArrayList<OfflineExpense>> mapHouseholdIdToExpenses = new HashMap<>();
+        for (String household : retrieveHouseholdsOffline(context).keySet()) {
+            String householdsExpenseString = retrieveTxtFromFile(context,
+                    OFFLINE_STORAGE_EXPENSES + household + OFFLINE_STORAGE_EXTENSION);
+            Type type = TypeToken.getParameterized(ArrayList.class, OfflineExpense.class).getType();
+            ArrayList<OfflineExpense> householdsExpenses = new Gson().fromJson(householdsExpenseString, type);
+            mapHouseholdIdToExpenses.put(household, householdsExpenses);
+        }
+        return mapHouseholdIdToExpenses;
+    }
+
     public static boolean pushEventsOffline(Context context, String currentHouseId, List<Calendar.Event> events) {
         ArrayList<OfflineEvent> offlineEvents = new ArrayList<>();
         for (Calendar.Event event : events) {
@@ -201,4 +215,19 @@ public class LocalStorage {
         return writeTxtToFile(context, OFFLINE_STORAGE_TASKS + house_id + OFFLINE_STORAGE_EXTENSION,
                 new Gson().toJson(offlineTasks, type));
     }
+
+    public static boolean pushExpensesOffline(Context context, String currentHouseId, List<Expense> expenses) {
+        ArrayList<OfflineExpense> offlineExpenses = new ArrayList<>();
+        for (Expense expense: expenses) {
+            offlineExpenses.add(new OfflineExpense(expense.getTitle(), expense.toText()));
+        }
+
+        String house_id = currentHouseId == null ? "temp" : currentHouseId;
+
+        Type type = TypeToken.getParameterized(ArrayList.class, OfflineExpense.class).getType();
+        return writeTxtToFile(context, OFFLINE_STORAGE_EXPENSES + house_id + OFFLINE_STORAGE_EXTENSION,
+                new Gson().toJson(offlineExpenses, type));
+    }
+
+
 }

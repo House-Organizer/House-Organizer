@@ -11,11 +11,13 @@ import androidx.test.ext.junit.rules.ActivityScenarioRule;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 import androidx.test.platform.app.InstrumentationRegistry;
 
+import com.github.houseorganizer.houseorganizer.billsharer.Expense;
 import com.github.houseorganizer.houseorganizer.calendar.Calendar;
 import com.github.houseorganizer.houseorganizer.panels.info.InfoActivity;
 import com.github.houseorganizer.houseorganizer.shop.ShopItem;
 import com.github.houseorganizer.houseorganizer.storage.LocalStorage;
 import com.github.houseorganizer.houseorganizer.storage.OfflineEvent;
+import com.github.houseorganizer.houseorganizer.storage.OfflineExpense;
 import com.github.houseorganizer.houseorganizer.storage.OfflineShopItem;
 import com.github.houseorganizer.houseorganizer.storage.OfflineTask;
 import com.github.houseorganizer.houseorganizer.task.HTask;
@@ -165,5 +167,24 @@ public class LocalStorageTest {
 
         Map<String, ArrayList<OfflineTask>> offlineTasks = LocalStorage.retrieveTaskListOffline(cx);
         assertEquals(offlineTasks.get("home_1"), Collections.singletonList(offlineTask));
+    }
+
+    //------------------- EXPENSES ------------------->
+    @Test
+    public void expensesOfflineWork() throws ExecutionException, InterruptedException {
+        Context cx = InstrumentationRegistry.getInstrumentation().getTargetContext();
+
+        Expense expense = new Expense("Lunch at tibits", 70d, "dummy-email@gmail.com", new HashMap<>());
+        OfflineExpense offlineExpense = new OfflineExpense(expense.getTitle(), expense.toText());
+
+        LocalStorage.pushHouseholdsOffline(cx, db, auth.getCurrentUser());
+        assertTrue(LocalStorage.pushExpensesOffline(cx, db
+                .collection("households")
+                .document("home_1").getId(), Collections.singletonList(expense)));
+
+        Map<String, ArrayList<OfflineExpense>> offlineExpenses =
+                LocalStorage.retrieveExpensesOffline(cx);
+
+        assertEquals(offlineExpenses.get("home_1"), Collections.singletonList(offlineExpense));
     }
 }
