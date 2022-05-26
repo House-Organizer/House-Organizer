@@ -66,8 +66,6 @@ public class OfflineScreenTest {
     public ActivityScenarioRule<OfflineScreenActivity> offlineScreenRule =
             new ActivityScenarioRule<>(intentFromMainScreen);
 
-    // TODO dismiss alert dialogs in @before
-
     @BeforeClass
     public static void setUpFirebaseAndLocalStorage() throws ExecutionException, InterruptedException {
         FirebaseTestsHelper.startAuthEmulator();
