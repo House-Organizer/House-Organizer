@@ -151,16 +151,6 @@ public class ExpenseActivityTest {
     }
 
     @Test
-    public void specifyingExpenseSharesCreatesCorrectDebts() {
-        // TODO test
-    }
-
-    @Test
-    public void wrongSharesOpensDialog() {
-        // TODO test
-    }
-
-    @Test
     public void navBarTakesBackToMainScreen(){
         Intents.init();
         onView(withId(R.id.nav_bar_menu)).perform(click());
