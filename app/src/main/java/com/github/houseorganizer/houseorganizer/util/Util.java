@@ -10,6 +10,9 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.github.houseorganizer.houseorganizer.R;
+import com.google.firebase.firestore.FieldValue;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
 
 public class Util {
 
@@ -56,5 +59,40 @@ public class Util {
         }
     }
 
+    //<-----------------| Removing All User Data |------------------------------------------------->
 
+    /** [!] This method triggers the deletion of all data related to a specific user,
+     * here indicated by their email address
+     *
+     * @param email the email of the user to delete
+     */
+    public static void wipeUserData(String email) {
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+
+        // Remove user from each household where they are a resident
+        db.collection("households")
+                .whereArrayContains("residents", email)
+                .get()
+                .addOnSuccessListener(queryDocumentSnapshots -> {
+
+                    for (QueryDocumentSnapshot docSnap: queryDocumentSnapshots) {
+
+                        Long updatedMemberCount = (Long) docSnap.getData().get("num_members") - 1;
+                        docSnap.getReference().update("num_members", updatedMemberCount,
+                                "residents", FieldValue.arrayRemove(email));
+                    }
+                });
+
+
+        // Remove user from each task where they are an assignee
+        db.collection("task_dump")
+                    .whereArrayContains("assignees", email)
+                    .get()
+                    .addOnSuccessListener(queryDocumentSnapshots -> {
+                        for (QueryDocumentSnapshot docSnap : queryDocumentSnapshots) {
+                            docSnap.getReference()
+                                    .update("assignees", FieldValue.arrayRemove(email));
+                        }
+                    });
+    }
 }

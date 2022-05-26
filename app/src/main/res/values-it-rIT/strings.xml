@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="info_facebook_button">Accedi con Facebook</string>
     <string name="discoverButton">Scoprire</string>
     <string name="appDescription">\"La migliore app per l\'organizzazione della casa\" -Gli sviluppatori</string>
     <string name="settings_speakable_text">Impostazioni</string>
@@ -51,9 +52,6 @@
     <string name="signature_title">Tuo nome</string>
     <string name="dark_mode_title">Modo scuro</string>
     <string name="lang_title">Lingua</string>
-    <string name="attachment_title">Scarica gli allegati</string>
-    <string name="attachment_summary_on">Scarica automaticamente gli allegati per il calendario</string>
-    <string name="attachment_summary_off">Scarica gli allegati solo se richiesti manualmente</string>
     <string name="task_title_hint">Nome</string>
     <string name="task_description_hint">Descrizione</string>
     <string name="assignees_button">Assegnatari</string>
@@ -134,6 +132,8 @@
     <string name="reminder_message">Non dimenticate il vostro compito:</string>
     <string name="notify">Notificare</string>
     <string name="show_image">TODO</string>
+    <string name="clear_local_storage">TODO</string>
+    <string name="clear_local_storage_success">TODO</string>
     <string name="edit_item_title">Modifica un articolo</string>
     <string name="edit_item_button">Modifica</string>
 </resources>
