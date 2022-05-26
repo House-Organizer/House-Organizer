@@ -187,6 +187,6 @@
     <string name="reminder">Reminder</string>
     <string name="reminder_message">Don\'t forget your task :</string>
     <string name="notify">Notify</string>
-    <string name="go_offline">Go offline</string>
+    <string name="show_image">Show image of household</string>
 
 </resources>

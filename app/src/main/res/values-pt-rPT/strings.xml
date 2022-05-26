@@ -131,6 +131,7 @@
     <string name="reminder">Lembrete</string>
     <string name="reminder_message">Não se esqueça da sua tarefa :</string>
     <string name="notify">Notificar</string>
+    <string name="show_image">TODO</string>
     <string name="clear_local_storage">TODO</string>
     <string name="clear_local_storage_success">TODO</string>
     <string name="edit_item_title">TODO</string>
