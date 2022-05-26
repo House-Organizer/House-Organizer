@@ -44,15 +44,26 @@ public class LoginActivityTest {
         Intents.release();
     }
 
-    /* Sign-in button */
+    /* Google sign-in button */
     @Test
-    public void signInButtonIsDisplayed() {
+    public void googleSignInButtonIsDisplayed() {
         onView(withId(R.id.google_sign_in_button)).check(matches(isDisplayed()));
     }
 
     @Test
-    public void signInButtonIsEnabled() {
+    public void googleSignInButtonIsEnabled() {
         onView(withId(R.id.google_sign_in_button)).check(matches(isEnabled()));
+    }
+
+    /* Facebook sign-in button */
+    @Test
+    public void facebookSignInButtonIsDisplayed() {
+        onView(withId(R.id.facebookLogInButton)).check(matches(isDisplayed()));
+    }
+
+    @Test
+    public void facebookSignInButtonIsEnabled() {
+        onView(withId(R.id.facebookLogInButton)).check(matches(isEnabled()));
     }
 
     /* Discover button */
