@@ -9,8 +9,10 @@ import static androidx.test.espresso.matcher.ViewMatchers.hasChildCount;
 import static androidx.test.espresso.matcher.ViewMatchers.isClickable;
 import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static androidx.test.espresso.matcher.ViewMatchers.isEnabled;
+import static androidx.test.espresso.matcher.ViewMatchers.isRoot;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
 import static androidx.test.platform.app.InstrumentationRegistry.getInstrumentation;
+import static com.github.houseorganizer.houseorganizer.FirebaseTestsHelper.waitFor;
 
 import android.content.Context;
 import android.content.Intent;
@@ -86,12 +88,12 @@ public class BalanceActivityTest {
 
     private void openBalances() throws InterruptedException {
         onView(withId(R.id.expense_balances)).perform(click());
-        Thread.sleep(500);
+        onView(isRoot()).perform(waitFor(500));
     }
 
     private void openExpenses() throws InterruptedException {
         onView(withId(R.id.balance_expenses)).perform(click());
-        Thread.sleep(500);
+        onView(isRoot()).perform(waitFor(500));
     }
 
     private void goAddExpense(String title, double cost) throws InterruptedException {
@@ -145,7 +147,7 @@ public class BalanceActivityTest {
     public void navBarTakesBackToMainScreen() throws InterruptedException {
         Intents.init();
         onView(withId(R.id.nav_bar_menu)).perform(click());
-        Thread.sleep(500);
+        onView(isRoot()).perform(waitFor(500));
         intended(hasComponent(MainScreenActivity.class.getName()));
         Intents.release();
     }

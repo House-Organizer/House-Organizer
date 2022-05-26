@@ -11,10 +11,12 @@ import static androidx.test.espresso.matcher.ViewMatchers.hasDescendant;
 import static androidx.test.espresso.matcher.ViewMatchers.isClickable;
 import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static androidx.test.espresso.matcher.ViewMatchers.isEnabled;
+import static androidx.test.espresso.matcher.ViewMatchers.isRoot;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
 import static androidx.test.espresso.matcher.ViewMatchers.withText;
 import static androidx.test.platform.app.InstrumentationRegistry.getInstrumentation;
 import static com.github.houseorganizer.houseorganizer.FirebaseTestsHelper.TEST_USERS_EMAILS;
+import static com.github.houseorganizer.houseorganizer.FirebaseTestsHelper.waitFor;
 import static org.hamcrest.Matchers.containsString;
 
 import android.content.Context;
@@ -71,13 +73,13 @@ public class ExpenseActivityTest {
         context.sendBroadcast(new Intent(Intent.ACTION_CLOSE_SYSTEM_DIALOGS));
     }
 
-    protected static void addNewExpense(String title, double cost) throws InterruptedException {
-        Thread.sleep(2000);
+    protected static void addNewExpense(String title, double cost) {
+        onView(isRoot()).perform(waitFor(1000));
         onView(withId(R.id.expense_add_item)).perform(click());
-        Thread.sleep(500);
+        onView(isRoot()).perform(waitFor(500));
         onView(withId(R.id.expense_edit_title)).perform(typeText(title));
         onView(withId(R.id.expense_edit_cost)).perform(typeText(""+cost));
-        Thread.sleep(500);
+        onView(isRoot()).perform(waitFor(500));
         onView(withText(R.string.confirm)).perform(click());
     }
 
@@ -108,12 +110,13 @@ public class ExpenseActivityTest {
     }
 
     @Test
-    public void addingExpenseShowsNewExpense() throws InterruptedException {
-        addNewExpense("test", 20.5);
+    public void addingExpenseShowsNewExpense() {
+        double cost = 20.5;
+        addNewExpense("test", cost);
         // Checking expense exists in the view
         onView(withId(R.id.expense_recycler)).check(matches(hasChildCount(2)));
         onView(withId(R.id.expense_recycler)).check(matches(hasDescendant(withText(containsString("test")))));
-        onView(withId(R.id.expense_recycler)).check(matches(hasDescendant(withText(containsString("20.5")))));
+        onView(withId(R.id.expense_recycler)).check(matches(hasDescendant(withText(containsString(""+cost)))));
         onView(withId(R.id.expense_recycler)).check(matches(hasDescendant(withText(containsString(TEST_USERS_EMAILS[1])))));
 
         onView(withId(R.id.expense_recycler))
@@ -131,7 +134,7 @@ public class ExpenseActivityTest {
     }
 
     @Test
-    public void deletingExpenseRemovesIt() throws InterruptedException {
+    public void deletingExpenseRemovesIt() {
         addNewExpense("expense", 40);
         onView(withId(R.id.expense_recycler))
                 .perform(RecyclerViewActions.actionOnItemAtPosition(
@@ -139,6 +142,5 @@ public class ExpenseActivityTest {
                         RecyclerViewHelper.clickChildViewWithId(R.id.expense_remove_check)));
         onView(withId(R.id.expense_recycler)).check(matches(hasChildCount(1)));
     }
-
 
 }
