@@ -132,4 +132,6 @@
     <string name="notify">Notificar</string>
     <string name="clear_local_storage">TODO</string>
     <string name="clear_local_storage_success">TODO</string>
+    <string name="edit_item_title">TODO</string>
+    <string name="edit_item_button">TODO</string>
 </resources>
