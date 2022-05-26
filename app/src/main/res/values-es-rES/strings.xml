@@ -134,4 +134,6 @@
     <string name="reminder_message">No olvides tu tarea :</string>
     <string name="notify">Notificar</string>
     <string name="show_image">TODO</string>
+    <string name="edit_item_title">Editar un producto</string>
+    <string name="edit_item_button">Editar</string>
 </resources>
