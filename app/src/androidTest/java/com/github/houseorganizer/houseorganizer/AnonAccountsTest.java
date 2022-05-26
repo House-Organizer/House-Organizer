@@ -57,6 +57,7 @@ public class AnonAccountsTest {
         Intents.init();
         onView(withId(R.id.discoverButton)).perform(click());
 
+        Thread.sleep(200);
         intended(hasComponent(MainScreenActivity.class.getName()));
         assertNotNull(FirebaseAuth.getInstance().getCurrentUser());
         assertTrue(FirebaseAuth.getInstance().getCurrentUser().isAnonymous());
