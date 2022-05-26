@@ -23,6 +23,8 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FacebookAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.auth.User;
 
 import java.util.Arrays;
 
@@ -38,7 +40,7 @@ public class FacebookAuthActivity extends LoginActivity {
         mCallbackManager = CallbackManager.Factory.create();
         mAuth = FirebaseAuth.getInstance();
 
-        LoginManager.getInstance().logInWithReadPermissions(this, Arrays.asList("public_profile"));
+        LoginManager.getInstance().logInWithReadPermissions(this, Arrays.asList("public_profile", "email"));
         LoginManager.getInstance().registerCallback(mCallbackManager, new FacebookCallback<LoginResult>() {
             @Override
             public void onSuccess(LoginResult loginResult) {
@@ -69,7 +71,8 @@ public class FacebookAuthActivity extends LoginActivity {
                         if (task.isSuccessful()) {
                             // Sign in success, update UI with the signed-in user's information
                             Log.d(getString(R.string.tag_login_activity), "signInWithCredential:success");
-                            updateUI();
+                            FirebaseUser user = mAuth.getCurrentUser();
+                            updateUI(user);
                             finish();
                         } else {
                             // If sign in fails, display a message to the user.
@@ -89,7 +92,7 @@ public class FacebookAuthActivity extends LoginActivity {
         mCallbackManager.onActivityResult(requestCode, resultCode, data);
     }
 
-    private void updateUI() {
+    private void updateUI(FirebaseUser user) {
         Intent intent = new Intent(FacebookAuthActivity.this, MainScreenActivity.class);
         intent.putExtra("LoadHouse", true);
         startActivity(intent);
