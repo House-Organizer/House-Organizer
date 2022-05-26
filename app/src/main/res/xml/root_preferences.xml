@@ -26,8 +26,9 @@
     <PreferenceCategory app:title="@string/cache_header">
 
         <Preference
-            android:title="@string/clear_local_storage"
-            android:key="clear_cache" />
+            android:id="@+id/clear_local_storage"
+            android:key="clear_cache"
+            android:title="@string/clear_local_storage" />
 
     </PreferenceCategory>
 
