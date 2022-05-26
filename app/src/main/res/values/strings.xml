@@ -1,4 +1,9 @@
 <resources>
+    <!-- Facebook sign in -->
+    <string name="facebook_app_id" translatable="false">3250021858609713</string>
+    <string name="facebook_client_token" translatable="false">1ababe214e641d42a8aadaefeb569ea3</string>
+    <string name="info_facebook_button">Sign in with Facebook</string>
+
     <string name="app_name" translatable="false">House Organizer</string>
     <string name="discoverButton"><u>Discover</u></string>
     <string name="appDescription">\"Best app for house organization\" -The Developers</string>
@@ -64,9 +69,8 @@
     <string name="lang_title">Language</string>
 
     <!-- Cache Preferences -->
-    <string name="attachment_title">Download attachments</string>
-    <string name="attachment_summary_on">Automatically download attachments for calendar </string>
-    <string name="attachment_summary_off">Only download attachments when manually requested</string>
+    <string name="clear_local_storage">Clear local storage</string>
+    <string name="clear_local_storage_success">Cleared local storage!</string>
 
     <!-- Task view and its buttons -->
     <string name="task_title_hint">Name</string>

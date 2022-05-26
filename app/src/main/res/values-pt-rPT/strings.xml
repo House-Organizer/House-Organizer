@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="info_facebook_button">Iniciar sessão com Facebook</string>
     <string name="discoverButton">Descobrir</string>
     <string name="appDescription">\"Melhor aplicação d\'organisação domestica\" - os programadores</string>
     <string name="settings_speakable_text">Configuração</string>
@@ -49,9 +50,6 @@
     <string name="cache_header">Cache</string>
     <string name="signature_title">O seu nome</string>
     <string name="dark_mode_title">Modo escuro</string>
-    <string name="attachment_title">Descaregar os anexos</string>
-    <string name="attachment_summary_on">Descaregar automaticamente os anexos</string>
-    <string name="attachment_summary_off">Descaregar manualmente os anexos</string>
     <string name="task_title_hint">Nome</string>
     <string name="task_description_hint">Desrição</string>
     <string name="add_subtask">Adicionar uma sub-tarefa</string>
@@ -133,6 +131,8 @@
     <string name="reminder">Lembrete</string>
     <string name="reminder_message">Não se esqueça da sua tarefa :</string>
     <string name="notify">Notificar</string>
+    <string name="clear_local_storage">TODO</string>
+    <string name="clear_local_storage_success">TODO</string>
     <string name="edit_item_title">TODO</string>
     <string name="edit_item_button">TODO</string>
     <string name="go_offline">TODO</string>

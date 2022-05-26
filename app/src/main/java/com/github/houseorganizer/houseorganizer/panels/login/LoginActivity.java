@@ -7,11 +7,20 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.widget.ImageButton;
+import android.widget.Toast;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.facebook.AccessToken;
+import com.facebook.CallbackManager;
+import com.facebook.FacebookCallback;
+import com.facebook.FacebookException;
+import com.facebook.login.LoginManager;
+import com.facebook.login.LoginResult;
 import com.github.houseorganizer.houseorganizer.R;
 import com.github.houseorganizer.houseorganizer.panels.main_activities.MainScreenActivity;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
@@ -19,11 +28,16 @@ import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.common.api.ApiException;
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.AuthResult;
+import com.google.firebase.auth.FacebookAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
+
+import java.util.Arrays;
 
 public class LoginActivity extends AppCompatActivity {
 
@@ -44,14 +58,9 @@ public class LoginActivity extends AppCompatActivity {
         // Firebase Auth Instance
         mAuth = FirebaseAuth.getInstance();
 
-        findViewById(R.id.email_signin_button).setOnClickListener(
-                v -> startActivity(new Intent(this, LoginEmail.class))
-        );
-        findViewById(R.id.google_sign_in_button).setOnClickListener(
-                v -> googleSignInResultLauncher.launch(new Intent(mGoogleSignInClient.getSignInIntent()))
-        );
+        setUpSignInButtons();
 
-      // If a sign out has been requested, sign out the current user
+        // If a sign out has been requested, sign out the current user
         if(getIntent().hasExtra(getString(R.string.signout_intent))){
             mAuth.signOut();
             mGoogleSignInClient.signOut().addOnCompleteListener(this, l ->
@@ -92,7 +101,17 @@ public class LoginActivity extends AppCompatActivity {
      *  Sets up the discover and Google Sign-In buttons for
      *  the user to authenticate
      */
-    private void setUpSignInButtons(){
+    private void setUpSignInButtons() {
+        findViewById(R.id.facebookLogInButton).setOnClickListener(
+                v -> startActivity(new Intent(this, FacebookAuthActivity.class))
+        );
+
+        findViewById(R.id.email_signin_button).setOnClickListener(v -> {
+                Intent intent = new Intent(this, LoginEmail.class);
+                intent.setFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
+                startActivity(intent);
+        });
+
         findViewById(R.id.google_sign_in_button).setOnClickListener(
                 v -> googleSignInResultLauncher.launch(new Intent(mGoogleSignInClient.getSignInIntent())));
 
