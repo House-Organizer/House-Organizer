@@ -15,6 +15,7 @@ import com.github.houseorganizer.houseorganizer.panels.main_activities.MainScree
 import com.github.houseorganizer.houseorganizer.panels.settings.ThemedAppCompatActivity;
 import com.github.houseorganizer.houseorganizer.storage.LocalStorage;
 import com.github.houseorganizer.houseorganizer.storage.OfflineAdapter;
+import com.github.houseorganizer.houseorganizer.storage.OfflineDebt;
 import com.github.houseorganizer.houseorganizer.storage.OfflineEvent;
 import com.github.houseorganizer.houseorganizer.storage.OfflineItem;
 import com.github.houseorganizer.houseorganizer.storage.OfflineShopItem;
@@ -38,6 +39,7 @@ public final class OfflineScreenActivity extends ThemedAppCompatActivity {
     private Map<String, ArrayList<OfflineEvent>> eventsMap;
     private Map<String, ArrayList<OfflineShopItem>> groceriesMap;
     private Map<String, ArrayList<OfflineTask>> tasksMap;
+    private Map<String, ArrayList<OfflineDebt>> debtsMap;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,6 +58,7 @@ public final class OfflineScreenActivity extends ThemedAppCompatActivity {
         eventsMap = LocalStorage.retrieveEventsOffline(appCtx);
         groceriesMap = LocalStorage.retrieveGroceriesOffline(appCtx);
         tasksMap = LocalStorage.retrieveTaskListOffline(appCtx);
+        debtsMap = LocalStorage.retrieveDebtsOffline(appCtx);
 
         currentHouseId = getIntent().getStringExtra("hh-id");
     }
@@ -83,8 +86,9 @@ public final class OfflineScreenActivity extends ThemedAppCompatActivity {
             List<OfflineEvent> events = eventsMap.get(currentHouseId);
             List<OfflineTask> tasks = tasksMap.get(currentHouseId);
             List<OfflineShopItem> groceries = groceriesMap.get(currentHouseId);
+            List<OfflineDebt> debts = debtsMap.get(currentHouseId);
 
-            Stream.of(events, groceries, tasks)
+            Stream.of(events, groceries, tasks, debts)
                     .filter(Objects::nonNull)
                     .forEach(items::addAll);
 

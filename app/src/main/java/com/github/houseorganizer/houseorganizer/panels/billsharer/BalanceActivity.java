@@ -11,6 +11,7 @@ import com.github.houseorganizer.houseorganizer.billsharer.Billsharer;
 import com.github.houseorganizer.houseorganizer.billsharer.DebtAdapter;
 import com.github.houseorganizer.houseorganizer.panels.main_activities.ExpenseActivity;
 import com.github.houseorganizer.houseorganizer.panels.main_activities.NavBarActivity;
+import com.github.houseorganizer.houseorganizer.storage.LocalStorage;
 import com.github.houseorganizer.houseorganizer.util.Util;
 import com.google.firebase.firestore.FirebaseFirestore;
 
@@ -31,7 +32,10 @@ public class BalanceActivity extends NavBarActivity {
                 .document(getIntent().getStringExtra("house"));
         initializeData();
 
-        findViewById(R.id.balance_balances).setOnClickListener(l -> bs.refreshBalances());
+        findViewById(R.id.balance_balances).setOnClickListener(l -> {
+            bs.refreshBalances();
+            LocalStorage.pushDebtsOffline(getApplicationContext(), currentHouse.getId(), bs.getDebts());
+        });
         findViewById(R.id.balance_expenses).setOnClickListener(l -> {
             Intent intent = new Intent(BalanceActivity.this, ExpenseActivity.class);
             intent.putExtra("house", currentHouse.getId());
@@ -55,6 +59,8 @@ public class BalanceActivity extends NavBarActivity {
                             view.setLayoutManager(linearLayoutManager);
                             view.setAdapter(adapter);
                         });
+
+                        LocalStorage.pushDebtsOffline(getApplicationContext(), currentHouse.getId(), bs.getDebts());
                     } else {
                         Util.logAndToast("BalanceActivity", "Could not initialize billsharer",
                                 t.getException(), this, "Could not load billsharer");
