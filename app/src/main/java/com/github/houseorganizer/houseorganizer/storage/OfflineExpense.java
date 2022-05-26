@@ -48,12 +48,13 @@ public class OfflineExpense extends OfflineItem {
 
     @Override
     public boolean equals(Object o) {
-        if (o == null || getClass() != o.getClass()){
+        if (o == null || getClass() != o.getClass()) {
             return false;
-        } else {
-            OfflineExpense that = (OfflineExpense) o;
-            return Objects.equals(title, that.title) && Objects.equals(info, that.info);
         }
+
+        OfflineExpense that = (OfflineExpense) o;
+        return Objects.equals(title, that.title) && Objects.equals(info, that.info);
+
     }
 
     @Override
