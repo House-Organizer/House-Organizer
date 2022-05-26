@@ -10,12 +10,14 @@ import androidx.preference.PreferenceFragmentCompat;
 
 import com.github.houseorganizer.houseorganizer.R;
 import com.github.houseorganizer.houseorganizer.panels.login.LoginActivity;
+import com.github.houseorganizer.houseorganizer.panels.offline.OfflineScreenActivity;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FieldPath;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 public class SettingsActivity extends ThemedAppCompatActivity {
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -34,9 +36,16 @@ public class SettingsActivity extends ThemedAppCompatActivity {
     }
 
     public void signOut(View v) {
-        Intent intent = new Intent(this, LoginActivity.class);
-        intent.putExtra(getString(R.string.signout_intent), true);
-        startActivity(intent);
+        startActivity(new Intent(this, LoginActivity.class)
+                .putExtra(getString(R.string.signout_intent), true));
+        finish();
+    }
+
+    public void goToOfflineScreen(View v) {
+        String currentHouseId = getIntent().getStringExtra("hh-id");
+
+        startActivity(new Intent(this, OfflineScreenActivity.class)
+                .putExtra("hh-id", currentHouseId));
         finish();
     }
 

@@ -313,7 +313,7 @@ public class MainScreenActivity extends TaskFragmentNavBarActivity {
 
     public void settingsButtonPressed(View view) {
         goToOfflineScreenIfNeeded();
-        Intent intent = new Intent(this, SettingsActivity.class);
+        Intent intent = new Intent(this, SettingsActivity.class).putExtra("hh-id", currentHouse.getId());
         startActivity(intent);
     }
 
