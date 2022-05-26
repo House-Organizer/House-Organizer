@@ -5,17 +5,20 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.github.houseorganizer.houseorganizer.R;
+import com.github.houseorganizer.houseorganizer.image.ImageHelper;
 import com.github.houseorganizer.houseorganizer.panels.main_activities.MainScreenActivity;
 import com.github.houseorganizer.houseorganizer.panels.settings.ThemedAppCompatActivity;
 import com.github.houseorganizer.houseorganizer.user.UserAdapter;
 import com.github.houseorganizer.houseorganizer.util.Util;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.storage.FirebaseStorage;
 
 import java.util.HashMap;
 import java.util.List;
@@ -59,6 +62,23 @@ public class InfoActivity extends ThemedAppCompatActivity {
             });
         } else {
             ((TextView)findViewById(R.id.infoHeader)).setText(R.string.no_household_info);
+        }
+    }
+
+    public void showImage(View view){
+        if(currentHouse != null){
+            FirebaseStorage.getInstance()
+                    .getReference()
+                    .child("house_" + currentHouse.getId())
+                    .getDownloadUrl()
+                    .addOnCompleteListener(task -> {
+                if(task.isSuccessful()) {
+                    ImageHelper.showImagePopup(task.getResult(), view.getContext());
+                }
+                else {
+                    Toast.makeText(getApplicationContext(), "Could not find the attachment", Toast.LENGTH_SHORT).show();
+                }
+            });
         }
     }
 

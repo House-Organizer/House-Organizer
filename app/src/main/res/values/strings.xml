@@ -185,6 +185,7 @@
     <string name="reminder">Reminder</string>
     <string name="reminder_message">Don\'t forget your task :</string>
     <string name="notify">Notify</string>
+    <string name="show_image">Show image of household</string>
 
     <!-- Others -->
     <string name="add" translatable="false">+</string>
