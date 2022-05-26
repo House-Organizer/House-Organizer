@@ -23,11 +23,13 @@ import com.facebook.login.LoginManager;
 import com.facebook.login.LoginResult;
 import com.github.houseorganizer.houseorganizer.R;
 import com.github.houseorganizer.houseorganizer.panels.main_activities.MainScreenActivity;
+import com.github.houseorganizer.houseorganizer.util.Util;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.common.api.ApiException;
+import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthCredential;
@@ -62,9 +64,17 @@ public class LoginActivity extends AppCompatActivity {
 
         // If a sign out has been requested, sign out the current user
         if(getIntent().hasExtra(getString(R.string.signout_intent))){
+            FirebaseUser currentUser = mAuth.getCurrentUser();
+
             mAuth.signOut();
-            mGoogleSignInClient.signOut().addOnCompleteListener(this, l ->
-                    setUpSignInButtons());
+            mGoogleSignInClient.signOut().addOnCompleteListener(this, l -> setUpSignInButtons());
+
+            if (currentUser.isAnonymous()) {
+                String email = currentUser.getEmail();
+                Util.wipeUserData(email);
+                currentUser.delete();
+            }
+
         } else{
             setUpSignInButtons();
         }
@@ -98,10 +108,10 @@ public class LoginActivity extends AppCompatActivity {
     );
 
     /**
-     *  Sets up the discover and Google Sign-In buttons for
+     *  Sets up the discover, email and Google Sign-In buttons for
      *  the user to authenticate
      */
-    private void setUpSignInButtons() {
+    private void setUpSignInButtons(){
         findViewById(R.id.facebookLogInButton).setOnClickListener(
                 v -> startActivity(new Intent(this, FacebookAuthActivity.class))
         );
@@ -119,18 +129,26 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void manageTask(Task<AuthResult> task, String func) {
-        if (task.isSuccessful()) {
-            // If sign in succeeds launch MainScreenActivity
-            Log.d(getString(R.string.tag_login_activity), func + ":success");
-            Intent intent = new Intent(LoginActivity.this, MainScreenActivity.class);
-            intent.putExtra("LoadHouse", true);
-            startActivity(intent);
-            finish();
-        } else {
-            // If sign in fails, display a message to the user.
-            logAndToast(getString(R.string.tag_login_activity), func + ":failure", task.getException(),
-                    LoginActivity.this, "Authentication failed.");
-        }
+        OnFailureListener authFailed = exception ->
+                logAndToast(getString(R.string.tag_login_activity), func + ":failure",
+                        exception, LoginActivity.this, "Authentication failed.");
+
+        task.addOnFailureListener(authFailed)
+            .addOnSuccessListener(authResult -> {
+                FirebaseUser newUser = authResult.getUser();
+                assert newUser != null;
+                if (newUser.isAnonymous()) {
+                    newUser.updateEmail(newUser.getUid().hashCode() + "@house-org.com")
+                            .addOnFailureListener(authFailed)
+                            .addOnSuccessListener(v -> {
+                                Log.d(getString(R.string.tag_login_activity), func + ":success");
+                                Intent intent = new Intent(LoginActivity.this, MainScreenActivity.class);
+                                intent.putExtra("LoadHouse", true);
+                                startActivity(intent);
+                                finish();
+                            });
+                }
+            });
     }
 
     private void signInAnonymously() {
