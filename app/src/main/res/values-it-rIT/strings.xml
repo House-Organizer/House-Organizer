@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="info_facebook_button">Accedi con Facebook</string>
     <string name="discoverButton">Scoprire</string>
     <string name="appDescription">\"La migliore app per l\'organizzazione della casa\" -Gli sviluppatori</string>
     <string name="settings_speakable_text">Impostazioni</string>

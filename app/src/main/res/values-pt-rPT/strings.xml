@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="info_facebook_button">Iniciar sessão com Facebook</string>
     <string name="discoverButton">Descobrir</string>
     <string name="appDescription">\"Melhor aplicação d\'organisação domestica\" - os programadores</string>
     <string name="settings_speakable_text">Configuração</string>
