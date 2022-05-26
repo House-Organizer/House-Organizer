@@ -3,6 +3,7 @@ package com.github.houseorganizer.houseorganizer;
 import static androidx.test.espresso.Espresso.onView;
 import static androidx.test.espresso.action.ViewActions.click;
 import static androidx.test.espresso.action.ViewActions.closeSoftKeyboard;
+import static androidx.test.espresso.action.ViewActions.longClick;
 import static androidx.test.espresso.action.ViewActions.typeText;
 import static androidx.test.espresso.assertion.ViewAssertions.matches;
 import static androidx.test.espresso.intent.Intents.intended;
@@ -30,9 +31,8 @@ import androidx.test.platform.app.InstrumentationRegistry;
 import com.github.houseorganizer.houseorganizer.panels.main_activities.CalendarActivity;
 import com.github.houseorganizer.houseorganizer.panels.main_activities.GroceriesActivity;
 import com.github.houseorganizer.houseorganizer.panels.main_activities.MainScreenActivity;
+import com.github.houseorganizer.houseorganizer.shop.ShopItem;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.firestore.DocumentReference;
-import com.google.firebase.firestore.FirebaseFirestore;
 
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -69,7 +69,7 @@ public class GroceriesActivityTest {
     }
 
     @Before
-    public void openActivity() throws InterruptedException {
+    public void openActivity() {
         Context context = InstrumentationRegistry.getInstrumentation().getTargetContext();
         context.sendBroadcast(new Intent(Intent.ACTION_CLOSE_SYSTEM_DIALOGS));
     }
@@ -77,7 +77,7 @@ public class GroceriesActivityTest {
     private void addNewItem(String name, int quantity, String unit) throws InterruptedException {
         Thread.sleep(1000);
         onView(withId(R.id.groceries_add)).perform(click());
-        Thread.sleep(2000);
+        Thread.sleep(1000);
         Context context = InstrumentationRegistry.getInstrumentation().getTargetContext();
         context.sendBroadcast(new Intent(Intent.ACTION_CLOSE_SYSTEM_DIALOGS));
         onView(withHint(R.string.name)).perform(typeText(name));
@@ -125,6 +125,29 @@ public class GroceriesActivityTest {
     }
 
     @Test
+    public void modifyingItemModifiesIt() throws InterruptedException {
+        String added = "o";
+        Thread.sleep(1000);
+        onView(withId(R.id.groceries_recycler)).perform(RecyclerViewActions.actionOnItemAtPosition(0,
+                longClick()));
+        onView(withId(R.id.edit_text_name)).perform(typeText(added));
+        onView(withId(R.id.edit_text_quantity)).perform(typeText("0"));
+        onView(withId(R.id.edit_text_unit)).perform(typeText(added));
+        onView(withText(R.string.edit_item_button)).perform(click());
+        onView(withId(R.id.groceries_recycler)).check(matches(hasDescendant(withText(containsString(
+                FirebaseTestsHelper.TEST_ITEM.getName() + added)))));
+        onView(withId(R.id.groceries_recycler)).check(matches(hasDescendant(withText(containsString(
+                FirebaseTestsHelper.TEST_ITEM.getQuantity() + "0")))));
+        onView(withId(R.id.groceries_recycler)).check(matches(hasDescendant(withText(containsString(
+                FirebaseTestsHelper.TEST_ITEM.getUnit() + added)))));
+        onView(withId(R.id.groceries_recycler))
+                .perform(RecyclerViewActions.actionOnItemAtPosition(
+                        0,
+                        RecyclerViewHelper.clickChildViewWithId(R.id.delete_item_button)));
+        ShopItem item = FirebaseTestsHelper.TEST_ITEM;
+        addNewItem(item.getName(), item.getQuantity(), item.getUnit());
+    }
+  
     public void navBarTakesBackToMainScreen() throws InterruptedException {
         Intents.init();
         Thread.sleep(50);
