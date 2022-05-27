@@ -32,34 +32,38 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="137dp"
-        android:layout_marginTop="3dp"
         android:layout_marginEnd="136dp"
         android:layout_marginBottom="2dp"
         android:text="@string/bs_add_expense"
         app:layout_constraintBottom_toTopOf="@+id/nav_bar"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintStart_toStartOf="parent"
+        tools:ignore="TextContrastCheck" />
 
     <Button
         android:id="@+id/expense_expenses"
-        android:layout_width="205dp"
+        android:layout_width="0dp"
         android:layout_height="85dp"
         android:layout_marginHorizontal="2dp"
-        android:layout_marginEnd="1dp"
+        android:layout_marginStart="2dp"
+        android:layout_marginEnd="2dp"
         android:text="@string/expenses"
         app:layout_constraintEnd_toStartOf="@+id/expense_balances"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        tools:ignore="TextContrastCheck" />
 
     <Button
         android:id="@+id/expense_balances"
-        android:layout_width="205dp"
+        android:layout_width="0dp"
         android:layout_height="85dp"
         android:layout_marginHorizontal="2dp"
-        android:layout_marginStart="1dp"
+        android:layout_marginStart="2dp"
+        android:layout_marginEnd="2dp"
         android:text="@string/balances"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/expense_expenses"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        tools:ignore="TextContrastCheck" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
