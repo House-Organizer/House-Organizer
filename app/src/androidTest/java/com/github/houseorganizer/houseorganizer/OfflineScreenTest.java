@@ -180,7 +180,7 @@ public class OfflineScreenTest {
     @Test
     public void debtsDisplayProperly() {
         for (Debt debt : DEBTS) {
-            String title = String.format(Locale.ROOT, "%f CHF for %s", debt.getAmount(), debt.getCreditor());
+            String title = String.format(Locale.ROOT, "%.1f chf (%s)", debt.getAmount(), debt.getCreditor());
             onView(withText(title)).check(matches(isDisplayed()));
         }
     }
