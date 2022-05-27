@@ -6,7 +6,7 @@
         <item name="colorPrimaryVariant">@color/t2_teal</item>
         <item name="colorOnPrimary">@color/white</item>
         <!-- Secondary brand color. -->
-        <item name="colorSecondary">#617F87</item>
+        <item name="colorSecondary">@color/t2_ashy_teal</item>
         <item name="colorSecondaryVariant">@color/t2_dark_teal</item>
         <item name="colorOnSecondary">@color/t2_teal</item>
         <!-- Status bar color. -->

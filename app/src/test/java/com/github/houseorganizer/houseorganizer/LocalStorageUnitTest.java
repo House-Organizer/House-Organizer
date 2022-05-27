@@ -7,6 +7,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 import com.github.houseorganizer.houseorganizer.storage.OfflineEvent;
+import com.github.houseorganizer.houseorganizer.storage.OfflineDebt;
 import com.github.houseorganizer.houseorganizer.storage.OfflineShopItem;
 import com.github.houseorganizer.houseorganizer.storage.OfflineTask;
 
@@ -45,6 +46,16 @@ public class LocalStorageUnitTest {
     }
 
     @Test
+    public void offlineEventMiscMethodsWork() {
+        OfflineEvent event = new OfflineEvent("title", "description", "start", 1, "id");
+        assertEquals("title", event.title());
+        assertEquals(String.format("%s\nOn %s; lasts %s minutes",
+                event.getDescription(), event.getStart(), event.getDuration()),
+                event.info());
+        assertEquals(1, event.colorRatio(), 0.1);
+    }
+
+    @Test
     public void offlineShopItemBuilds(){
         OfflineShopItem shopItem = new OfflineShopItem("name",1, "unit", true);
                 assertThat(shopItem, is(notNullValue()));
@@ -72,6 +83,14 @@ public class LocalStorageUnitTest {
     }
 
     @Test
+    public void offlineShopItemMiscMethodsWork() {
+        OfflineShopItem shopItem = new OfflineShopItem("name",1, "unit", true);
+        assertEquals("name", shopItem.title());
+        assertEquals("name [1 unit][x]", shopItem.info());
+        assertEquals(0.6, shopItem.colorRatio(), 0.1);
+    }
+
+    @Test
     public void offlineTaskBuilds(){
         OfflineTask task = new OfflineTask("name", "description", Arrays.asList("user1", "user2"));
         assertThat(task, is(notNullValue()));
@@ -84,7 +103,7 @@ public class LocalStorageUnitTest {
                 "OfflineTask{" +
                         "name='" + "name" + '\'' +
                         ", description='" + "description" + '\'' +
-                        ", assignees=" + Arrays.asList("user1", "user2").toString() +
+                        ", assignees=" + Arrays.asList("user1", "user2") +
                         '}', task.toString());
     }
 
@@ -94,5 +113,43 @@ public class LocalStorageUnitTest {
         assertEquals("name", task.getName());
         assertEquals("description", task.getDescription());
         assertEquals(Arrays.asList("user1", "user2"), task.getAssignees());
+    }
+
+    @Test
+    public void offlineTaskMiscMethodsWork() {
+        OfflineTask task = new OfflineTask("name", "description", Arrays.asList("user1", "user2"));
+        assertEquals("name", task.title());
+        assertEquals("description", task.info());
+        assertEquals(0.15, task.colorRatio(), 0.1);
+    }
+
+    @Test
+    public void offlineDebtBuilds() {
+        OfflineDebt debt = new OfflineDebt("title", "info");
+        assertThat(debt, is(notNullValue()));
+    }
+
+    @Test
+    public void offlineDebtStringIsCorrect() {
+        OfflineDebt debt = new OfflineDebt("10 CHF for Frank", "Joe owes Frank 10 CHF");
+        assertEquals("OfflineDebt{" +
+                "title='" + "10 CHF for Frank" + '\'' +
+                ", info='" + "Joe owes Frank 10 CHF" + '\'' +
+                '}', debt.toString());
+    }
+
+    @Test
+    public void offlineDebtGettersGet() {
+        OfflineDebt expense = new OfflineDebt("title", "info");
+        assertEquals("title", expense.getTitle());
+        assertEquals("info", expense.getInfo());
+    }
+
+    @Test
+    public void offlineDebtMiscMethodsWork() {
+        OfflineDebt expense = new OfflineDebt("title", "info");
+        assertEquals("title", expense.title());
+        assertEquals("info", expense.info());
+        assertEquals(0, expense.colorRatio(), 0.1);
     }
 }
