@@ -20,6 +20,18 @@ public final class TaskListActivity extends TaskFragmentNavBarActivity {
                 .collection("households")
                 .document(getIntent().getStringExtra("house"));
 
+        findViewById(R.id.entire_screen).setOnTouchListener(new OnSwipeTouchListener(this) {
+            @Override
+            public void onSwipeLeft() {
+                changeActivity(CurrentActivity.CALENDAR.id);
+            }
+
+            @Override
+            public void onSwipeRight() {
+                changeActivity(CurrentActivity.GROCERIES.id);
+            }
+        });
+
         initializeTaskList();
 
         Button newTask = findViewById(R.id.tl_screen_new_task);

@@ -57,7 +57,7 @@ public abstract class CalendarAdapter extends RecyclerView.Adapter<RecyclerView.
         new AlertDialog.Builder(ctx)
                 .setTitle(R.string.event_creation_title)
                 .setView(dialogView)
-                .setPositiveButton(R.string.add, (dialog, id) -> {
+                .setPositiveButton(R.string.add_event, (dialog, id) -> {
                     Task<DocumentReference> pushTask = pushEventFromDialog(dialogView, currentHouse);
                     if (pushTask != null) {
                             pushTask.addOnSuccessListener(documentReference -> refreshCalendarView(ctx, currentHouse, errMessage, calendar.getView() == Calendar.CalendarView.MONTHLY));

@@ -2,6 +2,8 @@ package com.github.houseorganizer.houseorganizer;
 
 import static androidx.test.espresso.Espresso.onView;
 import static androidx.test.espresso.action.ViewActions.click;
+import static androidx.test.espresso.action.ViewActions.swipeLeft;
+import static androidx.test.espresso.action.ViewActions.swipeRight;
 import static androidx.test.espresso.action.ViewActions.typeText;
 import static androidx.test.espresso.assertion.ViewAssertions.matches;
 import static androidx.test.espresso.intent.Intents.intended;
@@ -27,7 +29,9 @@ import androidx.test.espresso.intent.Intents;
 import androidx.test.ext.junit.rules.ActivityScenarioRule;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 
+import com.github.houseorganizer.houseorganizer.panels.main_activities.CalendarActivity;
 import com.github.houseorganizer.houseorganizer.panels.main_activities.ExpenseActivity;
+import com.github.houseorganizer.houseorganizer.panels.main_activities.GroceriesActivity;
 import com.github.houseorganizer.houseorganizer.panels.main_activities.MainScreenActivity;
 import com.google.firebase.auth.FirebaseAuth;
 
@@ -139,4 +143,14 @@ public class ExpenseActivityTest {
         deleteExpense();
         onView(withId(R.id.expense_recycler)).check(matches(hasChildCount(0)));
     }
+
+    @Test
+    public void swipingRightOpensCalendar() {
+        Intents.init();
+        onView(withId(R.id.entire_screen)).perform(swipeRight());
+        intended(hasComponent(CalendarActivity.class.getName()));
+        Intents.release();
+    }
+
+
 }
