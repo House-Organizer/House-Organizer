@@ -11,6 +11,7 @@ import com.github.houseorganizer.houseorganizer.R;
 import com.github.houseorganizer.houseorganizer.billsharer.Billsharer;
 import com.github.houseorganizer.houseorganizer.billsharer.ExpenseAdapter;
 import com.github.houseorganizer.houseorganizer.panels.billsharer.BalanceActivity;
+import com.github.houseorganizer.houseorganizer.storage.LocalStorage;
 import com.github.houseorganizer.houseorganizer.util.Util;
 import com.github.houseorganizer.houseorganizer.util.interfaces.RecyclerViewIdlingCallback;
 import com.github.houseorganizer.houseorganizer.util.interfaces.RecyclerViewLayoutCompleteListener;
@@ -80,10 +81,8 @@ public class ExpenseActivity extends NavBarActivity implements
                         adapter = t.getResult();
                         bs.getOnlineReference().addSnapshotListener((d, e) -> bs.refreshExpenses());
                         bs.startUpBillsharer().addOnCompleteListener(t1 -> {
-                            LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
-                            linearLayoutManager.setReverseLayout(true);
-                            linearLayoutManager.setStackFromEnd(true);
-                            view.setLayoutManager(linearLayoutManager);
+                            Util.setUpBillsharer(getApplicationContext(), view,
+                                    currentHouse.getId(), bs.getDebts());
                             view.setAdapter(adapter);
                         });
                     } else {

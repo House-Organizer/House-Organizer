@@ -11,6 +11,7 @@ import com.github.houseorganizer.houseorganizer.billsharer.Billsharer;
 import com.github.houseorganizer.houseorganizer.billsharer.DebtAdapter;
 import com.github.houseorganizer.houseorganizer.panels.main_activities.ExpenseActivity;
 import com.github.houseorganizer.houseorganizer.panels.main_activities.NavBarActivity;
+import com.github.houseorganizer.houseorganizer.storage.LocalStorage;
 import com.github.houseorganizer.houseorganizer.panels.main_activities.OnSwipeTouchListener;
 import com.github.houseorganizer.houseorganizer.util.Util;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -21,7 +22,7 @@ public class BalanceActivity extends NavBarActivity {
 
     private Billsharer bs;
     private DebtAdapter adapter;
-    private FirebaseFirestore db = FirebaseFirestore.getInstance();
+    private final FirebaseFirestore db = FirebaseFirestore.getInstance();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,7 +34,10 @@ public class BalanceActivity extends NavBarActivity {
 
         initializeData();
 
-        findViewById(R.id.balance_balances).setOnClickListener(l -> bs.refreshBalances());
+        findViewById(R.id.balance_balances).setOnClickListener(l -> {
+            bs.refreshBalances();
+            LocalStorage.pushDebtsOffline(getApplicationContext(), currentHouse.getId(), bs.getDebts());
+        });
         findViewById(R.id.balance_expenses).setOnClickListener(l -> {
             Intent intent = new Intent(BalanceActivity.this, ExpenseActivity.class);
             intent.putExtra("house", currentHouse.getId());
@@ -51,10 +55,8 @@ public class BalanceActivity extends NavBarActivity {
                         bs = t.getResult();
                         adapter = new DebtAdapter(bs);
                         bs.startUpBillsharer().addOnCompleteListener(t1 -> {
-                            LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
-                            linearLayoutManager.setReverseLayout(true);
-                            linearLayoutManager.setStackFromEnd(true);
-                            view.setLayoutManager(linearLayoutManager);
+                            Util.setUpBillsharer(getApplicationContext(), view,
+                                    currentHouse.getId(), bs.getDebts());
                             view.setAdapter(adapter);
                         });
                     } else {

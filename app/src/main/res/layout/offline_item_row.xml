@@ -6,11 +6,11 @@
     android:paddingBottom="0dp">
 
     <Button
-        android:id="@+id/offline_grocery_button"
+        android:id="@+id/offline_item_button"
         android:layout_width="0dp"
-        android:layout_height="40dp"
+        android:layout_height="wrap_content"
         android:layout_weight="1"
-        android:backgroundTint="?attr/colorSecondary"
+        android:backgroundTint="?attr/colorPrimaryVariant"
         android:textSize="12sp"
         android:textColor="?attr/colorOnPrimary"
         android:contentDescription="@string/tap_to_modify"

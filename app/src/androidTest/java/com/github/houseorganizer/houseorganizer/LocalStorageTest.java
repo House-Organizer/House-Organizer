@@ -11,12 +11,17 @@ import androidx.test.ext.junit.rules.ActivityScenarioRule;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 import androidx.test.platform.app.InstrumentationRegistry;
 
+import com.github.houseorganizer.houseorganizer.billsharer.Debt;
 import com.github.houseorganizer.houseorganizer.calendar.Calendar;
 import com.github.houseorganizer.houseorganizer.panels.info.InfoActivity;
 import com.github.houseorganizer.houseorganizer.shop.ShopItem;
 import com.github.houseorganizer.houseorganizer.storage.LocalStorage;
 import com.github.houseorganizer.houseorganizer.storage.OfflineEvent;
+import com.github.houseorganizer.houseorganizer.storage.OfflineDebt;
 import com.github.houseorganizer.houseorganizer.storage.OfflineShopItem;
+import com.github.houseorganizer.houseorganizer.storage.OfflineTask;
+import com.github.houseorganizer.houseorganizer.task.HTask;
+import com.google.android.gms.tasks.Tasks;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
 
@@ -30,8 +35,9 @@ import org.junit.runner.RunWith;
 import java.io.File;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
 
@@ -105,7 +111,8 @@ public class LocalStorageTest {
     public void householdsOfflineWork() throws ExecutionException, InterruptedException {
         Context cx = InstrumentationRegistry.getInstrumentation().getTargetContext();
 
-        LocalStorage.pushHouseholdsOffline(cx, db, auth.getCurrentUser());
+        Tasks.await(LocalStorage.pushHouseholdsOffline(cx, db, auth.getCurrentUser()));
+        Thread.sleep(700);
         HashMap<String, String> households = LocalStorage.retrieveHouseholdsOffline(cx);
         assertTrue(households.containsKey("home_2"));
         assertTrue(households.containsKey("home_1"));
@@ -122,13 +129,14 @@ public class LocalStorageTest {
         Calendar.Event event = new Calendar.Event("title","description", time, 1, "id");
         OfflineEvent offlineEvent = new OfflineEvent("title","description", time.toString(), 1, "id");
 
-        LocalStorage.pushHouseholdsOffline(cx, db, auth.getCurrentUser());
+        Tasks.await(LocalStorage.pushHouseholdsOffline(cx, db, auth.getCurrentUser()));
+        Thread.sleep(700);
         assertTrue(LocalStorage.pushEventsOffline(cx, db
                 .collection("households")
-                .document("home_1").getId(), Arrays.asList(event)));
+                .document("home_1").getId(), Collections.singletonList(event)));
 
         Map<String, ArrayList<OfflineEvent>> offlineEvents = LocalStorage.retrieveEventsOffline(cx);
-        assertEquals(offlineEvents.get("home_1"),Arrays.asList(offlineEvent));
+        assertEquals(offlineEvents.get("home_1"), Collections.singletonList(offlineEvent));
     }
 
     //------------------- GROCERIES ------------------->
@@ -136,19 +144,56 @@ public class LocalStorageTest {
     public void groceriesOfflineWork() throws ExecutionException, InterruptedException {
         Context cx = InstrumentationRegistry.getInstrumentation().getTargetContext();
 
-        LocalDateTime time = LocalDateTime.now();
         ShopItem shopItem = new ShopItem("name", 1, "unit");
         OfflineShopItem offlineShopItem = new OfflineShopItem("name", 1, "unit", false);
 
-        LocalStorage.pushHouseholdsOffline(cx, db, auth.getCurrentUser());
+        Tasks.await(LocalStorage.pushHouseholdsOffline(cx, db, auth.getCurrentUser()));
+        Thread.sleep(700);
         assertTrue(LocalStorage.pushGroceriesOffline(cx, db
                 .collection("households")
-                .document("home_1").getId(), Arrays.asList(shopItem)));
+                .document("home_1").getId(), Collections.singletonList(shopItem)));
 
         Map<String, ArrayList<OfflineShopItem>> offlineShopItems = LocalStorage.retrieveGroceriesOffline(cx);
-        assertEquals(offlineShopItems.get("home_1"),Arrays.asList(offlineShopItem));
+        assertEquals(offlineShopItems.get("home_1"), Collections.singletonList(offlineShopItem));
     }
 
     //------------------- TASKS ------------------->
-    //TODO AS HTASKS DO NOT HAVE THE RIGHT STRUCTURE YET
+    @Test
+    public void tasksOfflineWork() throws ExecutionException, InterruptedException {
+        Context cx = InstrumentationRegistry.getInstrumentation().getTargetContext();
+
+        HTask task = new HTask("title", "description");
+        OfflineTask offlineTask = new OfflineTask(task.getTitle(), task.getDescription(), task.getAssignees());
+
+        Tasks.await(LocalStorage.pushHouseholdsOffline(cx, db, auth.getCurrentUser()));
+        Thread.sleep(700);
+        assertTrue(LocalStorage.pushTaskListOffline(cx, db
+                .collection("households")
+                .document("home_1").getId(), Collections.singletonList(task)));
+
+        Map<String, ArrayList<OfflineTask>> offlineTasks = LocalStorage.retrieveTaskListOffline(cx);
+        assertEquals(offlineTasks.get("home_1"), Collections.singletonList(offlineTask));
+    }
+
+    //------------------- EXPENSES ------------------->
+    @Test
+    public void debtsOfflineWork() throws ExecutionException, InterruptedException {
+        Context cx = InstrumentationRegistry.getInstrumentation().getTargetContext();
+
+        Debt debt = new Debt("Emilie", "Florence", 35f);
+
+        String title = String.format(Locale.ROOT, "%.1f chf (%s)", debt.getAmount(), debt.getDebtor());
+        OfflineDebt offlineDebt = new OfflineDebt(title, debt.toText());
+
+        Tasks.await(LocalStorage.pushHouseholdsOffline(cx, db, auth.getCurrentUser()));
+        Thread.sleep(700);
+        assertTrue(LocalStorage.pushDebtsOffline(cx, db
+                .collection("households")
+                .document("home_1").getId(), Collections.singletonList(debt)));
+
+        Map<String, ArrayList<OfflineDebt>> offlineExpenses =
+                LocalStorage.retrieveDebtsOffline(cx);
+
+        assertEquals(offlineExpenses.get("home_1"), Collections.singletonList(offlineDebt));
+    }
 }
