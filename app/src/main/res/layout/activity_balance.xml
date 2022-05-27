@@ -9,23 +9,21 @@
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/balance_recycler"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_marginTop="3dp"
+        android:layout_height="wrap_content"
         android:layout_marginBottom="3dp"
+        app:layout_constrainedHeight="true"
+        app:layout_constraintHeight_max="wrap"
         app:layout_constraintBottom_toTopOf="@+id/nav_bar"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/balance_expenses" />
+        app:layout_constraintTop_toBottomOf="@+id/balance_expenses"
+        app:layout_constraintVertical_bias="0.035"/>
 
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/nav_bar"
-        android:layout_width="409dp"
+        android:layout_width="match_parent"
         android:layout_height="53dp"
-        android:layout_marginStart="1dp"
-        android:layout_marginEnd="1dp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
         app:menu="@menu/bottom_nav_menu" />
 
     <Button
@@ -33,7 +31,6 @@
         android:layout_width="205dp"
         android:layout_height="85dp"
         android:text="@string/expenses"
-        app:layout_constraintBottom_toTopOf="@+id/balance_recycler"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.0" />
@@ -43,7 +40,6 @@
         android:layout_width="205dp"
         android:layout_height="85dp"
         android:text="@string/balances"
-        app:layout_constraintBottom_toTopOf="@+id/balance_recycler"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.0" />

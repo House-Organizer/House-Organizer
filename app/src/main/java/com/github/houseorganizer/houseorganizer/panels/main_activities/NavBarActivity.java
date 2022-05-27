@@ -16,9 +16,9 @@ import java.util.OptionalInt;
 public abstract class NavBarActivity extends ThemedAppCompatActivity {
     protected enum CurrentActivity{
         MAIN(R.id.nav_bar_menu, MainScreenActivity.class),
-        CALENDAR(R.id.nav_bar_calendar, CalendarActivity.class),
         GROCERIES(R.id.nav_bar_cart, GroceriesActivity.class),
         TASKS(R.id.nav_bar_task, TaskListActivity.class),
+        CALENDAR(R.id.nav_bar_calendar, CalendarActivity.class),
         EXPENSE(R.id.nav_bar_bs, ExpenseActivity.class),
         BALANCE(R.id.nav_bar_bs, BalanceActivity.class);
 
