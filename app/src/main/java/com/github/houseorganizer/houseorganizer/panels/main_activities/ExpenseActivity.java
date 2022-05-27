@@ -40,6 +40,14 @@ public class ExpenseActivity extends NavBarActivity implements
 
         currentHouse = FirebaseFirestore.getInstance().collection("households")
                 .document(getIntent().getStringExtra("house"));
+
+        findViewById(R.id.entire_screen).setOnTouchListener(new OnSwipeTouchListener(this) {
+            @Override
+            public void onSwipeRight() {
+                changeActivity(CurrentActivity.CALENDAR.id);
+            }
+        });
+
         initializeData();
 
         findViewById(R.id.expense_add_item).setOnClickListener(l -> {

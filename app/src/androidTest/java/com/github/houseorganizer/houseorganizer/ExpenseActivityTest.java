@@ -3,6 +3,8 @@ package com.github.houseorganizer.houseorganizer;
 import static androidx.test.espresso.Espresso.onData;
 import static androidx.test.espresso.Espresso.onView;
 import static androidx.test.espresso.action.ViewActions.click;
+import static androidx.test.espresso.action.ViewActions.swipeLeft;
+import static androidx.test.espresso.action.ViewActions.swipeRight;
 import static androidx.test.espresso.action.ViewActions.typeText;
 import static androidx.test.espresso.assertion.ViewAssertions.matches;
 import static androidx.test.espresso.intent.Intents.intended;
@@ -34,7 +36,9 @@ import androidx.test.ext.junit.runners.AndroidJUnit4;
 import androidx.test.runner.lifecycle.ActivityLifecycleMonitorRegistry;
 import androidx.test.runner.lifecycle.Stage;
 
+import com.github.houseorganizer.houseorganizer.panels.main_activities.CalendarActivity;
 import com.github.houseorganizer.houseorganizer.panels.main_activities.ExpenseActivity;
+import com.github.houseorganizer.houseorganizer.panels.main_activities.GroceriesActivity;
 import com.github.houseorganizer.houseorganizer.panels.main_activities.MainScreenActivity;
 import com.github.houseorganizer.houseorganizer.util.RecyclerViewLayoutCompleteIdlingResource;
 import com.github.houseorganizer.houseorganizer.util.interfaces.RecyclerViewIdlingCallback;
@@ -174,6 +178,14 @@ public class ExpenseActivityTest {
                         1,
                         RecyclerViewHelper.clickChildViewWithId(R.id.expense_remove_check)));
         onView(withId(R.id.expense_recycler)).check(matches(hasChildCount(1)));
+    }
+
+    @Test
+    public void swipingRightOpensCalendar() {
+        Intents.init();
+        onView(withId(R.id.entire_screen)).perform(swipeRight());
+        intended(hasComponent(CalendarActivity.class.getName()));
+        Intents.release();
     }
 
 

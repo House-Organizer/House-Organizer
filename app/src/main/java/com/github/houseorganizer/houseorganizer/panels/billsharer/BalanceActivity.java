@@ -12,6 +12,7 @@ import com.github.houseorganizer.houseorganizer.billsharer.DebtAdapter;
 import com.github.houseorganizer.houseorganizer.panels.main_activities.ExpenseActivity;
 import com.github.houseorganizer.houseorganizer.panels.main_activities.NavBarActivity;
 import com.github.houseorganizer.houseorganizer.storage.LocalStorage;
+import com.github.houseorganizer.houseorganizer.panels.main_activities.OnSwipeTouchListener;
 import com.github.houseorganizer.houseorganizer.util.Util;
 import com.google.firebase.firestore.FirebaseFirestore;
 
@@ -30,6 +31,7 @@ public class BalanceActivity extends NavBarActivity {
 
         currentHouse = FirebaseFirestore.getInstance().collection("households")
                 .document(getIntent().getStringExtra("house"));
+
         initializeData();
 
         findViewById(R.id.balance_balances).setOnClickListener(l -> {

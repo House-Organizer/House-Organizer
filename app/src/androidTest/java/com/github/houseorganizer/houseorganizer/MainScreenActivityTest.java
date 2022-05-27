@@ -3,6 +3,7 @@ package com.github.houseorganizer.houseorganizer;
 import static androidx.test.espresso.Espresso.onView;
 import static androidx.test.espresso.Espresso.pressBack;
 import static androidx.test.espresso.action.ViewActions.click;
+import static androidx.test.espresso.action.ViewActions.swipeLeft;
 import static androidx.test.espresso.assertion.ViewAssertions.matches;
 import static androidx.test.espresso.intent.Intents.intended;
 import static androidx.test.espresso.intent.matcher.IntentMatchers.hasComponent;
@@ -23,6 +24,7 @@ import androidx.test.platform.app.InstrumentationRegistry;
 
 import com.github.houseorganizer.houseorganizer.panels.household.HouseSelectionActivity;
 import com.github.houseorganizer.houseorganizer.panels.main_activities.CalendarActivity;
+import com.github.houseorganizer.houseorganizer.panels.main_activities.GroceriesActivity;
 import com.github.houseorganizer.houseorganizer.panels.main_activities.MainScreenActivity;
 import com.github.houseorganizer.houseorganizer.panels.settings.SettingsActivity;
 import com.google.firebase.auth.FirebaseAuth;
@@ -163,5 +165,11 @@ public class MainScreenActivityTest {
             pressBack();
             fail("Should have thrown NoActivityResumedException");
         } catch (NoActivityResumedException expected) { }
+    }
+
+    @Test
+    public void swipingLeftOpensGroceries() {
+        onView(withId(R.id.entire_screen)).perform(swipeLeft());
+        intended(hasComponent(GroceriesActivity.class.getName()));
     }
 }

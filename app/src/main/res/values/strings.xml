@@ -75,7 +75,6 @@
     <!-- Task view and its buttons -->
     <string name="task_title_hint">Name</string>
     <string name="task_description_hint">Description</string>
-    <string name="add_task" translatable="false">+</string>
     <string name="add_subtask">Add subtask</string>
     <string name="task_completion_title">Congratulations!</string>
     <string name="task_completion_desc">You just completed a task. Keep it up!</string>
@@ -85,7 +84,6 @@
     <string name="assignees_button">Assignees</string>
 
     <!-- Calendar view and its buttons -->
-    <string name="add_event" translatable="false">+</string>
     <string name="cycle_calendar_views" translatable="false">↻</string>
     <string name="no_events">No events on this day.</string>
     <string name="refresh_calendar_fail">Could not refresh.</string>
@@ -99,7 +97,7 @@
     <string name="title">Title</string>
     <string name="duration">Duration (in minutes)</string>
     <string name="date">Date (dd/MM/yyyy HH:mm)</string>
-    <string name="add">Add</string>
+    <string name="add_event">Add</string>
     <string name="cancel">Cancel</string>
     <string name="ok" translatable="false">OK</string>
     <string name="delete">Delete</string>
@@ -192,4 +190,6 @@
     <!-- Offline mode -->
     <string name="go_offline">Go offline</string>
 
+    <!-- Others -->
+    <string name="add" translatable="false">+</string>
 </resources>
