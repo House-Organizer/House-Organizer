@@ -1,4 +1,9 @@
 <resources>
+    <!-- Facebook sign in -->
+    <string name="facebook_app_id" translatable="false">3250021858609713</string>
+    <string name="facebook_client_token" translatable="false">1ababe214e641d42a8aadaefeb569ea3</string>
+    <string name="info_facebook_button">Sign in with Facebook</string>
+
     <string name="app_name" translatable="false">House Organizer</string>
     <string name="discoverButton"><u>Discover</u></string>
     <string name="appDescription">\"Best app for house organization\" -The Developers</string>
@@ -64,14 +69,12 @@
     <string name="lang_title">Language</string>
 
     <!-- Cache Preferences -->
-    <string name="attachment_title">Download attachments</string>
-    <string name="attachment_summary_on">Automatically download attachments for calendar </string>
-    <string name="attachment_summary_off">Only download attachments when manually requested</string>
+    <string name="clear_local_storage">Clear local storage</string>
+    <string name="clear_local_storage_success">Cleared local storage!</string>
 
     <!-- Task view and its buttons -->
     <string name="task_title_hint">Name</string>
     <string name="task_description_hint">Description</string>
-    <string name="add_task" translatable="false">+</string>
     <string name="add_subtask">Add subtask</string>
     <string name="task_completion_title">Congratulations!</string>
     <string name="task_completion_desc">You just completed a task. Keep it up!</string>
@@ -81,7 +84,6 @@
     <string name="assignees_button">Assignees</string>
 
     <!-- Calendar view and its buttons -->
-    <string name="add_event" translatable="false">+</string>
     <string name="cycle_calendar_views" translatable="false">↻</string>
     <string name="no_events">No events on this day.</string>
     <string name="refresh_calendar_fail">Could not refresh.</string>
@@ -95,7 +97,7 @@
     <string name="title">Title</string>
     <string name="duration">Duration (in minutes)</string>
     <string name="date">Date (dd/MM/yyyy HH:mm)</string>
-    <string name="add">Add</string>
+    <string name="add_event">Add</string>
     <string name="cancel">Cancel</string>
     <string name="ok" translatable="false">OK</string>
     <string name="delete">Delete</string>
@@ -175,10 +177,19 @@
     <string name="amount">Amount</string>
     <string name="payer">Payer</string>
     <string name="debt">Debt</string>
+    <string name="specify_shares">Specify shares</string>
+    <string name="new_expense">New Expense</string>
+    <string name="adds_up_to_total">The total of the shares doesn\'t add up to the cost of the expense.</string>
 
     <!-- Notifications -->
     <string name="reminder">Reminder</string>
     <string name="reminder_message">Don\'t forget your task :</string>
     <string name="notify">Notify</string>
+    <string name="show_image">Show image of household</string>
+    
+    <!-- Offline mode -->
+    <string name="go_offline">Go offline</string>
 
+    <!-- Others -->
+    <string name="add" translatable="false">+</string>
 </resources>

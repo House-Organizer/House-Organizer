@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="info_facebook_button">Connexion avec Facebook</string>
     <string name="discoverButton">Découvrir</string>
     <string name="appDescription">\"Meilleur application d\'organisation du quotidien\" -Les développeurs</string>
     <string name="settings_speakable_text">Paramètres</string>
@@ -49,9 +50,6 @@
     <string name="cache_header">Cache</string>
     <string name="signature_title">Votre nom</string>
     <string name="dark_mode_title">Mode sombre</string>
-    <string name="attachment_title">Télécharger les pièces jointes</string>
-    <string name="attachment_summary_on">Télécharger automatiquement les pièces jointes</string>
-    <string name="attachment_summary_off">Télécharger manuellement les pièces jointes</string>
     <string name="task_title_hint">Nom</string>
     <string name="task_description_hint">Description</string>
     <string name="add_subtask">Ajouter une sous-tâche</string>
@@ -69,7 +67,7 @@
     <string name="title">Titre</string>
     <string name="duration">Durée (min)</string>
     <string name="date">Date (jj/MM/aaaa HH:mm)</string>
-    <string name="add">Ajouter</string>
+    <string name="add_event">Ajouter</string>
     <string name="cancel">Annuler</string>
     <string name="delete">Supprimer</string>
     <string name="edit">Editer</string>
@@ -133,6 +131,13 @@
     <string name="reminder">Rappel</string>
     <string name="reminder_message">N\'oublie pas ta tâche :</string>
     <string name="notify">Notifier</string>
+    <string name="show_image">TODO</string>
+    <string name="clear_local_storage">TODO</string>
+    <string name="clear_local_storage_success">TODO</string>
     <string name="edit_item_title">Modifier un article</string>
     <string name="edit_item_button">Modifier</string>
+    <string name="go_offline">Passer en mode hors-ligne</string>
+    <string name="specify_shares">TODO</string>
+    <string name="new_expense">TODO</string>
+    <string name="adds_up_to_total">TODO</string>
 </resources>

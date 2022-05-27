@@ -4,12 +4,29 @@ import static android.content.Context.MODE_PRIVATE;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.util.Log;
+import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
 import com.github.houseorganizer.houseorganizer.R;
+import com.github.houseorganizer.houseorganizer.billsharer.Debt;
+import com.github.houseorganizer.houseorganizer.panels.offline.OfflineScreenActivity;
+
+import com.github.houseorganizer.houseorganizer.storage.LocalStorage;
+import com.google.firebase.firestore.FieldValue;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+
+import java.util.List;
+
 
 public class Util {
 
@@ -56,5 +73,59 @@ public class Util {
         }
     }
 
+    //<---------------------| Connection Status |------------------------------------------->
+    public static boolean hasWifiOrData(Context panelCtx) {
+        ConnectivityManager connectivityManager =
+                (ConnectivityManager) panelCtx.getSystemService(Context.CONNECTIVITY_SERVICE);
 
+        NetworkInfo activeNetInfo = connectivityManager.getActiveNetworkInfo();
+
+        return (activeNetInfo != null) && activeNetInfo.isConnectedOrConnecting();
+    }
+
+    //<-----------------| Removing All User Data |------------------------------------------------->
+
+    /** [!] This method triggers the deletion of all data related to a specific user,
+     * here indicated by their email address
+     *
+     * @param email the email of the user to delete
+     */
+    public static void wipeUserData(String email) {
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+
+        // Remove user from each household where they are a resident
+        db.collection("households")
+                .whereArrayContains("residents", email)
+                .get()
+                .addOnSuccessListener(queryDocumentSnapshots -> {
+
+                    for (QueryDocumentSnapshot docSnap: queryDocumentSnapshots) {
+
+                        Long updatedMemberCount = (Long) docSnap.getData().get("num_members") - 1;
+                        docSnap.getReference().update("num_members", updatedMemberCount,
+                                "residents", FieldValue.arrayRemove(email));
+                    }
+                });
+
+
+        // Remove user from each task where they are an assignee
+        db.collection("task_dump")
+                    .whereArrayContains("assignees", email)
+                    .get()
+                    .addOnSuccessListener(queryDocumentSnapshots -> {
+                        for (QueryDocumentSnapshot docSnap : queryDocumentSnapshots) {
+                            docSnap.getReference()
+                                    .update("assignees", FieldValue.arrayRemove(email));
+                        }
+                    });
+    }
+
+    //<--------------------------| Billsharer util |------------------------------------->
+    public static void setUpBillsharer(Context appCtx, RecyclerView view, String houseId, List<Debt> debts) {
+        LocalStorage.pushDebtsOffline(appCtx, houseId, debts);
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(appCtx);
+        linearLayoutManager.setReverseLayout(true);
+        linearLayoutManager.setStackFromEnd(true);
+        view.setLayoutManager(linearLayoutManager);
+    }
 }

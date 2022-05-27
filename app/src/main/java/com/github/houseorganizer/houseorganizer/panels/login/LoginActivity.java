@@ -7,23 +7,39 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.widget.ImageButton;
+import android.widget.Toast;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.facebook.AccessToken;
+import com.facebook.CallbackManager;
+import com.facebook.FacebookCallback;
+import com.facebook.FacebookException;
+import com.facebook.login.LoginManager;
+import com.facebook.login.LoginResult;
 import com.github.houseorganizer.houseorganizer.R;
 import com.github.houseorganizer.houseorganizer.panels.main_activities.MainScreenActivity;
+import com.github.houseorganizer.houseorganizer.util.Util;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.common.api.ApiException;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.AuthResult;
+import com.google.firebase.auth.FacebookAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
+
+import java.util.Arrays;
 
 public class LoginActivity extends AppCompatActivity {
 
@@ -44,18 +60,21 @@ public class LoginActivity extends AppCompatActivity {
         // Firebase Auth Instance
         mAuth = FirebaseAuth.getInstance();
 
-        findViewById(R.id.email_signin_button).setOnClickListener(
-                v -> startActivity(new Intent(this, LoginEmail.class))
-        );
-        findViewById(R.id.google_sign_in_button).setOnClickListener(
-                v -> googleSignInResultLauncher.launch(new Intent(mGoogleSignInClient.getSignInIntent()))
-        );
+        setUpSignInButtons();
 
-      // If a sign out has been requested, sign out the current user
+        // If a sign out has been requested, sign out the current user
         if(getIntent().hasExtra(getString(R.string.signout_intent))){
+            FirebaseUser currentUser = mAuth.getCurrentUser();
+
             mAuth.signOut();
-            mGoogleSignInClient.signOut().addOnCompleteListener(this, l ->
-                    setUpSignInButtons());
+            mGoogleSignInClient.signOut().addOnCompleteListener(this, l -> setUpSignInButtons());
+
+            if (currentUser.isAnonymous()) {
+                String email = currentUser.getEmail();
+                Util.wipeUserData(email);
+                currentUser.delete();
+            }
+
         } else{
             setUpSignInButtons();
         }
@@ -89,10 +108,20 @@ public class LoginActivity extends AppCompatActivity {
     );
 
     /**
-     *  Sets up the discover and Google Sign-In buttons for
+     *  Sets up the discover, email and Google Sign-In buttons for
      *  the user to authenticate
      */
     private void setUpSignInButtons(){
+        findViewById(R.id.facebookLogInButton).setOnClickListener(
+                v -> startActivity(new Intent(this, FacebookAuthActivity.class))
+        );
+
+        findViewById(R.id.email_signin_button).setOnClickListener(v -> {
+                Intent intent = new Intent(this, LoginEmail.class);
+                intent.setFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
+                startActivity(intent);
+        });
+
         findViewById(R.id.google_sign_in_button).setOnClickListener(
                 v -> googleSignInResultLauncher.launch(new Intent(mGoogleSignInClient.getSignInIntent())));
 
@@ -100,18 +129,26 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void manageTask(Task<AuthResult> task, String func) {
-        if (task.isSuccessful()) {
-            // If sign in succeeds launch MainScreenActivity
-            Log.d(getString(R.string.tag_login_activity), func + ":success");
-            Intent intent = new Intent(LoginActivity.this, MainScreenActivity.class);
-            intent.putExtra("LoadHouse", true);
-            startActivity(intent);
-            finish();
-        } else {
-            // If sign in fails, display a message to the user.
-            logAndToast(getString(R.string.tag_login_activity), func + ":failure", task.getException(),
-                    LoginActivity.this, "Authentication failed.");
-        }
+        OnFailureListener authFailed = exception ->
+                logAndToast(getString(R.string.tag_login_activity), func + ":failure",
+                        exception, LoginActivity.this, "Authentication failed.");
+
+        task.addOnFailureListener(authFailed)
+            .addOnSuccessListener(authResult -> {
+                FirebaseUser newUser = authResult.getUser();
+                assert newUser != null;
+                if (newUser.isAnonymous()) {
+                    newUser.updateEmail(newUser.getUid().hashCode() + "@house-org.com")
+                            .addOnFailureListener(authFailed)
+                            .addOnSuccessListener(v -> {
+                                Log.d(getString(R.string.tag_login_activity), func + ":success");
+                                Intent intent = new Intent(LoginActivity.this, MainScreenActivity.class);
+                                intent.putExtra("LoadHouse", true);
+                                startActivity(intent);
+                                finish();
+                            });
+                }
+            });
     }
 
     private void signInAnonymously() {

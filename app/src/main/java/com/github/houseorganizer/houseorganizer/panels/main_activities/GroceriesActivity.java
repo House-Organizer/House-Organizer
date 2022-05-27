@@ -30,6 +30,18 @@ public class GroceriesActivity extends NavBarActivity {
 
         initializeData();
 
+        findViewById(R.id.entire_screen).setOnTouchListener(new OnSwipeTouchListener(this) {
+            @Override
+            public void onSwipeLeft() {
+                changeActivity(CurrentActivity.TASKS.id);
+            }
+
+            @Override
+            public void onSwipeRight() {
+                changeActivity(CurrentActivity.MAIN.id);
+            }
+        });
+
         findViewById(R.id.groceries_add).setOnClickListener(c -> {
             if(shopListAdapter != null) shopListAdapter.addItem(this, shopList);
             else initializeData();

@@ -87,7 +87,7 @@ public final class TaskView {
                         Map<String, Object> taskData = task2.getResult().getData();
                         taskList.addTask(FirestoreTask.recoverTask(taskData, ptr));
                         taskListAdapter.notifyDataSetChanged(); // patch s.t. they show up faster
-                        LocalStorage.pushTaskListOffline(parent, (String) metadata.get("hh-id"), taskList.getTasks());
+                        LocalStorage.pushTaskListOffline(parent.getApplicationContext(), (String) metadata.get("hh-id"), taskList.getTasks());
                     }
                 }));
 

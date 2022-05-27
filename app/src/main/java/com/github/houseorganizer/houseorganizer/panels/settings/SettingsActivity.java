@@ -4,18 +4,26 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
+import androidx.preference.Preference;
 import androidx.preference.PreferenceFragmentCompat;
+import androidx.preference.PreferenceScreen;
 
 import com.github.houseorganizer.houseorganizer.R;
 import com.github.houseorganizer.houseorganizer.panels.login.LoginActivity;
+import com.github.houseorganizer.houseorganizer.panels.offline.OfflineScreenActivity;
+import com.github.houseorganizer.houseorganizer.storage.LocalStorage;
+
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FieldPath;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 public class SettingsActivity extends ThemedAppCompatActivity {
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -34,9 +42,16 @@ public class SettingsActivity extends ThemedAppCompatActivity {
     }
 
     public void signOut(View v) {
-        Intent intent = new Intent(this, LoginActivity.class);
-        intent.putExtra(getString(R.string.signout_intent), true);
-        startActivity(intent);
+        startActivity(new Intent(this, LoginActivity.class)
+                .putExtra(getString(R.string.signout_intent), true));
+        finish();
+    }
+
+    public void goToOfflineScreen(View v) {
+        String currentHouseId = getIntent().getStringExtra("hh-id");
+
+        startActivity(new Intent(this, OfflineScreenActivity.class)
+                .putExtra("hh-id", currentHouseId));
         finish();
     }
 
@@ -46,6 +61,17 @@ public class SettingsActivity extends ThemedAppCompatActivity {
         public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
             setPreferencesFromResource(R.xml.root_preferences, rootKey);
             getPreferenceManager().getSharedPreferences().registerOnSharedPreferenceChangeListener(this);
+        }
+
+        @Override
+        public boolean onPreferenceTreeClick(@NonNull Preference preference) {
+            if(preference.getKey().equals("clear_cache")){
+                LocalStorage.clearOfflineStorage(this.getContext());
+                Toast.makeText(this.getContext(), R.string.clear_local_storage_success, Toast.LENGTH_SHORT).show();
+                return true;
+            } else {
+                return false;
+            }
         }
 
         @Override

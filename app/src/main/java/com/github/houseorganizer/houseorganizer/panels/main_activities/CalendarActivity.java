@@ -35,11 +35,28 @@ public final class CalendarActivity extends NavBarActivity {
         setContentView(R.layout.activity_calendar);
 
         currentHouse = FirebaseFirestore.getInstance().collection("households").document(getIntent().getStringExtra("house"));
+
+        findViewById(R.id.entire_screen).setOnTouchListener(new OnSwipeTouchListener(this) {
+            @Override
+            public void onSwipeLeft() {
+                changeActivity(CurrentActivity.EXPENSE.id);
+            }
+
+            @Override
+            public void onSwipeRight() {
+                changeActivity(CurrentActivity.TASKS.id);
+            }
+        });
+
+        setupCalendar();
+        super.setUpNavBar(R.id.nav_bar, OptionalInt.of(R.id.nav_bar_calendar));
+    }
+
+    private void setupCalendar() {
         TextView yearMonth = findViewById(R.id.calendar_screen_year_month);
         Button navigateMonthLeft = findViewById(R.id.calendar_screen_month_left);
         Button navigateMonthRight = findViewById(R.id.calendar_screen_month_right);
         prepareMonthlyViewItems(yearMonth, navigateMonthLeft, navigateMonthRight);
-
         calendarEvents = findViewById(R.id.calendar_screen_calendar);
         calendarAdapter = new UpcomingAdapter(calendar,
                 registerForActivityResult(new ActivityResultContracts.GetContent(), uri -> calendarAdapter.pushAttachment(uri)));
@@ -50,7 +67,6 @@ public final class CalendarActivity extends NavBarActivity {
         setUpViewChange(yearMonth, navigateMonthLeft, navigateMonthRight);
 
         findViewById(R.id.calendar_screen_add_event).setOnClickListener(v -> calendarAdapter.showAddEventDialog(this, currentHouse, "addEvent:failure"));
-        super.setUpNavBar(R.id.nav_bar, OptionalInt.of(R.id.nav_bar_calendar));
     }
 
     private void setUpViewChange(TextView yearMonth, Button navigateMonthLeft, Button navigateMonthRight) {
