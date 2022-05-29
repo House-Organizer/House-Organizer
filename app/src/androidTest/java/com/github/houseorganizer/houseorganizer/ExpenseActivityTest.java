@@ -75,20 +75,21 @@ public class ExpenseActivityTest {
     }
 
     protected static void addNewExpense(String title, String cost) {
-        onView(isRoot()).perform(waitFor(1000));
+        onView(isRoot()).perform(waitFor(500));
         onView(withId(R.id.expense_add_item)).perform(click());
         onView(isRoot()).perform(waitFor(500));
         onView(withId(R.id.expense_edit_title)).perform(typeText(title));
         onView(withId(R.id.expense_edit_cost)).perform(typeText(cost));
         onView(withText(R.string.confirm)).perform(click());
-        onView(isRoot()).perform(waitFor(1000));
+        onView(isRoot()).perform(waitFor(500));
     }
 
-    protected static void deleteExpense() {
+    protected static void deleteExpense() throws InterruptedException {
         onView(withId(R.id.expense_recycler))
                 .perform(RecyclerViewActions.actionOnItemAtPosition(
                         0,
                         RecyclerViewHelper.clickChildViewWithId(R.id.expense_remove_check)));
+        Thread.sleep(500);
         onView(withText(R.string.confirm)).perform(click());
         onView(isRoot()).perform(waitFor(500));
     }
@@ -115,13 +116,11 @@ public class ExpenseActivityTest {
     }
 
     @Test
-    public void addingExpenseShowsNewExpense() {
+    public void addingExpenseShowsNewExpense() throws InterruptedException {
         addNewExpense("test", "20");
-        // Checking expense exists in the view
         onView(withId(R.id.expense_recycler)).check(matches(hasChildCount(1)));
         onView(withId(R.id.expense_recycler)).check(matches(hasDescendant(withText(containsString("test")))));
         onView(withId(R.id.expense_recycler)).check(matches(hasDescendant(withText(containsString("20.0")))));
-
         deleteExpense();
     }
 
@@ -134,7 +133,7 @@ public class ExpenseActivityTest {
     }
 
     @Test
-    public void deletingExpenseRemovesIt() {
+    public void deletingExpenseRemovesIt() throws InterruptedException {
         addNewExpense("expense", "40");
         deleteExpense();
         onView(withId(R.id.expense_recycler)).check(matches(hasChildCount(0)));

@@ -102,17 +102,18 @@ public class BalanceActivityTest {
         openBalances();
     }
 
-    private void goDeleteExpense() {
+    private void goDeleteExpense() throws InterruptedException {
         openExpenses();
         ExpenseActivityTest.deleteExpense();
         openBalances();
     }
 
-    private void deleteDebt() {
+    private void deleteDebt() throws InterruptedException {
         onView(withId(R.id.balance_recycler))
                 .perform(RecyclerViewActions.actionOnItemAtPosition(
                         0,
                         RecyclerViewHelper.clickChildViewWithId(R.id.debt_remove_check)));
+        Thread.sleep(500);
         onView(withText(R.string.confirm)).perform(click());
         onView(isRoot()).perform(waitFor(500));
     }
@@ -132,14 +133,14 @@ public class BalanceActivityTest {
     }
 
     @Test
-    public void addingExpenseShowsCorrectNumberOfDebt() {
+    public void addingExpenseShowsCorrectNumberOfDebt() throws InterruptedException {
         goAddExpense("title1", "41");
         onView(withId(R.id.balance_recycler)).check(matches(hasChildCount(bs.getResidents().size()-1)));
         goDeleteExpense();
     }
 
     @Test
-    public void deletingDebtRemovesIt() {
+    public void deletingDebtRemovesIt() throws InterruptedException {
         goAddExpense("title2", "42");
         deleteDebt();
         onView(withId(R.id.balance_recycler)).check(matches(hasChildCount(bs.getResidents().size()-2)));
@@ -147,7 +148,7 @@ public class BalanceActivityTest {
     }
 
     @Test
-    public void deletingDebtCreatesNewExpense() {
+    public void deletingDebtCreatesNewExpense() throws InterruptedException {
         goAddExpense("title3", "43");
         deleteDebt();
         openExpenses();
