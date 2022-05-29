@@ -51,7 +51,7 @@ public class BalanceActivityTest {
     private static Intent startIntent;
 
     @Rule
-    public ActivityScenarioRule<BalanceActivity> rule = new ActivityScenarioRule<>(startIntent);
+    public ActivityScenarioRule<BalanceActivity> activityScenarioRule = new ActivityScenarioRule<>(startIntent);
 
     @BeforeClass
     public static void createFirebase() throws ExecutionException, InterruptedException {
@@ -102,6 +102,12 @@ public class BalanceActivityTest {
         openBalances();
     }
 
+    private void goDeleteExpense() {
+        openExpenses();
+        ExpenseActivityTest.deleteExpense();
+        openBalances();
+    }
+
     private void deleteDebt() {
         onView(withId(R.id.balance_recycler))
                 .perform(RecyclerViewActions.actionOnItemAtPosition(
@@ -130,6 +136,7 @@ public class BalanceActivityTest {
     public void addingExpenseShowsCorrectNumberOfDebt() {
         goAddExpense("title1", "41");
         onView(withId(R.id.balance_recycler)).check(matches(hasChildCount(bs.getResidents().size()-1)));
+        goDeleteExpense();
     }
 
     @Test
@@ -137,6 +144,7 @@ public class BalanceActivityTest {
         goAddExpense("title2", "42");
         deleteDebt();
         onView(withId(R.id.balance_recycler)).check(matches(hasChildCount(bs.getResidents().size()-2)));
+        goDeleteExpense(); goDeleteExpense();
     }
 
     @Test
@@ -145,6 +153,9 @@ public class BalanceActivityTest {
         deleteDebt();
         openExpenses();
         onView(withId(R.id.expense_recycler)).check(matches(hasChildCount(2)));
+        ExpenseActivityTest.deleteExpense();
+        openBalances();
+        goDeleteExpense();
     }
 
     @Test

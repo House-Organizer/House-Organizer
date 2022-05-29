@@ -2,7 +2,6 @@ package com.github.houseorganizer.houseorganizer;
 
 import static androidx.test.espresso.Espresso.onView;
 import static androidx.test.espresso.action.ViewActions.click;
-import static androidx.test.espresso.action.ViewActions.swipeLeft;
 import static androidx.test.espresso.action.ViewActions.swipeRight;
 import static androidx.test.espresso.action.ViewActions.typeText;
 import static androidx.test.espresso.assertion.ViewAssertions.matches;
@@ -31,7 +30,6 @@ import androidx.test.ext.junit.runners.AndroidJUnit4;
 
 import com.github.houseorganizer.houseorganizer.panels.main_activities.CalendarActivity;
 import com.github.houseorganizer.houseorganizer.panels.main_activities.ExpenseActivity;
-import com.github.houseorganizer.houseorganizer.panels.main_activities.GroceriesActivity;
 import com.github.houseorganizer.houseorganizer.panels.main_activities.MainScreenActivity;
 import com.google.firebase.auth.FirebaseAuth;
 
@@ -51,7 +49,7 @@ public class ExpenseActivityTest {
     private static Intent startIntent;
 
     @Rule
-    public ActivityScenarioRule<ExpenseActivity> mainScreenActivityActivityScenarioRule =
+    public ActivityScenarioRule<ExpenseActivity> activityScenarioRule =
             new ActivityScenarioRule<>(startIntent);
 
     @BeforeClass
@@ -87,7 +85,7 @@ public class ExpenseActivityTest {
         onView(isRoot()).perform(waitFor(1000));
     }
 
-    private void deleteExpense() {
+    protected static void deleteExpense() {
         onView(withId(R.id.expense_recycler))
                 .perform(RecyclerViewActions.actionOnItemAtPosition(
                         0,
