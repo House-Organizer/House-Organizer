@@ -1,5 +1,7 @@
 package com.github.houseorganizer.houseorganizer;
 
+import static androidx.test.espresso.matcher.ViewMatchers.isRoot;
+
 import android.view.View;
 
 import androidx.test.espresso.UiController;
@@ -319,8 +321,6 @@ public class FirebaseTestsHelper {
         Billsharer bs = new Billsharer(household);
         Task<DocumentSnapshot> t1 = bs.startUpBillsharer();
         Tasks.await(t1);
-        Expense expense = test_expense(bs,40);
-        bs.addExpense(expense);
         Task<DocumentReference> t2 = Billsharer.storeNewBillsharer(db.collection("billsharers"), new ArrayList<>(), household);
         Tasks.await(t2);
         bs.setOnlineReference(t2.getResult());
@@ -331,8 +331,6 @@ public class FirebaseTestsHelper {
         bs = new Billsharer(household);
         t1 = bs.startUpBillsharer();
         Tasks.await(t1);
-        expense = test_expense(bs,40);
-        bs.addExpense(expense);
         t2 = Billsharer.storeNewBillsharer(db.collection("billsharers"), new ArrayList<>(), household);
         Tasks.await(t2);
         bs.setOnlineReference(t2.getResult());
@@ -548,5 +546,27 @@ public class FirebaseTestsHelper {
         }
 
         Tasks.await(tlDocSnap.getReference().delete());
+    }
+
+    /**
+     * Perform action of waiting for a specific time.
+     */
+    public static ViewAction waitFor(final long millis) {
+        return new ViewAction() {
+            @Override
+            public Matcher<View> getConstraints() {
+                return isRoot();
+            }
+
+            @Override
+            public String getDescription() {
+                return "Wait for " + millis + " milliseconds.";
+            }
+
+            @Override
+            public void perform(UiController uiController, final View view) {
+                uiController.loopMainThreadForAtLeast(millis);
+            }
+        };
     }
 }

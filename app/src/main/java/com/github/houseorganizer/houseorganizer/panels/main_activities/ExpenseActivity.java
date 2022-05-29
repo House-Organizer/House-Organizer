@@ -64,7 +64,7 @@ public class ExpenseActivity extends NavBarActivity implements
             });
         });
         findViewById(R.id.expense_balances).setOnClickListener(l -> {
-            Intent intent = new Intent(ExpenseActivity.this, BalanceActivity.class);
+            Intent intent = new Intent(this, BalanceActivity.class);
             intent.putExtra("house", currentHouse.getId());
             startActivity(intent);
         });

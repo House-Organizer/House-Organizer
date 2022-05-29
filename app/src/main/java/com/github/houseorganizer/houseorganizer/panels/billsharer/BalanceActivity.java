@@ -39,7 +39,7 @@ public class BalanceActivity extends NavBarActivity {
             LocalStorage.pushDebtsOffline(getApplicationContext(), currentHouse.getId(), bs.getDebts());
         });
         findViewById(R.id.balance_expenses).setOnClickListener(l -> {
-            Intent intent = new Intent(BalanceActivity.this, ExpenseActivity.class);
+            Intent intent = new Intent(this, ExpenseActivity.class);
             intent.putExtra("house", currentHouse.getId());
             startActivity(intent);
         });
@@ -70,6 +70,4 @@ public class BalanceActivity extends NavBarActivity {
     protected CurrentActivity currentActivity() {
         return CurrentActivity.BALANCE;
     }
-
-
 }
