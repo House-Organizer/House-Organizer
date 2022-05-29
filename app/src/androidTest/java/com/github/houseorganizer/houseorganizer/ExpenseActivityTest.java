@@ -80,7 +80,6 @@ public class ExpenseActivityTest {
         onView(isRoot()).perform(waitFor(500));
         onView(withId(R.id.expense_edit_title)).perform(typeText(title));
         onView(withId(R.id.expense_edit_cost)).perform(typeText(cost));
-        onView(isRoot()).perform(waitFor(500));
         onView(withText(R.string.confirm)).perform(click());
         onView(isRoot()).perform(waitFor(1000));
     }
@@ -90,7 +89,6 @@ public class ExpenseActivityTest {
                 .perform(RecyclerViewActions.actionOnItemAtPosition(
                         0,
                         RecyclerViewHelper.clickChildViewWithId(R.id.expense_remove_check)));
-        onView(isRoot()).perform(waitFor(500));
         onView(withText(R.string.confirm)).perform(click());
         onView(isRoot()).perform(waitFor(500));
     }

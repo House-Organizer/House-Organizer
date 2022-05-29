@@ -113,7 +113,6 @@ public class BalanceActivityTest {
                 .perform(RecyclerViewActions.actionOnItemAtPosition(
                         0,
                         RecyclerViewHelper.clickChildViewWithId(R.id.debt_remove_check)));
-        onView(isRoot()).perform(waitFor(500));
         onView(withText(R.string.confirm)).perform(click());
         onView(isRoot()).perform(waitFor(500));
     }
