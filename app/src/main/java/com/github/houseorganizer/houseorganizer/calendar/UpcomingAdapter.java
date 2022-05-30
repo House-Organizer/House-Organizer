@@ -1,8 +1,8 @@
 package com.github.houseorganizer.houseorganizer.calendar;
 
 import static com.github.houseorganizer.houseorganizer.calendar.Calendar.Event.putEventStringsInData;
-import static com.github.houseorganizer.houseorganizer.util.interfaces.UpcomingRowItem.DELIMITER;
-import static com.github.houseorganizer.houseorganizer.util.interfaces.UpcomingRowItem.EVENT;
+import static com.github.houseorganizer.houseorganizer.calendar.UpcomingRowItem.DELIMITER;
+import static com.github.houseorganizer.houseorganizer.calendar.UpcomingRowItem.EVENT;
 
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
@@ -24,7 +24,6 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.github.houseorganizer.houseorganizer.R;
 import com.github.houseorganizer.houseorganizer.calendar.Calendar.Event;
 import com.github.houseorganizer.houseorganizer.image.ImageHelper;
-import com.github.houseorganizer.houseorganizer.util.interfaces.UpcomingRowItem;
 import com.google.firebase.firestore.SetOptions;
 import com.google.firebase.storage.StorageReference;
 
@@ -36,11 +35,19 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
-
+/**
+ * Class representing a calendar adapter in the upcoming view
+ */
 public class UpcomingAdapter extends CalendarAdapter {
 
     private ArrayList<UpcomingRowItem> items;
 
+    /**
+     * Creates a new upcoming adapter for a calendar RecyclerView
+     *
+     * @param calendar      The calendar this adapter is for
+     * @param getPicture    The handler for fetching an attachment for an event
+     */
     public UpcomingAdapter(Calendar calendar, ActivityResultLauncher<String> getPicture) {
         super(calendar, getPicture);
     }
@@ -73,11 +80,11 @@ public class UpcomingAdapter extends CalendarAdapter {
         items = ret;
     }
 
-    public static class EventViewHolder extends RecyclerView.ViewHolder {
-        public Button titleView;
-        public TextView descView;
-        public ImageButton attachView;
-        public EventViewHolder(View eventView) {
+    private static class EventViewHolder extends RecyclerView.ViewHolder {
+        private final Button titleView;
+        private final TextView descView;
+        private final ImageButton attachView;
+        private EventViewHolder(View eventView) {
             super(eventView);
             titleView = eventView.findViewById(R.id.event_upcoming_title);
             descView = eventView.findViewById(R.id.event_upcoming_date);
@@ -85,9 +92,9 @@ public class UpcomingAdapter extends CalendarAdapter {
         }
     }
 
-    public static class DelimiterViewHolder extends RecyclerView.ViewHolder {
-        public TextView dayView;
-        public DelimiterViewHolder(View delimiterView) {
+    private static class DelimiterViewHolder extends RecyclerView.ViewHolder {
+        private final TextView dayView;
+        private DelimiterViewHolder(View delimiterView) {
             super(delimiterView);
             dayView = delimiterView.findViewById(R.id.calendar_delimiter_text);
         }

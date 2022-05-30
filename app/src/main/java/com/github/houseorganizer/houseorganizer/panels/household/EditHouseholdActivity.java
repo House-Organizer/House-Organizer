@@ -225,6 +225,11 @@ public class EditHouseholdActivity extends ThemedAppCompatActivity {
         });
     }
 
+    /**
+     * Displays a QR code that can be scanned in the app to join this household
+     *
+     * @param view The view in which to display the QR code
+     */
     public void showInviteQR(View view) {
         Dialog qrDialog = new Dialog(this);
         try {
@@ -239,6 +244,13 @@ public class EditHouseholdActivity extends ThemedAppCompatActivity {
         }
     }
 
+    /**
+     * Creates a QR code bitmap for the current household
+     *
+     * @param householdId       The id of the household
+     * @return                  The bitmap of the generated QR code
+     * @throws WriterException  If the bitmap could not be created
+     */
     public static Bitmap createQRCodeBitmap(String householdId) throws WriterException {
         int length = 800;
         BitMatrix qrCode = new QRCodeWriter().encode(householdId, BarcodeFormat.QR_CODE, length, length);
@@ -330,7 +342,7 @@ public class EditHouseholdActivity extends ThemedAppCompatActivity {
                 message, Toast.LENGTH_SHORT).show();
     }
 
-    public Task<QuerySnapshot> deleteTaskList() {
+    private Task<QuerySnapshot> deleteTaskList() {
         OnFailureListener tlDeletionFailed = toastExceptionFailureListener("Cannot remove task list");
 
         return firestore.collection("task_lists")
@@ -359,7 +371,7 @@ public class EditHouseholdActivity extends ThemedAppCompatActivity {
                 .addOnFailureListener(tlDeletionFailed);
     }
 
-    public Task<QuerySnapshot> deleteCalendar(View view) {
+    private Task<QuerySnapshot> deleteCalendar(View view) {
         return firestore.collection("events")
                 .whereEqualTo("household", currentHousehold)
                 .get().addOnCompleteListener(task1 -> {
@@ -379,7 +391,7 @@ public class EditHouseholdActivity extends ThemedAppCompatActivity {
         });
     }
 
-    public void deleteHousehold(View view) {
+    private void deleteHousehold(View view) {
         firestore.collection("households").document(householdId).delete()
                 .addOnCompleteListener(task -> {
                     if(task.isSuccessful()) {
