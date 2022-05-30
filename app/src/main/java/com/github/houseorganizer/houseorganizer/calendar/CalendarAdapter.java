@@ -144,6 +144,7 @@ public abstract class CalendarAdapter extends RecyclerView.Adapter<RecyclerView.
      * @param uri The uri of the attachment to upload
      */
     public void pushAttachment(Uri uri) {
+        if (uri == null) return;
         // Store the image on firebase storage
         FirebaseStorage storage = FirebaseStorage.getInstance();
         // this creates the reference to the picture

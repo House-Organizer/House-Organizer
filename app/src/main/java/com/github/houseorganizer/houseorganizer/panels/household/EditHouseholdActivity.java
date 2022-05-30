@@ -85,6 +85,7 @@ public class EditHouseholdActivity extends ThemedAppCompatActivity {
     }
 
     public void pushImageToHousehold(Uri uri){
+        if (uri == null) return;
         StorageReference imageRef = storage.getReference().child("house_" + householdId);
         imageRef.putFile(uri);
         Toast.makeText(getApplicationContext(), getApplicationContext().getString(R.string.changed_picture), Toast.LENGTH_SHORT).show();
