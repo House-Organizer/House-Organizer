@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="info_facebook_button">Accedi con Facebook</string>
-    <string name="discoverButton">Scoprire</string>
+    <string name="discoverButton"><u>Scoprire</u></string>
     <string name="appDescription">\"La migliore app per l\'organizzazione della casa\" -Gli sviluppatori</string>
     <string name="settings_speakable_text">Impostazioni</string>
     <string name="house_speakable_text">Selezione casa</string>
@@ -137,7 +137,7 @@
     <string name="edit_item_title">Modifica un articolo</string>
     <string name="edit_item_button">Modifica</string>
     <string name="go_offline">Vai offline</string>
-    <string name="specify_shares">TODO</string>
-    <string name="new_expense">TODO</string>
-    <string name="adds_up_to_total">TODO</string>
+    <string name="specify_shares">Specificare le spese</string>
+    <string name="new_expense">Nuova spesa</string>
+    <string name="adds_up_to_total">Il totale delle parti non corrisponde al costo della spesa.</string>
 </resources>

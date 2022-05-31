@@ -118,7 +118,7 @@ public class LoginActivity extends AppCompatActivity {
     private void manageTask(Task<AuthResult> task, String func) {
         OnFailureListener authFailed = exception ->
                 logAndToast(getString(R.string.tag_login_activity), func + ":failure",
-                        exception, LoginActivity.this, "Authentication failed.");
+                        exception, LoginActivity.this, getString(R.string.reg_email_auth_failed));
 
         task.addOnFailureListener(authFailed)
             .addOnSuccessListener(authResult -> {

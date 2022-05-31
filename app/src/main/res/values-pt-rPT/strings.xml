@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="info_facebook_button">Iniciar sessão com Facebook</string>
-    <string name="discoverButton">Descobrir</string>
+    <string name="discoverButton"><u>Descobrir</u></string>
     <string name="appDescription">\"Melhor aplicação d\'organisação domestica\" - os programadores</string>
     <string name="settings_speakable_text">Configuração</string>
     <string name="house_speakable_text">Selecionar uma casa</string>
@@ -137,7 +137,7 @@
     <string name="edit_item_title">TODO</string>
     <string name="edit_item_button">TODO</string>
     <string name="go_offline">TODO</string>
-    <string name="specify_shares">TODO</string>
-    <string name="new_expense">TODO</string>
-    <string name="adds_up_to_total">TODO</string>
+    <string name="specify_shares">Especificar as despesas</string>
+    <string name="new_expense">Nova Despesa</string>
+    <string name="adds_up_to_total">O total das peças não somam o custo da despesa.</string>
 </resources>

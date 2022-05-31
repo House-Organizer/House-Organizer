@@ -161,7 +161,7 @@ public class Billsharer {
             if (temp_balances.size() == 1) {
                 String max = findMaxBalance(temp_balances);
                 double max_val = temp_balances.get(max);
-                if (max_val < 0.01) {
+                if (Math.round(max_val*100.0)/100.0 <= 0.01) {
                     temp_balances = new HashMap<>();
                 }
             }
