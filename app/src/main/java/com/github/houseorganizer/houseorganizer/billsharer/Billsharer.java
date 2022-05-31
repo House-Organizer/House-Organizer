@@ -38,6 +38,11 @@ public class Billsharer {
         this.onlineReference = onlineReference;
     }
 
+    /**
+     * Initializes all data inside the billsharer after fetching the list of residents inside
+     * currentHouse.
+     * @return a Task on the snapshot of currentHouse
+     */
     public Task<DocumentSnapshot> startUpBillsharer() {
         return initResidents().addOnCompleteListener(l -> refreshBalances());
     }
@@ -46,7 +51,7 @@ public class Billsharer {
         return expenses;
     }
 
-    public void setExpenses(List<Expense> expenses) {
+    private void setExpenses(List<Expense> expenses) {
         this.expenses = expenses;
     }
 
@@ -74,18 +79,28 @@ public class Billsharer {
         this.residents = residents;
     }
 
+    /**
+     * Fetches the residents of currentHouse from Firestore
+     * @return a Task on the snapshot of currentHouse
+     */
     private Task<DocumentSnapshot> initResidents() {
         residents = new ArrayList<>();
         return currentHouse.get().addOnCompleteListener(t -> {
             if (t.isSuccessful()) {
                 DocumentSnapshot house = t.getResult();
                 setResidents((ArrayList<String>) house.get("residents"));
+                if (residents == null) {
+                    Log.e("Billsharer", "initResidents:could not fetch users.");
+                }
             } else {
                 Log.e("Billsharer", "failure to get house.");
             }
         });
     }
 
+    /**
+     * Initializes balances with 0.0 for every resident inside residents
+     */
     private void initBalances() {
         balances = new HashMap<>();
         for (String resident : residents) {
@@ -93,6 +108,10 @@ public class Billsharer {
         }
     }
 
+    /**
+     * Computes the updated  balance of a resident from his share of a single expense
+     * @return double : resident's updated balance
+     */
     private double computeTotal(String resident, Expense expense) {
         double total = 0f;
         if (balances.containsKey(resident)) {
@@ -108,6 +127,9 @@ public class Billsharer {
         return total;
     }
 
+    /**
+     * Computes the balances of every resident for every expense.
+     */
     private void computeBalances() {
         for (Expense expense : expenses) {
             for (String resident : residents) {
@@ -120,6 +142,9 @@ public class Billsharer {
         }
     }
 
+    /**
+     * Computes the debts of every resident depending on their balances
+     */
     private void computeDebts() {
         debts = new ArrayList<>();
         Map<String, Double> temp_balances = new HashMap<>(balances);
@@ -137,6 +162,11 @@ public class Billsharer {
         }
     }
 
+    /**
+     * Computes a single debt from temp_balances
+     * @param temp_balances Map<String, Double> : The balances that remain to be counted inside
+     *                      debts
+     */
     private void computeNextDebt(Map<String, Double> temp_balances) {
         String max = findMaxBalance(temp_balances);
         double max_val = temp_balances.get(max);
@@ -181,6 +211,9 @@ public class Billsharer {
         return min_key;
     }
 
+    /**
+     * Adds an expense and updates Firestore
+     */
     public void addExpense(Expense expense) {
         expenses.add((Expense) expense.clone());
         updateExpenses();
@@ -195,6 +228,10 @@ public class Billsharer {
         updateExpenses();
     }
 
+    /**
+     * Removes a debt by adding a new expense with the same amount from the debtor to the creditor.
+     * Used to confirm the payment of a debt.
+     */
     public void removeDebt(Debt debt) {
         HashMap<String, Double> shares = new HashMap<>();
         for (String resident : residents) {
@@ -208,6 +245,10 @@ public class Billsharer {
         refreshBalances();
     }
 
+    /**
+     * Updates the expense list inside Firestore
+     * @return a Task
+     */
     public Task<Void> updateExpenses() {
         if(currentHouse == null || onlineReference == null){
             return Tasks.forCanceled();
@@ -217,7 +258,11 @@ public class Billsharer {
         return onlineReference.update("expenses", expenses);
     }
 
-    public Task<DocumentSnapshot> refreshExpenses(){
+    /**
+     * Fetches Firestore and updates expenses
+     * @return a Task on the snapshot of the billsharer
+     */
+    public Task<DocumentSnapshot> refreshExpenses() {
         if(onlineReference == null){
             return Tasks.forCanceled();
         }
@@ -229,13 +274,20 @@ public class Billsharer {
         });
     }
 
+    /**
+     * Re-computes the debts of each resident
+     */
     public void refreshBalances() {
         initBalances();
         computeBalances();
         computeDebts();
     }
 
-    private static List<Map<String, Object>> convertExpensesListToFirebase(List<Expense> expenses){
+    /**
+     * Converts the expenses list to the format of the list on Firestore
+     * @return List<Map<String, Object>> : expense list on Firestore
+     */
+    private static List<Map<String, Object>> convertExpensesListToFirebase(List<Expense> expenses) {
         List<Map<String, Object>> result = new ArrayList<>();
         for(Expense expense : expenses){
             Map<String, Object> expenseMap = new HashMap<>();
@@ -248,7 +300,12 @@ public class Billsharer {
         return result;
     }
 
-    private static List<Expense> convertFirebaseListToExpenses(List<Map<String, Object>> list){
+    /**
+     * Converts the list of expenses from Firestore to a List of Expenses
+     * @param list List<Map<String, Object>> : list from Firestore
+     * @return List<Expense> expenses
+     */
+    private static List<Expense> convertFirebaseListToExpenses(List<Map<String, Object>> list) {
         List<Expense> expenses = new ArrayList<>();
         for(Map<String, Object> m : list){
             if (m.get("cost") instanceof Double) {
@@ -262,7 +319,15 @@ public class Billsharer {
         return expenses;
     }
 
-    public static Task<DocumentReference> storeNewBillsharer(CollectionReference billsharerRoot, List<Expense> list, DocumentReference household){
+    /**
+     * Creates a new billsharer on Firestore
+     * @param billsharerRoot CollectionReference : the root on Firestore where the billsharer will
+     *                      be stored
+     * @param list List<Expense> : list to be stored
+     * @param household DocumentReference : the house that will use the new billsharer
+     * @return a Task on the reference of the root
+     */
+    public static Task<DocumentReference> storeNewBillsharer(CollectionReference billsharerRoot, List<Expense> list, DocumentReference household) {
         Map<String, Object> map = new HashMap<>();
         map.put("household", household);
         List<Map<String, Object>> expenses = convertExpensesListToFirebase(list);
@@ -270,7 +335,15 @@ public class Billsharer {
         return billsharerRoot.add(map);
     }
 
-    public static Task<Billsharer> retrieveBillsharer(CollectionReference billsharerRoot, DocumentReference household){
+    /**
+     * Retrieves the billsharer from Firestore
+     * @param billsharerRoot CollectionReference : the root on Firestore where the billsharer will
+     *                      be stored
+     * @param household DocumentReference : the house that will uses the billsharer
+     * @return the Billsharer if it exists, null otherwise
+     * @throws IllegalStateException if there are more than 1 billsharers for that house on Firestore
+     */
+    public static Task<Billsharer> retrieveBillsharer(CollectionReference billsharerRoot, DocumentReference household) {
         return billsharerRoot.whereEqualTo("household", household).get().continueWith( t -> {
             List<DocumentSnapshot> res = t.getResult().getDocuments();
             if(res.isEmpty())return null;
@@ -279,7 +352,11 @@ public class Billsharer {
         });
     }
 
-    public static Billsharer buildBillsharer(DocumentSnapshot documentSnapshot){
+    /**
+     * Builds a Billsharer from the snapshot of the billsharer on Firestore
+     * @return the Billsharer, null if the snapshot was null
+     */
+    public static Billsharer buildBillsharer(DocumentSnapshot documentSnapshot) {
         if(documentSnapshot == null) return null;
         DocumentReference household = (DocumentReference) documentSnapshot.get("household");
         List<Map<String, Object>> list = (List<Map<String, Object>>) documentSnapshot.get("expenses");
@@ -287,6 +364,13 @@ public class Billsharer {
         return new Billsharer(household, documentSnapshot.getReference(), expenses);
     }
 
+    /**
+     * Initializes the Billsharer, creates one if the house doesn't have any, otherwise retrieves it
+     * from Firestore
+     * @param currentHouse DocumentReference : reference of the house
+     * @param db FirebaseFirestore
+     * @return a Task which returns an ExpenseAdapter when completed
+     */
     public static Task<ExpenseAdapter> initializeBillsharer(DocumentReference currentHouse, FirebaseFirestore db) {
         if (currentHouse == null) return Tasks.forCanceled();
         CollectionReference root = db.collection("billsharers");
