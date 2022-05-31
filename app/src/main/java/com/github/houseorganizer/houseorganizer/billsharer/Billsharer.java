@@ -66,18 +66,6 @@ public class Billsharer {
         return currentHouse;
     }
 
-    public void setDebts(List<Debt> debts) {
-        this.debts = debts;
-    }
-
-    public Map<String, Double> getBalances() {
-        return balances;
-    }
-
-    public void setBalances(Map<String, Double> balances) {
-        this.balances = balances;
-    }
-
     public List<String> getResidents() {
         return residents;
     }
@@ -99,9 +87,6 @@ public class Billsharer {
     }
 
     private void initBalances() {
-        if (residents == null) {
-            Log.e("Billsharer", "initResidents:could not fetch users.");
-        }
         balances = new HashMap<>();
         for (String resident : residents) {
             balances.put(resident, 0.0);
@@ -201,12 +186,10 @@ public class Billsharer {
         updateExpenses();
     }
 
-    public void editExpense(Expense expense, int pos) {
-        removeExpense(pos);
-        expenses.add(pos, expense);
-        updateExpenses();
-    }
-
+    /**
+     * Removes an expense and updates Firestore
+     * @param pos int : the position of the expense to be removed
+     */
     public void removeExpense(int pos) {
         expenses.remove(pos);
         updateExpenses();
@@ -323,10 +306,5 @@ public class Billsharer {
                         });
                     }
                 });
-    }
-
-    public static Task<Void> deleteBillsharer(DocumentReference onlineReference) {
-        if (onlineReference == null) return Tasks.forCanceled();
-        return onlineReference.delete();
     }
 }
