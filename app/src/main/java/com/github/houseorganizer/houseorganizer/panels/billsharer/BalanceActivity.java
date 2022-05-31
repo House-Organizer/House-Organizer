@@ -46,7 +46,7 @@ public class BalanceActivity extends NavBarActivity {
     }
 
     /**
-     *
+     * Initializes the data needed for the activity, the billsharer and the debt adapter
      */
     private void initializeData(){
         RecyclerView view = findViewById(R.id.balance_recycler);

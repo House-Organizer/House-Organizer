@@ -54,7 +54,7 @@ public class ExpenseActivity extends NavBarActivity {
     }
 
     /**
-     *
+     * Initializes the data needed for the activity, the billsharer and the expense adapter
      */
     private void initializeData(){
         RecyclerView view = findViewById(R.id.expense_recycler);
