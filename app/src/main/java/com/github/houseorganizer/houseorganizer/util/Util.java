@@ -4,12 +4,10 @@ import static android.content.Context.MODE_PRIVATE;
 
 import android.app.Activity;
 import android.content.Context;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.util.Log;
-import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -18,8 +16,6 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.github.houseorganizer.houseorganizer.R;
 import com.github.houseorganizer.houseorganizer.billsharer.Debt;
-import com.github.houseorganizer.houseorganizer.panels.offline.OfflineScreenActivity;
-
 import com.github.houseorganizer.houseorganizer.storage.LocalStorage;
 import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -52,11 +48,24 @@ public class Util {
         INPUTS_EMPTY
     }
 
+    /**
+     * Create a Toast and a log to show an error
+     * @param tag the tag of the log to be created
+     * @param log the message to put in the log
+     * @param e the exception at fault
+     * @param cx the current context
+     * @param toastMsg the message to put in the Toast
+     */
     public static void logAndToast(String tag, String log, Exception e, Context cx, String toastMsg) {
         Log.e(tag, log, e);
         Toast.makeText(cx, toastMsg, Toast.LENGTH_SHORT).show();
     }
 
+    /**
+     * Display a login error message on the given textView
+     * @param err ErrorType
+     * @param error_field the view in which to display the error message
+     */
     public static void displayErrorMessage(ErrorType err, TextView error_field) {
         switch (err) {
             case INVALID_EMAIL:
@@ -74,6 +83,12 @@ public class Util {
     }
 
     //<---------------------| Connection Status |------------------------------------------->
+
+    /**
+     * Check if the current device has Wifi or Data connection
+     * @param panelCtx current context
+     * @return true if an internet connection is active
+     */
     public static boolean hasWifiOrData(Context panelCtx) {
         ConnectivityManager connectivityManager =
                 (ConnectivityManager) panelCtx.getSystemService(Context.CONNECTIVITY_SERVICE);
@@ -121,6 +136,14 @@ public class Util {
     }
 
     //<--------------------------| Billsharer util |------------------------------------->
+
+    /**
+     * Sets up the Billsharer
+     * @param appCtx current context
+     * @param view : RecyclerView to display the Billsharer
+     * @param houseId current Firestore house id
+     * @param debts List of debts
+     */
     public static void setUpBillsharer(Context appCtx, RecyclerView view, String houseId, List<Debt> debts) {
         LocalStorage.pushDebtsOffline(appCtx, houseId, debts);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(appCtx);

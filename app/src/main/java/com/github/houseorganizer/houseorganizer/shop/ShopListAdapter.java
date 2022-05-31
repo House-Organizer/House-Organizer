@@ -52,6 +52,13 @@ public class ShopListAdapter extends RecyclerView.Adapter<ShopListAdapter.ItemsH
         return null;
     }
 
+    /**
+     * Initialize a new ShopListAdapter with the FirestoreShopList
+     * assiociated with the household reference
+     * @param currentHouse reference to the current house
+     * @param db The Firestore instance
+     * @return the task with the ShopListAdapter when completed
+     */
     public static Task<ShopListAdapter> initializeFirestoreShopList(DocumentReference currentHouse,
                                                                      FirebaseFirestore db) {
         if (currentHouse == null) return Tasks.forCanceled();
@@ -102,12 +109,23 @@ public class ShopListAdapter extends RecyclerView.Adapter<ShopListAdapter.ItemsH
         return shopList.size();
     }
 
+    /**
+     * Set the adapter to the task_list view on MainScreen
+     * @param parent the current Activity
+     */
     public void setUpShopListView(AppCompatActivity parent) {
         RecyclerView shopListView = parent.findViewById(R.id.task_list);
         shopListView.setAdapter(this);
         shopListView.setLayoutManager(new LinearLayoutManager(parent));
     }
 
+    /**
+     * Edit the item at position on the screen
+     * @param parent the current context
+     * @param shopList the current ShopList
+     * @param position the position of the item on the screen
+     */
+    @SuppressLint("SetTextI18n")
     public void editItem(Context parent, ShopList shopList, int position){
         ShopItem toModify = shopList.getItemAt(position);
 
@@ -126,6 +144,11 @@ public class ShopListAdapter extends RecyclerView.Adapter<ShopListAdapter.ItemsH
                 .show();
     }
 
+    /**
+     * Creates the dialog to add an item to the FirestoreShopList
+     * @param parent current Activity
+     * @param shopList the FirestoreShopList into which the item must be added
+     */
     public void addItem(AppCompatActivity parent, FirestoreShopList shopList){
         LayoutInflater inflater = LayoutInflater.from(parent);
         final View dialogView = inflater.inflate(R.layout.shop_item_dialog, null);
