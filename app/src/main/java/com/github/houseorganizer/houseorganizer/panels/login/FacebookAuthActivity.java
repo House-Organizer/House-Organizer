@@ -60,6 +60,10 @@ public class FacebookAuthActivity extends LoginActivity {
         });
     }
 
+    /**
+     * Implements facebook sign in with firebase
+     * @param token access token for facebook
+     */
     private void handleFacebookAccessToken(AccessToken token) {
         Log.d(getString(R.string.tag_login_activity), "handleFacebookAccessToken:" + token);
 
@@ -92,6 +96,10 @@ public class FacebookAuthActivity extends LoginActivity {
         mCallbackManager.onActivityResult(requestCode, resultCode, data);
     }
 
+    /**
+     * Sends the logged in user to the main screen activity
+     * @param user  firebase user that was logged in
+     */
     private void updateUI(FirebaseUser user) {
         Intent intent = new Intent(FacebookAuthActivity.this, MainScreenActivity.class);
         intent.putExtra("LoadHouse", true);

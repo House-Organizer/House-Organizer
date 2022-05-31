@@ -47,6 +47,7 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 public class EditHouseholdActivity extends ThemedAppCompatActivity {
+
     private FirebaseFirestore firestore;
     private FirebaseAuth mAuth;
     private String householdId;
@@ -80,16 +81,31 @@ public class EditHouseholdActivity extends ThemedAppCompatActivity {
                 });
     }
 
+    /**
+     * Launchs gallery
+     * @param view  base class for the changeImageOfHousehold image button on the edit household
+     *              activity
+     */
     public void pickImageForHousehold(View view){
         galleryLauncher.launch("image/*");
     }
 
+    /**
+     * Uploads image of a household from a content URI to the firebase StorageReference
+     * @param uri content URI of the household's image
+     */
     public void pushImageToHousehold(Uri uri){
         StorageReference imageRef = storage.getReference().child("house_" + householdId);
         imageRef.putFile(uri);
         Toast.makeText(getApplicationContext(), getApplicationContext().getString(R.string.changed_picture), Toast.LENGTH_SHORT).show();
     }
 
+    /**
+     * Verifies email has the correct format
+     * @param email email of the user to be verified
+     * @param view  base class for the buttons on the edit household activity
+     * @return      whether the email is correct
+     */
     private boolean verifyEmail(String email, View view) {
         if (!Verifications.verifyEmailHasCorrectFormat(email)) {
             Toast.makeText(getApplicationContext(), view.getContext().getString(R.string.invalid_email), Toast.LENGTH_SHORT).show();
@@ -98,11 +114,23 @@ public class EditHouseholdActivity extends ThemedAppCompatActivity {
         return true;
     }
 
+    /**
+     * Gets email from the given text view and calls to verifyEmail to verify it
+     * @param emailView text view with the email to be verified
+     * @param view      base class for the buttons on the edit household activity
+     * @return          whether the email is correct
+     */
     private boolean verifyEmailInput(TextView emailView, View view) {
         String email = emailView.getText().toString();
         return verifyEmail(email, view);
     }
 
+    /**
+     * First checks if the email specified in the editTextAddUser EditText is correct and if so
+     * calls to addUserIfNotPresent method with this email
+     * @param view  base class for the imageButtonAddUser image button on the edit household
+     *              activity
+     */
     public void addUser(View view) {
         EspressoIdlingResource.increment();
 
@@ -125,7 +153,13 @@ public class EditHouseholdActivity extends ThemedAppCompatActivity {
                 });
     }
 
-    public void addUserIfNotPresent(String email, View view) {
+    /**
+     * Adds user to a household on firebase
+     * @param email email of the user to be added
+     * @param view  base class for the imageButtonAddUser image button on the edit household
+     *              activity
+     */
+    private void addUserIfNotPresent(String email, View view) {
         firestore.collection("households").document(householdId).get()
                 .addOnCompleteListener(task -> {
                     Map<String, Object> householdData = task.getResult().getData();
@@ -148,6 +182,12 @@ public class EditHouseholdActivity extends ThemedAppCompatActivity {
                 });
     }
 
+    /**
+     * First checks if the email specified in the editTextChangeOwner EditText is correct and if so
+     * calls to changeOwner method with this email
+     * @param view  base class for the imageButtonChangeOwner image button on the edit household
+     *              activity
+     */
     public void transmitOwnership(View view) {
         EspressoIdlingResource.increment();
 
@@ -171,7 +211,13 @@ public class EditHouseholdActivity extends ThemedAppCompatActivity {
                 });
     }
 
-    public void changeOwner(String email, View view) {
+    /**
+     * Changes owner of a household in firebase
+     * @param email email of the new owner
+     * @param view  base class for the imageButtonChangeOwner image button on the edit household
+     *              activity
+     */
+    private void changeOwner(String email, View view) {
         firestore.collection("households").document(householdId).get()
                 .addOnCompleteListener(task -> {
                     Map<String, Object> householdData = task.getResult().getData();
@@ -194,6 +240,12 @@ public class EditHouseholdActivity extends ThemedAppCompatActivity {
                 });
     }
 
+    /**
+     * First checks if the email specified in the editTextRemoveUser EditText is correct and if so
+     * calls to removeUserFromHousehold method with this email
+     * @param view  base class for the imageButtonRemoveUser image button on the edit household
+     *              activity
+     */
     public void removeUser(View view) {
         EspressoIdlingResource.increment();
 
@@ -225,6 +277,10 @@ public class EditHouseholdActivity extends ThemedAppCompatActivity {
         });
     }
 
+    /**
+     * Sets generated QR code on the QR dialog
+     * @param view  base class for the showQRCode image button on the edit household activity
+     */
     public void showInviteQR(View view) {
         Dialog qrDialog = new Dialog(this);
         try {
@@ -239,7 +295,13 @@ public class EditHouseholdActivity extends ThemedAppCompatActivity {
         }
     }
 
-    public static Bitmap createQRCodeBitmap(String householdId) throws WriterException {
+    /**
+     * Creates QR code for a given household
+     * @param householdId       household from which to create the QR code
+     * @return                  QR code
+     * @throws WriterException
+     */
+    private static Bitmap createQRCodeBitmap(String householdId) throws WriterException {
         int length = 800;
         BitMatrix qrCode = new QRCodeWriter().encode(householdId, BarcodeFormat.QR_CODE, length, length);
         return Bitmap.createBitmap(IntStream.range(0, length)
@@ -249,7 +311,13 @@ public class EditHouseholdActivity extends ThemedAppCompatActivity {
                 length, length, Bitmap.Config.ARGB_8888);
     }
 
-    public void removeUserFromHousehold(String email, View view) {
+    /**
+     * Removes user from the current household
+     * @param email email of the user to be removed
+     * @param view  base class for the imageButtonRemoveUser image button on the edit household
+     *              activity
+     */
+    private void removeUserFromHousehold(String email, View view) {
         firestore.collection("households").document(householdId).get()
                 .addOnCompleteListener(task -> {
                     Map<String, Object> householdData = task.getResult().getData();
@@ -271,6 +339,10 @@ public class EditHouseholdActivity extends ThemedAppCompatActivity {
                 });
     }
 
+    /**
+     * Removes user from the assignees of a task in the current task list if present
+     * @param email email of the user to be removed
+     */
     private void removeUserFromTaskAssignees(String email) {
         firestore.collection("task_lists")
                 .whereEqualTo("hh-id", householdId)
@@ -290,6 +362,11 @@ public class EditHouseholdActivity extends ThemedAppCompatActivity {
                 .addOnFailureListener(toastExceptionFailureListener("Could not update task assignees"));
     }
 
+    /**
+     * Shows delete dialog to get the confirmation from the user and if so, deletes the calendar,
+     * shop list, billsharer and task list of the current household apart from the household
+     * @param view  base class for the deleteButton button on the edit household activity
+     */
     public void deleteDialog(View view) {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setMessage("The household calendar and lists will be deleted too. " +
@@ -315,8 +392,14 @@ public class EditHouseholdActivity extends ThemedAppCompatActivity {
         alert.show();
     }
 
+    /**
+     * Deletes given root document from the current household
+     * @param root          document to be deleted
+     * @param errorMessage  text shown when an error occurs
+     * @return              Task<QuerySnapshot> with info about the firebase task to delete the
+     *                      document
+     */
     public Task<QuerySnapshot> deleteFromHousehold(String root, String errorMessage) {
-
         return firestore.collection(root)
                 .whereEqualTo("household", currentHousehold)
                 .get().addOnCompleteListener(doc ->{
@@ -325,12 +408,21 @@ public class EditHouseholdActivity extends ThemedAppCompatActivity {
                 }).addOnFailureListener(toastExceptionFailureListener(errorMessage));
     }
 
+    /**
+     * Creates toast to notify the user about a failure in the app
+     * @param message   text shown to the user
+     * @return          listener called when a Task fails with an exception
+     */
     private OnFailureListener toastExceptionFailureListener(String message) {
         return exception -> Toast.makeText(getApplicationContext(),
                 message, Toast.LENGTH_SHORT).show();
     }
 
-    public Task<QuerySnapshot> deleteTaskList() {
+    /**
+     * Deletes task list for the current household from firebase
+     * @return  Task<QuerySnapshot> with info about the firebase task to delete the task list
+     */
+    private Task<QuerySnapshot> deleteTaskList() {
         OnFailureListener tlDeletionFailed = toastExceptionFailureListener("Cannot remove task list");
 
         return firestore.collection("task_lists")
@@ -359,7 +451,12 @@ public class EditHouseholdActivity extends ThemedAppCompatActivity {
                 .addOnFailureListener(tlDeletionFailed);
     }
 
-    public Task<QuerySnapshot> deleteCalendar(View view) {
+    /**
+     * Deletes calendar for the current household from firebase
+     * @param view  base class for the deleteButton button on the edit household activity
+     * @return      Task<QuerySnapshot> with info about the firebase task to delete the calendar
+     */
+    private Task<QuerySnapshot> deleteCalendar(View view) {
         return firestore.collection("events")
                 .whereEqualTo("household", currentHousehold)
                 .get().addOnCompleteListener(task1 -> {
@@ -379,7 +476,11 @@ public class EditHouseholdActivity extends ThemedAppCompatActivity {
         });
     }
 
-    public void deleteHousehold(View view) {
+    /**
+     * Deletes current household from firebase and sends the user back to the house selection activity
+     * @param view  base class for the deleteButton button on the edit household activity
+     */
+    private void deleteHousehold(View view) {
         firestore.collection("households").document(householdId).delete()
                 .addOnCompleteListener(task -> {
                     if(task.isSuccessful()) {
