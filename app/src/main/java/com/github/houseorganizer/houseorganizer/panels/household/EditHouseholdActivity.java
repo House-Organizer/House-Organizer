@@ -301,7 +301,7 @@ public class EditHouseholdActivity extends ThemedAppCompatActivity {
      * @return                  QR code
      * @throws WriterException
      */
-    private static Bitmap createQRCodeBitmap(String householdId) throws WriterException {
+    public static Bitmap createQRCodeBitmap(String householdId) throws WriterException {
         int length = 800;
         BitMatrix qrCode = new QRCodeWriter().encode(householdId, BarcodeFormat.QR_CODE, length, length);
         return Bitmap.createBitmap(IntStream.range(0, length)
