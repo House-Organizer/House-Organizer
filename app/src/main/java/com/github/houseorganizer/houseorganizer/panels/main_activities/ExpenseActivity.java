@@ -53,6 +53,9 @@ public class ExpenseActivity extends NavBarActivity {
         super.setUpNavBar(R.id.nav_bar, OptionalInt.of(R.id.nav_bar_bs));
     }
 
+    /**
+     *
+     */
     private void initializeData(){
         RecyclerView view = findViewById(R.id.expense_recycler);
         Billsharer.initializeBillsharer(currentHouse, FirebaseFirestore.getInstance())

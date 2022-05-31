@@ -45,6 +45,9 @@ public class BalanceActivity extends NavBarActivity {
         super.setUpNavBar(R.id.nav_bar, OptionalInt.of(R.id.nav_bar_bs));
     }
 
+    /**
+     *
+     */
     private void initializeData(){
         RecyclerView view = findViewById(R.id.balance_recycler);
         Billsharer.retrieveBillsharer(db.collection("billsharers"), currentHouse)

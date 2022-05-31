@@ -14,7 +14,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.github.houseorganizer.houseorganizer.R;
 
 /**
- * An adapter  to RecyclerView for a list of Debts inside a Billsharer.
+ * An adapter to RecyclerView for a list of Debt inside a Billsharer.
  */
 public class DebtAdapter extends RecyclerView.Adapter<DebtAdapter.DebtHolder> {
 
