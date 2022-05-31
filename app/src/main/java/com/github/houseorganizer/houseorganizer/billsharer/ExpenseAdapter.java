@@ -153,6 +153,17 @@ public class ExpenseAdapter extends RecyclerView.Adapter<ExpenseAdapter.ExpenseH
                 .show();
     }
 
+    public static class ExpenseHolder extends RecyclerView.ViewHolder {
+        public TextView textView;
+        public ImageButton removeCheck;
+
+        public ExpenseHolder(@NonNull View expenseView) {
+            super(expenseView);
+            textView = expenseView.findViewById(R.id.expense_text);
+            removeCheck = expenseView.findViewById(R.id.expense_remove_check);
+        }
+    }
+
     @NonNull
     @Override
     public ExpenseHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -173,17 +184,6 @@ public class ExpenseAdapter extends RecyclerView.Adapter<ExpenseAdapter.ExpenseH
     @Override
     public int getItemCount() {
         return billsharer.getExpenses().size();
-    }
-
-    public static class ExpenseHolder extends RecyclerView.ViewHolder {
-        public TextView textView;
-        public ImageButton removeCheck;
-
-        public ExpenseHolder(@NonNull View expenseView) {
-            super(expenseView);
-            textView = expenseView.findViewById(R.id.expense_text);
-            removeCheck = expenseView.findViewById(R.id.expense_remove_check);
-        }
     }
 
 }

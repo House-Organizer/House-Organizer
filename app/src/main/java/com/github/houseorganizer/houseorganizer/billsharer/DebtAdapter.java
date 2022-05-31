@@ -13,6 +13,9 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.github.houseorganizer.houseorganizer.R;
 
+/**
+ * An adapter  to RecyclerView for a list of Debts inside a Billsharer.
+ */
 public class DebtAdapter extends RecyclerView.Adapter<DebtAdapter.DebtHolder> {
 
     private Billsharer billsharer;
@@ -29,6 +32,13 @@ public class DebtAdapter extends RecyclerView.Adapter<DebtAdapter.DebtHolder> {
         this.billsharer = billsharer;
     }
 
+    /**
+     * Shows a AlertDialog for the confirmation of the payment of the debt, if confirmed it removes
+     * the debt by adding an expense. (Cf. removeDebt inside Billsharer)
+     * @param ctx : the current Context
+     * @param debt : the debt to be removed
+     * @param pos : the position of the debt
+     */
     public void removeDebt(Context ctx, Debt debt, int pos) {
         new AlertDialog.Builder(ctx)
                 .setTitle("Confirm payment of this debt ?")
@@ -38,6 +48,20 @@ public class DebtAdapter extends RecyclerView.Adapter<DebtAdapter.DebtHolder> {
                 })
                 .setNegativeButton(R.string.cancel, (dialog, id) -> dialog.dismiss())
                 .show();
+    }
+
+    /**
+     * The holder inside the RecyclerView for a single debt
+     */
+    public static class DebtHolder extends RecyclerView.ViewHolder {
+        public TextView textView;
+        public ImageButton removeCheck;
+
+        public DebtHolder(@NonNull View debtView) {
+            super(debtView);
+            textView = debtView.findViewById(R.id.debt_text);
+            removeCheck = debtView.findViewById(R.id.debt_remove_check);
+        }
     }
 
     @NonNull
@@ -60,16 +84,5 @@ public class DebtAdapter extends RecyclerView.Adapter<DebtAdapter.DebtHolder> {
     @Override
     public int getItemCount() {
         return billsharer.getDebts().size();
-    }
-
-    public static class DebtHolder extends RecyclerView.ViewHolder {
-        public TextView textView;
-        public ImageButton removeCheck;
-
-        public DebtHolder(@NonNull View debtView) {
-            super(debtView);
-            textView = debtView.findViewById(R.id.debt_text);
-            removeCheck = debtView.findViewById(R.id.debt_remove_check);
-        }
     }
 }

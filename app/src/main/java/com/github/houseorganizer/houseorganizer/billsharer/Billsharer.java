@@ -16,6 +16,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * Represents a bill-sharer.
+ * Saves the list of residents inside a currentHouse as well as their expenses.
+ * Computes the balances and debts of each resident depending on their expenses.
+ * Backs up the expenses and the currentHouse on Firestore at onlineReference.
+ */
 public class Billsharer {
 
     private List<Expense> expenses;
