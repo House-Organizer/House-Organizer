@@ -48,23 +48,23 @@ import java.util.Objects;
 public class HouseSelectionActivity extends ThemedAppCompatActivity {
 
     public static final String HOUSEHOLD_TO_EDIT = "com.github.houseorganizer.houseorganizer.HOUSEHOLD_TO_EDIT";
-    public static final int DEFAULT_UPDATE_INTERVAL = 30;
+    private static final int DEFAULT_UPDATE_INTERVAL = 30;
 
-    String emailUser;
-    RecyclerView housesView;
-    FirestoreRecyclerAdapter<HouseModel, HouseViewHolder> adapter;
-    FirebaseFirestore firestore;
-    FirebaseStorage storage;
+    private String emailUser;
+    private RecyclerView housesView;
+    private FirestoreRecyclerAdapter<HouseModel, HouseViewHolder> adapter;
+    private FirebaseFirestore firestore;
+    private FirebaseStorage storage;
 
     // Coordinates
-    Double lat;
-    Double lon;
+    private Double lat;
+    private Double lon;
 
     // Config file for all settings related to FusedLocationProviderClient
-    LocationRequest locationRequest;
+    private LocationRequest locationRequest;
     // Google's API for location services
-    FusedLocationProviderClient fusedLocationProviderClient;
-    Geocoder geocoder;
+    private FusedLocationProviderClient fusedLocationProviderClient;
+    private Geocoder geocoder;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -82,7 +82,10 @@ public class HouseSelectionActivity extends ThemedAppCompatActivity {
 
         setHousesView();
     }
-  
+
+    /**
+     * Sets the recycler view with the given households for an user
+     */
     private void setHousesView() {
         Query query = firestore.collection("households").whereArrayContains("residents", emailUser);
         FirestoreRecyclerOptions<HouseModel> options = new FirestoreRecyclerOptions.Builder<HouseModel>()
@@ -113,6 +116,11 @@ public class HouseSelectionActivity extends ThemedAppCompatActivity {
         housesView.setAdapter(adapter);
     }
 
+    /**
+     * Sets the image from a given household by retrieving from firebase
+     * @param imageViewToSet    view to set the image
+     * @param houseId           household's id to get the image from
+     */
     private void fetchImageForHousehold(ImageView imageViewToSet, String houseId){
         StorageReference imageHouse = storage.getReference().child("house_" + houseId);
             imageHouse.getDownloadUrl()
@@ -125,6 +133,10 @@ public class HouseSelectionActivity extends ThemedAppCompatActivity {
                 });
     }
 
+    /**
+     * Saves the selected house in the shared preferences
+     * @param selectedHouse house to be saved
+     */
     private void saveData(String selectedHouse) {
         SharedPreferences.Editor editor = getSharedPrefsEditor(this);
 
@@ -132,6 +144,10 @@ public class HouseSelectionActivity extends ThemedAppCompatActivity {
         editor.apply();
     }
 
+    /**
+     * Sends user to the main screen activity with the house selected
+     * @param view  base class for the houseName text view on the house row
+     */
     @SuppressWarnings("unused")
     public void houseSelected(View view) {
         saveData(view.getTag().toString());
@@ -140,6 +156,10 @@ public class HouseSelectionActivity extends ThemedAppCompatActivity {
         startActivity(intent);
     }
 
+    /**
+     * Checks whether the user is the owner of the house and if so, calls to sendToEditHouse method
+     * @param view  base class for the editButton image button on the house row
+     */
     public void editHousehold(View view) {
         String householdId = view.getTag().toString();
 
@@ -162,6 +182,10 @@ public class HouseSelectionActivity extends ThemedAppCompatActivity {
                 });
     }
 
+    /**
+     * Leaves current household saved on the device and calls to resetData method
+     * @param view  base class for the leaveButton button on the house selection activity
+     */
     public void leaveHouse(View view){
         EspressoIdlingResource.increment();
         SharedPreferences sharedPreferences = getSharedPrefs(this);
@@ -177,6 +201,11 @@ public class HouseSelectionActivity extends ThemedAppCompatActivity {
         EspressoIdlingResource.decrement();
     }
 
+    /**
+     * Updates info of a household on firebase by removing the actual user
+     * @param currentHouse  household to be modified on firebase
+     * @param householdData actual data for the household retrieved from firebase
+     */
     private void resetData(DocumentReference currentHouse, Map<String, Object> householdData) {
         if (householdData != null) {
             List<String> residents = (List<String>) householdData.getOrDefault("residents", "[]");
@@ -196,18 +225,29 @@ public class HouseSelectionActivity extends ThemedAppCompatActivity {
         }
     }
 
+    /**
+     * Sends user to the edit household activity with the house selected
+     * @param view  base class for the editButton image button on the house row
+     */
     public void sendToEditHouse(View view){
         Intent intent = new Intent(this, EditHouseholdActivity.class);
         intent.putExtra(HOUSEHOLD_TO_EDIT, view.getTag().toString());
         startActivity(intent);
     }
 
+    /**
+     * Sends user to the create household activity
+     * @param view  base class for the add_household_button button on the house selection activity
+     */
     public void addHouseholdButtonPressed(@SuppressWarnings("unused") View view) {
         Intent intent = new Intent(this, CreateHouseholdActivity.class);
         intent.putExtra("mUserEmail", emailUser);
         startActivity(intent);
     }
 
+    /**
+     * Class used to build the recycler view with the given households for an user
+     */
     private static class HouseViewHolder extends RecyclerView.ViewHolder {
         TextView houseName;
         ImageButton editButton;
