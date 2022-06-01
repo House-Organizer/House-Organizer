@@ -14,16 +14,33 @@ public class OnSwipeTouchListener implements View.OnTouchListener {
 
     private final GestureDetector gestureDetector;
 
+    /**
+     * Creates a new listener for swipes
+     *
+     * @param context The context of the activity where the listener will be
+     */
     public OnSwipeTouchListener(Context context) {
         gestureDetector = new GestureDetector(context, new GestureListener());
     }
 
+    /**
+     * Handler for when the user swipes left
+     */
     public void onSwipeLeft() {
     }
 
+    /**
+     * Handler for when the user swipes right
+     */
     public void onSwipeRight() {
     }
 
+    /**
+     * Handler for when the user touches the view
+     * @param v     The view that was touched
+     * @param event The event the touch was
+     * @return      True if the event was important (if it did anything)
+     */
     @SuppressLint("ClickableViewAccessibility")
     public boolean onTouch(View v, MotionEvent event) {
         return gestureDetector.onTouchEvent(event);

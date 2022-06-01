@@ -9,8 +9,6 @@ import com.github.houseorganizer.houseorganizer.panels.login.LoginActivity;
 import com.github.houseorganizer.houseorganizer.panels.login.LoginEmail;
 import com.github.houseorganizer.houseorganizer.panels.main_activities.MainScreenActivity;
 import com.github.houseorganizer.houseorganizer.panels.settings.ThemedAppCompatActivity;
-
-import com.google.api.LogDescriptor;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
