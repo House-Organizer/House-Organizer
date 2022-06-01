@@ -65,8 +65,6 @@
     <string name="event_creation_title">Ajouter un évenement</string>
     <string name="description">Description</string>
     <string name="title">Titre</string>
-    <string name="duration">Durée (min)</string>
-    <string name="date">Date (jj/MM/aaaa HH:mm)</string>
     <string name="add_event">Ajouter</string>
     <string name="cancel">Annuler</string>
     <string name="delete">Supprimer</string>
@@ -140,4 +138,6 @@
     <string name="specify_shares">TODO</string>
     <string name="new_expense">TODO</string>
     <string name="adds_up_to_total">TODO</string>
+    <string name="pick_a_date_and_time">Choisissez une date et une heure</string>
+    <string name="no_attachment">Impossible de trouver la pièce jointe</string>
 </resources>

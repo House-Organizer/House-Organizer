@@ -6,8 +6,8 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
-import com.github.houseorganizer.houseorganizer.storage.OfflineEvent;
 import com.github.houseorganizer.houseorganizer.storage.OfflineDebt;
+import com.github.houseorganizer.houseorganizer.storage.OfflineEvent;
 import com.github.houseorganizer.houseorganizer.storage.OfflineShopItem;
 import com.github.houseorganizer.houseorganizer.storage.OfflineTask;
 

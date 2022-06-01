@@ -61,22 +61,19 @@ public class Calendar {
         private  String title;
         private String description;
         private LocalDateTime start;
-        // Duration of the event in minutes
-        private long duration;
         private final String id;
 
         public Event(String id) {
             this.id = id;
         }
 
-        public Event(String title, String description, LocalDateTime start, long duration, String id) {
+        public Event(String title, String description, LocalDateTime start, String id) {
             requireNonNull(title);
             requireNonNull(start);
             requireNonNull(id);
             this.title = title;
             this.description = (description == null) ? "" : description;
             this.start = start;
-            this.duration = duration;
             this.id = id;
         }
 
@@ -90,10 +87,6 @@ public class Calendar {
 
         public LocalDateTime getStart() {
             return start;
-        }
-
-        public long getDuration() {
-            return duration;
         }
 
         public String getId() {
@@ -112,17 +105,12 @@ public class Calendar {
             this.start = start;
         }
 
-        public void setDuration(long duration) {
-            this.duration = duration;
-        }
-
         public static boolean putEventStringsInData(Map<String, String> event, Map<String, Object> data) {
             data.put("title", event.get("title"));
             data.put("description", event.get("desc"));
             try {
                 TemporalAccessor start = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm").parse(event.get("date"));
                 data.put("start", LocalDateTime.from(start).toEpochSecond(ZoneOffset.UTC));
-                data.put("duration", Integer.parseInt(Objects.requireNonNull(event.get("duration"))));
             } catch(Exception e) {
                 return true;
             }
@@ -135,13 +123,12 @@ public class Calendar {
             Event event = (Event) oEvent;
             return ((this.title.equals(event.title)) &&
                     (this.description.equals(event.description)) &&
-                    (this.start.equals(event.start)) &&
-                    (this.duration == event.duration));
+                    (this.start.equals(event.start)));
         }
 
         @Override
         public int hashCode() {
-            return Objects.hash(title, description, start, duration);
+            return Objects.hash(title, description, start);
         }
 
         @Override

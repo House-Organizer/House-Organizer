@@ -4,14 +4,12 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.ViewTreeObserver;
 
-import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.github.houseorganizer.houseorganizer.R;
 import com.github.houseorganizer.houseorganizer.billsharer.Billsharer;
 import com.github.houseorganizer.houseorganizer.billsharer.ExpenseAdapter;
 import com.github.houseorganizer.houseorganizer.panels.billsharer.BalanceActivity;
-import com.github.houseorganizer.houseorganizer.storage.LocalStorage;
 import com.github.houseorganizer.houseorganizer.util.Util;
 import com.github.houseorganizer.houseorganizer.util.interfaces.RecyclerViewIdlingCallback;
 import com.github.houseorganizer.houseorganizer.util.interfaces.RecyclerViewLayoutCompleteListener;

@@ -33,7 +33,6 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 
 
@@ -140,7 +139,7 @@ public class UpcomingAdapter extends CalendarAdapter {
         attachmentMenu.getMenuInflater().inflate(R.menu.event_attachment_menu, attachmentMenu.getMenu());
         attachmentMenu.setOnMenuItemClickListener(menuItem -> {
             StorageReference attachment = storage.getReference().child("event_" + eventId);
-            switch(menuItem.getTitle().toString()) {
+            switch(menuItem.getTitleCondensed().toString()) {
                 case "Attach":
                     eventToAttach = eventId;
                     getPicture.launch("image/*");
@@ -151,7 +150,7 @@ public class UpcomingAdapter extends CalendarAdapter {
                             ImageHelper.showImagePopup(task.getResult(), ctx);
                         }
                         else {
-                            Toast.makeText(ctx, "Could not find the attachment", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(ctx, ctx.getString(R.string.no_attachment), Toast.LENGTH_SHORT).show();
                         }
                     });
                     break;
@@ -212,8 +211,8 @@ public class UpcomingAdapter extends CalendarAdapter {
         @SuppressLint("InflateParams") View retView = inflater.inflate(R.layout.event_creation, null);
         ((EditText) retView.findViewById(R.id.new_event_title)).setText(event.getTitle());
         ((EditText) retView.findViewById(R.id.new_event_desc)).setText(event.getDescription());
-        ((EditText) retView.findViewById(R.id.new_event_date)).setText(event.getStart().format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm")));
-        ((EditText) retView.findViewById(R.id.new_event_duration)).setText(String.format(Locale.getDefault(), "%d", event.getDuration()));
+        ((TextView) retView.findViewById(R.id.new_event_picked_date)).setText(event.getStart().format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm")));
+        retView.findViewById(R.id.new_event_date).setOnClickListener(v -> showDateTimePicker(ctx, v, event.getStart()));
         return retView;
     }
 
@@ -222,13 +221,11 @@ public class UpcomingAdapter extends CalendarAdapter {
         Map<String, Object> data = new HashMap<>();
         final String title = ((EditText) dialogView.findViewById(R.id.new_event_title)).getText().toString();
         final String desc = ((EditText) dialogView.findViewById(R.id.new_event_desc)).getText().toString();
-        final String date = ((EditText) dialogView.findViewById(R.id.new_event_date)).getText().toString();
-        final String duration = ((EditText) dialogView.findViewById(R.id.new_event_duration)).getText().toString();
+        final String date = ((TextView) dialogView.findViewById(R.id.new_event_picked_date)).getText().toString();
         eventObj.setTitle(title);
         eventObj.setDescription(desc);
         try {
             eventObj.setStart(LocalDateTime.parse(date, DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm")));
-            eventObj.setDuration(Integer.parseInt(duration));
         } catch(Exception e) {
             return;
         }
@@ -236,7 +233,6 @@ public class UpcomingAdapter extends CalendarAdapter {
         event.put("title", title);
         event.put("desc", desc);
         event.put("date", date);
-        event.put("duration", duration);
         if (putEventStringsInData(event, data)) {
             return;
         }

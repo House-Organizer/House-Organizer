@@ -4,12 +4,10 @@ import static android.content.Context.MODE_PRIVATE;
 
 import android.app.Activity;
 import android.content.Context;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.util.Log;
-import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -18,8 +16,6 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.github.houseorganizer.houseorganizer.R;
 import com.github.houseorganizer.houseorganizer.billsharer.Debt;
-import com.github.houseorganizer.houseorganizer.panels.offline.OfflineScreenActivity;
-
 import com.github.houseorganizer.houseorganizer.storage.LocalStorage;
 import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;

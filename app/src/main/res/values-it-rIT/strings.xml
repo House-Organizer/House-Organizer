@@ -61,8 +61,6 @@
     <string name="event_creation_title">Aggiungere un evento</string>
     <string name="description">Descrizione</string>
     <string name="title">Titolo</string>
-    <string name="duration">Durata (in minuti)</string>
-    <string name="date">Data (gg/MM/aaaa HH:mm)</string>
     <string name="add_event">Aggiungere</string>
     <string name="cancel">Annullare</string>
     <string name="delete">Cancellare</string>
@@ -97,7 +95,7 @@
     <string name="groceries">Generi alimentari</string>
     <string name="tasks">Compiti</string>
     <string name="calendar">Calendario</string>
-    <string name="add_an_event">Add an event</string>
+    <string name="add_an_event">Aggiungere un evento</string>
     <string name="cycle_view">Cambia vista</string>
     <string name="add_subtask">Aggiungere un sottocompito</string>
     <string name="task_completion_title">Bravo!</string>
@@ -140,4 +138,6 @@
     <string name="specify_shares">TODO</string>
     <string name="new_expense">TODO</string>
     <string name="adds_up_to_total">TODO</string>
+    <string name="pick_a_date_and_time">Scegliere una data e un orario</string>
+    <string name="no_attachment">Impossibile trovare l\'allegato</string>
 </resources>
