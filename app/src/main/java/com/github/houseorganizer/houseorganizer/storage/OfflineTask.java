@@ -1,10 +1,6 @@
 package com.github.houseorganizer.houseorganizer.storage;
 
-import androidx.annotation.AttrRes;
-import androidx.annotation.ColorRes;
 import androidx.annotation.NonNull;
-
-import com.github.houseorganizer.houseorganizer.R;
 
 import java.util.List;
 import java.util.Objects;

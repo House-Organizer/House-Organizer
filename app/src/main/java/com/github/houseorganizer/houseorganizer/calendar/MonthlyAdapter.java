@@ -22,11 +22,20 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
+/**
+ * Class representing a calendar adapter in the monthly view
+ */
 public class MonthlyAdapter extends CalendarAdapter {
 
     private ArrayList<ArrayList<Calendar.Event>> items;
     private YearMonth month;
 
+    /**
+     * Creates a new monthly adapter for a calendar RecyclerView
+     *
+     * @param calendar      The calendar this adapter is for
+     * @param getPicture    The handler for fetching an attachment for an event
+     */
     public MonthlyAdapter(Calendar calendar, ActivityResultLauncher<String> getPicture) {
         super(calendar, getPicture);
     }
@@ -57,9 +66,9 @@ public class MonthlyAdapter extends CalendarAdapter {
         items = ret;
     }
 
-    public static class MonthlyDayViewHolder extends RecyclerView.ViewHolder {
-        public Button titleView;
-        public MonthlyDayViewHolder(View eventView) {
+    private static class MonthlyDayViewHolder extends RecyclerView.ViewHolder {
+        private final Button titleView;
+        private MonthlyDayViewHolder(View eventView) {
             super(eventView);
             titleView = eventView.findViewById(R.id.event_monthly_title);
         }
@@ -102,6 +111,12 @@ public class MonthlyAdapter extends CalendarAdapter {
         }
     }
 
+    /**
+     * Changes the month of the adapter
+     *
+     * @param monthsDifference  By how many months to move (can be negative)
+     * @param yearMonthText     The text view holding the month that needs to be updated
+     */
     @SuppressLint("NotifyDataSetChanged")
     public void moveMonth(int monthsDifference, TextView yearMonthText) {
         month = month.plusMonths(monthsDifference);

@@ -63,7 +63,7 @@
     <string name="title">Titolo</string>
     <string name="duration">Durata (in minuti)</string>
     <string name="date">Data (gg/MM/aaaa HH:mm)</string>
-    <string name="add_event">Aggiungere</string>
+    <string name="add_text">Aggiungere</string>
     <string name="cancel">Annullare</string>
     <string name="delete">Cancellare</string>
     <string name="edit">Modifica</string>

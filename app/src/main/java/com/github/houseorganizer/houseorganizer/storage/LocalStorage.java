@@ -1,7 +1,5 @@
 package com.github.houseorganizer.houseorganizer.storage;
 
-import static com.google.android.gms.tasks.Tasks.await;
-
 import android.content.Context;
 
 import com.github.houseorganizer.houseorganizer.billsharer.Debt;
@@ -9,7 +7,6 @@ import com.github.houseorganizer.houseorganizer.calendar.Calendar;
 import com.github.houseorganizer.houseorganizer.shop.ShopItem;
 import com.github.houseorganizer.houseorganizer.task.HTask;
 import com.google.android.gms.tasks.Task;
-import com.google.android.gms.tasks.Tasks;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -30,7 +27,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
-import java.util.concurrent.ExecutionException;
 
 public class LocalStorage {
 

@@ -95,6 +95,7 @@ public class EditHouseholdActivity extends ThemedAppCompatActivity {
      * @param uri content URI of the household's image
      */
     public void pushImageToHousehold(Uri uri){
+        if (uri == null) return;
         StorageReference imageRef = storage.getReference().child("house_" + householdId);
         imageRef.putFile(uri);
         Toast.makeText(getApplicationContext(), getApplicationContext().getString(R.string.changed_picture), Toast.LENGTH_SHORT).show();
@@ -278,8 +279,8 @@ public class EditHouseholdActivity extends ThemedAppCompatActivity {
     }
 
     /**
-     * Sets generated QR code on the QR dialog
-     * @param view  base class for the showQRCode image button on the edit household activity
+     * Displays a QR code that can be scanned in the app to join this household
+     * @param view The view in which to display the QR code
      */
     public void showInviteQR(View view) {
         Dialog qrDialog = new Dialog(this);
@@ -296,10 +297,10 @@ public class EditHouseholdActivity extends ThemedAppCompatActivity {
     }
 
     /**
-     * Creates QR code for a given household
-     * @param householdId       household from which to create the QR code
-     * @return                  QR code
-     * @throws WriterException
+     * Creates a QR code bitmap for the current household
+     * @param householdId       The id of the household
+     * @return                  The bitmap of the generated QR code
+     * @throws WriterException  If the bitmap could not be created
      */
     public static Bitmap createQRCodeBitmap(String householdId) throws WriterException {
         int length = 800;

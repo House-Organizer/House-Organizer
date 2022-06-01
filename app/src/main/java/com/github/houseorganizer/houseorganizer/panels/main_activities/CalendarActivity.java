@@ -21,6 +21,9 @@ import java.time.YearMonth;
 import java.time.format.DateTimeFormatter;
 import java.util.OptionalInt;
 
+/**
+ * The activity for the calendar
+ */
 public final class CalendarActivity extends NavBarActivity {
 
     private CalendarAdapter calendarAdapter;
@@ -71,7 +74,7 @@ public final class CalendarActivity extends NavBarActivity {
 
     private void setUpViewChange(TextView yearMonth, Button navigateMonthLeft, Button navigateMonthRight) {
         findViewById(R.id.calendar_screen_view_change).setOnClickListener(v -> {
-            calendarAdapter = calendar.rotateCalendarView(this, calendarAdapter, calendarEvents);
+            calendarAdapter = calendar.rotateAdapterView(this, calendarAdapter, calendarEvents);
             calendarAdapter.refreshCalendarView(this, currentHouse, "refreshCalendar:failureToRefresh", calendar.getView() == Calendar.CalendarView.MONTHLY);
             yearMonth.setText(YearMonth.now().format(DateTimeFormatter.ofPattern("LLLL uuuu")));
             yearMonth.setVisibility(calendar.getView() == Calendar.CalendarView.MONTHLY ? View.VISIBLE : View.GONE);
