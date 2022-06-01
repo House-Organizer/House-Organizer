@@ -231,7 +231,7 @@ public class CalendarViewTest {
         onView(withText(R.string.ok)).perform(click());
         onView(withClassName(Matchers.equalTo(TimePicker.class.getName()))).perform(PickerActions.setTime(10, 10));
         onView(withText(R.string.ok)).perform(click());
-        onView(withText(R.string.add_event)).perform(click());
+        onView(withText(R.string.add_text)).perform(click());
         Thread.sleep(1000);
         // Count is 2*EVENTS_TO_DISPLAY because we removed one event and added one
         // and because there is one delimiter per event
