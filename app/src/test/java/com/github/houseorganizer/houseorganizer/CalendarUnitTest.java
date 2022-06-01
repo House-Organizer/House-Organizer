@@ -120,11 +120,9 @@ public class CalendarUnitTest {
         Event event3 = new Event("title", "des", LocalDateTime.of(LocalDate.of(2000, 1, 1), LocalTime.NOON), TEST_ID);
         Event event4 = new Event("title", "desc", LocalDateTime.of(LocalDate.of(2001, 1, 1), LocalTime.NOON), TEST_ID);
         Event event5 = new Event("title", "desc", LocalDateTime.of(LocalDate.of(2000, 1, 1), LocalTime.of(10, 10, 10)), TEST_ID);
-        Event event6 = new Event("title", "desc", LocalDateTime.of(LocalDate.of(2000, 1, 1), LocalTime.NOON), TEST_ID);
         assertNotEquals(event1, event2);
         assertNotEquals(event1, event3);
         assertNotEquals(event1, event4);
         assertNotEquals(event1, event5);
-        assertNotEquals(event1, event6);
     }
 }

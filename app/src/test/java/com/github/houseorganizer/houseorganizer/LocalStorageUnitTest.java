@@ -30,7 +30,6 @@ public class LocalStorageUnitTest {
                 "title='" + "title" + '\'' +
                 ", description='" + "description" + '\'' +
                 ", start='" + "start" + '\'' +
-                ", duration='" + 1 + '\'' +
                 ", id='" + "id" + '\'' +
                 '}', event.toString());
     }
