@@ -35,6 +35,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * Class representing any adapter linked to a calendar
+ */
 public abstract class CalendarAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
     ActivityResultLauncher<String> getPicture;
 
@@ -43,20 +46,34 @@ public abstract class CalendarAdapter extends RecyclerView.Adapter<RecyclerView.
     final FirebaseStorage storage = FirebaseStorage.getInstance();
     final FirebaseFirestore db = FirebaseFirestore.getInstance();
 
+    /**
+     * Creates a new adapter for a calendar RecyclerView
+     *
+     * @param calendar      The calendar this adapter is for
+     * @param getPicture    The handler for fetching an attachment for an event
+     */
     public CalendarAdapter(Calendar calendar, ActivityResultLauncher<String> getPicture) {
         this.calendar = calendar;
         this.getPicture = getPicture;
         generateItems(calendar.getEvents());
     }
 
+    /**
+     * Switches views of the adapter, this creates a new adapter from another subclass
+     *
+     * @return The new adapter from the other view subclass
+     */
     public abstract CalendarAdapter switchView();
 
     abstract void generateItems(List<Calendar.Event> events);
 
-    public Calendar getCalendar() {
-        return calendar;
-    }
-
+    /**
+     * Displays an alert dialog to create a new event on this calendar
+     *
+     * @param ctx           The context of the activity
+     * @param currentHouse  The current house the calendar is linked to
+     * @param errMessage    The message to display in case of an error
+     */
     public void showAddEventDialog(Context ctx, DocumentReference currentHouse, String errMessage) {
         LayoutInflater inflater = LayoutInflater.from(ctx);
         final View dialogView = inflater.inflate(R.layout.event_creation, null);
@@ -64,7 +81,7 @@ public abstract class CalendarAdapter extends RecyclerView.Adapter<RecyclerView.
         new AlertDialog.Builder(ctx)
                 .setTitle(R.string.event_creation_title)
                 .setView(dialogView)
-                .setPositiveButton(R.string.add_event, (dialog, id) -> {
+                .setPositiveButton(R.string.add_text, (dialog, id) -> {
                     Task<DocumentReference> pushTask = pushEventFromDialog(dialogView, currentHouse);
                     if (pushTask != null) {
                             pushTask.addOnSuccessListener(documentReference -> refreshCalendarView(ctx, currentHouse, errMessage, calendar.getView() == Calendar.CalendarView.MONTHLY));
@@ -91,6 +108,14 @@ public abstract class CalendarAdapter extends RecyclerView.Adapter<RecyclerView.
         return db.collection("events").add(data);
     }
 
+    /**
+     * Refreshes the calendar adapter contents using firebase and updates its view
+     *
+     * @param ctx           The context of the activity
+     * @param currentHouse  The current house the calendar is linked to
+     * @param errMessage    The message to display in case of an error
+     * @param withPast      The boolean that decides whether to retrieve past events or not (compared to the current date and time)
+     */
     @SuppressLint("NotifyDataSetChanged")
     public void refreshCalendarView(Context ctx, DocumentReference currentHouse, String errMessage, boolean withPast) {
         long timeThreshold = withPast ? LocalDateTime.MIN.toEpochSecond(ZoneOffset.UTC) : LocalDateTime.now().toEpochSecond(ZoneOffset.UTC);
@@ -130,7 +155,13 @@ public abstract class CalendarAdapter extends RecyclerView.Adapter<RecyclerView.
         }, base.getYear(), base.getMonthValue(), base.getDayOfMonth()).show();
     }
 
+    /**
+     * Uploads an attachment to firebase storage
+     *
+     * @param uri The uri of the attachment to upload
+     */
     public void pushAttachment(Uri uri) {
+        if (uri == null) return;
         // Store the image on firebase storage
         FirebaseStorage storage = FirebaseStorage.getInstance();
         // this creates the reference to the picture

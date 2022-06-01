@@ -65,7 +65,7 @@
     <string name="event_creation_title">Ajouter un évenement</string>
     <string name="description">Description</string>
     <string name="title">Titre</string>
-    <string name="add_event">Ajouter</string>
+    <string name="add_text">Ajouter</string>
     <string name="cancel">Annuler</string>
     <string name="delete">Supprimer</string>
     <string name="edit">Editer</string>

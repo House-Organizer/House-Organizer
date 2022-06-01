@@ -97,7 +97,7 @@
     <string name="event_creation_title">Add an event</string>
     <string name="description">Description</string>
     <string name="title">Title</string>
-    <string name="add_event">Add</string>
+    <string name="add_text">Add</string>
     <string name="cancel">Cancel</string>
     <string name="ok" translatable="false">OK</string>
     <string name="delete">Delete</string>
@@ -186,7 +186,7 @@
     <string name="reminder_message">Don\'t forget your task :</string>
     <string name="notify">Notify</string>
     <string name="show_image">Show image of household</string>
-    
+
     <!-- Offline mode -->
     <string name="go_offline">Go offline</string>
 
