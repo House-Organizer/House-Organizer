@@ -103,7 +103,7 @@ public class MainScreenActivity extends TaskFragmentNavBarActivity {
             }
         });
         if(!loadHouse) loadData();
-        if(loadHouse && LocationHelpers.checkLocationPermission(getApplicationContext(), this)){
+        if(loadHouse && LocationHelpers.checkLocationPermission(this, this)){
             locationPermission = true;
             loadData();
         }
