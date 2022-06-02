@@ -40,6 +40,13 @@ public class LocalStorage {
 
     public static final String OFFLINE_STORAGE_EXTENSION = "_.json";
 
+    /**
+     * This helper function writes text to a file
+     * @param context The context of the app
+     * @param filename The name of the file
+     * @param content The content to write
+     * @return Status on completion
+     */
     public static boolean writeTxtToFile(Context context, String filename, String content) {
         File path = context.getFilesDir();
         try {
@@ -52,6 +59,10 @@ public class LocalStorage {
         }
     }
 
+    /**
+     * Recursively cleans local storage
+     * @param context The context of the app
+     */
     public static void clearOfflineStorage(Context context) {
         File directory = context.getFilesDir();
         if (directory.isDirectory()) {
@@ -69,6 +80,12 @@ public class LocalStorage {
         fileOrDirectory.delete();
     }
 
+    /**
+     * Retrieves text from a file
+     * @param context The context of the app
+     * @param filename The name of the file
+     * @return The content as a string
+     */
     public static String retrieveTxtFromFile(Context context, String filename) {
         try {
             FileInputStream fis = context.openFileInput(filename);
@@ -85,12 +102,24 @@ public class LocalStorage {
         }
     }
 
+    /**
+     * Retrieves the different households
+     * @param context The context of the app
+     * @return A map of household identifier to household name
+     */
     public static HashMap<String, String> retrieveHouseholdsOffline(Context context) {
         String householdsString = retrieveTxtFromFile(context, OFFLINE_STORAGE_HOUSEHOLDS + OFFLINE_STORAGE_EXTENSION);
         Type type = TypeToken.getParameterized(HashMap.class, String.class, String.class).getType();
         return new Gson().fromJson(householdsString, type);
     }
 
+    /**
+     * Push the households offline
+     * @param context The context of the app
+     * @param db The database instance
+     * @param mUser The user instance
+     * @return An asynchronous task of the query
+     */
     // Can't use Task::await on main application thread
     public static Task<QuerySnapshot> pushHouseholdsOffline(Context context, FirebaseFirestore db, FirebaseUser mUser) {
         Task<QuerySnapshot> householdsTasks = db.collection("households").whereArrayContains("residents",
@@ -139,6 +168,13 @@ public class LocalStorage {
         return mapToFill;
     }
 
+    /**
+     * Pushes events offline
+     * @param context The context of the app
+     * @param currentHouseId Id of the household
+     * @param events List of events
+     * @return Status of the task
+     */
     public static boolean pushEventsOffline(Context context, String currentHouseId, List<Calendar.Event> events) {
         ArrayList<OfflineEvent> offlineEvents = new ArrayList<>();
         for (Calendar.Event event : events) {
@@ -156,6 +192,13 @@ public class LocalStorage {
                 new Gson().toJson(offlineEvents, type));
     }
 
+    /**
+     * Pushes groceries offline
+     * @param context The context of the app
+     * @param currentHouseId The id of the household
+     * @param items The list of shopItems
+     * @return The status of the task
+     */
     public static boolean pushGroceriesOffline(Context context, String currentHouseId, List<ShopItem> items) {
         ArrayList<OfflineShopItem> offlineShopItems = new ArrayList<>();
         for (ShopItem item : items) {
@@ -174,6 +217,13 @@ public class LocalStorage {
                 new Gson().toJson(offlineShopItems, type));
     }
 
+    /**
+     * Pushes tasks offline
+     * @param context The context of the app
+     * @param currentHouseId The id of the household
+     * @param tasks The list of tasks
+     * @return The status of the task
+     */
     public static boolean pushTaskListOffline(Context context, String currentHouseId, List<HTask> tasks) {
         ArrayList<OfflineTask> offlineTasks = new ArrayList<>();
         for (HTask task : tasks) {
@@ -190,6 +240,13 @@ public class LocalStorage {
                 new Gson().toJson(offlineTasks, type));
     }
 
+    /**
+     * Pushes debts offline
+     * @param context The context of the app
+     * @param currentHouseId The id of the household
+     * @param debts The list of debts
+     * @return The status of the task
+     */
     public static boolean pushDebtsOffline(Context context, String currentHouseId, List<Debt> debts) {
         ArrayList<OfflineDebt> offlineDebts = new ArrayList<>();
         for (Debt debt : debts) {
@@ -203,6 +260,4 @@ public class LocalStorage {
         return writeTxtToFile(context, OFFLINE_STORAGE_DEBTS + house_id + OFFLINE_STORAGE_EXTENSION,
                 new Gson().toJson(offlineDebts, type));
     }
-
-
 }

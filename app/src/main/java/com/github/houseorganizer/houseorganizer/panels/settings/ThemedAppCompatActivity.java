@@ -18,6 +18,8 @@ public class ThemedAppCompatActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        //This next bit changes the languages of the app
         sp = PreferenceManager.getDefaultSharedPreferences(this);
         setTheme(getCurrentTheme());
         Configuration config = getBaseContext().getResources().getConfiguration();

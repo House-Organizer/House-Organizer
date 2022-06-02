@@ -126,11 +126,19 @@ public class CreateHouseholdActivity extends ThemedAppCompatActivity {
         };
     }
 
+    /**
+     * Sends the user to the QRCodeScanActivity
+     * @param view The button
+     */
     public void goToQRScan(View view){
         Intent intent = new Intent(this, QRCodeScanActivity.class);
         startActivity(intent);
     }
 
+    /**
+     * Creates a household by fetching name and address from fields on the screen
+     * @param view The button
+     */
     public void createHouseholdButtonPressed(View view){
         TextView houseHoldNameView = findViewById(R.id.editTextHouseholdName);
         TextView addressView = findViewById(R.id.editTextAddress);
@@ -149,6 +157,12 @@ public class CreateHouseholdActivity extends ThemedAppCompatActivity {
         }else displayMapDialog(view, loc, houseName);
     }
 
+    /**
+     * Creates a household on firestore with the given name and location
+     * @param view Button
+     * @param houseName Name of the house
+     * @param location Location of the house
+     */
     public void submitHouseholdToFirestore(View view, String houseName, Location location){
 
         Map<String, Object> houseHold = createHousehold(houseName,
@@ -181,6 +195,13 @@ public class CreateHouseholdActivity extends ThemedAppCompatActivity {
         startActivity(intent);
     }
 
+    /**
+     * Creates a household as a map of String to Object
+     * @param houseHoldName Name of the house
+     * @param lat Latitude of the house
+     * @param lon Longitude of the house
+     * @return A map representation of the household
+     */
     private Map<String, Object> createHousehold(CharSequence houseHoldName, double lat, double lon) {
         Map<String, Object> houseHold = new HashMap<>();
         List<String> residents = new ArrayList<>();
