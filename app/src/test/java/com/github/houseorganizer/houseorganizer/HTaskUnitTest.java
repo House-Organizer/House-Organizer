@@ -76,7 +76,7 @@ public class HTaskUnitTest {
         HTask t = new HTask("Task 1", "stub description");
 
         t.assignTo(NOBODY);
-        t.removeAssigneeAt(0);
+        t.getAssignees().remove(0);
         assertFalse(t.hasAssignees());
     }
 
@@ -124,23 +124,6 @@ public class HTaskUnitTest {
 
         t.removeSubTask(0);
         assertFalse(t.hasSubTasks());
-    }
-
-    @Test
-    public void taskCanInsertSubTasksAtGivenIndex() {
-        HTask t = new HTask("Task 1", "stub description");
-        HTask.SubTask s = new HTask.SubTask("Subtask 1");
-        HTask.SubTask s2 = new HTask.SubTask("Subtask 2");
-        HTask.SubTask s3 = new HTask.SubTask("Subtask 3");
-
-        t.addSubTask(s);
-        t.addSubTask(0, s2);
-        t.addSubTask(1, s3);
-
-        // order should be: s2, s3, s
-        assertEquals(s2, t.getSubTaskAt(0));
-        assertEquals(s3, t.getSubTaskAt(1));
-        assertEquals(s,  t.getSubTaskAt(2));
     }
 
     @Test

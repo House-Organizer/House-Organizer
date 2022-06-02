@@ -23,11 +23,27 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * RecyclerView Adapter of a task list;
+ *
+ * Shows each HTask as a button displaying its title
+ *
+ * @see RecyclerView.Adapter
+ * @see TaskList
+ */
 public final class TaskListAdapter extends RecyclerView.Adapter<BiViewHolder<Button, Button>> {
     private final TaskList taskList;
     private final DocumentReference metadataDocRef;
     private List<String> memberEmails = new ArrayList<>();
 
+    /**
+     * Creates a TaskListAdapter from the given task list, metadata document,
+     * and the reference of the current house.
+     *
+     * @param taskList: the task list to be adapted
+     * @param metadataDocRef: the metadata document reference for this task list
+     * @param currentHouse: the current house's document reference
+     */
     public TaskListAdapter(TaskList taskList, DocumentReference metadataDocRef, DocumentReference currentHouse) {
         this.taskList       = taskList;
         this.metadataDocRef = metadataDocRef;
@@ -35,6 +51,17 @@ public final class TaskListAdapter extends RecyclerView.Adapter<BiViewHolder<But
         setMemberEmails(currentHouse);
     }
 
+
+    /**
+     * Returns a ViewHolder adapted for a task list.
+     *
+     * @param parent The ViewGroup into which the new View will be
+     *               added after it is bound to an adapter position.
+     * @param viewType The view type of the new View.
+     * @return a ViewHolder adapted for a task list.
+     *
+     * @see RecyclerView.Adapter#onCreateViewHolder(ViewGroup, int)
+     */
     @NonNull
     @Override
     public BiViewHolder<Button, Button> onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -42,6 +69,19 @@ public final class TaskListAdapter extends RecyclerView.Adapter<BiViewHolder<But
                 R.id.task_title, R.id.task_done_button);
     }
 
+    /**
+     * Adds a listener such that, when clicked,
+     * the task button displays an AlertDialog
+     * permitting the user to edit the selected task;
+     *
+     * When the done button is clicked, the selected
+     * task is removed from the task list.
+     *
+     * @param holder: the ViewHolder used for the current task
+     * @param position: the position of the current task UI being bound
+     *
+     * @see RecyclerView.Adapter#onBindViewHolder(RecyclerView.ViewHolder, int)
+     */
     @Override
     public void onBindViewHolder(@NonNull BiViewHolder<Button, Button> holder, int position) {
         Button titleButton = holder.leftView;
@@ -53,7 +93,12 @@ public final class TaskListAdapter extends RecyclerView.Adapter<BiViewHolder<But
         doneButton.setOnClickListener(doneButtonListener(position));
     }
 
-    // TODO move somewhere else [code duplication w/ TaskView for adding a taskPtr
+
+    /**
+     * Creates and returns a View.OnClickListener such that the done button
+     * being clicked leads to the selected task being deleted locally and
+     * from the database.
+     */
     private View.OnClickListener doneButtonListener(int position) {
         return v -> {
             DocumentReference taskDocRef =
@@ -89,7 +134,12 @@ public final class TaskListAdapter extends RecyclerView.Adapter<BiViewHolder<But
         };
     }
 
-    // todo: modify due date
+    /**
+     * Creates and returns a View.OnClickListener such that the title button
+     * being clicked leads to an AlertDialog being displayed, which allows
+     * the user to further interact with a task by changing its title,
+     * description, subtask list or assignee list.
+     */
     @SuppressLint("InflateParams")
     private View.OnClickListener titleButtonListener(int position, Button titleButton) {
         return v -> {
@@ -132,6 +182,11 @@ public final class TaskListAdapter extends RecyclerView.Adapter<BiViewHolder<But
         };
     }
 
+    /**
+     * Creates and returns a View.OnClickListener such that the assignees
+     * of the current task will receive a notification once a click
+     * occurs
+     */
     private View.OnClickListener notifyAssignees(int position) {
         return v -> {
             for (String assignee : taskList.getTaskAt(position).getAssignees()) {
@@ -143,6 +198,11 @@ public final class TaskListAdapter extends RecyclerView.Adapter<BiViewHolder<But
         };
     }
 
+    /**
+     * Creates and returns a View.OnClickListener such that the assignees button
+     * in the main task AlertDialog being clicked leads to a second AlertDialog
+     * allowing the user to modify the assignee list of the current task.
+     */
     private View.OnClickListener assigneeButtonListener(AlertDialog taskEditorDialog, int position)  {
         return v -> {
             taskEditorDialog.dismiss();
@@ -168,11 +228,21 @@ public final class TaskListAdapter extends RecyclerView.Adapter<BiViewHolder<But
         };
     }
 
+    /**
+     * Returns the number of tasks in the represented task list
+     * @return the number of tasks in the represented task list
+     *
+     * @see RecyclerView.Adapter#getItemCount()
+     */
     @Override
     public int getItemCount() {
         return taskList.getTasks().size();
     }
 
+    /**
+     * Retrieves the list of member emails from the DocumentReference of
+     * the current household.
+     */
     private void setMemberEmails(DocumentReference currentHouse) {
         if (currentHouse == null) return;
 
