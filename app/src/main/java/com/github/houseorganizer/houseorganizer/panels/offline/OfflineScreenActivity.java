@@ -46,9 +46,12 @@ public final class OfflineScreenActivity extends ThemedAppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_offline_screen);
 
-        loadData();
-        fixHouseOrder();
-        setUpItemCollectionForHouse(currentHouseId);
+        currentHouseId = getIntent().getStringExtra("hh-id");
+        if (currentHouseId != "") {
+            loadData();
+            fixHouseOrder();
+            setUpItemCollectionForHouse(currentHouseId);
+        }
     }
 
     private void loadData() {
@@ -59,8 +62,6 @@ public final class OfflineScreenActivity extends ThemedAppCompatActivity {
         groceriesMap = LocalStorage.retrieveGroceriesOffline(appCtx);
         tasksMap = LocalStorage.retrieveTaskListOffline(appCtx);
         debtsMap = LocalStorage.retrieveDebtsOffline(appCtx);
-
-        currentHouseId = getIntent().getStringExtra("hh-id");
     }
 
     private void fixHouseOrder() {

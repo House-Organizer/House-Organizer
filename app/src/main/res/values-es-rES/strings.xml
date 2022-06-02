@@ -129,15 +129,15 @@
     <string name="reminder">Recordatorio</string>
     <string name="reminder_message">No olvides tu tarea :</string>
     <string name="notify">Notificar</string>
-    <string name="show_image">TODO</string>
-    <string name="clear_local_storage">TODO</string>
-    <string name="clear_local_storage_success">TODO</string>
+    <string name="show_image">Mostrar imagen de la casa</string>
+    <string name="clear_local_storage">Limpiar el almacén local</string>
+    <string name="clear_local_storage_success">¡Almacén local limpio!</string>
     <string name="edit_item_title">Editar un producto</string>
     <string name="edit_item_button">Editar</string>
     <string name="go_offline">Pasar al modo offline</string>
-    <string name="specify_shares">TODO</string>
-    <string name="new_expense">TODO</string>
-    <string name="adds_up_to_total">TODO</string>
     <string name="pick_a_date_and_time">Elija una fecha y hora</string>
     <string name="no_attachment">No se ha podido encontrar el archivo adjunto</string>
+    <string name="specify_shares">Especificar participaciones</string>
+    <string name="new_expense">Nuevo gasto</string>
+    <string name="adds_up_to_total">El total de participaciones no se ajusta al coste del gasto.</string>
 </resources>

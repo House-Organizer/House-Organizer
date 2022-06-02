@@ -7,6 +7,7 @@ import static android.graphics.ImageFormat.YUV_444_888;
 import androidx.camera.core.ImageAnalysis;
 import androidx.camera.core.ImageProxy;
 
+import com.github.houseorganizer.houseorganizer.util.interfaces.QRListener;
 import com.google.zxing.BinaryBitmap;
 import com.google.zxing.PlanarYUVLuminanceSource;
 import com.google.zxing.Result;
