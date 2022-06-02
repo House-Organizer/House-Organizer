@@ -35,7 +35,7 @@
         app:layout_constraintBottom_toTopOf="@id/nav_bar"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHeight_default="percent"
-        app:layout_constraintHeight_percent=".075"
+        app:layout_constraintHeight_percent=".08"
         app:layout_constraintWidth_default="percent"
         app:layout_constraintWidth_percent=".5" />
 
