@@ -146,7 +146,6 @@ public class LocalStorage {
                     event.getTitle(),
                     event.getDescription(),
                     event.getStart().toString(),
-                    event.getDuration(),
                     event.getId()
             ));
         }

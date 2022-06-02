@@ -76,7 +76,7 @@
         app:layout_constraintBottom_toTopOf="@id/nav_bar"
         app:layout_constraintEnd_toStartOf="@id/calendar_screen_view_change"
         app:layout_constraintHeight_default="percent"
-        app:layout_constraintHeight_percent=".075"
+        app:layout_constraintHeight_percent=".09"
         app:layout_constraintWidth_default="percent"
         app:layout_constraintWidth_percent=".5"/>
 
@@ -89,7 +89,7 @@
         app:layout_constraintBottom_toTopOf="@id/nav_bar"
         app:layout_constraintStart_toEndOf="@id/calendar_screen_add_event"
         app:layout_constraintHeight_default="percent"
-        app:layout_constraintHeight_percent=".075"
+        app:layout_constraintHeight_percent=".09"
         app:layout_constraintWidth_default="percent"
         app:layout_constraintWidth_percent=".5"/>
 

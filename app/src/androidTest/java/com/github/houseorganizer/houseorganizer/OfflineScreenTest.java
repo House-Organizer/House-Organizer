@@ -61,9 +61,9 @@ public class OfflineScreenTest {
 
     private final static List<Calendar.Event> EVENTS =
             Arrays.asList(new Calendar.Event("Movie night", "This week sometime",
-                    LocalDateTime.of(2030, Month.MAY, 21, 20, 20), 100, "0"),
+                    LocalDateTime.of(2030, Month.MAY, 21, 20, 20), "0"),
                     new Calendar.Event("Celine's bday", "We should make cupcakes!",
-                            LocalDateTime.of(2030, Month.MAY, 25, 15, 30), 200, "0"));
+                            LocalDateTime.of(2030, Month.MAY, 25, 15, 30), "0"));
 
     private final static List<Debt> DEBTS =
             Arrays.asList(new Debt("Kim", "Alex", 100),
@@ -89,7 +89,7 @@ public class OfflineScreenTest {
         context.sendBroadcast(new Intent(Intent.ACTION_CLOSE_SYSTEM_DIALOGS));
     }
 
-    private static void pushEverythingOffline() throws ExecutionException, InterruptedException {
+    private static void pushEverythingOffline() {
         Context context =
                 InstrumentationRegistry.getInstrumentation()
                         .getTargetContext()
@@ -190,7 +190,7 @@ public class OfflineScreenTest {
         onView(withText(EVENTS.get(0).getTitle())).perform(click());
 
         Calendar.Event event = EVENTS.get(0);
-        String info = String.format("%s\nOn %s; lasts %s minutes", event.getDescription(), event.getStart().toString(), event.getDuration());
+        String info = String.format("%s\nOn %s", event.getDescription(), event.getStart().toString());
 
         onView(withText(event.getTitle())).inRoot(isDialog()).check(matches(isDisplayed()));
         onView(withText(info)).inRoot(isDialog()).check(matches(isDisplayed()));

@@ -18,39 +18,37 @@ import java.util.Arrays;
 public class LocalStorageUnitTest {
     @Test
     public void offlineEventBuilds(){
-        OfflineEvent event = new OfflineEvent("title", "description", "start", 1, "id");
+        OfflineEvent event = new OfflineEvent("title", "description", "start", "id");
         assertThat(event, is(notNullValue()));
     }
 
     @Test
     public void offlineEventStringIsCorrect(){
-        OfflineEvent event = new OfflineEvent("title", "description", "start", 1, "id");
+        OfflineEvent event = new OfflineEvent("title", "description", "start", "id");
         assertEquals(
                 "OfflineEvent{" +
                 "title='" + "title" + '\'' +
                 ", description='" + "description" + '\'' +
                 ", start='" + "start" + '\'' +
-                ", duration='" + 1 + '\'' +
                 ", id='" + "id" + '\'' +
                 '}', event.toString());
     }
 
     @Test
     public void offlineEventGettersGet(){
-        OfflineEvent event = new OfflineEvent("title", "description", "start", 1, "id");
+        OfflineEvent event = new OfflineEvent("title", "description", "start", "id");
         assertEquals("title", event.getTitle());
         assertEquals("description", event.getDescription());
         assertEquals("start", event.getStart());
-        assertEquals(1, event.getDuration());
         assertEquals("id", event.getId());
     }
 
     @Test
     public void offlineEventMiscMethodsWork() {
-        OfflineEvent event = new OfflineEvent("title", "description", "start", 1, "id");
+        OfflineEvent event = new OfflineEvent("title", "description", "start", "id");
         assertEquals("title", event.title());
-        assertEquals(String.format("%s\nOn %s; lasts %s minutes",
-                event.getDescription(), event.getStart(), event.getDuration()),
+        assertEquals(String.format("%s\nOn %s",
+                event.getDescription(), event.getStart()),
                 event.info());
         assertEquals(1, event.colorRatio(), 0.1);
     }
