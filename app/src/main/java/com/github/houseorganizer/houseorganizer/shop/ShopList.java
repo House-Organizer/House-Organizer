@@ -28,6 +28,9 @@ public class ShopList {
         items.remove(index);
     }
 
+    /**
+     * Remove items from the list with the picked_up to true
+     */
     public void removePickedUpItems(){
         items.removeIf(ShopItem::isPickedUp);
     }
@@ -36,6 +39,10 @@ public class ShopList {
         return items.isEmpty();
     }
 
+    /**
+     * Change the picked-up attribute of the item at index
+     * @param index position of the item to toggle
+     */
     public void toggleItemPickedUp(int index){
         getItemAt(index).togglePickedUp();
     }
@@ -49,7 +56,6 @@ public class ShopList {
     }
 
     //Getters
-
     public int size(){
         return items.size();
     }
