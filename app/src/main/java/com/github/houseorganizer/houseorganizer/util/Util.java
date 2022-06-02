@@ -24,7 +24,7 @@ import com.google.firebase.firestore.QueryDocumentSnapshot;
 import java.util.List;
 
 
-public class Util {
+public final class Util {
 
     //<-------------------¦ Preferences ¦--------------------------------------------------->
 

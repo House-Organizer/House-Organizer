@@ -51,20 +51,32 @@ public final class OfflineEvent extends OfflineItem {
         return id;
     }
 
+    /**
+     * @see OfflineItem#title()
+     */
     @NonNull
     public String title() {
         return title;
     }
 
+    /**
+     * @see OfflineItem#info()
+     */
     @NonNull
     public String info() {
         return String.format("%s\nOn %s; lasts %s minutes", description, start, duration);
     }
 
+    /**
+     * @see OfflineItem#colorRatio() 
+     */
     public float colorRatio() {
         return 1f;
     }
 
+    /**
+     * @see Object#equals(Object)
+     */
     @Override
     public boolean equals(Object o) {
         if (o == null || getClass() != o.getClass()){
@@ -75,6 +87,9 @@ public final class OfflineEvent extends OfflineItem {
         }
     }
 
+    /**
+     * @see Object#hashCode()
+     */
     @Override
     public int hashCode() {
         return Objects.hash(title, description, start, duration, id);
