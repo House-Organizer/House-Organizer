@@ -129,15 +129,15 @@
     <string name="reminder">Promemoria</string>
     <string name="reminder_message">Non dimenticate il vostro compito:</string>
     <string name="notify">Notificare</string>
-    <string name="show_image">TODO</string>
-    <string name="clear_local_storage">TODO</string>
-    <string name="clear_local_storage_success">TODO</string>
+    <string name="show_image">Mostra immagine</string>
+    <string name="clear_local_storage">Cancellare la memoria locale</string>
+    <string name="clear_local_storage_success">Successo</string>
     <string name="edit_item_title">Modifica un articolo</string>
     <string name="edit_item_button">Modifica</string>
     <string name="go_offline">Vai offline</string>
-    <string name="specify_shares">TODO</string>
-    <string name="new_expense">TODO</string>
-    <string name="adds_up_to_total">TODO</string>
+    <string name="specify_shares">Specificare azioni</string>
+    <string name="new_expense">Nuova spesa</string>
+    <string name="adds_up_to_total">La somma non corrisponde al totale</string>
     <string name="pick_a_date_and_time">Scegliere una data e un orario</string>
     <string name="no_attachment">Impossibile trovare l\'allegato</string>
 </resources>
