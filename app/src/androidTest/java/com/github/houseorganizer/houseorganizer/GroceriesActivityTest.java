@@ -86,7 +86,7 @@ public class GroceriesActivityTest {
         onView(withHint(R.string.name)).perform(typeText(name));
         onView(withHint("0")).perform(typeText(""+quantity));
         onView(withHint(R.string.unit)).perform(typeText(unit), closeSoftKeyboard());
-        onView(withText(R.string.add)).perform(click());
+        onView(withText(R.string.add_text)).perform(click());
         Thread.sleep(500);
     }
 

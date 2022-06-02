@@ -21,7 +21,7 @@ import androidx.core.content.ContextCompat;
 
 import com.github.houseorganizer.houseorganizer.R;
 import com.github.houseorganizer.houseorganizer.image.QRAnalyzer;
-import com.github.houseorganizer.houseorganizer.image.QRListener;
+import com.github.houseorganizer.houseorganizer.util.interfaces.QRListener;
 import com.github.houseorganizer.houseorganizer.panels.main_activities.MainScreenActivity;
 import com.github.houseorganizer.houseorganizer.panels.settings.ThemedAppCompatActivity;
 import com.github.houseorganizer.houseorganizer.util.EspressoIdlingResource;

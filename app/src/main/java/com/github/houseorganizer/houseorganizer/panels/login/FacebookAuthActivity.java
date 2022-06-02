@@ -1,12 +1,11 @@
 package com.github.houseorganizer.houseorganizer.panels.login;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.Toast;
+
+import androidx.annotation.NonNull;
 
 import com.facebook.AccessToken;
 import com.facebook.CallbackManager;
@@ -23,8 +22,6 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FacebookAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.auth.User;
 
 import java.util.Arrays;
 
@@ -60,6 +57,10 @@ public class FacebookAuthActivity extends LoginActivity {
         });
     }
 
+    /**
+     * Implements facebook sign in with firebase
+     * @param token access token for facebook
+     */
     private void handleFacebookAccessToken(AccessToken token) {
         Log.d(getString(R.string.tag_login_activity), "handleFacebookAccessToken:" + token);
 
@@ -92,6 +93,10 @@ public class FacebookAuthActivity extends LoginActivity {
         mCallbackManager.onActivityResult(requestCode, resultCode, data);
     }
 
+    /**
+     * Sends the logged in user to the main screen activity
+     * @param user  firebase user that was logged in
+     */
     private void updateUI(FirebaseUser user) {
         Intent intent = new Intent(FacebookAuthActivity.this, MainScreenActivity.class);
         intent.putExtra("LoadHouse", true);
