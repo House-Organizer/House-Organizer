@@ -11,11 +11,9 @@ tools:context=".panels.login.LoginActivity">
     android:id="@+id/google_sign_in_button"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    app:layout_constraintBottom_toBottomOf="parent"
+    app:layout_constraintBottom_toTopOf="@id/discoverButton"
     app:layout_constraintEnd_toEndOf="parent"
-    app:layout_constraintStart_toStartOf="parent"
-    app:layout_constraintTop_toTopOf="parent"
-    app:layout_constraintVertical_bias="0.846" />
+    app:layout_constraintStart_toStartOf="parent" />
 
 <TextView
     android:id="@+id/loginStatus"
@@ -33,8 +31,6 @@ tools:context=".panels.login.LoginActivity">
     android:layout_width="264dp"
     android:layout_height="64dp"
     android:layout_gravity="center"
-    android:layout_marginStart="76dp"
-    android:layout_marginEnd="71dp"
     android:adjustViewBounds="true"
     android:backgroundTint="#02673AB7"
     android:contentDescription="@string/info_facebook_button"
@@ -42,25 +38,23 @@ tools:context=".panels.login.LoginActivity">
     app:layout_constraintBottom_toTopOf="@+id/google_sign_in_button"
     app:layout_constraintEnd_toEndOf="parent"
     app:layout_constraintStart_toStartOf="parent"
-    app:layout_constraintTop_toBottomOf="@+id/email_signin_button"
     app:srcCompat="@drawable/facebook_log_in_button" />
 
 <TextView
     android:id="@+id/discoverButton"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:layout_marginStart="176dp"
-    android:layout_marginTop="16dp"
     android:text="@string/discoverButton"
     android:textColor="@color/purple_700"
+    android:layout_marginBottom="50dp"
     app:layout_constraintStart_toStartOf="parent"
-    app:layout_constraintTop_toBottomOf="@+id/google_sign_in_button" />
+    app:layout_constraintEnd_toEndOf="parent"
+    app:layout_constraintBottom_toBottomOf="parent" />
 
 <TextView
     android:id="@+id/appNameText"
     android:layout_width="262dp"
     android:layout_height="94dp"
-    android:layout_marginStart="76dp"
     android:layout_marginTop="180dp"
     android:fontFamily="@font/aldrich"
     android:gravity="center"
@@ -68,30 +62,29 @@ tools:context=".panels.login.LoginActivity">
     android:textColor="@color/purple_500"
     android:textSize="34sp"
     app:layout_constraintStart_toStartOf="parent"
+    app:layout_constraintEnd_toEndOf="parent"
     app:layout_constraintTop_toTopOf="parent" />
 
 <TextView
     android:id="@+id/appDescriptionText"
-    android:layout_width="wrap_content"
+    android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginStart="64dp"
     android:layout_marginTop="28dp"
+    android:gravity="center_horizontal"
     android:text="@string/appDescription"
     android:textColor="@color/purple_700"
     app:layout_constraintStart_toStartOf="parent"
-    app:layout_constraintTop_toBottomOf="@+id/appNameText" />
+    app:layout_constraintTop_toBottomOf="@+id/appNameText"
+    app:layout_constraintEnd_toEndOf="parent"/>
 
     <Button
         android:id="@+id/email_signin_button"
-        android:layout_width="wrap_content"
+        android:layout_width="240dp"
         android:layout_height="wrap_content"
         android:text="@string/sign_in_with_email"
-        android:textColor="#000000"
-        app:layout_constraintBottom_toTopOf="@+id/google_sign_in_button"
+        app:layout_constraintBottom_toTopOf="@+id/facebookLogInButton"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/appDescriptionText"
-        app:layout_constraintVertical_bias="0.589" />
+        app:layout_constraintStart_toStartOf="parent" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
