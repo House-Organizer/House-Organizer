@@ -97,7 +97,7 @@
     <string name="title">Title</string>
     <string name="duration">Duration (in minutes)</string>
     <string name="date">Date (dd/MM/yyyy HH:mm)</string>
-    <string name="add_event">Add</string>
+    <string name="add_text">Add</string>
     <string name="cancel">Cancel</string>
     <string name="ok" translatable="false">OK</string>
     <string name="delete">Delete</string>

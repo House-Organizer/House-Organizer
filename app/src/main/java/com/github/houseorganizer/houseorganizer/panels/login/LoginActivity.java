@@ -136,6 +136,13 @@ public class LoginActivity extends AppCompatActivity {
                                 finish();
                             });
                 }
+                else {
+                    Log.d(getString(R.string.tag_login_activity), func + ":success");
+                    Intent intent = new Intent(LoginActivity.this, MainScreenActivity.class);
+                    intent.putExtra("LoadHouse", true);
+                    startActivity(intent);
+                    finish();
+                }
             });
     }
 

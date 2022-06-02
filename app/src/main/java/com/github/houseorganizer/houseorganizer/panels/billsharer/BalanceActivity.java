@@ -3,7 +3,6 @@ package com.github.houseorganizer.houseorganizer.panels.billsharer;
 import android.content.Intent;
 import android.os.Bundle;
 
-import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.github.houseorganizer.houseorganizer.R;
@@ -12,7 +11,6 @@ import com.github.houseorganizer.houseorganizer.billsharer.DebtAdapter;
 import com.github.houseorganizer.houseorganizer.panels.main_activities.ExpenseActivity;
 import com.github.houseorganizer.houseorganizer.panels.main_activities.NavBarActivity;
 import com.github.houseorganizer.houseorganizer.storage.LocalStorage;
-import com.github.houseorganizer.houseorganizer.panels.main_activities.OnSwipeTouchListener;
 import com.github.houseorganizer.houseorganizer.util.Util;
 import com.google.firebase.firestore.FirebaseFirestore;
 
@@ -39,7 +37,7 @@ public class BalanceActivity extends NavBarActivity {
             LocalStorage.pushDebtsOffline(getApplicationContext(), currentHouse.getId(), bs.getDebts());
         });
         findViewById(R.id.balance_expenses).setOnClickListener(l -> {
-            Intent intent = new Intent(BalanceActivity.this, ExpenseActivity.class);
+            Intent intent = new Intent(this, ExpenseActivity.class);
             intent.putExtra("house", currentHouse.getId());
             startActivity(intent);
         });
@@ -70,6 +68,4 @@ public class BalanceActivity extends NavBarActivity {
     protected CurrentActivity currentActivity() {
         return CurrentActivity.BALANCE;
     }
-
-
 }

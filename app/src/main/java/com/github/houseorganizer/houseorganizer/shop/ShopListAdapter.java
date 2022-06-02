@@ -155,7 +155,7 @@ public class ShopListAdapter extends RecyclerView.Adapter<ShopListAdapter.ItemsH
         new AlertDialog.Builder(parent)
                 .setTitle(R.string.add_item_title)
                 .setView(dialogView)
-                .setPositiveButton(R.string.add, (dialog, id) -> retrieveItemFromDialog(shopList, dialogView, -1))
+                .setPositiveButton(R.string.add_text, (dialog, id) -> retrieveItemFromDialog(shopList, dialogView, -1))
                 .setNegativeButton(R.string.cancel, (dialog, id) -> dialog.dismiss())
                 .show();
     }
