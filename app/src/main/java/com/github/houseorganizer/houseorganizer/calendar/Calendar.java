@@ -93,27 +93,23 @@ public class Calendar {
         private  String title;
         private String description;
         private LocalDateTime start;
-        // Duration of the event in minutes
-        private long duration;
         private final String id;
 
         /**
-         * Creates an event with a title, description, start time duration and id
+         * Creates an event with a title, description, start time and id
          *
          * @param title         The title of the event
          * @param description   The description of the event
          * @param start         The start date and time of the event
-         * @param duration      The duration in minutes of the event
          * @param id            The id of the event on firebase
          */
-        public Event(String title, String description, LocalDateTime start, long duration, String id) {
+        public Event(String title, String description, LocalDateTime start, String id) {
             requireNonNull(title);
             requireNonNull(start);
             requireNonNull(id);
             this.title = title;
             this.description = (description == null) ? "" : description;
             this.start = start;
-            this.duration = duration;
             this.id = id;
         }
 
@@ -144,20 +140,6 @@ public class Calendar {
             return start;
         }
 
-        /**
-         * Getter for the duration
-         *
-         * @return The duration in minutes of the event
-         */
-        public long getDuration() {
-            return duration;
-        }
-
-        /**
-         * Getter for the id
-         *
-         * @return The id of the event on firebase
-         */
         public String getId() {
             return id;
         }
@@ -189,23 +171,12 @@ public class Calendar {
             this.start = start;
         }
 
-        /**
-         * Setter for the duration
-         *
-         * @param duration The new duration in minutes of this event
-         */
-        void setDuration(long duration) {
-            this.duration = duration;
-        }
-
-
         static boolean putEventStringsInData(Map<String, String> event, Map<String, Object> data) {
             data.put("title", event.get("title"));
             data.put("description", event.get("desc"));
             try {
                 TemporalAccessor start = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm").parse(event.get("date"));
                 data.put("start", LocalDateTime.from(start).toEpochSecond(ZoneOffset.UTC));
-                data.put("duration", Integer.parseInt(Objects.requireNonNull(event.get("duration"))));
             } catch(Exception e) {
                 return true;
             }
@@ -218,13 +189,12 @@ public class Calendar {
             Event event = (Event) oEvent;
             return ((this.title.equals(event.title)) &&
                     (this.description.equals(event.description)) &&
-                    (this.start.equals(event.start)) &&
-                    (this.duration == event.duration));
+                    (this.start.equals(event.start)));
         }
 
         @Override
         public int hashCode() {
-            return Objects.hash(title, description, start, duration);
+            return Objects.hash(title, description, start);
         }
 
         @Override

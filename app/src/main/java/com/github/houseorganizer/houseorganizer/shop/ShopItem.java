@@ -17,6 +17,10 @@ public class ShopItem {
     }
 
     //Setters
+
+    /**
+     * Changes the picked_up attribute to its inverse
+     */
     public void togglePickedUp(){
         this.isPickedUp = !this.isPickedUp;
     }

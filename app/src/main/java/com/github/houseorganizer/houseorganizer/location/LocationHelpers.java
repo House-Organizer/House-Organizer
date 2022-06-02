@@ -18,6 +18,12 @@ public class LocationHelpers {
 
     public static final int PERMISSION_FINE_LOCATION = 99;
 
+    /**
+     * Computes the closest house from a QuerySnapshot of houses
+     * @param households a querySnapshot of houses on Firestore
+     * @param location the current location of the user
+     * @return the closest house
+     */
     public static DocumentSnapshot getClosestHouse(QuerySnapshot households, Location location){
 
         double closest = Double.MAX_VALUE;
@@ -35,6 +41,12 @@ public class LocationHelpers {
         return closestHouse;
     }
 
+    /**
+     * Check that location permissions are set and if not displays a pop-up to ask them
+     * @param context current context
+     * @param activity current Activity
+     * @return true if permission was granted before
+     */
     public static boolean checkLocationPermission(Context context, Activity activity) {
         if (ContextCompat.checkSelfPermission(context,
                 Manifest.permission.ACCESS_FINE_LOCATION)

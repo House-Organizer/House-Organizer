@@ -6,7 +6,7 @@
         <entry key="app/src/main/res/drawable-v24/ic_launcher_foreground.xml" value="0.2255" />
         <entry key="app/src/main/res/drawable/ic_launcher_background.xml" value="0.2255" />
         <entry key="app/src/main/res/layout/activity_add_expense.xml" value="0.35625" />
-        <entry key="app/src/main/res/layout/activity_balance.xml" value="0.33" />
+        <entry key="app/src/main/res/layout/activity_balance.xml" value="0.1798780487804878" />
         <entry key="app/src/main/res/layout/activity_billsharer.xml" value="0.33" />
         <entry key="app/src/main/res/layout/activity_create_household.xml" value="0.1" />
         <entry key="app/src/main/res/layout/activity_dialog_expense.xml" value="0.33" />

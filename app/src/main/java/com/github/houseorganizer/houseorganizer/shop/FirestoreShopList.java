@@ -20,11 +20,6 @@ public class FirestoreShopList extends ShopList {
         this.household = household;
     }
 
-    public FirestoreShopList(DocumentReference household, DocumentReference onlineReference) {
-        this.household = household;
-        this.onlineReference = onlineReference;
-    }
-
     public FirestoreShopList(DocumentReference household, DocumentReference onlineReference, List<ShopItem> items) {
         super(items);
 
@@ -46,6 +41,10 @@ public class FirestoreShopList extends ShopList {
         onlineReference = docRef;
     }
 
+    /**
+     * Setting the reference to the household with this FirestoreShopList
+     * @param household the household Firestore reference
+     */
     public void setHousehold(DocumentReference household) {
         this.household = household;
     }
@@ -80,6 +79,10 @@ public class FirestoreShopList extends ShopList {
         updateItems();
     }
 
+    /**
+     * Upload local changes to Firestore
+     * @return the Task<Void> completed when the items are uploaded
+     */
     public Task<Void> updateItems() {
         if(household == null || onlineReference == null)
             return Tasks.forCanceled();
@@ -105,6 +108,10 @@ public class FirestoreShopList extends ShopList {
         return items;
     }
 
+    /**
+     * Refresh the local list with potential remote changes
+     * @return the snapshot of the document but the list is updated when the task completes
+     */
     public Task<DocumentSnapshot> refreshItems() {
         if(onlineReference == null)
             return Tasks.forCanceled();
@@ -146,6 +153,12 @@ public class FirestoreShopList extends ShopList {
         return shopListRoot.add(map);
     }
 
+    /**
+     * Retrieves a shoplist associated with the referenced house
+     * @param shopListRoot root directory of shop lists
+     * @param household household Firestore reference
+     * @return a Task with the FirestoreShopList when completed
+     */
     public static Task<FirestoreShopList> retrieveShopList(CollectionReference shopListRoot, DocumentReference household) {
         return shopListRoot.whereEqualTo("household", household).get().continueWith( t -> {
             List<DocumentSnapshot> res = t.getResult().getDocuments();
@@ -158,6 +171,11 @@ public class FirestoreShopList extends ShopList {
         });
     }
 
+    /**
+     * Builds the FirestoreShopList using a snapshot of it
+     * @param documentSnapshot snapshot of the list on Firestore
+     * @return the newly built FirestoreShopList
+     */
     public static FirestoreShopList buildShopList(DocumentSnapshot documentSnapshot) {
         if(documentSnapshot == null)
             return null;

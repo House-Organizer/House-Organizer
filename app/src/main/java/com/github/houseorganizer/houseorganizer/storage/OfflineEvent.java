@@ -8,14 +8,12 @@ public final class OfflineEvent extends OfflineItem {
     private final String title;
     private final String description;
     private final String start;
-    private final long duration;
     private final String id;
 
-    public OfflineEvent(String title, String description, String start, long duration, String id) {
+    public OfflineEvent(String title, String description, String start, String id) {
         this.title = title;
         this.description = description;
         this.start = start;
-        this.duration = duration;
         this.id = id;
     }
 
@@ -26,7 +24,6 @@ public final class OfflineEvent extends OfflineItem {
                 "title='" + title + '\'' +
                 ", description='" + description + '\'' +
                 ", start='" + start + '\'' +
-                ", duration='" + duration + '\'' +
                 ", id='" + id + '\'' +
                 '}';
     }
@@ -43,10 +40,6 @@ public final class OfflineEvent extends OfflineItem {
         return start;
     }
 
-    public long getDuration() {
-        return duration;
-    }
-
     public String getId() {
         return id;
     }
@@ -58,7 +51,7 @@ public final class OfflineEvent extends OfflineItem {
 
     @NonNull
     public String info() {
-        return String.format("%s\nOn %s; lasts %s minutes", description, start, duration);
+        return String.format("%s\nOn %s", description, start);
     }
 
     public float colorRatio() {
@@ -71,12 +64,12 @@ public final class OfflineEvent extends OfflineItem {
             return false;
         } else {
             OfflineEvent that = (OfflineEvent) o;
-            return duration == that.duration && Objects.equals(title, that.title) && Objects.equals(description, that.description) && Objects.equals(start, that.start) && Objects.equals(id, that.id);
+            return Objects.equals(title, that.title) && Objects.equals(description, that.description) && Objects.equals(start, that.start) && Objects.equals(id, that.id);
         }
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(title, description, start, duration, id);
+        return Objects.hash(title, description, start, id);
     }
 }
