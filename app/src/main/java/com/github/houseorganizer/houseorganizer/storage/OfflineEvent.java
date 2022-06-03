@@ -4,6 +4,12 @@ import androidx.annotation.NonNull;
 
 import java.util.Objects;
 
+/**
+ * Represents an offline event, which has a title,
+ * description, start, duration, and id.
+ *
+ * @see OfflineItem
+ */
 public final class OfflineEvent extends OfflineItem {
     private final String title;
     private final String description;
@@ -11,6 +17,16 @@ public final class OfflineEvent extends OfflineItem {
     private final long duration;
     private final String id;
 
+    /**
+     * Creates an OfflineEvent with the given title, description, start,
+     * duration, and id
+     *
+     * @param title the title of the event
+     * @param description the description of the event
+     * @param start the start of the event
+     * @param duration the duration of the event
+     * @param id the ID of the event
+     */
     public OfflineEvent(String title, String description, String start, long duration, String id) {
         this.title = title;
         this.description = description;
@@ -19,6 +35,14 @@ public final class OfflineEvent extends OfflineItem {
         this.id = id;
     }
 
+    /**
+     *
+     * Returns a serialized version of this OfflineEvent
+     *
+     * @return a serialized version of this OfflineEvent
+     *
+     * @see Object#toString()
+     */
     @NonNull
     @Override
     public String toString() {
@@ -31,22 +55,42 @@ public final class OfflineEvent extends OfflineItem {
                 '}';
     }
 
+    /**
+     * Returns the title of this event
+     * @return the title of this event
+     */
     public String getTitle() {
         return title;
     }
 
+    /**
+     * Returns the description of this event
+     * @return the description of this event
+     */
     public String getDescription() {
         return description;
     }
 
+    /**
+     * Returns the start of this event
+     * @return the start of this event
+     */
     public String getStart() {
         return start;
     }
 
+    /**
+     * Returns the duration of this event
+     * @return the duration of this event
+     */
     public long getDuration() {
         return duration;
     }
 
+    /**
+     * Returns the ID of this event
+     * @return the ID of this event
+     */
     public String getId() {
         return id;
     }
@@ -68,7 +112,7 @@ public final class OfflineEvent extends OfflineItem {
     }
 
     /**
-     * @see OfflineItem#colorRatio() 
+     * @see OfflineItem#colorRatio()
      */
     public float colorRatio() {
         return 1f;
