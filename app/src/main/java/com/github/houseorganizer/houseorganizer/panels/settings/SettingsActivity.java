@@ -10,13 +10,11 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
 import androidx.preference.Preference;
 import androidx.preference.PreferenceFragmentCompat;
-import androidx.preference.PreferenceScreen;
 
 import com.github.houseorganizer.houseorganizer.R;
 import com.github.houseorganizer.houseorganizer.panels.login.LoginActivity;
 import com.github.houseorganizer.houseorganizer.panels.offline.OfflineScreenActivity;
 import com.github.houseorganizer.houseorganizer.storage.LocalStorage;
-
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FieldPath;
@@ -47,6 +45,12 @@ public class SettingsActivity extends ThemedAppCompatActivity {
         finish();
     }
 
+    /**
+     * Method to go to the OfflineScreen from this activity,
+     * after a click event on the offline button
+     *
+     * @param v the contextual view of this action
+     */
     public void goToOfflineScreen(View v) {
         String currentHouseId = getIntent().getStringExtra("hh-id");
 

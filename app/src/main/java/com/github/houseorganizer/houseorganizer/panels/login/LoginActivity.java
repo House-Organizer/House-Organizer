@@ -33,6 +33,7 @@ public class LoginActivity extends AppCompatActivity {
     private GoogleSignInClient mGoogleSignInClient;
     private FirebaseAuth mAuth;
 
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
@@ -135,9 +136,19 @@ public class LoginActivity extends AppCompatActivity {
                                 finish();
                             });
                 }
+                else {
+                    Log.d(getString(R.string.tag_login_activity), func + ":success");
+                    Intent intent = new Intent(LoginActivity.this, MainScreenActivity.class);
+                    intent.putExtra("LoadHouse", true);
+                    startActivity(intent);
+                    finish();
+                }
             });
     }
 
+    /**
+     * Signs in using an anonymous firebase account
+     */
     private void signInAnonymously() {
         mAuth.signInAnonymously().addOnCompleteListener(this,
                         task -> manageTask(task, "signInAnonymously")
@@ -151,6 +162,9 @@ public class LoginActivity extends AppCompatActivity {
         );
     }
 
+    /**
+     * @see AppCompatActivity#onBackPressed()
+     */
     @Override
     public void onBackPressed() {
         // Leave the app instead of going to MainActivity

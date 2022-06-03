@@ -65,9 +65,7 @@
     <string name="event_creation_title">Adicionar um evento</string>
     <string name="description">Descrição</string>
     <string name="title">Título</string>
-    <string name="duration">Duração (min)</string>
-    <string name="date">Data (dd/MM/aaaa HH:mm)</string>
-    <string name="add_event">Adicionar</string>
+    <string name="add_text">Adicionar</string>
     <string name="cancel">Anular</string>
     <string name="delete">Apagar</string>
     <string name="edit">Editar</string>
@@ -137,7 +135,9 @@
     <string name="edit_item_title">TODO</string>
     <string name="edit_item_button">TODO</string>
     <string name="go_offline">TODO</string>
-    <string name="specify_shares">Especificar as despesas</string>
-    <string name="new_expense">Nova Despesa</string>
-    <string name="adds_up_to_total">O total das peças não somam o custo da despesa.</string>
+    <string name="specify_shares">TODO</string>
+    <string name="new_expense">TODO</string>
+    <string name="adds_up_to_total">TODO</string>
+    <string name="pick_a_date_and_time">Escolha uma data e hora</string>
+    <string name="no_attachment">Não foi possível encontrar o anexo</string>
 </resources>

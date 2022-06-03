@@ -34,6 +34,7 @@ import com.github.houseorganizer.houseorganizer.panels.info.InfoActivity;
 import com.github.houseorganizer.houseorganizer.panels.login.LoginActivity;
 import com.github.houseorganizer.houseorganizer.panels.offline.OfflineScreenActivity;
 import com.github.houseorganizer.houseorganizer.panels.settings.SettingsActivity;
+import com.github.houseorganizer.houseorganizer.panels.settings.ThemedAppCompatActivity;
 import com.github.houseorganizer.houseorganizer.shop.FirestoreShopList;
 import com.github.houseorganizer.houseorganizer.shop.ShopListAdapter;
 import com.github.houseorganizer.houseorganizer.storage.LocalStorage;
@@ -72,6 +73,9 @@ public class MainScreenActivity extends TaskFragmentNavBarActivity {
     private ShopListAdapter shopListAdapter;
     private ListFragmentView listView = ListFragmentView.CHORES_LIST;
 
+    /**
+     * @see TaskFragmentNavBarActivity#taskListAdapterId()
+     */
     @Override
     protected int taskListAdapterId() {
         return R.id.task_list;
@@ -103,7 +107,7 @@ public class MainScreenActivity extends TaskFragmentNavBarActivity {
             }
         });
         if(!loadHouse) loadData();
-        if(loadHouse && LocationHelpers.checkLocationPermission(getApplicationContext(), this)){
+        if(loadHouse && LocationHelpers.checkLocationPermission(this, this)){
             locationPermission = true;
             loadData();
         }
@@ -186,13 +190,17 @@ public class MainScreenActivity extends TaskFragmentNavBarActivity {
                 });
     }
 
+    /**
+     * @see NavBarActivity#currentActivity()
+     */
     @Override
     protected CurrentActivity currentActivity() {
         return CurrentActivity.MAIN;
     }
 
-
-
+    /**
+     * @see androidx.appcompat.app.AppCompatActivity#onRequestPermissionsResult(int, String[], int[])
+     */
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
@@ -325,7 +333,11 @@ public class MainScreenActivity extends TaskFragmentNavBarActivity {
 
     public void settingsButtonPressed(View view) {
         goToOfflineScreenIfNeeded();
-        Intent intent = new Intent(this, SettingsActivity.class).putExtra("hh-id", currentHouse.getId());
+        Intent intent = new Intent(this, SettingsActivity.class);
+        if (currentHouse == null)
+            intent.putExtra("hh-id", "");
+        else
+            intent.putExtra("hh-id", currentHouse.getId());
         startActivity(intent);
     }
 
@@ -335,6 +347,12 @@ public class MainScreenActivity extends TaskFragmentNavBarActivity {
         startActivity(intent);
     }
 
+    /**
+     * Adds either a task or a shop item depending on the current display
+     * mode of the app.
+     *
+     * @param view the contextaul view of this action
+     */
     public void bottomAddButtonPressed(View view){
         goToOfflineScreenIfNeeded();
         if(listView == ListFragmentView.CHORES_LIST){
@@ -347,6 +365,12 @@ public class MainScreenActivity extends TaskFragmentNavBarActivity {
         }
     }
 
+    /**
+     * Rotates list views between the task list and shop item fragments
+     * after a click event
+     *
+     * @param view the contextual view of this action
+     */
     public void rotateLists(View view) {
         goToOfflineScreenIfNeeded();
         listView = ListFragmentView.values()[1 - listView.ordinal()];
@@ -376,6 +400,10 @@ public class MainScreenActivity extends TaskFragmentNavBarActivity {
         }
     }
 
+    /**
+     * Method that goes to the offline screen if and only if
+     * the user doesn't have an active wifi or data connection.
+     */
     public void goToOfflineScreenIfNeeded() {
         if(! Util.hasWifiOrData(this)) {
             startActivity(new Intent(this, OfflineScreenActivity.class)
@@ -383,12 +411,18 @@ public class MainScreenActivity extends TaskFragmentNavBarActivity {
         }
     }
 
+    /**
+     * @see NavBarActivity#changeActivity(int)
+     */
     @Override
     protected boolean changeActivity(int buttonId) {
         goToOfflineScreenIfNeeded();
         return super.changeActivity(buttonId);
     }
 
+    /**
+     * @see ThemedAppCompatActivity#onResume()
+     */
     @Override
     protected void onResume() {
         super.onResume();

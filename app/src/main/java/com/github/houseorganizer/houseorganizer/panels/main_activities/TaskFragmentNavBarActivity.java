@@ -11,11 +11,21 @@ import com.google.firebase.firestore.QueryDocumentSnapshot;
 
 import java.util.ArrayList;
 
+/**
+ * Represents a NavBarActivity that has a TaskList component
+ *
+ * @see NavBarActivity
+ * @see MainScreenActivity
+ * @see TaskListActivity
+ */
 public abstract class TaskFragmentNavBarActivity extends NavBarActivity {
     protected TaskList taskList;
     protected DocumentReference tlMetadata;
     protected TaskListAdapter taskListAdapter;
 
+    /**
+     * Initializes the task list by reading it from the database
+     */
     protected void initializeTaskList() {
         FirebaseFirestore db = FirebaseFirestore.getInstance();
 
@@ -32,5 +42,11 @@ public abstract class TaskFragmentNavBarActivity extends NavBarActivity {
         });
     }
 
+    /**
+     * Returns the RecyclerView.Adapter resource id used for
+     * the TaskList component
+     *
+     * @return the id of the task list RecyclerView.Adapter
+     */
     protected abstract @IdRes int taskListAdapterId();
 }

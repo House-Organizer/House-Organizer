@@ -16,8 +16,8 @@ import com.github.houseorganizer.houseorganizer.calendar.Calendar;
 import com.github.houseorganizer.houseorganizer.panels.info.InfoActivity;
 import com.github.houseorganizer.houseorganizer.shop.ShopItem;
 import com.github.houseorganizer.houseorganizer.storage.LocalStorage;
-import com.github.houseorganizer.houseorganizer.storage.OfflineEvent;
 import com.github.houseorganizer.houseorganizer.storage.OfflineDebt;
+import com.github.houseorganizer.houseorganizer.storage.OfflineEvent;
 import com.github.houseorganizer.houseorganizer.storage.OfflineShopItem;
 import com.github.houseorganizer.houseorganizer.storage.OfflineTask;
 import com.github.houseorganizer.houseorganizer.task.HTask;
@@ -126,8 +126,8 @@ public class LocalStorageTest {
         Context cx = InstrumentationRegistry.getInstrumentation().getTargetContext();
 
         LocalDateTime time = LocalDateTime.now();
-        Calendar.Event event = new Calendar.Event("title","description", time, 1, "id");
-        OfflineEvent offlineEvent = new OfflineEvent("title","description", time.toString(), 1, "id");
+        Calendar.Event event = new Calendar.Event("title","description", time, "id");
+        OfflineEvent offlineEvent = new OfflineEvent("title","description", time.toString(), "id");
 
         Tasks.await(LocalStorage.pushHouseholdsOffline(cx, db, auth.getCurrentUser()));
         Thread.sleep(700);

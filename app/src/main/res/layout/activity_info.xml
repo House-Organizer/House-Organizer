@@ -9,9 +9,8 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_marginBottom="32dp"
         android:orientation="vertical"
-        app:layout_constraintBottom_toTopOf="@+id/editTextHouseholdNotes"
+        app:layout_constraintBottom_toTopOf="@+id/imageOfHousehold"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
@@ -42,15 +41,18 @@
             android:layout_marginTop="5dp"
             android:layout_marginRight="5dp"
             android:text="@string/no_household_info" />
-
-        <Button
-            android:id="@+id/imageOfHousehold"
-            android:text="@string/show_image"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:onClick="showImage"/>
     </LinearLayout>
+
+    <Button
+        android:id="@+id/imageOfHousehold"
+        android:text="@string/show_image"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:onClick="showImage"
+        app:layout_constraintBottom_toTopOf="@id/buttonEditNotes"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"/>
 
     <EditText
         android:id="@+id/editTextHouseholdNotes"

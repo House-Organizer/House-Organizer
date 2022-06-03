@@ -90,14 +90,14 @@
     <string name="calendar_upcoming_date">On the %1$s.</string>
     <string name="left_arrow" translatable="false"><![CDATA[<]]></string>
     <string name="right_arrow" translatable="false"><![CDATA[>]]></string>
+    <string name="pick_a_date_and_time">Pick a date and time</string>
+    <string name="no_attachment">Could not find the attachment</string>
 
     <!-- Event creation and information popups -->
     <string name="event_creation_title">Add an event</string>
     <string name="description">Description</string>
     <string name="title">Title</string>
-    <string name="duration">Duration (in minutes)</string>
-    <string name="date">Date (dd/MM/yyyy HH:mm)</string>
-    <string name="add_event">Add</string>
+    <string name="add_text">Add</string>
     <string name="cancel">Cancel</string>
     <string name="ok" translatable="false">OK</string>
     <string name="delete">Delete</string>
@@ -186,7 +186,7 @@
     <string name="reminder_message">Don\'t forget your task :</string>
     <string name="notify">Notify</string>
     <string name="show_image">Show image of household</string>
-    
+
     <!-- Offline mode -->
     <string name="go_offline">Go offline</string>
 

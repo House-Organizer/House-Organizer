@@ -1,5 +1,4 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -22,13 +21,11 @@
             style="?android:attr/buttonBarButtonStyle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-
             android:backgroundTint="?attr/colorPrimary"
             android:onClick="signOut"
             android:text="@string/sign_out"
             android:textColor="?attr/colorOnPrimary"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.229"
+            android:layout_marginStart="75dp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
@@ -38,12 +35,13 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:backgroundTint="?attr/colorPrimary"
+            android:maxWidth="200dp"
             android:onClick="goToOfflineScreen"
             android:text="@string/go_offline"
             android:textColor="?attr/colorOnPrimary"
-            app:layout_constraintStart_toEndOf="@id/sign_out_button"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"/>
+            android:layout_marginStart="75dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/sign_out_button" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 </LinearLayout>
