@@ -146,6 +146,9 @@ public class LoginActivity extends AppCompatActivity {
             });
     }
 
+    /**
+     * Signs in using an anonymous firebase account
+     */
     private void signInAnonymously() {
         mAuth.signInAnonymously().addOnCompleteListener(this,
                         task -> manageTask(task, "signInAnonymously")
@@ -159,6 +162,9 @@ public class LoginActivity extends AppCompatActivity {
         );
     }
 
+    /**
+     * @see AppCompatActivity#onBackPressed()
+     */
     @Override
     public void onBackPressed() {
         // Leave the app instead of going to MainActivity

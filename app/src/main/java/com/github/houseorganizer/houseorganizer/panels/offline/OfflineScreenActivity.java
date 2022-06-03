@@ -28,7 +28,15 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Stream;
 
-// TODO: Fetch list of member emails [sprint 9 task]
+/**
+ * Represents the offline screen of the app,
+ * which allows users to see brief descriptions of
+ * the backed-up events, shop items, tasks and debts.
+ *
+ * The offline screen has a button to go back to
+ * the main screen, which works if and only if
+ * the user has an active connection to the app.
+ */
 public final class OfflineScreenActivity extends ThemedAppCompatActivity {
     private String currentHouseId;
     private int currentHouseIdx;
@@ -41,19 +49,27 @@ public final class OfflineScreenActivity extends ThemedAppCompatActivity {
     private Map<String, ArrayList<OfflineTask>> tasksMap;
     private Map<String, ArrayList<OfflineDebt>> debtsMap;
 
+    /**
+     * @see androidx.appcompat.app.AppCompatActivity#onCreate(Bundle)
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_offline_screen);
 
         currentHouseId = getIntent().getStringExtra("hh-id");
-        if (currentHouseId != "") {
+        if (!currentHouseId.equals("")) {
             loadData();
             fixHouseOrder();
             setUpItemCollectionForHouse(currentHouseId);
         }
     }
 
+    /**
+     * Retrieves all relevant information for the offline screen,
+     * namely, the house names, as well as all the events,
+     * groceries, tasks, and debts for all houses.
+     */
     private void loadData() {
         Context appCtx = getApplicationContext();
 
@@ -64,6 +80,11 @@ public final class OfflineScreenActivity extends ThemedAppCompatActivity {
         debtsMap = LocalStorage.retrieveDebtsOffline(appCtx);
     }
 
+    /**
+     * Fixes a house order for when the user cycles between
+     * house views. This method also picks the first house
+     * to be shown on the offline screen.
+     */
     private void fixHouseOrder() {
         allHousesList = new ArrayList<>();
         currentHouseIdx = 0;
@@ -80,6 +101,11 @@ public final class OfflineScreenActivity extends ThemedAppCompatActivity {
         currentHouseId = allHousesList.get(currentHouseIdx);
     }
 
+    /**
+     * Sets up the OfflineAdapter for the given house ID.
+     * @param houseId the house ID for which to display
+     *                events, tasks, groceries, and debts.
+     */
     private void setUpItemCollectionForHouse(String houseId) {
         List<OfflineItem> items = new ArrayList<>();
 
@@ -102,18 +128,35 @@ public final class OfflineScreenActivity extends ThemedAppCompatActivity {
         itemRV.setAdapter(new OfflineAdapter(items, this));
     }
 
+    /**
+     * Allows users to cycle through different households
+     * after a click event.
+     *
+     * @param view the contextual view of this action
+     */
     public void switchToNextHouse(View view) {
         currentHouseId = allHousesList.get((++currentHouseIdx) % allHousesList.size());
 
         setUpItemCollectionForHouse(currentHouseId);
     }
 
+    /**
+     * Displays an AlertDialog after an unsupported click event.
+     *
+     * @param view the contextual view of this action
+     */
     public void unsupportedActionAlert(View view) {
         new AlertDialog.Builder(view.getContext())
                 .setMessage("To perform this action, you need to have an active WiFi or data connection.")
                 .show();
     }
 
+    /**
+     * Allows the user to go back to the main screen after
+     * a click event, if and only if there is an active wifi connection
+     *
+     * @param view the contextual view of this action
+     */
     public void goOnlineIfPossible(View view) {
         if (Util.hasWifiOrData(this)) {
             startActivity(new Intent(this, MainScreenActivity.class));

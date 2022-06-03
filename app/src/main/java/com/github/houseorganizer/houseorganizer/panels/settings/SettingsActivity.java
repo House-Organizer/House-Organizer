@@ -45,6 +45,12 @@ public class SettingsActivity extends ThemedAppCompatActivity {
         finish();
     }
 
+    /**
+     * Method to go to the OfflineScreen from this activity,
+     * after a click event on the offline button
+     *
+     * @param v the contextual view of this action
+     */
     public void goToOfflineScreen(View v) {
         String currentHouseId = getIntent().getStringExtra("hh-id");
 

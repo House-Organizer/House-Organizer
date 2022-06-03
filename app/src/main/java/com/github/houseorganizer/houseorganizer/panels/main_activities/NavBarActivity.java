@@ -13,7 +13,24 @@ import com.google.firebase.firestore.DocumentReference;
 
 import java.util.OptionalInt;
 
+/**
+ * Represents a parent class for activities with a navigation bar
+ * on the bottom.
+ *
+ * @see MainScreenActivity
+ * @see GroceriesActivity
+ * @see TaskListActivity
+ * @see CalendarActivity
+ * @see ExpenseActivity
+ * @see BalanceActivity
+ */
 public abstract class NavBarActivity extends ThemedAppCompatActivity {
+
+    /**
+     * Represents current activity information, namely,
+     * the id of the activity's button on the naviaation bar,
+     * as well as the activity's class.
+     */
     protected enum CurrentActivity{
         MAIN(R.id.nav_bar_menu, MainScreenActivity.class),
         GROCERIES(R.id.nav_bar_cart, GroceriesActivity.class),
@@ -43,7 +60,11 @@ public abstract class NavBarActivity extends ThemedAppCompatActivity {
     protected DocumentReference currentHouse;
     abstract protected CurrentActivity currentActivity();
 
-    // Hypothesis: the buttonText is always correct
+    /**
+     * Potentially switches to another NavBarActivity after a click event
+     *
+     * @param buttonId the id of the button that was clicked on the navigation bar
+     */
     protected boolean changeActivity(int buttonId) {
         if(currentActivity().id != buttonId) {
             Intent intent = new Intent(this, CurrentActivity.activityWithId(buttonId).panelActivity);
@@ -53,6 +74,14 @@ public abstract class NavBarActivity extends ThemedAppCompatActivity {
         return true;
     }
 
+    /**
+     * Sets up the navigation bar click listeners, and also
+     * potentially selects a button
+     *
+     * @param navBarId the resource id of the navigation bar
+     * @param navBarButtonId the optional id of the button to be
+     *                       shown as selected on the navigation bar
+     */
     @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
     protected void setUpNavBar(@IdRes int navBarId, OptionalInt navBarButtonId) {
         BottomNavigationView menu = findViewById(navBarId);

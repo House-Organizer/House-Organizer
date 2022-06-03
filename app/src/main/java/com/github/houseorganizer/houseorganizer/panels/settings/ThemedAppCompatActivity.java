@@ -12,9 +12,21 @@ import com.github.houseorganizer.houseorganizer.R;
 
 import java.util.Locale;
 
+/**
+ * Represents an AppCompatActivity compatible with
+ * multiple color themes and languages, and which
+ * renders itself according to the chosen preferences
+ * in SettingsActivity
+ *
+ * @see SettingsActivity
+ * @see AppCompatActivity
+ */
 public class ThemedAppCompatActivity extends AppCompatActivity {
     private SharedPreferences sp;
 
+    /**
+     * @see AppCompatActivity#onCreate(Bundle)
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -27,16 +39,27 @@ public class ThemedAppCompatActivity extends AppCompatActivity {
         getBaseContext().getResources().updateConfiguration(config, getBaseContext().getResources().getDisplayMetrics());
     }
 
+    /**
+     * Returns the current language of the app
+     * @return the current language of the app
+     */
     private String getCurrentLanguage() {
         return sp.getString("lang", "en");
     }
 
+    /**
+     * @see AppCompatActivity#onResume()
+     */
     @Override
     protected void onResume() {
         super.onResume();
         setTheme(getCurrentTheme());
     }
 
+    /**
+     * Returns the style resource of the current theme
+     * @return the style resource of the current theme
+     */
     private @StyleRes int getCurrentTheme() {
         String themeCode = sp.getString("theme", "1");
 
