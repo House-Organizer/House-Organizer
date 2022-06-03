@@ -1,8 +1,8 @@
 package com.github.houseorganizer.houseorganizer.billsharer;
 
-
 import static java.lang.Math.abs;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.view.LayoutInflater;
@@ -26,6 +26,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
 
+/**
+ * An adapter to RecyclerView for a list of Expense inside a Billsharer.
+ */
 public class ExpenseAdapter extends RecyclerView.Adapter<ExpenseAdapter.ExpenseHolder> {
 
     private Billsharer billsharer;
@@ -42,6 +45,11 @@ public class ExpenseAdapter extends RecyclerView.Adapter<ExpenseAdapter.ExpenseH
         this.billsharer = billsharer;
     }
 
+    /**
+     * Creates an AlertDialog for adding an expense.
+     * @param parent AppCompatActivity : the current Activity
+     */
+    @SuppressLint("SetTextI18n")
     public void addExpense(AppCompatActivity parent) {
         AtomicReference<HashMap<String, Double>> shares = new AtomicReference<>();
         LayoutInflater inflater = LayoutInflater.from(parent);
@@ -63,6 +71,14 @@ public class ExpenseAdapter extends RecyclerView.Adapter<ExpenseAdapter.ExpenseH
         );
     }
 
+    /**
+     * Creates an AlertDialog for specifying shares when adding an expense
+     * @param expenseDialog AlertDialog : the adding expense dialog for returning to when finished
+     *                      specifying shares
+     * @param ctx : current Context
+     * @param cost : the cost of the expense to be added
+     * @param shares : AtomicReference to shares inside the Expense
+     */
     private void specifyShares(AlertDialog expenseDialog, Context ctx, double cost, AtomicReference<HashMap<String, Double>> shares) {
         expenseDialog.dismiss();
 
@@ -88,6 +104,16 @@ public class ExpenseAdapter extends RecyclerView.Adapter<ExpenseAdapter.ExpenseH
         );
     }
 
+    /**
+     * Verifies the shares add up to the cost, otherwise shows an AlertDialog which asks the user
+     * to correct the shares.
+     * @param expenseDialog AlertDialog : the dialog to return to if the shares add up
+     * @param sharesDialog AlertDialog : the dialog to return to if the shares do not add up
+     * @param ctx : current Context
+     * @param adapter SharesAdapter
+     * @param cost double : cost of the expense
+     * @param shares : AtomicReference to shares inside the Expense
+     */
     private void alertDoesntAddUp(AlertDialog expenseDialog, AlertDialog sharesDialog, Context ctx, SharesAdapter adapter, double cost, AtomicReference<HashMap<String, Double>> shares) {
         if (addsUpToTotal(cost, adapter.getShares())) {
             shares.set(adapter.getShares());
@@ -101,15 +127,25 @@ public class ExpenseAdapter extends RecyclerView.Adapter<ExpenseAdapter.ExpenseH
         }
     }
 
+    /**
+     * Verifies that the sum of the shares equals the total
+     * @param total double : to be compared to
+     * @param shares HashMap<String, Double> : the shares from the dialog
+     * @return boolean : true if the difference is less than a cent
+     */
     private boolean addsUpToTotal(double total, HashMap<String, Double> shares) {
         double sum = 0;
         for (double val : shares.values()) {
             sum += val;
         }
-
         return abs(sum - total) < 0.01;
     }
 
+    /**
+     * Retrieves the information from the dialog, creates the expense and adds it to the Billsharer
+     * @param dialogView View
+     * @param shares HashMap<String, Double>
+     */
     private void getExpenseFromDialog(View dialogView, HashMap<String, Double> shares) {
         String title = ((EditText) dialogView.findViewById(R.id.expense_edit_title)).getText().toString();
         Spinner spinner = dialogView.findViewById(R.id.expense_edit_payee);
@@ -123,6 +159,11 @@ public class ExpenseAdapter extends RecyclerView.Adapter<ExpenseAdapter.ExpenseH
         this.notifyItemInserted(billsharer.getExpenses().size()-1);
     }
 
+    /**
+     * Retrieves the cost from the dialog
+     * @param dialogView View
+     * @return double : cost
+     */
     private double getCostFromDialog(View dialogView) {
         double cost = 0f;
         try {
@@ -133,6 +174,11 @@ public class ExpenseAdapter extends RecyclerView.Adapter<ExpenseAdapter.ExpenseH
         return cost;
     }
 
+    /**
+     * Initializes shares to an equal share of the total cost for each person
+     * @param cost double : cost of the expense
+     * @return HashMap<String, Double> : the shares
+     */
     private HashMap<String, Double> initShares(double cost) {
         List<String> residents = billsharer.getResidents();
         HashMap<String, Double> shares = new HashMap<>();
@@ -142,6 +188,11 @@ public class ExpenseAdapter extends RecyclerView.Adapter<ExpenseAdapter.ExpenseH
         return shares;
     }
 
+    /**
+     * Shows an AlertDialog for removing an expense
+     * @param ctx : current Context
+     * @param pos int : position of the expense to be removed
+     */
     public void removeExpense(Context ctx, int pos) {
         new AlertDialog.Builder(ctx)
                 .setTitle("Remove Expense")
@@ -151,6 +202,20 @@ public class ExpenseAdapter extends RecyclerView.Adapter<ExpenseAdapter.ExpenseH
                 })
                 .setNegativeButton(R.string.cancel, (dialog, id) -> dialog.dismiss())
                 .show();
+    }
+
+    /**
+     * The holder inside the RecyclerView for a single expense
+     */
+    public static class ExpenseHolder extends RecyclerView.ViewHolder {
+        public TextView textView;
+        public ImageButton removeCheck;
+
+        public ExpenseHolder(@NonNull View expenseView) {
+            super(expenseView);
+            textView = expenseView.findViewById(R.id.expense_text);
+            removeCheck = expenseView.findViewById(R.id.expense_remove_check);
+        }
     }
 
     @NonNull
@@ -173,17 +238,6 @@ public class ExpenseAdapter extends RecyclerView.Adapter<ExpenseAdapter.ExpenseH
     @Override
     public int getItemCount() {
         return billsharer.getExpenses().size();
-    }
-
-    public static class ExpenseHolder extends RecyclerView.ViewHolder {
-        public TextView textView;
-        public ImageButton removeCheck;
-
-        public ExpenseHolder(@NonNull View expenseView) {
-            super(expenseView);
-            textView = expenseView.findViewById(R.id.expense_text);
-            removeCheck = expenseView.findViewById(R.id.expense_remove_check);
-        }
     }
 
 }

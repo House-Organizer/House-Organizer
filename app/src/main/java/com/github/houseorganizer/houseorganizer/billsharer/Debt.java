@@ -1,5 +1,10 @@
 package com.github.houseorganizer.houseorganizer.billsharer;
 
+/**
+ * Represents a debt for the Billsharer.
+ * Saves the name of the debtor and the creditor as well as
+ * the amount (double) the debtor owes.
+ */
 public class Debt {
 
     private final String creditor, debtor;
