@@ -24,7 +24,7 @@ public final class TaskListActivity extends TaskFragmentNavBarActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.task_list_screen);
+        setContentView(R.layout.activity_task_list);
 
         currentHouse = FirebaseFirestore.getInstance()
                 .collection("households")

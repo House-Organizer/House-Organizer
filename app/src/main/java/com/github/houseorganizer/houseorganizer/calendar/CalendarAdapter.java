@@ -4,11 +4,14 @@ import static com.github.houseorganizer.houseorganizer.util.Util.logAndToast;
 
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
+import android.app.DatePickerDialog;
+import android.app.TimePickerDialog;
 import android.content.Context;
 import android.net.Uri;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.TextView;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.recyclerview.widget.RecyclerView;
@@ -22,8 +25,11 @@ import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.time.ZoneOffset;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -71,6 +77,7 @@ public abstract class CalendarAdapter extends RecyclerView.Adapter<RecyclerView.
     public void showAddEventDialog(Context ctx, DocumentReference currentHouse, String errMessage) {
         LayoutInflater inflater = LayoutInflater.from(ctx);
         final View dialogView = inflater.inflate(R.layout.event_creation, null);
+        dialogView.findViewById(R.id.new_event_date).setOnClickListener(v -> showDateTimePicker(ctx, v, LocalDateTime.now()));
         new AlertDialog.Builder(ctx)
                 .setTitle(R.string.event_creation_title)
                 .setView(dialogView)
@@ -89,13 +96,11 @@ public abstract class CalendarAdapter extends RecyclerView.Adapter<RecyclerView.
         Map<String, Object> data = new HashMap<>();
         final String title = ((EditText) dialogView.findViewById(R.id.new_event_title)).getText().toString();
         final String desc = ((EditText) dialogView.findViewById(R.id.new_event_desc)).getText().toString();
-        final String date = ((EditText) dialogView.findViewById(R.id.new_event_date)).getText().toString();
-        final String duration = ((EditText) dialogView.findViewById(R.id.new_event_duration)).getText().toString();
+        final String date = ((TextView) dialogView.findViewById(R.id.new_event_picked_date)).getText().toString();
         Map<String, String> event = new HashMap<>();
         event.put("title", title);
         event.put("desc", desc);
         event.put("date", date);
-        event.put("duration", duration);
         if (Calendar.Event.putEventStringsInData(event, data)) {
             return null;
         }
@@ -123,7 +128,6 @@ public abstract class CalendarAdapter extends RecyclerView.Adapter<RecyclerView.
                                     document.getString("title"),
                                     document.getString("description"),
                                     LocalDateTime.ofEpochSecond(document.getLong("start"), 0, ZoneOffset.UTC),
-                                    document.getLong("duration") == null ? 0 : document.getLong("duration"),
                                     document.getId());
                             newEvents.add(event);
                         }
@@ -136,6 +140,19 @@ public abstract class CalendarAdapter extends RecyclerView.Adapter<RecyclerView.
                                 ctx, ctx.getString(R.string.refresh_calendar_fail));
                     }
                 });
+    }
+
+    void showDateTimePicker(Context ctx, View v, LocalDateTime base) {
+        new DatePickerDialog(ctx, (view, year, monthOfYear, dayOfMonth) -> {
+            LocalDate date = LocalDate.of(year, monthOfYear, dayOfMonth);
+            StringBuilder pickedDateTime = new StringBuilder().append(date.format(DateTimeFormatter.ofPattern("dd/MM/yyyy")));
+            new TimePickerDialog(ctx, (view1, hourOfDay, minute) -> {
+                LocalTime time = LocalTime.of(hourOfDay, minute);
+                pickedDateTime
+                        .append(time.format(DateTimeFormatter.ofPattern(" HH:mm")));
+                ((TextView)((View)v.getParent()).findViewById(R.id.new_event_picked_date)).setText(pickedDateTime.toString());
+            }, base.getHour(), base.getMinute(), false).show();
+        }, base.getYear(), base.getMonthValue(), base.getDayOfMonth()).show();
     }
 
     /**

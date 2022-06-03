@@ -13,6 +13,7 @@ import static androidx.test.espresso.matcher.ViewMatchers.hasChildCount;
 import static androidx.test.espresso.matcher.ViewMatchers.isCompletelyDisplayed;
 import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static androidx.test.espresso.matcher.ViewMatchers.isEnabled;
+import static androidx.test.espresso.matcher.ViewMatchers.withClassName;
 import static androidx.test.espresso.matcher.ViewMatchers.withEffectiveVisibility;
 import static androidx.test.espresso.matcher.ViewMatchers.withHint;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
@@ -25,7 +26,10 @@ import static org.hamcrest.Matchers.is;
 
 import android.content.Context;
 import android.content.Intent;
+import android.widget.DatePicker;
+import android.widget.TimePicker;
 
+import androidx.test.espresso.contrib.PickerActions;
 import androidx.test.espresso.contrib.RecyclerViewActions;
 import androidx.test.espresso.intent.Intents;
 import androidx.test.espresso.matcher.ViewMatchers;
@@ -44,6 +48,7 @@ import com.google.firebase.firestore.SetOptions;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.UploadTask;
 
+import org.hamcrest.Matchers;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -54,9 +59,7 @@ import org.junit.runner.RunWith;
 import org.junit.runners.MethodSorters;
 
 import java.io.ByteArrayOutputStream;
-import java.time.LocalDateTime;
 import java.time.ZoneOffset;
-import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
@@ -106,7 +109,6 @@ public class CalendarViewTest {
         Map<String, Object> eventBuilder = new HashMap<>();
         eventBuilder.put("title", "title");
         eventBuilder.put("description", "desc");
-        eventBuilder.put("duration", 10);
         eventBuilder.put("start", DELETED_EVENT_TIME.toEpochSecond(ZoneOffset.UTC));
         eventBuilder.put("household", db.collection("households").document(TEST_HOUSEHOLD_NAMES[0]));
         Map<String, Object> baseDesc = new HashMap<>();
@@ -224,9 +226,11 @@ public class CalendarViewTest {
         onView(withId(R.id.calendar_screen_add_event)).perform(click());
         onView(withHint(R.string.title)).perform(clearText()).perform(typeText("added")).perform(closeSoftKeyboard());
         onView(withHint(R.string.description)).perform(clearText()).perform(typeText("desc")).perform(closeSoftKeyboard());
-        String date = LocalDateTime.of(2050, 10, 10, 10, 10).format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm"));
-        onView(withHint(R.string.date)).perform(clearText()).perform(typeText(date)).perform(closeSoftKeyboard());
-        onView(withHint(R.string.duration)).perform(clearText()).perform(typeText("10")).perform(closeSoftKeyboard());
+        onView(withText(R.string.pick_a_date_and_time)).perform(click());
+        onView(withClassName(Matchers.equalTo(DatePicker.class.getName()))).perform(PickerActions.setDate(2050, 10, 10));
+        onView(withText(R.string.ok)).perform(click());
+        onView(withClassName(Matchers.equalTo(TimePicker.class.getName()))).perform(PickerActions.setTime(10, 10));
+        onView(withText(R.string.ok)).perform(click());
         onView(withText(R.string.add_text)).perform(click());
         Thread.sleep(1000);
         // Count is 2*EVENTS_TO_DISPLAY because we removed one event and added one

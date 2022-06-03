@@ -71,27 +71,35 @@
         android:id="@+id/calendar_screen_add_event"
         android:layout_width="0dip"
         android:layout_height="0dip"
+        android:layout_marginHorizontal="2dp"
+        android:layout_marginStart="2dp"
+        android:layout_marginEnd="2dp"
         android:text="@string/add_an_event"
         android:visibility="visible"
         app:layout_constraintBottom_toTopOf="@id/nav_bar"
         app:layout_constraintEnd_toStartOf="@id/calendar_screen_view_change"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintHeight_default="percent"
-        app:layout_constraintHeight_percent=".075"
+        app:layout_constraintHeight_percent=".11"
         app:layout_constraintWidth_default="percent"
-        app:layout_constraintWidth_percent=".5"/>
+        app:layout_constraintWidth_percent=".49"/>
 
     <Button
         android:id="@+id/calendar_screen_view_change"
         android:layout_width="0dip"
         android:layout_height="0dip"
+        android:layout_marginHorizontal="2dp"
+        android:layout_marginStart="2dp"
+        android:layout_marginEnd="2dp"
         android:text="@string/cycle_view"
         android:visibility="visible"
         app:layout_constraintBottom_toTopOf="@id/nav_bar"
         app:layout_constraintStart_toEndOf="@id/calendar_screen_add_event"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHeight_default="percent"
-        app:layout_constraintHeight_percent=".075"
+        app:layout_constraintHeight_percent=".11"
         app:layout_constraintWidth_default="percent"
-        app:layout_constraintWidth_percent=".5"/>
+        app:layout_constraintWidth_percent=".49"/>
 
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/nav_bar"

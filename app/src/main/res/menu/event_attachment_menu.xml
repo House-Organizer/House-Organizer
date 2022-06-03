@@ -2,13 +2,16 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item
         android:id="@+id/attach_image"
-        android:title="@string/attach" />
+        android:title="@string/attach"
+        android:titleCondensed="Attach" />
 
     <item
         android:id="@+id/show_image"
-        android:title="@string/show" />
+        android:title="@string/show"
+        android:titleCondensed="Show" />
 
     <item
         android:id="@+id/remove_image"
-        android:title="@string/remove"/>
+        android:title="@string/remove"
+        android:titleCondensed="Remove" />
 </menu>

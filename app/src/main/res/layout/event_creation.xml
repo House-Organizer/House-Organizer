@@ -27,25 +27,19 @@
         android:autofillHints="description"
         android:hint="@string/description"/>
 
-    <EditText
-        android:id="@+id/new_event_date"
+    <TextView
+        android:id="@+id/new_event_picked_date"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:ems="10"
-        android:inputType="datetime"
-        android:text=""
-        android:textColor="#7A7A7A"
-        android:autofillHints="date"
-        android:hint="@string/date"/>
+        android:textAlignment="center"
+        android:textStyle="bold"
+        android:textSize="18sp"
+        android:text="" />
 
-    <EditText
-        android:id="@+id/new_event_duration"
-        android:layout_width="match_parent"
+    <Button
+        android:id="@+id/new_event_date"
+        android:layout_gravity="center_horizontal"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:ems="10"
-        android:inputType="number"
-        android:text=""
-        android:textColor="#7A7A7A"
-        android:autofillHints="duration"
-        android:hint="@string/duration"/>
+        android:text="@string/pick_a_date_and_time" />
 </LinearLayout>

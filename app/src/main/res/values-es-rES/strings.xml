@@ -64,8 +64,6 @@
     <string name="event_creation_title">Añadir un evento</string>
     <string name="description">Descripción</string>
     <string name="title">Título</string>
-    <string name="duration">Tiempo (min)</string>
-    <string name="date">Fecha (dd/MM/aaaa HH:mm)</string>
     <string name="add_text">Añadir</string>
     <string name="cancel">Anular</string>
     <string name="delete">Borrar</string>
@@ -137,6 +135,8 @@
     <string name="edit_item_title">Editar un producto</string>
     <string name="edit_item_button">Editar</string>
     <string name="go_offline">Pasar al modo offline</string>
+    <string name="pick_a_date_and_time">Elija una fecha y hora</string>
+    <string name="no_attachment">No se ha podido encontrar el archivo adjunto</string>
     <string name="specify_shares">Especificar participaciones</string>
     <string name="new_expense">Nuevo gasto</string>
     <string name="adds_up_to_total">El total de participaciones no se ajusta al coste del gasto.</string>

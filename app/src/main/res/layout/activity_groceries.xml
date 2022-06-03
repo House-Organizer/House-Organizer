@@ -25,32 +25,40 @@
         android:id="@+id/groceries_add"
         android:layout_width="0dip"
         android:layout_height="0dip"
+        android:layout_marginHorizontal="2dp"
+        android:layout_marginStart="2dp"
+        android:layout_marginEnd="2dp"
         android:text="@string/add_item_button"
         android:visibility="visible"
         app:layout_constraintBottom_toTopOf="@id/nav_bar"
         app:layout_constraintEnd_toStartOf="@id/groceries_picked_up_button"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintHeight_default="percent"
-        app:layout_constraintHeight_percent=".075"
+        app:layout_constraintHeight_percent=".11"
         app:layout_constraintWidth_default="percent"
-        app:layout_constraintWidth_percent=".5" />
+        app:layout_constraintWidth_percent=".49" />
 
     <Button
         android:id="@+id/groceries_picked_up_button"
         android:layout_width="0dip"
         android:layout_height="0dip"
+        android:layout_marginHorizontal="2dp"
+        android:layout_marginStart="2dp"
+        android:layout_marginEnd="2dp"
         android:text="@string/remove_picked_up"
         android:visibility="visible"
         app:layout_constraintBottom_toTopOf="@id/nav_bar"
         app:layout_constraintHeight_default="percent"
-        app:layout_constraintHeight_percent=".075"
+        app:layout_constraintHeight_percent=".11"
         app:layout_constraintStart_toEndOf="@id/groceries_add"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintWidth_default="percent"
-        app:layout_constraintWidth_percent=".5" />
+        app:layout_constraintWidth_percent=".49" />
 
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/nav_bar"
         android:layout_width="match_parent"
-        android:layout_height="53dip"
+        android:layout_height="53dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:menu="@menu/bottom_nav_menu" />
 

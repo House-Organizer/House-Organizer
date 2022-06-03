@@ -14,7 +14,6 @@ public final class OfflineEvent extends OfflineItem {
     private final String title;
     private final String description;
     private final String start;
-    private final long duration;
     private final String id;
 
     /**
@@ -24,14 +23,12 @@ public final class OfflineEvent extends OfflineItem {
      * @param title the title of the event
      * @param description the description of the event
      * @param start the start of the event
-     * @param duration the duration of the event
      * @param id the ID of the event
      */
-    public OfflineEvent(String title, String description, String start, long duration, String id) {
+    public OfflineEvent(String title, String description, String start, String id) {
         this.title = title;
         this.description = description;
         this.start = start;
-        this.duration = duration;
         this.id = id;
     }
 
@@ -50,7 +47,6 @@ public final class OfflineEvent extends OfflineItem {
                 "title='" + title + '\'' +
                 ", description='" + description + '\'' +
                 ", start='" + start + '\'' +
-                ", duration='" + duration + '\'' +
                 ", id='" + id + '\'' +
                 '}';
     }
@@ -80,14 +76,6 @@ public final class OfflineEvent extends OfflineItem {
     }
 
     /**
-     * Returns the duration of this event
-     * @return the duration of this event
-     */
-    public long getDuration() {
-        return duration;
-    }
-
-    /**
      * Returns the ID of this event
      * @return the ID of this event
      */
@@ -108,7 +96,7 @@ public final class OfflineEvent extends OfflineItem {
      */
     @NonNull
     public String info() {
-        return String.format("%s\nOn %s; lasts %s minutes", description, start, duration);
+        return String.format("%s\nOn %s", description, start);
     }
 
     /**
@@ -127,7 +115,7 @@ public final class OfflineEvent extends OfflineItem {
             return false;
         } else {
             OfflineEvent that = (OfflineEvent) o;
-            return duration == that.duration && Objects.equals(title, that.title) && Objects.equals(description, that.description) && Objects.equals(start, that.start) && Objects.equals(id, that.id);
+            return Objects.equals(title, that.title) && Objects.equals(description, that.description) && Objects.equals(start, that.start) && Objects.equals(id, that.id);
         }
     }
 
@@ -136,6 +124,6 @@ public final class OfflineEvent extends OfflineItem {
      */
     @Override
     public int hashCode() {
-        return Objects.hash(title, description, start, duration, id);
+        return Objects.hash(title, description, start, id);
     }
 }
