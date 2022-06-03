@@ -3,6 +3,11 @@ package com.github.houseorganizer.houseorganizer.billsharer;
 import java.util.HashMap;
 import java.util.Objects;
 
+/**
+ * Represents an Expense for the Billsharer.
+ * Saves the title, the expense cost, the payee
+ * as well as the shares for each person.
+ */
 public class Expense implements Cloneable {
 
     private final String title;
@@ -52,6 +57,9 @@ public class Expense implements Cloneable {
                 (HashMap<String, Double>) this.shares.clone());
     }
 
+    /**
+     * @return the expense in text format for display
+     */
     public String toText() {
         return title + " by " + payee + " : " + cost + " CHF";
     }

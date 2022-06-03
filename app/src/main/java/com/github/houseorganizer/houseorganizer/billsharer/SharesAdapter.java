@@ -19,6 +19,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
 
+/**
+ * An adapter to RecyclerView for a map of Shares
+ * Saves the list of users counted for the shares
+ */
 public class SharesAdapter extends RecyclerView.Adapter<SharesAdapter.ShareHolder> {
 
     private final HashMap<String, Double> shares;
@@ -34,6 +38,20 @@ public class SharesAdapter extends RecyclerView.Adapter<SharesAdapter.ShareHolde
         return shares;
     }
 
+    /**
+     * The holder inside the RecyclerView for a single user and his share amount
+     */
+    public static class ShareHolder extends RecyclerView.ViewHolder {
+        public TextView user;
+        public EditText amount;
+
+        public ShareHolder(@NonNull View itemView) {
+            super(itemView);
+            user = itemView.findViewById(R.id.share_user_email);
+            amount = itemView.findViewById(R.id.share_amount);
+        }
+    }
+
     @NonNull
     @Override
     public ShareHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -42,6 +60,9 @@ public class SharesAdapter extends RecyclerView.Adapter<SharesAdapter.ShareHolde
         return new ShareHolder(view);
     }
 
+    /**
+     * Adds a TextWatcher on the amount for each user to update shares
+     */
     @SuppressLint("SetTextI18n")
     @Override
     public void onBindViewHolder(@NonNull ShareHolder holder, int position) {
@@ -68,16 +89,5 @@ public class SharesAdapter extends RecyclerView.Adapter<SharesAdapter.ShareHolde
     @Override
     public int getItemCount() {
         return user_emails.size();
-    }
-
-    public static class ShareHolder extends RecyclerView.ViewHolder {
-        public TextView user;
-        public EditText amount;
-
-        public ShareHolder(@NonNull View itemView) {
-            super(itemView);
-            user = itemView.findViewById(R.id.share_user_email);
-            amount = itemView.findViewById(R.id.share_amount);
-        }
     }
 }
