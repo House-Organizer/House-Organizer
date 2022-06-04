@@ -129,15 +129,15 @@
     <string name="reminder">Lembrete</string>
     <string name="reminder_message">Não se esqueça da sua tarefa :</string>
     <string name="notify">Notificar</string>
-    <string name="show_image">TODO</string>
-    <string name="clear_local_storage">TODO</string>
-    <string name="clear_local_storage_success">TODO</string>
-    <string name="edit_item_title">TODO</string>
-    <string name="edit_item_button">TODO</string>
-    <string name="go_offline">TODO</string>
-    <string name="specify_shares">TODO</string>
-    <string name="new_expense">TODO</string>
-    <string name="adds_up_to_total">TODO</string>
+    <string name="show_image">Mostrar imagem</string>
+    <string name="clear_local_storage">Armazenagem local limpa</string>
+    <string name="clear_local_storage_success">Sucesso</string>
+    <string name="edit_item_title">Editar item</string>
+    <string name="edit_item_button">Editar item</string>
+    <string name="go_offline">Ficar offline</string>
+    <string name="specify_shares">Especificar acções</string>
+    <string name="new_expense">Novas despesas</string>
+    <string name="adds_up_to_total">A soma está errada</string>
     <string name="pick_a_date_and_time">Escolha uma data e hora</string>
     <string name="no_attachment">Não foi possível encontrar o anexo</string>
 </resources>

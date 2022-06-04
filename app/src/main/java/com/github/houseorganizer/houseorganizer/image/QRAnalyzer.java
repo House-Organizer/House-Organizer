@@ -16,13 +16,24 @@ import com.google.zxing.multi.qrcode.QRCodeMultiReader;
 
 import java.nio.ByteBuffer;
 
+/**
+ * This class is used to implement a scanner on top of the camera that scans for QR codes
+ */
 public final class QRAnalyzer implements ImageAnalysis.Analyzer {
     private final QRListener listener;
 
+    /**
+     * Builds a QR analyser using a QRlistener
+     * @param listener listener that has methods called on QR code found/not found events
+     */
     public QRAnalyzer(QRListener listener) {
         this.listener = listener;
     }
 
+    /**
+     * Analyses an image from the camera to find a QRcode
+     * @param image The image to scan
+     */
     @Override
     public void analyze(ImageProxy image) {
         if (image.getFormat() == YUV_420_888 || image.getFormat() == YUV_422_888 || image.getFormat() == YUV_444_888) {

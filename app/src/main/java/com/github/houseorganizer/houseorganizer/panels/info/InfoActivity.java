@@ -65,6 +65,10 @@ public class InfoActivity extends ThemedAppCompatActivity {
         }
     }
 
+    /**
+     * This helper method fetches the image of the household on firestore and displays it if found
+     * @param view The button
+     */
     public void showImage(View view){
         if(currentHouse != null){
             FirebaseStorage.getInstance()
@@ -82,6 +86,10 @@ public class InfoActivity extends ThemedAppCompatActivity {
         }
     }
 
+    /**
+     * This method changes the notes of a household
+     * @param view The button
+     */
     public void changeNotesHousehold(View view){
         EditText editNotes = findViewById(R.id.editTextHouseholdNotes);
         String notes = editNotes.getText().toString();

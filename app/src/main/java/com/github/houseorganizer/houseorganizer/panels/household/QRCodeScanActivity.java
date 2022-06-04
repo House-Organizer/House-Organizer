@@ -35,6 +35,9 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * This class implements the functionality of scanning a QR code to join a household
+ */
 public class QRCodeScanActivity extends ThemedAppCompatActivity {
 
     private FirebaseFirestore db;
@@ -117,6 +120,10 @@ public class QRCodeScanActivity extends ThemedAppCompatActivity {
         cameraProvider.bindToLifecycle(this, cameraSelector, imageAnalysis, preview);
     }
 
+    /**
+     * This method is called when a QRcode is successfully scanned and valid
+     * @param QRCode String representing the household ID
+     */
     public void acceptInvite(String QRCode){
         EspressoIdlingResource.increment();
         String email = auth.getCurrentUser().getEmail();

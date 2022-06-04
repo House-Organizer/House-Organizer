@@ -39,6 +39,10 @@ public class SettingsActivity extends ThemedAppCompatActivity {
         }
     }
 
+    /**
+     * Signs the user out
+     * @param v The button
+     */
     public void signOut(View v) {
         startActivity(new Intent(this, LoginActivity.class)
                 .putExtra(getString(R.string.signout_intent), true));

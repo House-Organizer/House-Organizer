@@ -129,15 +129,15 @@
     <string name="reminder">Rappel</string>
     <string name="reminder_message">N\'oublie pas ta tâche :</string>
     <string name="notify">Notifier</string>
-    <string name="show_image">TODO</string>
-    <string name="clear_local_storage">TODO</string>
-    <string name="clear_local_storage_success">TODO</string>
+    <string name="show_image">Montrer l\'image</string>
+    <string name="clear_local_storage">Supprimer le stockage local</string>
+    <string name="clear_local_storage_success">Succès</string>
     <string name="edit_item_title">Modifier un article</string>
     <string name="edit_item_button">Modifier</string>
     <string name="go_offline">Passer en mode hors-ligne</string>
-    <string name="specify_shares">TODO</string>
-    <string name="new_expense">TODO</string>
-    <string name="adds_up_to_total">TODO</string>
+    <string name="specify_shares">Spécifier les parts</string>
+    <string name="new_expense">Nouvelle dépense</string>
+    <string name="adds_up_to_total">Le total est incorrect</string>
     <string name="pick_a_date_and_time">Choisissez une date et une heure</string>
     <string name="no_attachment">Impossible de trouver la pièce jointe</string>
 </resources>
