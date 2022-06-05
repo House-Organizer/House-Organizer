@@ -190,7 +190,7 @@ public class HouseSelectionActivity extends ThemedAppCompatActivity {
         EspressoIdlingResource.increment();
         SharedPreferences sharedPreferences = getSharedPrefs(this);
         String householdId = sharedPreferences.getString(CURRENT_HOUSEHOLD, "");
-        if(householdId != null) {
+        if(!householdId.equals("")) {
             DocumentReference currentHouse = firestore.collection("households").document(householdId);
             currentHouse.get().addOnCompleteListener(task -> {
                 Map<String, Object> householdData = task.getResult().getData();

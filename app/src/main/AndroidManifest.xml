@@ -56,16 +56,14 @@
             android:exported="false" />
         <activity
             android:name=".panels.login.LoginEmail"
-            android:exported="false"
-            android:parentActivityName=".panels.login.LoginActivity" />
+            android:exported="false"/>
         <activity
             android:name=".panels.login.RegisterEmail"
             android:exported="false"
-            android:parentActivityName=".panels.login.LoginEmail" />
+            android:parentActivityName=".panels.login.LoginEmail"/>
         <activity
             android:name=".panels.login.VerifyEmail"
-            android:exported="false"
-            android:parentActivityName=".panels.login.LoginEmail" />
+            android:exported="false"/>
         <activity
             android:name=".panels.main_activities.MainScreenActivity"
             android:exported="false" />
