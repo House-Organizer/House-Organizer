@@ -144,7 +144,7 @@ public abstract class CalendarAdapter extends RecyclerView.Adapter<RecyclerView.
 
     void showDateTimePicker(Context ctx, View v, LocalDateTime base) {
         new DatePickerDialog(ctx, (view, year, monthOfYear, dayOfMonth) -> {
-            LocalDate date = LocalDate.of(year, monthOfYear, dayOfMonth);
+            LocalDate date = LocalDate.of(year, monthOfYear+1, dayOfMonth);
             StringBuilder pickedDateTime = new StringBuilder().append(date.format(DateTimeFormatter.ofPattern("dd/MM/yyyy")));
             new TimePickerDialog(ctx, (view1, hourOfDay, minute) -> {
                 LocalTime time = LocalTime.of(hourOfDay, minute);
@@ -152,7 +152,7 @@ public abstract class CalendarAdapter extends RecyclerView.Adapter<RecyclerView.
                         .append(time.format(DateTimeFormatter.ofPattern(" HH:mm")));
                 ((TextView)((View)v.getParent()).findViewById(R.id.new_event_picked_date)).setText(pickedDateTime.toString());
             }, base.getHour(), base.getMinute(), false).show();
-        }, base.getYear(), base.getMonthValue(), base.getDayOfMonth()).show();
+        }, base.getYear(), base.getMonthValue()-1, base.getDayOfMonth()).show();
     }
 
     /**
